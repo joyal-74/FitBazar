@@ -1,0 +1,153 @@
+
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container d-flex align-items-center justify-content-between">
+        <!-- Logo -->
+        <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+
+        <!-- Navbar Toggler for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Items -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="d-flex align-items-center">
+                <a href="#" class="me-3 notification-icon">
+                    <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                </a>
+                <a href="#" class="avathar">
+                    <i class="fa-light fa-circle-user fa-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar + Main Content -->
+<div class="container-fluid w-100">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+            <ul class="nav flex-column mt-3 gap-2">
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
+                <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fas fa-tags me-2"></i>Products</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+            <h1 class="h3 mb-4 fw-bold">Add Product</h1>
+
+            <!-- Add Product Form -->
+            <div class="card add-product-form">
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3 d-flex gap-4">
+                            <div class="w-50">
+                                <label for="productName" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" placeholder="Enter product name" required>
+                            </div>
+
+                            <!-- Category Selection -->
+                            <div class="w-50">
+                                <label for="productCategory" class="form-label">Category</label>
+                                <select class="form-select" id="productCategory" required onchange="updateFields()">
+                                    <option value="">Select Category</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Footwear">Footwear</option>
+                                    <option value="Gym Equipment">Gym Equipment</option>
+                                    <option value="Yoga Mat">Yoga Mat</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Stock Quantity (Always Visible) -->
+                        <div class="mb-3">
+                            <label for="productStock" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="productStock" placeholder="Enter stock quantity" required>
+                        </div>
+
+                        <!-- Product Description (Always Visible) -->
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Product Description</label>
+                            <textarea class="form-control" id="productDescription" rows="3" placeholder="Enter product description" required></textarea>
+                        </div>
+
+                        <!-- Product Image Upload (Always Visible) -->
+                        <div class="mb-3">
+                            <label class="form-label">Product Images</label>
+                            <input type="file" class="form-control" id="productImages" multiple>
+                        </div>
+
+                        <!-- Dynamic Fields Container -->
+                        <div id="dynamicFields"></div>
+
+                        <!-- Base Price & Discount Price -->
+                        <div class="mb-3 d-flex gap-4">
+                            <div class="w-50">
+                                <label for="basePrice" class="form-label">Base Price</label>
+                                <input type="number" class="form-control" id="basePrice" placeholder="Enter base price" required>
+                            </div>
+                            <div class="w-50">
+                                <label for="discountPrice" class="form-label">Discount Price</label>
+                                <input type="number" class="form-control" id="discountPrice" placeholder="Enter discount price">
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Script for Dynamic Fields -->
+<script>
+    function updateFields() {
+        const category = document.getElementById("productCategory").value;
+        const dynamicFields = document.getElementById("dynamicFields");
+        dynamicFields.innerHTML = ""; 
+
+        if (category === "Clothing" || category === "Footwear") {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Size</label>
+                    <select class="form-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Color</label>
+                    <input type="color" class="form-control form-control-color">
+                </div>
+            `;
+        } else if (category === "Gym Equipment") {
+            dynamicFields.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Weight (kg)</label>
+                    <input type="number" class="form-control" placeholder="Enter weight">
+                </div>
+            `;
+        }
+    }
+</script>
+
+</body>
+

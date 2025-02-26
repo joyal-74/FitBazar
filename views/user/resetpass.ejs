@@ -1,0 +1,76 @@
+<body class="d-flex align-items-center justify-content-center min-vh-100 l-body">
+    <div class="container log-container row">
+        <div class="d-flex login-div flex-md-row align-items-center">
+            <!-- Left Side - Form -->
+            <div class="w-50 p-4">
+                <h1 class="fw-bold mb-5">Change Password</h1>
+                <p class="mb-4">Please confirm your password</p>
+
+                <!-- Change Password Form -->
+                <form class="text-center" method="POST" id="confirmPasswordForm" action="/resetpass">
+                    <!-- Single Error Message Display -->
+                    <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
+                        <% if (errorMessage) { %>
+                            <span id="errorText">
+                                <%= errorMessage %>
+                            </span>
+                            <% } else { %>
+                                <span id="errorText"></span>
+                                <% } %>
+                    </p>
+
+                    <div class="mb-4">
+                        <input type="password" class="form-control" placeholder="New Password" name="newPassword">
+                    </div>
+                    <div class="mb-4">
+                        <input type="password" class="form-control" placeholder="Confirm Password"
+                            name="confirmPassword">
+                    </div>
+                    <button type="submit" class="btn send-btn">Change Password</button>
+                </form>
+
+                <!-- Go back to login -->
+                <p class="change-password-go-back mt-5"><a href="/login">Go back to Login page</a></p>
+            </div>
+
+            <!-- Right Side - Image -->
+            <div class="w-50 d-flex justify-content-center">
+                <div class="change-pass-image">
+                    <img src="/key-change.png" alt="Change Password Illustration">
+                </div>
+            </div>
+            <p class="text-center logo-text-bottom">FitBazar</p>
+        </div>
+        
+    </div>
+
+    <script>
+        document.getElementById("confirmPasswordForm").addEventListener("submit", function (event) {
+            let newPassword = document.getElementById("newPassword").value.trim();
+            let confirmPassword = document.getElementById("confirmPassword").value.trim();
+            let errorMessageContainer = document.getElementById("errorMessageContainer");
+            let errorText = document.getElementById("errorText");
+
+            if (!newPassword || !confirmPassword) {
+                errorText.innerText = "All fields are required";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                errorText.innerText = "Password must be 6+ characters";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                errorText.innerText = "Password do not match";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+        });
+    </script>
+</body>

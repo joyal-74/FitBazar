@@ -1,0 +1,127 @@
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+    
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fas fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4">Orders</h1>
+
+                <!-- Filters and Export Button -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Filter by Status</option>
+                            <option value="1">Completed</option>
+                            <option value="2">Pending</option>
+                            <option value="3">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" placeholder="Filter by Date">
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button class="btn btn-primary" onclick="">
+                            <i class="fas fa-download me-2"></i>Export to PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#12345</td>
+                                        <td>John Doe</td>
+                                        <td>2023-10-01</td>
+                                        <td>₹1,200</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                        <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12346</td>
+                                        <td>Jane Smith</td>
+                                        <td>2023-10-02</td>
+                                        <td>₹2,500</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
+                                        <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12347</td>
+                                        <td>Alice Johnson</td>
+                                        <td>2023-10-03</td>
+                                        <td>₹800</td>
+                                        <td><span class="badge bg-danger">Cancelled</span></td>
+                                        <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#12348</td>
+                                        <td>Bob Brown</td>
+                                        <td>2023-10-04</td>
+                                        <td>₹1,500</td>
+                                        <td><span class="badge bg-success">Completed</span></td>
+                                        <td><a href="/admin/vieworders" class="btn btn-sm btn-outline-primary">View</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+</body>

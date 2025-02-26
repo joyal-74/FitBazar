@@ -1,0 +1,101 @@
+<body class="d-flex align-items-center justify-content-center min-vh-100 l-body">
+    <div class="container log-container row">
+        <div class="d-flex login-div flex-md-row align-items-center">
+            <!-- Left Side - Login Form -->
+            <div class="w-50 px-5 py-5">
+                <h2 class="fw-bold mb-5 text-center">Create Account</h2>
+                <!-- Google Login -->
+                <div class="google-btn mt-3">
+                    <img src="/google-logo.png" alt="Google Logo">
+                    Signup with Google
+                </div>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <!-- register Form -->
+                <form action="/register" method="POST" id="registerForm">
+                    <!-- Error Message Display -->
+                    <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
+                        <% if (errorMessage) { %>
+                            <span id="errorText"><%= errorMessage %></span>
+                        <% } else { %>
+                            <span id="errorText"></span>
+                        <% } %>
+                    </p>
+
+                    <div class="mb-3">
+                        <input type="email" class="form-control" placeholder="Email" id="email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" placeholder="Password" id="password"
+                            name="password">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" placeholder="Confirm Password" id="confirmPassword"
+                            name="confirmPassword">
+                    </div>
+
+                    <button type="submit" class="btn send-btn mt-3">Signup</button>
+                </form>
+
+                <!-- Sign Up -->
+                <p class="signup-text mt-3">Already have an account? <a href="/login">Log in now..!</a></p>
+            </div>
+
+            <!-- Right Side - Image -->
+            <div class="w-50 d-flex justify-content-center">
+                <div class="register-image">
+                    <img src="/image3.png" alt="Running Illustration">
+                </div>
+            </div>
+        </div>
+        <p class="text-center logo-text-bottom">FitBazar</p>
+    </div>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", function (event) {
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+            let confirmPassword = document.getElementById("confirmPassword").value.trim();
+            let errorMessageContainer = document.getElementById("errorMessageContainer");
+            let errorText = document.getElementById("errorText");
+
+            // Clear previous error message
+            errorText.innerText = "";
+            errorMessageContainer.classList.add("d-none");
+
+            if (!email || !password) {
+                errorText.innerText = "Email and password are required";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            // Validate email format
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errorText.innerText = "Invalid email format";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            if (password.length < 6) {
+                errorText.innerText = "Password must be 6+ characters";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorText.innerText = "Password do not match";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+        });
+    </script>
+</body>

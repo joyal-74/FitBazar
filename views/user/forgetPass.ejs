@@ -1,0 +1,76 @@
+<body class="d-flex align-items-center justify-content-center min-vh-100 l-body">
+    <div class="container row log-container">
+        <div class="d-flex login-div flex-md-row align-items-center">
+            <!-- Left Side - Form -->
+            <div class="w-50 p-4">
+                <h1 class="fw-bold mb-5">Forgot Password?</h1>
+                <p class="mb-4 text-center">No worries! Enter your email address below, and we'll send you a link to
+                    reset your password.</p>
+
+                <!-- Forgot Password Form -->
+                <form class="text-center" action="/sendmail" method="POST" id="resetForm">
+                    <!-- Single Error Message Display -->
+                    <!-- Single Error Message Display -->
+                    <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
+                        <% if (errorMessage) { %>
+                            <span id="errorText">
+                                <%= errorMessage %>
+                            </span>
+                            <% } else { %>
+                                <span id="errorText"></span>
+                                <% } %>
+                    </p>
+
+                    <div class="mb-4">
+                        <input type="email" class="form-control" placeholder="Email address" id="email" name="email"
+                            required>
+                    </div>
+                    <button type="submit" class="btn send-btn w-50">Send OTP</button>
+                </form>
+
+                <!-- Go back to login -->
+                <p class="go-back mt-5 text-center">Remember your password?<span class="text-primary"><a
+                            href="/login">Log in here</a></span></p>
+            </div>
+
+            <!-- Right Side - Image -->
+            <div class="w-50 d-flex justify-content-center">
+                <div class="forgot-image">
+                    <img src="/forgot-password.png" alt="Forgot Password Illustration">
+                </div>
+            </div>
+        </div>
+        <p class="text-center logo-text-bottom">FitBazar</p>
+    </div>
+
+    <script>
+        document.getElementById("resetForm").addEventListener("submit", function (event) {
+            const email = document.getElementById("email").value.trim();
+            const errorMessageContainer = document.getElementById("errorMessageContainer");
+            const errorText = document.getElementById("errorText");
+
+            // Clear previous error message
+            errorText.innerText = "";
+            errorMessageContainer.classList.add("d-none");
+
+            // Validate email
+            if (!email) {
+                errorText.innerText = "Email is required";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            // Validate email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errorText.innerText = "Invalid email format";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            // If validation passes, the form will submit normally
+        });
+    </script>
+</body>

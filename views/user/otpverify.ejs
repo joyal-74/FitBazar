@@ -1,0 +1,99 @@
+<body class="d-flex align-items-center justify-content-center min-vh-100 l-body">
+    <div class="container row log-container">
+        <div class="d-flex login-div flex-md-row align-items-center">
+            <!-- Left Side - Image -->
+            <div class="w-50 d-flex justify-content-center">
+                <div class="otp-image">
+                    <img src="/otp-verify.png" alt="OTP Illustration">
+                </div>
+            </div>
+
+            <!-- Right Side - OTP Form -->
+            <div class="w-50 pe-4 text-center">
+                <h1 class="fw-bold p-4">Confirm with OTP</h1>
+                <p>Please check your mail address for OTP</p>
+
+                <!-- Timer Display -->
+                <div id="timer" class="text-center mt-3" style="font-size: 1em; color: rgb(81, 2, 2);"></div>
+
+                <!-- OTP Input Fields -->
+                <form action="/otpverify" method="POST" id="otpverifyForm">
+                    <!-- Single Error Message Display -->
+                    <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
+                        <% if (errorMessage) { %>
+                            <span id="errorText">
+                                <%= errorMessage %>
+                            </span>
+                            <% } else { %>
+                                <span id="errorText"></span>
+                                <% } %>
+                    </p>
+                    <div class="d-flex justify-content-center">
+                        <input type="text" maxlength="1" class="otp-input" id="otp1" name="otp1"
+                            oninput="moveToNext(this, 'otp2')" onkeydown="handleBackspace(this, null)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp2" name="otp2"
+                            oninput="moveToNext(this, 'otp3')" onkeydown="handleBackspace(this, 'otp1')">
+                        <input type="text" maxlength="1" class="otp-input" id="otp3" name="otp3"
+                            oninput="moveToNext(this, 'otp4')" onkeydown="handleBackspace(this, 'otp2')">
+                        <input type="text" maxlength="1" class="otp-input" id="otp4" name="otp4"
+                            oninput="moveToNext(this, null)" onkeydown="handleBackspace(this, 'otp3')">
+                    </div>
+                    <button type="submit" class="btn send-btn mt-4 w-75">Confirm</button>
+                </form>
+
+                <!-- Go back to login -->
+                <h4 class="go-back mt-4"><a href="/login">Go back to Login page</a></h4>
+            </div>
+        </div>
+        <p class="text-center pt-4 logo-text-bottom">FitBazar</p>
+    </div>
+
+    <script>
+        // Set the timer duration (in seconds)
+        let timeLeft = 120;
+
+        // Function to update the timer
+        function updateTimer() {
+            const timerElement = document.getElementById("timer");
+
+            // Calculate minutes and seconds
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+
+            // Display the timer
+            timerElement.textContent = `Time left: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            // Decrease the time left
+            timeLeft--;
+
+            // Stop the timer when it reaches zero
+            if (timeLeft < 0) {
+                clearInterval(timerInterval); // Stop the timer
+                timerElement.textContent = "Time's up!";
+                req.session.otp = "expired"
+            }
+        }
+
+        // Start the timer
+        const timerInterval = setInterval(updateTimer, 1000); // Update every second
+
+        // Existing functions for OTP input handling
+        function moveToNext(currentField, nextFieldId) {
+            if (currentField.value.length === 1) {
+                if (nextFieldId) {
+                    document.getElementById(nextFieldId).focus();
+                } else {
+                    document.querySelector("form").submit();
+                }
+            }
+        }
+
+        function handleBackspace(currentField, previousFieldId) {
+            if (event.key === "Backspace" || event.key === "Delete") {
+                if (currentField.value.length === 0 && previousFieldId) {
+                    document.getElementById(previousFieldId).focus();
+                }
+            }
+        }
+    </script>
+</body>

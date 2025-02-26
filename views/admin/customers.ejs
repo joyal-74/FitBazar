@@ -1,0 +1,143 @@
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-display-chart-up me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-clothes-hanger me-2"></i>Products</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fa-solid fa-users me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4 fw-bold">Customers</h1>
+
+                <!-- Filters and Add Product Button -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <!-- Filter by Category -->
+                    <div class="d-flex gap-2">
+                        <div class="flex-grow-1" style="max-width: 180px;">
+                            <select class="form-select">
+                                <option selected disabled hidden>Filter ⇅</option>
+                                <option value="1">All</option>
+                                <option value="2">Active</option>
+                                <option value="3">Blocked</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn" type="submit" style="background-color: #3e29a8;">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </form>
+                </div>
+
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Customer ID</th>
+                                        <th>Name</th>
+                                        <th>Orders</th>
+                                        <th>Balance</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#1001</td>
+                                        <td>Joyal Kuriakose</td>
+                                        <td>Footwear</td>
+                                        <td>₹1,000</td>
+                                        <td><span class="badge stock-btn1">Active</span></td>
+                                        <td>
+                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i></a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1002</td>
+                                        <td>Cezanne P</td>
+                                        <td>Jersey</td>
+                                        <td>₹1,000</td>
+                                        <td><span class="badge stock-btn3">Blocked</span></td>
+                                        <td>
+                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-check fa-xl" style="color: #00e61b;"></i></a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1001</td>
+                                        <td>Achuth J</td>
+                                        <td>Boxing Kit</td>
+                                        <td>₹11,000</td>
+                                        <td><span class="badge stock-btn1">Active</span></td>
+                                        <td>
+                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i></a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1002</td>
+                                        <td>Abhinav K</td>
+                                        <td>Jersey</td>
+                                        <td>₹1,000</td>
+                                        <td><span class="badge stock-btn3">Blocked</span></td>
+                                        <td>
+                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-check fa-xl" style="color: #00e61b;"></i></a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>

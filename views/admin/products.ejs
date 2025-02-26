@@ -1,0 +1,170 @@
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fas fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4">Products</h1>
+
+                <!-- Filters and Add Product Button -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <!-- Filter by Category -->
+                    <div class="d-flex gap-2">
+                        <div class="flex-grow-1" style="max-width: 180px;">
+                            <select class="form-select">
+                                <option selected disabled hidden>Filter by Category</option>
+                                <option value="1">Gym Equipment</option>
+                                <option value="2">Sports Gear</option>
+                                <option value="3">Yoga & Meditation</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter by Stock -->
+                        <div class="flex-grow-1" style="max-width: 180px;">
+                            <select class="form-select">
+                                <option selected disabled hidden>Filter by Stock</option>
+                                <option value="1">In Stock</option>
+                                <option value="2">Out of Stock</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn" type="submit" style="background-color: #3e29a8;">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </form>
+
+                    <!-- Add Product Button -->
+                    <div class="text-end">
+                        <a class="btn add-product-btn" href="/admin/addProducts">
+                            <i class="fas fa-plus me-2"></i>Add Product
+                        </a>
+                    </div>
+                </div>
+
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Added On</th>
+                                        <th>Staus</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#1001</td>
+                                        <td>Running Shoes</td>
+                                        <td>Footwear</td>
+                                        <td>₹1,000</td>
+                                        <td><span class="badge stock-btn1">In Stock</span></td>
+                                        <td>01-02-2025</td>
+                                        <td>
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1001" checked>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1002</td>
+                                        <td>Sports T-Shirt</td>
+                                        <td>Apparel</td>
+                                        <td>₹500</td>
+                                        <td><span class="badge stock-btn2">Low Stock</span></td>
+                                        <td>01-02-2025</td>
+                                        <td>
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1002">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#1003</td>
+                                        <td>Water Bottle</td>
+                                        <td>Accessories</td>
+                                        <td>₹200</td>
+                                        <td><span class="badge stock-btn3">Out of Stock</span></td>
+                                        <td>01-02-2025</td>
+                                        <td>
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1003">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                
+                            </table>
+                            
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>

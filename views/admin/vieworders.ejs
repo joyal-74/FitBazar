@@ -1,0 +1,139 @@
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+    
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fas fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4">View Order</h1>
+
+                <!-- Order Details -->
+                <div class="row">
+                    <!-- Order Summary -->
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Order Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Order ID:</strong> #12345</p>
+                                        <p><strong>Order Date:</strong> 2023-10-01</p>
+                                        <p><strong>Customer:</strong> John Doe</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Status:</strong> <span class="badge bg-success">Completed</span></p>
+                                        <p><strong>Total Amount:</strong> ₹1,200</p>
+                                        <p><strong>Payment Method:</strong> Credit Card</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="card mb-4">
+                            <div class="card-body p-0 m-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Running Shoes</td>
+                                                <td>1</td>
+                                                <td>₹1,000</td>
+                                                <td>₹1,000</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sports T-Shirt</td>
+                                                <td>2</td>
+                                                <td>₹100</td>
+                                                <td>₹200</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Timeline -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Order Timeline</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="timeline">
+                                    <div class="timeline-item">
+                                        <p class="mb-1"><strong>Order Placed</strong></p>
+                                        <p class="text-muted mb-0">2023-10-01 10:00 AM</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <p class="mb-1"><strong>Order Confirmed</strong></p>
+                                        <p class="text-muted mb-0">2023-10-01 10:30 AM</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <p class="mb-1"><strong>Order Shipped</strong></p>
+                                        <p class="text-muted mb-0">2023-10-02 09:00 AM</p>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <p class="mb-1"><strong>Order Delivered</strong></p>
+                                        <p class="text-muted mb-0">2023-10-03 03:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>

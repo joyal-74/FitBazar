@@ -1,0 +1,413 @@
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-display-chart-up me-2"></i>Dashboard</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-shop me-2"></i>Products</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fa-solid fa-users me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-3 mx-auto">
+                <h1 class="h3 mb-3 fw-bold">Categories</h1>
+
+                <!-- Filters and Add Product Button -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <!-- Filter by Category -->
+                    <div class="d-flex gap-2">
+                        <div class="flex-grow-1" style="max-width: 180px;">
+                            <select class="form-select">
+                                <option selected disabled hidden>Filter ⇅</option>
+                                <option value="1">All</option>
+                                <option value="2">Active</option>
+                                <option value="3">Blocked</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+
+                    
+
+                    <!-- Search Bar -->
+                    <div class="d-flex gap-4">
+                        <!-- Button to Open Modal -->
+                        <button type="button" class="btn admin-btns text-white" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            <i class="fa-solid fa-plus"></i> New
+                        </button>
+                        <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                            <input class="form-control me-2" type="search" placeholder="Search category name...." aria-label="Search">
+                            <button class="btn" type="submit" style="background-color: #3e29a8;">
+                                <i class="fas fa-search text-white"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- add category modal -->
+                <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content ">
+                            <div class="modal-header">
+                                <h5 class="modal-title fw-bold" id="addCategoryModalLabel">Add Category</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/admin/categories" method="POST" id="addCategoryForm">
+                                    <div class="mb-3">
+                                        <label for="addCategoryName" class="form-label">Category Name</label>
+                                        <input type="text" class="form-control" id="addCategoryName" name="addCategoryName" placeholder="Enter Category Name">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Thumbnail</label>
+                                        <input type="file" class="form-control" id="addThumbnail" name="addThumbnail">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="addCategoryDescription" class="form-label">Category Description</label>
+                                        <textarea class="form-control" id="addCategoryDescription" name="addCategoryDescription" rows="3" placeholder="Enter Category Description"></textarea>
+                                    </div>
+                                    <div class="mb-3 d-flex gap-4">
+                                        <div class="w-50">
+                                            <label for="addVisibilityStatus" class="form-label">Visibility Status</label>
+                                            <select class="form-select" id="addVisibilityStatus" name="addVisibilityStatus">
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="w-50">
+                                            <label for="addDiscountPrice" class="form-label">Discount/Offers (%)</label>
+                                            <input type="number" class="form-control" id="addDiscountPrice" name="addDiscountPrice" placeholder="Enter Discount (Optional)">
+                                        </div>
+                                    </div>
+                                    <!-- Error Message Container -->
+                                    <p id="errorMessageContainer1" class="text-danger text-center d-none">
+                                        <span id="errorText1"></span>
+                                    </p>
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Add Category</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- edit category modal -->
+                <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <input type="hidden" id="originalCategoryName" name="originalCategoryName">
+                                <h5 class="modal-title fw-bold" id="editCategoryModalLabel">Edit Category</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editCategoryForm" enctype="multipart/form-data">
+                                    <!-- Form fields here -->
+                                    <div class="mb-3">
+                                        <label for="editCategoryName" class="form-label">Category Name</label>
+                                        <input type="text" class="form-control" id="editCategoryName" name="editCategoryName" placeholder="Enter Category Name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Thumbnail</label>
+                                        <input type="file" class="form-control" id="editThumbnail" name="editThumbnail">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="editCategoryDescription" class="form-label">Category Description</label>
+                                        <textarea class="form-control" id="editCategoryDescription" name="editCategoryDescription" rows="3" placeholder="Enter Category Description" required></textarea>
+                                    </div>
+                                    <div class="mb-3 d-flex gap-4">
+                                        <div class="w-50">
+                                            <label for="editVisibilityStatus" class="form-label">Visibility Status</label>
+                                            <select class="form-select" id="editVisibilityStatus" name="editVisibilityStatus" required>
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="w-50">
+                                            <label for="discountPrice" class="form-label">Discount/Offers (%)</label>
+                                            <input type="number" class="form-control" id="discountPrice" name="discountPrice" placeholder="Enter Discount (Optional)">
+                                        </div>
+                                    </div>
+                
+                                    <!-- Remove Thumbnail Option -->
+                                    <div class="mb-3">
+                                        <label for="removeThumbnail" class="form-label">
+                                            <input type="checkbox" id="removeThumbnail" name="removeThumbnail" value="false"> Remove Thumbnail
+                                        </label>
+                                    </div>
+                
+                                    <!-- Error Message Container -->
+                                    <p id="errorMessageContainer2" class="text-danger text-center d-none">
+                                        <span id="errorText2"></span>
+                                    </p>
+                
+                                    <div class="text-end">
+                                        <button type="submit" class="btn btn-primary">Edit Category</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="text-start ps-5">Category Info</th>
+                                        <th>Description</th>
+                                        <th>No of Products</th>
+                                        <th>Discount/Offers (%)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% cat.reverse().forEach((category, index) => { %>
+                                    <tr>
+                                        <td class="text-start ps-4"><img src="/uploads/<%= category.thumbnail || 'default.png' %>" alt="Category Thumbnail" width="30" height="30"> <%= category.name%></td>
+                                        <td class="category-description"><%= category.description %></td>
+                                        <td><%= category.productsCount %></td>
+                                        <td><%= category.categoryOffer %> %</td>
+                                        <td>
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input 
+                                                    class="form-check-input toggle-switch" 
+                                                    type="checkbox" 
+                                                    role="switch" 
+                                                    id="toggle<%= category._id %>" 
+                                                    data-id="<%= category._id %>" 
+                                                    <%= category.visibility ? 'checked' : 'disabled' %>
+                                                    <%= category.visibility ? 'onclick="return false;"' : '' %>
+                                                >
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button 
+                                                class="btn btn-sm btn-outline-danger me-2" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editCategoryModal"
+                                                onclick="openEditModal('<%= category.name %>', '<%= category.description %>', '<%= category.categoryOffer %>', '<%= category.visibility %>')">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-3 ">
+                    <nav>
+                        <ul class="pagination pagination-sm">
+                            <!-- Previous Page Button -->
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <!-- Page Numbers -->
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <!-- Next Page Button -->
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+
+
+        function openEditModal(name, description, discount, visibility) {
+            document.getElementById("originalCategoryName").value = name;
+            document.getElementById("editCategoryName").value = name;
+            document.getElementById("editCategoryDescription").value = description;
+            document.getElementById("discountPrice").value = discount ? discount : ""; 
+        
+            document.getElementById("editVisibilityStatus").value = visibility.toString() === "true" ? "Active" : "Inactive";
+        
+            document.getElementById("editCategoryDescription").dispatchEvent(new Event("input"));
+            document.getElementById("discountPrice").dispatchEvent(new Event("input"));
+        }
+
+        document.getElementById("removeThumbnail")?.addEventListener("click", function () {
+            this.value = this.checked ? "true" : "false";
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("editCategoryForm")?.addEventListener("submit", async function (event) {
+                event.preventDefault();
+        
+                const categoryName = document.getElementById("originalCategoryName").value.trim();
+                const editCategoryName = document.getElementById("editCategoryName").value.trim();
+                const categoryDescription = document.getElementById("editCategoryDescription").value.trim();
+                const discountPrice = document.getElementById("discountPrice").value.trim();
+                const visibilityStatus = document.getElementById("editVisibilityStatus").value;
+                const thumbnail = document.getElementById("editThumbnail");
+                const removeThumbnail = document.getElementById("removeThumbnail").value;
+        
+                const editErrorMessageContainer = document.getElementById("errorMessageContainer2");
+                const editErrorText = document.getElementById("errorText2");
+        
+                editErrorText.innerText = "";
+                editErrorMessageContainer.classList.add("d-none");
+        
+                let isValid = true;
+        
+                if (!editCategoryName) {
+                    editErrorText.innerText = "Category Name is required.";
+                    isValid = false;
+                } else if (!categoryDescription) {
+                    editErrorText.innerText = "Category Description is required.";
+                    isValid = false;
+                } else if (thumbnail && thumbnail.files.length > 1) {
+                    editErrorText.innerText = "Only one image is allowed.";
+                    isValid = false;
+                } else if (thumbnail && thumbnail.files.length > 0) {
+                    const allowedExtensions = /\.(jpg|jpeg|png)$/i;
+                    if (!allowedExtensions.test(thumbnail.files[0].name)) {
+                        editErrorText.innerText = "Only JPG, JPEG, and PNG files are allowed.";
+                        isValid = false;
+                    }
+                }
+        
+                if (!isValid) {
+                    editErrorMessageContainer.classList.remove("d-none");
+                    return;
+                }
+
+                const formData = new FormData(event.target);
+                formData.append('categoryName',categoryName);
+        
+                const response = await fetch("/admin/categories", {
+                    method: "PUT",
+                    body: formData
+                });
+        
+                if (response.ok) {
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "success",
+                        title: "Category updated successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    const result = await response.json();
+                    editErrorText.textContent = result.error;
+                    editErrorMessageContainer.classList.remove("d-none");
+                }
+            });
+        
+            document.getElementById("addCategoryForm")?.addEventListener("submit", async function (event) {
+                event.preventDefault();
+        
+                const formData = new FormData(this);
+        
+                try {
+                    const response = await fetch("/admin/categories", {
+                        method: "POST",
+                        body: formData
+                    });
+        
+                    const result = await response.json();
+        
+                    if (response.ok) {
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "success",
+                            title: "Category added successfully!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: result.error || "An unexpected error occurred.",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: "Something went wrong. Please try again.",
+                    });
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".category-description").forEach((desc) => {
+            const maxLength = 40;
+            if (desc.textContent.length > maxLength) {
+                desc.textContent = desc.textContent.substring(0, maxLength) + "...";
+            }
+            });
+        });
+        </script>
+
+</body>
