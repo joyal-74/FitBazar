@@ -7,6 +7,10 @@ const categorySchema = new Schema({
         required : true,
         unique : true
     },
+    thumbnail : {
+        type : String,
+        required : false
+    },
     description : {
         type : String,
         required : true,
@@ -26,12 +30,7 @@ const categorySchema = new Schema({
     productsCount : {
         type : Number,
         default : 0,
-    },
-    thumbnail : {
-        type : String,
-        required : false
     }
-
 })
 
 const Category = mongoose.model("Category", categorySchema)

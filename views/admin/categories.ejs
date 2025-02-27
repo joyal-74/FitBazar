@@ -32,12 +32,12 @@
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
                 <ul class="nav flex-column mt-3 gap-2">
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-display-chart-up me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
                     <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-shop me-2"></i>Products</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fa-solid fa-users me-2"></i>Customers</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
@@ -53,26 +53,24 @@
                     <!-- Filter by Category -->
                     <div class="d-flex gap-2">
                         <div class="flex-grow-1" style="max-width: 180px;">
-                            <select class="form-select">
-                                <option selected disabled hidden>Filter ⇅</option>
-                                <option value="1">All</option>
-                                <option value="2">Active</option>
-                                <option value="3">Blocked</option>
+                            <select class="form-select filter-select">
+                                <option disabled hidden>Filter ⇅</option>
+                                <option value="1" <%= selectedFilter === undefined ? 'selected' : '' %>>All</option>
+                                <option value="true" <%= selectedFilter === 'true' ? 'selected' : '' %>>Active</option>
+                                <option value="false" <%= selectedFilter === 'false' ? 'selected' : '' %>>Blocked</option>
                             </select>
                         </div>
-                        
                     </div>
 
-                    
-
                     <!-- Search Bar -->
-                    <div class="d-flex gap-4">
+                    <div class="d-flex gap-4 align-items-center">
                         <!-- Button to Open Modal -->
                         <button type="button" class="btn admin-btns text-white" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                             <i class="fa-solid fa-plus"></i> New
                         </button>
-                        <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
-                            <input class="form-control me-2" type="search" placeholder="Search category name...." aria-label="Search">
+                        
+                        <form class="d-flex search-container flex-grow-1" style="max-width: 300px;" id="searchForm">
+                            <input id="searchInput" class="form-control me-2" type="search" placeholder="Search category name...." aria-label="Search" value="<%= searchQuery || '' %>">
                             <button class="btn" type="submit" style="background-color: #3e29a8;">
                                 <i class="fas fa-search text-white"></i>
                             </button>
@@ -165,14 +163,7 @@
                                             <input type="number" class="form-control" id="discountPrice" name="discountPrice" placeholder="Enter Discount (Optional)">
                                         </div>
                                     </div>
-                
-                                    <!-- Remove Thumbnail Option -->
-                                    <div class="mb-3">
-                                        <label for="removeThumbnail" class="form-label">
-                                            <input type="checkbox" id="removeThumbnail" name="removeThumbnail" value="false"> Remove Thumbnail
-                                        </label>
-                                    </div>
-                
+
                                     <!-- Error Message Container -->
                                     <p id="errorMessageContainer2" class="text-danger text-center d-none">
                                         <span id="errorText2"></span>
@@ -199,6 +190,7 @@
                                         <th>Description</th>
                                         <th>No of Products</th>
                                         <th>Discount/Offers (%)</th>
+                                        <th>Created Date</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -210,6 +202,12 @@
                                         <td class="category-description"><%= category.description %></td>
                                         <td><%= category.productsCount %></td>
                                         <td><%= category.categoryOffer %> %</td>
+                                        <td><%= new Date(category.createdAt).toLocaleString("en-IN", { 
+                                            day: "2-digit", 
+                                            month: "short", 
+                                            year: "numeric", 
+                                            timeZone: "Asia/Kolkata"
+                                        }) %></td>
                                         <td>
                                             <div class="form-check form-switch d-flex justify-content-center">
                                                 <input 
@@ -276,8 +274,6 @@
     </div>
 
     <script>
-
-
         function openEditModal(name, description, discount, visibility) {
             document.getElementById("originalCategoryName").value = name;
             document.getElementById("editCategoryName").value = name;
@@ -303,7 +299,6 @@
                 const discountPrice = document.getElementById("discountPrice").value.trim();
                 const visibilityStatus = document.getElementById("editVisibilityStatus").value;
                 const thumbnail = document.getElementById("editThumbnail");
-                const removeThumbnail = document.getElementById("removeThumbnail").value;
         
                 const editErrorMessageContainer = document.getElementById("errorMessageContainer2");
                 const editErrorText = document.getElementById("errorText2");
@@ -399,6 +394,37 @@
                     });
                 }
             });
+
+            document.getElementById('searchForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const searchQuery = document.getElementById('searchInput').value.trim();
+
+                try {
+                    if (searchQuery) {
+                        window.location.href = `/admin/categories?q=${encodeURIComponent(searchQuery)}`;
+                    } else if (searchQuery == "") {
+                        window.location.href = '/admin/categories'; // Redirect to the main page if the search query is empty
+                    }
+                } catch (error) {
+                    console.error('Error fetching search results:', error);
+                }
+            });
+
+            document.querySelector('.filter-select').addEventListener('change', function () {
+                const filterValue = this.value;
+                let query = '';
+
+                if (filterValue === 'true') {
+                    query = '?visibility=true';
+                } else if (filterValue === 'false') {
+                    query = '?visibility=false';
+                }
+
+                window.location.href = `/admin/categories/filter${query}`;
+            });
+
+
         });
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".category-description").forEach((desc) => {
@@ -408,6 +434,7 @@
             }
             });
         });
+
         </script>
 
 </body>

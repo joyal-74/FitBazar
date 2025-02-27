@@ -16,6 +16,7 @@ router.get('/dashboard', adminController.loadDashboard);
 router.get('/categories', categoryController.categoryInfo);
 router.post('/categories', categoryMiddlewere.upload.single("addThumbnail"), categoryController.addCategory);
 router.put('/categories', categoryMiddlewere.upload.single('editThumbnail'),categoryController.editCategory);
+router.get('/categories/filter', categoryController.filterCategories);
 
 
 router.get('/orders', adminController.loadOrders);

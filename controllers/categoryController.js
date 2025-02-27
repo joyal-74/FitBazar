@@ -5,123 +5,126 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const categoryInfo = async (req,res) => {
+const limit = process.env.PAGINATION_LIMIT || 8;
+
+const categoryInfo = async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 8;
+        const { q: searchQuery = "", status, page = 1 } = req.query;
         const skip = (page - 1) * limit;
 
-        const categoryData = await Category.find({}).sort({createdAt : -1}).skip(skip).limit(limit)
+        const filter = { name: { $regex: searchQuery, $options: "i" } };
+        const [categoryData, totalcategories] = await Promise.all([
+            Category.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            Category.countDocuments(filter)
+        ]);
 
-        const totalcategories = await Category.countDocuments();
-        const totalPages = Math.ceil(totalcategories/ limit);
+        const totalPages = Math.ceil(totalcategories / limit);
 
-        res.render("admin/categories", {title : 'categories', errorMessage: "" , cat : categoryData, currentPage : page, 
-            totalPages : totalPages, totalcategories : totalcategories})
-
+        res.render("admin/categories", {
+            title: "categories",
+            errorMessage: "",
+            cat: categoryData,
+            currentPage: page,
+            totalPages,
+            totalcategories,
+            selectedFilter: "",
+            searchQuery
+        });
     } catch (error) {
-        console.error(error)
+        next(error);
     }
-}
+};
 
-
-const addCategory = async (req, res) => {
+const addCategory = async (req, res, next) => {
     try {
         let { addCategoryName, addCategoryDescription, addDiscountPrice, addVisibilityStatus } = req.body;
-
-        // Trim input values to prevent accidental spaces
         addCategoryName = addCategoryName?.trim();
         addCategoryDescription = addCategoryDescription?.trim();
 
-        // Validate required fields
         if (!addCategoryName || !addCategoryDescription) {
             return res.status(400).json({ error: "Category Name and Description are required." });
         }
 
-        // Check if category already exists
         const existingCategory = await Category.findOne({ name: addCategoryName });
         if (existingCategory) {
-            return res.status(409).json({ error: "Category already exists." }); // 409 Conflict
+            return res.status(409).json({ error: "Category already exists." });
         }
 
-        // Convert visibility status to boolean
-        addVisibilityStatus = addVisibilityStatus === "Active";
         const thumbnail = req.file ? req.file.filename : null;
-
-        // Create new category
         const newCategory = new Category({
             name: addCategoryName,
             description: addCategoryDescription,
-            thumbnail: thumbnail,
+            thumbnail,
             categoryOffer: addDiscountPrice || 0,
-            visibility: addVisibilityStatus
+            visibility: addVisibilityStatus === "Active"
         });
 
         await newCategory.save();
-        console.log("Uploaded file:", req.file);
-        console.log("Request body:", req.body);
-
-        return res.status(201).json({ message: "Category added successfully." }); // 201 Created
-
+        res.status(201).json({ message: "Category added successfully." });
     } catch (error) {
-        console.error("Add Category Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        next(error);
     }
 };
 
-
-
-
-const editCategory = async (req, res) => {
+const editCategory = async (req, res, next) => {
     try {
         const { categoryName, editCategoryName, editCategoryDescription, discountPrice, editVisibilityStatus, removeThumbnail } = req.body;
-        let thumbnail = req.file ? req.file.filename : null; // Start with new file if uploaded
+        let thumbnail = req.file ? req.file.filename : null;
 
-        // Find the category to update
         const category = await Category.findOne({ name: categoryName });
         if (!category) {
             return res.status(404).json({ error: "Category not found." });
         }
 
-        // Handle thumbnail removal or replacement
-        if ((req.file || removeThumbnail === "true") && category.thumbnail) {
+        if (req.file && category.thumbnail) {
             const oldThumbnailPath = path.join(__dirname, "..", "public", "uploads", category.thumbnail);
-            fs.unlink(oldThumbnailPath, (err) => {
-                if (err) {
-                    console.error("Failed to delete old thumbnail:", err);
-                } else {
-                    console.log("Old thumbnail deleted successfully:", oldThumbnailPath);
-                }
-            });
+            if (fs.existsSync(oldThumbnailPath)) {
+                fs.unlink(oldThumbnailPath, (err) => {
+                    if (err) console.error("Failed to delete old thumbnail:", err);
+                });
+            }
         }
 
-        // Set thumbnail based on request
-        if (removeThumbnail === "true") {
-            thumbnail = null; // Remove thumbnail if requested
-        } else if (!req.file) {
-            thumbnail = category.thumbnail; // Keep existing thumbnail if no new file is uploaded
-        }
-
-        // Update category fields
         category.name = editCategoryName;
         category.description = editCategoryDescription;
         category.categoryOffer = discountPrice ? parseFloat(discountPrice) : 0;
         category.visibility = editVisibilityStatus === "Active";
-        category.thumbnail = thumbnail;
+        category.thumbnail = thumbnail || category.thumbnail;
 
-        // Save the updated category
         await category.save();
-        console.log("Uploaded file:", req.file);
-        console.log("Request body:", req.body);
-
-        return res.status(200).json({ message: "Category updated successfully!" });
+        res.status(200).json({ message: "Category updated successfully!" });
     } catch (error) {
-        console.error("Edit category error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        next(error);
     }
 };
 
+const filterCategories = async (req, res, next) => {
+    try {
+        const { visibility } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const skip = (page - 1) * limit;
 
+        const filter = visibility !== undefined ? { visibility: visibility === 'true' } : {};
+        const [categories, totalcategories] = await Promise.all([
+            Category.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            Category.countDocuments(filter)
+        ]);
 
+        const totalPages = Math.ceil(totalcategories / limit);
 
-export default {categoryInfo, addCategory, editCategory}
+        res.render("admin/categories", {
+            title: "Categories",
+            errorMessage: "",
+            cat: categories,
+            currentPage: page,
+            totalPages,
+            totalcategories,
+            selectedFilter: visibility,
+            searchQuery: ""
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export default { categoryInfo, addCategory, editCategory, filterCategories };
