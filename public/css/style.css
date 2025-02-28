@@ -312,6 +312,9 @@
 .sidebar {
     height: 90.5vh;
 }
+.sidebar-big {
+    height: 100.5vh;
+}
 .avathar {
     color: #493cd0;
 }
@@ -496,4 +499,24 @@
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
     border-bottom: none !important;
+}
+
+/* Custom File Input Container */
+.input-group {
+    max-width: 500px;
+    height: 60px;
+}
+
+/* Style the custom button */
+#customFileButton {
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+/* Style the file names display */
+#fileNamesDisplay {
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ced4da; /* Match Bootstrap's input border */
+    border-left: none; /* Remove left border to blend with the button */
+    cursor: default;
+    font-size: 14px; /* Disable pointer events */
 }

@@ -55,9 +55,9 @@
                         <div class="flex-grow-1" style="max-width: 180px;">
                             <select class="form-select">
                                 <option selected disabled hidden>Filter by Category</option>
-                                <option value="1">Gym Equipment</option>
-                                <option value="2">Sports Gear</option>
-                                <option value="3">Yoga & Meditation</option>
+                                <% cat.forEach(category => { %>
+                                    <option value="<%= category.name %>"><%= category.name %></option>
+                                <% }) %>
                             </select>
                         </div>
 
@@ -72,8 +72,8 @@
                     </div>
 
                     <!-- Search Bar -->
-                    <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <form class="d-flex search-container flex-grow-1" style="max-width: 300px;" id="searchForm">
+                        <input id="searchInput" class="form-control me-2" type="search" placeholder="Search category name...." aria-label="Search" value="<%= searchQuery || '' %>">
                         <button class="btn" type="submit" style="background-color: #3e29a8;">
                             <i class="fas fa-search text-white"></i>
                         </button>
@@ -108,10 +108,10 @@
                                 <tbody>
                                     <% product.forEach(product => { %>
                                         <tr>
-                                            <td><%= product._id %></td>
+                                            <td><%= product.productId %></td>
                                             <td><%= product.name %></td>
                                             <td><%= product.category %></td>
-                                            <td>$<%= product.price.toFixed(2) %></td>
+                                            <td>₹ <%= product.price.toFixed(2) %></td>
                                             <td>
                                                 <% if (product.stock > 0) { %>
                                                     <span class="badge bg-success">In Stock (<%= product.stock %>)</span>
@@ -121,13 +121,22 @@
                                             </td>
                                             <td><%= new Date(product.createdAt).toLocaleDateString("en-US") %></td>
                                             <td>
-                                                <div class="form-check form-switch d-flex justify-content-center">
-                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="<%= product._id %>" <%= product.status === 'active' ? 'checked' : '' %> >
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <!-- Visible (Eye) Icon: Shown when visibility is TRUE -->
+                                                    <p style="color: #3e29a8; margin: 0;" class="<%= product.visibility ? '' : 'd-none' %>">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </p>
+                                                
+                                                    <!-- Hidden (Eye-slash) Icon: Shown when visibility is FALSE -->
+                                                    <p style="color: #9c9999; margin: 0;" class="<%= product.visibility ? 'd-none' : '' %>">
+                                                        <i class="fa-solid fa-eye-slash"></i>
+                                                    </p>
                                                 </div>
+                                                
                                             </td>
+                                            
                                             <td>
-                                                <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                                <a href="/admin/products/delete/<%= product._id %>" class="btn btn-sm btn-outline-danger delete-product">Delete</a>
+                                                <a href="/admin/editProducts/<%= product.productId %>" class="btn btn-sm btn-outline-primary me-2">Edit</a>
                                             </td>
                                         </tr>
                                     <% }) %>
@@ -136,9 +145,59 @@
                             
                             
                         </div>
+                        
                     </div>
+                    
+                </div>
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-3 ">
+                    <nav>
+                        <ul class="pagination pagination-sm">
+                            <!-- Previous Page Button -->
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <!-- Page Numbers -->
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <!-- Next Page Button -->
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
                 </div>
             </main>
         </div>
     </div>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const searchQuery = document.getElementById('searchInput').value.trim();
+
+                try {
+                    if (searchQuery) {
+                        window.location.href = `/admin/products?q=${encodeURIComponent(searchQuery)}`;
+                    } else if (searchQuery == "") {
+                        window.location.href = '/admin/products'; 
+                    }
+                } catch (error) {
+                    console.error('Error fetching search results:', error);
+                }
+            });
+    </script>
 </body>

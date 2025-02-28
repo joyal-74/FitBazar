@@ -24,6 +24,9 @@ router.get('/products', productController.productInfo);
 router.get('/addProducts', productController.loadaddProducts);
 router.post('/addProducts',productMiddleware.upload.array('productImages'),productController.addProducts);
 
+router.get('/editProducts/:productId', productController.loadEditProducts);
+router.put('/editProducts',productMiddleware.upload.array('productImages'),productController.editProducts);
+
 router.get('/orders', adminController.loadOrders);
 router.get('/vieworders', adminController.viewOrders);
 

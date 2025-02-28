@@ -49,20 +49,19 @@
             <h1 class="h3 mb-4 fw-bold">Add Product</h1>
 
             <!-- Add Product Form -->
-            <div class="card add-product-form">
-                <div class="card-body">
+            <div class="card add-product-form p-4">
+                <div class="card-body p-2">
                     <form id="addProductForm" enctype="multipart/form-data">
-                        <div class="mb-3 d-flex gap-4">
+                        <div class="mb-3 d-flex gap-3">
                             <div class="w-50">
-                                <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter product name">
+                                <label for="productName" class="form-label mb-1">Product Name</label>
+                                <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name">
                             </div>
-                             
 
                             <!-- Category Selection -->
                             <div class="w-50">
-                                <label for="productCategory" class="form-label">Category</label>
-                                <select class="form-select" id="productCategory" name="productCategory" onchange="updateFields()">
+                                <label for="productCategory" class="form-label mb-1">Category</label>
+                                <select class="form-select form-select-sm" id="productCategory" name="productCategory">
                                     <% cat.forEach(category => { %>
                                         <option value="<%= category.name %>"><%= category.name %></option>
                                     <% }) %>
@@ -70,77 +69,78 @@
                             </div>
                         </div>
 
-                        <!-- Stock Quantity (Always Visible) -->
-                        <div class="mb-3 d-flex justify-content-between gap-4">
-                            <div class="w-100">
-                                <label for="productStock" class="form-label">Stock Quantity</label>
-                                <input type="number" class="form-control" id="productStock" name="productStock" placeholder="Enter stock quantity">
-                            </div>
-                            <div class="w-100">
-                                <label for="productStock" class="form-label">Brand</label>
-                                <input type="text" class="form-control" id="brand" name="productBrand" placeholder="Enter product brand">
-                            </div>
-                        </div>
-
-                        <!-- Product Description (Always Visible) -->
-                        <div class="mb-3">
-                            <label for="productDescription" class="form-label">Product Description</label>
-                            <textarea class="form-control" id="productDescription" name="productDescription" rows="3" placeholder="Enter product description"></textarea>
-                        </div>
-
-                        <div class="d-flex gap-4">
-                            <!-- Product Image Upload -->
-                            <div class="mb-3 w-100">
-                                <label class="form-label">Product Images</label>
-                                <input type="file" class="form-control" id="productImages" name="productImages" multiple>
-                            </div>
-                            <!-- Size Selection -->
-                            <div class="mb-3 w-100">
-                                <label class="form-label">Size</label>
-                                <input type="text" class="form-control" id="productSize" name="productSize" placeholder="Enter size">
-                            </div>
-                            
-                        </div>
-
-                        <div>
-                            <div class="d-flex form-row gap-4">
-                                
-                
-                                <div class="mb-3 w-100">
-                                    <label for="productColor" class="form-label">Select a Color:</label>
-                                        <input type="text" id="productColor" name="productColor" class="form-control" placeholder="Enter color of product">
-                                </div>
-                            
-                                <div class="mb-3 w-100">
-                                    <label class="form-label">Meterial type</label>
-                                    <input type="text" id="productMeterial" name="productMeterial" class="form-control" placeholder="Enter meterial type">
-                                </div>
-                                <div class="mb-3 w-100">
-                                    <label class="form-label">Weight(optional)</label>
-                                    <input type="text" id="productWeight" name="productWeight" class="form-control" placeholder="Enter weight of product">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Base Price & Discount Price -->
-                        <div class="mb-3 d-flex gap-4">
+                        <!-- Stock Quantity & Brand -->
+                        <div class="mb-3 d-flex gap-3">
                             <div class="w-50">
-                                <label for="basePrice" class="form-label">Base Price</label>
-                                <input type="number" id="productPrice" name="productPrice" class="form-control" id="basePrice" placeholder="Enter base price">
+                                <label for="productStock" class="form-label mb-1">Stock</label>
+                                <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity">
                             </div>
                             <div class="w-50">
-                                <label for="discountPrice" class="form-label">Discount Price</label>
-                                <input type="number" id="discountPrice" name="discountPrice" class="form-control" id="discountPrice" placeholder="Enter discount price">
+                                <label for="brand" class="form-label mb-1">Brand</label>
+                                <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
+                            </div>
+                        </div>
+
+                        <!-- Product Description & specs -->
+                        <div class="d-flex gap-3">
+                            <div class="mb-3 w-100">
+                                <label for="productDescription" class="form-label mb-1">Description</label>
+                                <textarea class="form-control form-control-sm" id="productDescription" name="productDescription" rows="2" placeholder="Enter description"></textarea>
+                            </div>
+                            <div class="mb-3  w-100">
+                                <label for="productDescription" class="form-label mb-1">Specifications</label>
+                                <textarea class="form-control form-control-sm" id="productSpec" name="productSpec" rows="2" placeholder="Enter Specifications"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Image & Size -->
+                        <div class="mb-3 d-flex gap-3">
+                            <div class="w-50">
+                                <label class="form-label mb-1">Images</label>
+                                <input type="file" class="form-control form-control-sm" id="productImages" name="productImages" multiple>
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
+                                <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size">
+                            </div>
+                        </div>
+
+                        <!-- Color, Material, Weight -->
+                        <div class="mb-3 d-flex gap-3">
+                            <div class="w-100">
+                                <label class="form-label mb-1">Color</label>
+                                <input type="text" id="productColor" name="productColor" class="form-control form-control-sm" placeholder="Enter color">
+                            </div>
+                            <div class="w-100">
+                                <label class="form-label mb-1">Material</label>
+                                <input type="text" id="productMeterial" name="productMeterial" class="form-control form-control-sm" placeholder="Enter material">
+                            </div>
+                            <div class="w-100">
+                                <label class="form-label mb-1">Weight</label>
+                                <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight">
+                            </div>
+                        </div>
+
+                        <!-- Base & Discount Price -->
+                        <div class="mb-3 d-flex gap-3">
+                            <div class="w-50">
+                                <label for="basePrice" class="form-label mb-1">Base Price</label>
+                                <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
+                            </div>
+                            <div class="w-50">
+                                <label for="discountPrice" class="form-label mb-1">Discount Percentage (%)</label>
+                                <input type="number" id="discountPrice" name="discountPrice" class="form-control form-control-sm" placeholder="Enter discount">
                             </div>
                         </div>
 
                         <!-- Submit Button -->
                         <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Add Product</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Add Product</button>
                         </div>
                     </form>
                 </div>
             </div>
+
         </main>
     </div>
 </div>
@@ -167,7 +167,7 @@
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            location.reload();
+                            window.location.href = '/admin/products'
                         });
                     } else {
                         Swal.fire({

@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 const {Schema} = mongoose;
 
 const productSchema = new Schema({
+    productId : {
+        type : String,
+        unique : true,
+    },
     name : {
         type : String,
         required : true
@@ -9,6 +13,10 @@ const productSchema = new Schema({
     description : {
         type : String,
         required : true
+    },
+    specifications : {
+        type : String,
+        required : false
     },
     brand : {
         type : String,
@@ -37,15 +45,19 @@ const productSchema = new Schema({
     },
     color : {
         type : String,
-        required : true
+        required : false
     },
     size : {
         type : String,
-        required : true
+        required : false
     },
     weight : {
         type : String,
-        required : true,
+        required : false,
+    },
+    material : {
+        type : String,
+        required : false
     },
     productImages : {
         type : [String],

@@ -198,7 +198,7 @@
                                 <tbody>
                                     <% cat.reverse().forEach((category, index) => { %>
                                     <tr>
-                                        <td class="text-start ps-4"><img src="/uploads/<%= category.thumbnail || 'default.png' %>" alt="Category Thumbnail" width="30" height="30"> <%= category.name%></td>
+                                        <td class="text-start ps-4"><img src="/uploads/<%= category.thumbnail || 'default.png' %>" style="border-radius: 50%;" alt="Category Thumbnail" width="30" height="30"> <%= category.name%></td>
                                         <td class="category-description"><%= category.description %></td>
                                         <td><%= category.productsCount %></td>
                                         <td><%= category.categoryOffer %> %</td>
@@ -209,16 +209,18 @@
                                             timeZone: "Asia/Kolkata"
                                         }) %></td>
                                         <td>
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input 
-                                                    class="form-check-input toggle-switch" 
-                                                    type="checkbox" 
-                                                    role="switch" 
-                                                    id="toggle<%= category._id %>" 
-                                                    data-id="<%= category._id %>" 
-                                                    <%= category.visibility ? 'checked' : 'disabled' %>
-                                                    <%= category.visibility ? 'onclick="return false;"' : '' %>
-                                                >
+                                            <div class="d-flex justify-content-center">
+                                                <!-- Active Toggle -->
+                                                <div id="activeToggle" class="d-flex align-items-center <%= category.visibility ? '' : 'd-none' %>" 
+                                                    style="height: 15px; width: 40px; background-color: #3e29a8; border-radius: 28px;">
+                                                    <div class="bg-white" style="width: 10px; height: 10px; border-radius: 50%; margin-left: 27px;"></div>
+                                                </div>
+                                        
+                                                <!-- Inactive Toggle -->
+                                                <div id="inactiveToggle" class="d-flex align-items-center <%= category.visibility ? 'd-none' : '' %>" 
+                                                     style="height: 15px; width: 40px; background-color: #f43f3f; border-radius: 28px;">
+                                                    <div class="bg-white" style="width: 10px; height: 10px; border-radius: 50%; margin-left: 3px;"></div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td>
@@ -404,7 +406,7 @@
                     if (searchQuery) {
                         window.location.href = `/admin/categories?q=${encodeURIComponent(searchQuery)}`;
                     } else if (searchQuery == "") {
-                        window.location.href = '/admin/categories'; // Redirect to the main page if the search query is empty
+                        window.location.href = '/admin/categories'; 
                     }
                 } catch (error) {
                     console.error('Error fetching search results:', error);
@@ -428,7 +430,7 @@
         });
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".category-description").forEach((desc) => {
-            const maxLength = 40;
+            const maxLength = 30;
             if (desc.textContent.length > maxLength) {
                 desc.textContent = desc.textContent.substring(0, maxLength) + "...";
             }

@@ -1,0 +1,255 @@
+
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+
+            <!-- Navbar Toggler for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-light fa-circle-user fa-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content -->
+    <div class="container-fluid w-100">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3 gap-2">
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/products"><i class="fas fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4 fw-bold">Edit Product</h1>
+
+                <!-- Add Product Form -->
+                <div class="card add-product-form p-4">
+                    <div class="card-body p-2">
+                        <form id="editProductForm" enctype="multipart/form-data">
+                            <div class="mb-3 d-flex gap-3">
+                                <input type="hidden" id="productId" name="productId" value="<%= product.productId %>">
+                                <div class="w-50">
+                                    <label for="productName" class="form-label mb-1">Product Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name" value="<%= product.name%>">
+                                </div>
+
+                                <!-- Category Selection -->
+                                <div class="w-50">
+                                    <label for="productCategory" class="form-label mb-1">Category</label>
+                                    <select class="form-select form-select-sm" id="productCategory" name="productCategory">
+                                        <% cat.forEach(category => { %>
+                                            <option value="<%= category.name %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="w-50">
+                                    <label for="brand" class="form-label mb-1">Brand</label>
+                                    <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand" value="<%= product.brand%>">
+                                </div>
+                            </div>
+
+                            <!-- Stock Quantity & Brand -->
+                            <div class="mb-3 d-flex gap-3">
+                                <div class="w-50">
+                                    <label for="productStock" class="form-label mb-1">Stock</label>
+                                    <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity" value="<%= product.stock%>">
+                                </div>
+                                <div class="w-50">
+                                    <label for="basePrice" class="form-label mb-1">Base Price</label>
+                                    <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price" value="<%= product.price%>">
+                                </div>
+                                <div class="w-50">
+                                    <label for="discountPrice" class="form-label mb-1">Discount Percentage (%)</label>
+                                    <input type="number" id="discountPrice" name="discountPrice" class="form-control form-control-sm" placeholder="Enter discount" value="<%= product.productOffer%>">
+                                </div>
+                                
+                            </div>
+
+                            <!-- Product Description & specs -->
+                            <div class="d-flex gap-3">
+                                <div class="mb-3 w-100">
+                                    <label for="productDescription" class="form-label mb-1">Description</label>
+                                    <textarea class="form-control form-control-sm" id="productDescription" name="productDescription" rows="2" placeholder="Enter description"><%= product.description%></textarea>
+                                </div>
+                                <div class="mb-3  w-100">
+                                    <label for="productDescription" class="form-label mb-1">Specifications</label>
+                                    <textarea class="form-control form-control-sm" id="productSpec" name="productSpec" rows="2" placeholder="Enter Specifications"><%= product.specifications%></textarea>
+                                </div>
+                                
+                                
+                            </div>
+
+                            <!-- Image & Size -->
+                            <div class="mb-3 d-flex gap-3">
+                                <div class="mb-3 d-flex gap-3 w-100">
+                                    <!-- Display already uploaded images -->
+                                    <div class="w-100">
+                                        <label class="form-label">Current images</label>
+                                        <div class="d-flex gap-2">
+                                            <% if (product.productImages && product.productImages.length > 0) { %>
+                                                <% product.productImages.forEach((image, index) => { %>
+                                                    <div class="position-relative">
+                                                        <img src="/uploads/products/<%= image %>" alt="Product Image" class="img-thumbnail" width="60" height="60">
+                                                    </div>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <p>No images uploaded yet.</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Upload new images -->
+                                <div class="mb-3 w-100">
+                                    <label for="productImages" class="form-label">Upload new images</label>
+                                    <div class="input-group">
+                                        <!-- Custom Button -->
+                                        <button class="btn btn-outline-secondary" type="button" id="customFileButton">
+                                            <i class="px-3 fa-solid fa-upload"></i>
+                                        </button>
+                                
+                                        <!-- Hidden File Input -->
+                                        <input type="file" class="form-control d-none" id="productImages" name="productImages" multiple onchange="updateFileNames(event)">
+                                
+                                        <!-- Display Selected File Names -->
+                                        <span class="form-control d-flex align-items-center" id="fileNamesDisplay">No files chosen</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Color, Material, Weight -->
+                            <div class="mb-3 d-flex gap-3">
+                                <div class="w-100">
+                                    <label class="form-label mb-1">Color</label>
+                                    <input type="text" id="productColor" name="productColor" class="form-control form-control-sm" placeholder="Enter color" value="<%= product.color%>">
+                                </div>
+                                <div class="w-100">
+                                    <label class="form-label mb-1">Material</label>
+                                    <input type="text" id="productMeterial" name="productMeterial" class="form-control form-control-sm" placeholder="Enter material" value="<%= product.material%>">
+                                </div>
+                                <div class="w-100">
+                                    <label class="form-label mb-1">Weight</label>
+                                    <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight" value="<%= product.weight%>">
+                                </div>
+                                <div class="w-100">
+                                    <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
+                                    <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size" value="<%= product.size%>">
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="visibility" id="inlineRadio1" value="true"
+                                            <% if (product.visibility === true || product.visibility === 'true') { %> checked <% } %>>
+                                        <label class="form-check-label" for="inlineRadio1">Active</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="visibility" id="inlineRadio2" value="false"
+                                            <% if (product.visibility === false || product.visibility === 'false') { %> checked <% } %>>
+                                        <label class="form-check-label" for="inlineRadio2">Hide</label>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div>
+                                    <a href="/admin/products"><div class="btn btn-sm btn-outline-primary">Cancel</div></a>
+                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                </div>
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("customFileButton").addEventListener("click", function () {
+            document.getElementById("productImages").click();
+        });
+
+        // Update the file names display
+        function updateFileNames(event) {
+            const files = event.target.files;
+            const fileNamesDisplay = document.getElementById("fileNamesDisplay");
+
+            if (files.length > 0) {
+                const fileNames = Array.from(files).map(file => file.name).join(", ");
+                fileNamesDisplay.textContent = fileNames;
+            } else {
+                fileNamesDisplay.textContent = "No files chosen";
+            }
+        }
+
+        document.getElementById("editProductForm")?.addEventListener("submit", async function (event) {
+                    event.preventDefault();
+           
+                    const formData = new FormData(this);
+
+                    try {
+                        const response = await fetch(`/admin/editProducts`, {
+                            method: "PUT",
+                            body: formData
+                        });
+            
+                        const result = await response.json();
+            
+                        if (response.ok) {
+                            Swal.fire({
+                                position: "top-center",
+                                icon: "success",
+                                title: "Product updated successfully!",
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                window.location.href = '/admin/products'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: result.error || "An unexpected error occurred.",
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: "Something went wrong. Please try again.",
+                        });
+                    }
+                });
+    </script>
+</body>
+

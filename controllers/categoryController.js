@@ -8,7 +8,6 @@ const __dirname = path.dirname(__filename);
 const categoryInfo = async (req, res) => {
     try {
         const searchQuery = req.query.q || "";
-        const status = req.query.status;
         
         const page = parseInt(req.query.page) || 1;
         const limit = 8;
