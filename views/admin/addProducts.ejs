@@ -51,56 +51,86 @@
             <!-- Add Product Form -->
             <div class="card add-product-form">
                 <div class="card-body">
-                    <form>
+                    <form id="addProductForm" enctype="multipart/form-data">
                         <div class="mb-3 d-flex gap-4">
                             <div class="w-50">
                                 <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="productName" placeholder="Enter product name" required>
+                                <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter product name">
                             </div>
+                             
 
                             <!-- Category Selection -->
                             <div class="w-50">
                                 <label for="productCategory" class="form-label">Category</label>
-                                <select class="form-select" id="productCategory" required onchange="updateFields()">
-                                    <option value="">Select Category</option>
-                                    <option value="Clothing">Clothing</option>
-                                    <option value="Footwear">Footwear</option>
-                                    <option value="Gym Equipment">Gym Equipment</option>
-                                    <option value="Yoga Mat">Yoga Mat</option>
+                                <select class="form-select" id="productCategory" name="productCategory" onchange="updateFields()">
+                                    <% cat.forEach(category => { %>
+                                        <option value="<%= category.name %>"><%= category.name %></option>
+                                    <% }) %>
                                 </select>
                             </div>
                         </div>
 
                         <!-- Stock Quantity (Always Visible) -->
-                        <div class="mb-3">
-                            <label for="productStock" class="form-label">Stock Quantity</label>
-                            <input type="number" class="form-control" id="productStock" placeholder="Enter stock quantity" required>
+                        <div class="mb-3 d-flex justify-content-between gap-4">
+                            <div class="w-100">
+                                <label for="productStock" class="form-label">Stock Quantity</label>
+                                <input type="number" class="form-control" id="productStock" name="productStock" placeholder="Enter stock quantity">
+                            </div>
+                            <div class="w-100">
+                                <label for="productStock" class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="productBrand" placeholder="Enter product brand">
+                            </div>
                         </div>
 
                         <!-- Product Description (Always Visible) -->
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Product Description</label>
-                            <textarea class="form-control" id="productDescription" rows="3" placeholder="Enter product description" required></textarea>
+                            <textarea class="form-control" id="productDescription" name="productDescription" rows="3" placeholder="Enter product description"></textarea>
                         </div>
 
-                        <!-- Product Image Upload (Always Visible) -->
-                        <div class="mb-3">
-                            <label class="form-label">Product Images</label>
-                            <input type="file" class="form-control" id="productImages" multiple>
+                        <div class="d-flex gap-4">
+                            <!-- Product Image Upload -->
+                            <div class="mb-3 w-100">
+                                <label class="form-label">Product Images</label>
+                                <input type="file" class="form-control" id="productImages" name="productImages" multiple>
+                            </div>
+                            <!-- Size Selection -->
+                            <div class="mb-3 w-100">
+                                <label class="form-label">Size</label>
+                                <input type="text" class="form-control" id="productSize" name="productSize" placeholder="Enter size">
+                            </div>
+                            
                         </div>
 
-                        <!-- Dynamic Fields Container -->
-                        <div id="dynamicFields"></div>
+                        <div>
+                            <div class="d-flex form-row gap-4">
+                                
+                
+                                <div class="mb-3 w-100">
+                                    <label for="productColor" class="form-label">Select a Color:</label>
+                                        <input type="text" id="productColor" name="productColor" class="form-control" placeholder="Enter color of product">
+                                </div>
+                            
+                                <div class="mb-3 w-100">
+                                    <label class="form-label">Meterial type</label>
+                                    <input type="text" id="productMeterial" name="productMeterial" class="form-control" placeholder="Enter meterial type">
+                                </div>
+                                <div class="mb-3 w-100">
+                                    <label class="form-label">Weight(optional)</label>
+                                    <input type="text" id="productWeight" name="productWeight" class="form-control" placeholder="Enter weight of product">
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Base Price & Discount Price -->
                         <div class="mb-3 d-flex gap-4">
                             <div class="w-50">
                                 <label for="basePrice" class="form-label">Base Price</label>
-                                <input type="number" class="form-control" id="basePrice" placeholder="Enter base price" required>
+                                <input type="number" id="productPrice" name="productPrice" class="form-control" id="basePrice" placeholder="Enter base price">
                             </div>
                             <div class="w-50">
                                 <label for="discountPrice" class="form-label">Discount Price</label>
-                                <input type="number" class="form-control" id="discountPrice" placeholder="Enter discount price">
+                                <input type="number" id="discountPrice" name="discountPrice" class="form-control" id="discountPrice" placeholder="Enter discount price">
                             </div>
                         </div>
 
@@ -115,38 +145,46 @@
     </div>
 </div>
 
-<!-- Script for Dynamic Fields -->
 <script>
-    function updateFields() {
-        const category = document.getElementById("productCategory").value;
-        const dynamicFields = document.getElementById("dynamicFields");
-        dynamicFields.innerHTML = ""; 
+    document.getElementById("addProductForm")?.addEventListener("submit", async function (event) {
+                event.preventDefault();
+        
+                const formData = new FormData(this);
 
-        if (category === "Clothing" || category === "Footwear") {
-            dynamicFields.innerHTML = `
-                <div class="mb-3">
-                    <label class="form-label">Size</label>
-                    <select class="form-select">
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Color</label>
-                    <input type="color" class="form-control form-control-color">
-                </div>
-            `;
-        } else if (category === "Gym Equipment") {
-            dynamicFields.innerHTML = `
-                <div class="mb-3">
-                    <label class="form-label">Weight (kg)</label>
-                    <input type="number" class="form-control" placeholder="Enter weight">
-                </div>
-            `;
-        }
-    }
+                try {
+                    const response = await fetch("/admin/addProducts", {
+                        method: "POST",
+                        body: formData
+                    });
+        
+                    const result = await response.json();
+        
+                    if (response.ok) {
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "success",
+                            title: "Product added successfully!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: result.error || "An unexpected error occurred.",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: "Something went wrong. Please try again.",
+                    });
+                }
+            });
 </script>
 
 </body>

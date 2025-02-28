@@ -4,11 +4,12 @@ const router = express.Router();
 import adminController from '../controllers/adminController.js';
 import categoryController from '../controllers/categoryController.js'
 import categoryMiddlewere from '../middleware/ccategoryMiddlewere.js'
+import productController from "../controllers/productController.js";
+import productMiddleware from "../middleware/productMiddleware.js";
 
 
 router.get('/login', adminController.loadLogin);
 router.post('admin/login', adminController.adminLogin);
-
 
 router.get('/dashboard', adminController.loadDashboard);
 
@@ -18,13 +19,14 @@ router.post('/categories', categoryMiddlewere.upload.single("addThumbnail"), cat
 router.put('/categories', categoryMiddlewere.upload.single('editThumbnail'),categoryController.editCategory);
 router.get('/categories/filter', categoryController.filterCategories);
 
+// product management
+router.get('/products', productController.productInfo);
+router.get('/addProducts', productController.loadaddProducts);
+router.post('/addProducts',productMiddleware.upload.array('productImages'),productController.addProducts);
 
 router.get('/orders', adminController.loadOrders);
 router.get('/vieworders', adminController.viewOrders);
 
-
-router.get('/products', adminController.loadProducts);
-router.get('/addProducts', adminController.addProducts);
 
 router.get('/customers', adminController.loadCustomers);
 

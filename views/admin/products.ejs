@@ -101,65 +101,39 @@
                                         <th>Price</th>
                                         <th>Stock</th>
                                         <th>Added On</th>
-                                        <th>Staus</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>#1001</td>
-                                        <td>Running Shoes</td>
-                                        <td>Footwear</td>
-                                        <td>₹1,000</td>
-                                        <td><span class="badge stock-btn1">In Stock</span></td>
-                                        <td>01-02-2025</td>
-                                        <td>
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1001" checked>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#1002</td>
-                                        <td>Sports T-Shirt</td>
-                                        <td>Apparel</td>
-                                        <td>₹500</td>
-                                        <td><span class="badge stock-btn2">Low Stock</span></td>
-                                        <td>01-02-2025</td>
-                                        <td>
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1002">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#1003</td>
-                                        <td>Water Bottle</td>
-                                        <td>Accessories</td>
-                                        <td>₹200</td>
-                                        <td><span class="badge stock-btn3">Out of Stock</span></td>
-                                        <td>01-02-2025</td>
-                                        <td>
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="toggle1003">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
-                                        </td>
-                                    </tr>
+                                    <% product.forEach(product => { %>
+                                        <tr>
+                                            <td><%= product._id %></td>
+                                            <td><%= product.name %></td>
+                                            <td><%= product.category %></td>
+                                            <td>$<%= product.price.toFixed(2) %></td>
+                                            <td>
+                                                <% if (product.stock > 0) { %>
+                                                    <span class="badge bg-success">In Stock (<%= product.stock %>)</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Out of Stock</span>
+                                                <% } %>
+                                            </td>
+                                            <td><%= new Date(product.createdAt).toLocaleDateString("en-US") %></td>
+                                            <td>
+                                                <div class="form-check form-switch d-flex justify-content-center">
+                                                    <input class="form-check-input toggle-status" type="checkbox" data-id="<%= product._id %>" <%= product.status === 'active' ? 'checked' : '' %> >
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                                <a href="/admin/products/delete/<%= product._id %>" class="btn btn-sm btn-outline-danger delete-product">Delete</a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
                                 </tbody>
-                                
                             </table>
+                            
                             
                         </div>
                     </div>

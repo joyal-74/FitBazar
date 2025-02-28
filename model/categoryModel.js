@@ -23,15 +23,11 @@ const categorySchema = new Schema({
         type : Number,
         default : 0,
     },
-    createdAt : {
-        type : Date,
-        default : Date.now
-    },
     productsCount : {
         type : Number,
         default : 0,
     }
-})
+},{ timestamps: true })
 
 const Category = mongoose.model("Category", categorySchema)
 

@@ -60,17 +60,11 @@ function viewOrders(req, res) {
     res.render('admin/vieworders', { title: 'Order Details', errorMessage: "" });
 }
 
-function loadProducts(req, res) {
-    res.render('admin/products', { title: 'Products', errorMessage: "" });
-}
 
-function addProducts(req, res) {
-    res.render('admin/addProducts', { title: 'Add Products', errorMessage: "" });
-}
 
 function loadCustomers(req, res) {
     res.render('admin/customers', { title: 'Customers', errorMessage: "" });
 }
 
 
-export default { loadLogin, adminLogin, loadDashboard, loadOrders, loadProducts, viewOrders, addProducts, loadCustomers }
+export default { loadLogin, adminLogin, loadDashboard, loadOrders, viewOrders, loadCustomers }
