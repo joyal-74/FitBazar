@@ -39,7 +39,7 @@ const adminLogin = async (req, res) => {
         }
 
         // Redirect on success
-        return res.redirect('/home');
+        return res.render('admin/dashboard',{ title : "dashboard", errorMessage: ""});
 
     } catch (err) {
         console.error(err);

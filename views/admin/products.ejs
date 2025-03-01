@@ -46,15 +46,15 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
-                <h1 class="h3 mb-4">Products</h1>
+                <h1 class="h3 mb-4 fw-bold">Products</h1>
 
                 <!-- Filters and Add Product Button -->
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                     <!-- Filter by Category -->
                     <div class="d-flex gap-2">
-                        <div class="flex-grow-1" style="max-width: 180px;">
+                        <div class="flex-grow-1" style="max-width: 150px;">
                             <select class="form-select">
-                                <option selected disabled hidden>Filter by Category</option>
+                                <option selected disabled hidden>Category ⇅</option>
                                 <% cat.forEach(category => { %>
                                     <option value="<%= category.name %>"><%= category.name %></option>
                                 <% }) %>
@@ -62,11 +62,20 @@
                         </div>
 
                         <!-- Filter by Stock -->
-                        <div class="flex-grow-1" style="max-width: 180px;">
+                        <div class="flex-grow-1" style="max-width: 120px;">
                             <select class="form-select">
-                                <option selected disabled hidden>Filter by Stock</option>
+                                <option selected disabled hidden>Stock ⇅</option>
                                 <option value="1">In Stock</option>
                                 <option value="2">Out of Stock</option>
+                            </select>
+                        </div>
+
+                        <!-- Filter by Status -->
+                        <div class="flex-grow-1" style="max-width: 160px;">
+                            <select class="form-select">
+                                <option selected disabled hidden>Status ⇅</option>
+                                <option value="1">Active</option>
+                                <option value="2">Hidden</option>
                             </select>
                         </div>
                     </div>
@@ -82,7 +91,7 @@
                     <!-- Add Product Button -->
                     <div class="text-end">
                         <a class="btn add-product-btn" href="/admin/addProducts">
-                            <i class="fas fa-plus me-2"></i>Add Product
+                            <i class="fas fa-plus me-2"></i> New
                         </a>
                     </div>
                 </div>

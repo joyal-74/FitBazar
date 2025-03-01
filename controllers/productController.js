@@ -1,5 +1,10 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
+import fs from 'fs';
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const loadaddProducts = async (req, res) => {
     try {
@@ -50,6 +55,8 @@ const addProducts = async (req, res) => {
 
         await newProduct.save();
 
+        await Category.findOneAndUpdate({name : productCategory},{$inc : {itemsCount : 1}})
+
         return res.status(201).json({ message: "Product added successfully." });
 
     } catch (error) {
@@ -70,10 +77,9 @@ const editProducts = async (req, res) => {
             return res.status(404).json({ error: "Product not found." });
         }
 
-        let productImages = product.productImages; // Keep existing images if no new ones are uploaded
+        let productImages = product.productImages;
 
         if (req.files && req.files.length > 0) {
-            // Delete old images before storing new ones
             await Promise.all(
                 product.productImages.map(async (image) => {
                     const oldImagePath = path.join(__dirname, "..", "public", "uploads", "products", image);
@@ -86,12 +92,10 @@ const editProducts = async (req, res) => {
                 })
             );
 
-            // Store new image filenames
             productImages = req.files.map(file => file.filename);
             console.log("New uploaded images:", productImages);
         }
 
-        // Update product details
         product.name = productName;
         product.description = productDescription;
         product.specifications = productSpec;

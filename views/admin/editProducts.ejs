@@ -64,7 +64,12 @@
                                     <label for="productCategory" class="form-label mb-1">Category</label>
                                     <select class="form-select form-select-sm" id="productCategory" name="productCategory">
                                         <% cat.forEach(category => { %>
-                                            <option value="<%= category.name %>"><%= category.name %></option>
+                                            <option 
+                                                value="<%= category.name %>" 
+                                                <%= (category.name === product.category) ? 'selected' : '' %>
+                                            >
+                                                <%= category.name %>
+                                            </option>
                                         <% }) %>
                                     </select>
                                 </div>

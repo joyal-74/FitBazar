@@ -9,7 +9,7 @@ import productMiddleware from "../middleware/productMiddleware.js";
 
 
 router.get('/login', adminController.loadLogin);
-router.post('admin/login', adminController.adminLogin);
+router.post('/login', adminController.adminLogin);
 
 router.get('/dashboard', adminController.loadDashboard);
 

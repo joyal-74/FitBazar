@@ -1,1 +1,1 @@
-"# FitBazar" 
+"# FitBazar Mobile Application" 

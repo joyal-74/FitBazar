@@ -188,7 +188,7 @@
                                     <tr>
                                         <th class="text-start ps-5">Category Info</th>
                                         <th>Description</th>
-                                        <th>No of Products</th>
+                                        <th>Item Count</th>
                                         <th>Discount/Offers (%)</th>
                                         <th>Created Date</th>
                                         <th>Status</th>
@@ -200,7 +200,7 @@
                                     <tr>
                                         <td class="text-start ps-4"><img src="/uploads/<%= category.thumbnail || 'default.png' %>" style="border-radius: 50%;" alt="Category Thumbnail" width="30" height="30"> <%= category.name%></td>
                                         <td class="category-description"><%= category.description %></td>
-                                        <td><%= category.productsCount %></td>
+                                        <td><%= category.itemsCount %></td>
                                         <td><%= category.categoryOffer %> %</td>
                                         <td><%= new Date(category.createdAt).toLocaleString("en-IN", { 
                                             day: "2-digit", 
@@ -209,18 +209,29 @@
                                             timeZone: "Asia/Kolkata"
                                         }) %></td>
                                         <td>
-                                            <div class="d-flex justify-content-center">
-                                                <!-- Active Toggle -->
+                                          <!-- <div class="d-flex justify-content-center">
+                                                
                                                 <div id="activeToggle" class="d-flex align-items-center <%= category.visibility ? '' : 'd-none' %>" 
                                                     style="height: 15px; width: 40px; background-color: #3e29a8; border-radius: 28px;">
                                                     <div class="bg-white" style="width: 10px; height: 10px; border-radius: 50%; margin-left: 27px;"></div>
                                                 </div>
                                         
-                                                <!-- Inactive Toggle -->
+                                                
                                                 <div id="inactiveToggle" class="d-flex align-items-center <%= category.visibility ? 'd-none' : '' %>" 
                                                      style="height: 15px; width: 40px; background-color: #f43f3f; border-radius: 28px;">
                                                     <div class="bg-white" style="width: 10px; height: 10px; border-radius: 50%; margin-left: 3px;"></div>
                                                 </div>
+                                            </div> -->
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <!-- Visible (Eye) Icon: Shown when visibility is TRUE -->
+                                                <p style="color: #3e29a8; margin: 0;" class="<%= category.visibility ? '' : 'd-none' %>">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </p>
+                                            
+                                                <!-- Hidden (Eye-slash) Icon: Shown when visibility is FALSE -->
+                                                <p style="color: #9c9999; margin: 0;" class="<%= category.visibility ? 'd-none' : '' %>">
+                                                    <i class="fa-solid fa-eye-slash"></i>
+                                                </p>
                                             </div>
                                         </td>
                                         <td>
