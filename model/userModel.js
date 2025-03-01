@@ -7,6 +7,7 @@ const userSchema = new Schema(
     name : {
       type : String,
       required : false,
+      unique : false
     },
     email: {
       type: String,
@@ -22,8 +23,11 @@ const userSchema = new Schema(
     phone : {
       type : String,
       required : false,
-      unique : true,
-      sparse : true,
+      unique : true
+    },
+    prodilePic : {
+      type : String,
+      required : false,
     },
     googleId :{
       type : String,

@@ -63,7 +63,7 @@
                     </div>
 
                     <!-- Search Bar -->
-                    <form class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                    <form class="d-flex search-container flex-grow-1" id="searchForm" style="max-width: 300px;">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn" type="submit" style="background-color: #3e29a8;">
                             <i class="fas fa-search text-white"></i>
@@ -76,68 +76,82 @@
                 <div class="card">
                     <div class="card-body p-0 m-0">
                         <div class="table-responsive">
-                            <table class="table table-hover text-center">
+                            <table class="table table-hover text-center customer-table">
                                 <thead>
                                     <tr>
-                                        <th>Customer ID</th>
                                         <th>Name</th>
-                                        <th>Orders</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
                                         <th>Balance</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <% customer.reverse().forEach((customer, index) => { %>
                                     <tr>
-                                        <td>#1001</td>
-                                        <td>Joyal Kuriakose</td>
-                                        <td>Footwear</td>
-                                        <td>₹1,000</td>
-                                        <td><span class="badge stock-btn1">Active</span></td>
+                                        <td><%= customer.name %></td>
+                                        <td><%= customer.email %></td>
+                                        <td><%= customer.phone %></td>
+                                        <td>₹<%= customer.wallet || 0 %></td>
                                         <td>
-                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i></a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
+                                            <% if (customer.isBlocked) { %>
+                                                <span class="badge stock-btn3">Blocked</span>
+                                            <% } else { %>
+                                                <span class="badge stock-btn1">Active</span>
+                                            <% } %>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#1002</td>
-                                        <td>Cezanne P</td>
-                                        <td>Jersey</td>
-                                        <td>₹1,000</td>
-                                        <td><span class="badge stock-btn3">Blocked</span></td>
                                         <td>
-                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-check fa-xl" style="color: #00e61b;"></i></a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
-                                        </td>
+                                            <% if (customer.isBlocked) { %>
+                                                <a href="#" class="toggle-block me-2" data-id="<%= customer._id %>" data-blocked="true">
+                                                    <i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i>
+                                                </a>
+                                            <% } else { %>
+                                                <a href="#" class="toggle-block me-2" data-id="<%= customer._id %>" data-blocked="false">
+                                                    <i class="fa-solid fa-circle-check fa-xl" style="color: #0a8f3b;"></i>
+                                                </a>
+                                            <% } %>
+                                            <a href="/admin/viewcustomers?id=<%= customer._id %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a>
+
+                                        </td>                                        
                                     </tr>
-                                    <tr>
-                                        <td>#1001</td>
-                                        <td>Achuth J</td>
-                                        <td>Boxing Kit</td>
-                                        <td>₹11,000</td>
-                                        <td><span class="badge stock-btn1">Active</span></td>
-                                        <td>
-                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i></a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#1002</td>
-                                        <td>Abhinav K</td>
-                                        <td>Jersey</td>
-                                        <td>₹1,000</td>
-                                        <td><span class="badge stock-btn3">Blocked</span></td>
-                                        <td>
-                                            <a href="#" class="me-2"><i class="fa-solid fa-circle-check fa-xl" style="color: #00e61b;"></i></a>
-                                            <a href="#" class="btn btn-sm btn-outline-danger me-2">View</a>
-                                        </td>
-                                    </tr>
+                                    <% }) %>
                                 </tbody>
-                            </table>
+                            </table>                     
                         </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
+    <script>
+        document.querySelectorAll(".toggle-block").forEach(button => {
+            button.addEventListener("click", async (event) => {
+                event.preventDefault();
+    
+                const customerId = button.getAttribute("data-id");
+                const isBlocked = button.getAttribute("data-blocked") === "true";
+    
+                try {
+                    const response = await fetch(`/admin/customers?user=${customerId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ isBlocked: !isBlocked })
+                    });
+    
+                    const result = await response.json();
+    
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert(result.error || "Error updating status");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong. Try again!");
+                }
+            });
+        });
+    </script> 
 </body>
+

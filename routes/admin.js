@@ -6,6 +6,7 @@ import categoryController from '../controllers/categoryController.js'
 import categoryMiddlewere from '../middleware/ccategoryMiddlewere.js'
 import productController from "../controllers/productController.js";
 import productMiddleware from "../middleware/productMiddleware.js";
+import customerController from "../controllers/customerController.js";
 
 
 router.get('/login', adminController.loadLogin);
@@ -23,14 +24,17 @@ router.get('/categories/filter', categoryController.filterCategories);
 router.get('/products', productController.productInfo);
 router.get('/addProducts', productController.loadaddProducts);
 router.post('/addProducts',productMiddleware.upload.array('productImages'),productController.addProducts);
-
 router.get('/editProducts/:productId', productController.loadEditProducts);
 router.put('/editProducts',productMiddleware.upload.array('productImages'),productController.editProducts);
 
+// user management
+router.get('/customers', customerController.userInfo);
+router.put("/customers", customerController.toggleBlockStatus);
+router.get('/viewcustomers', customerController.userDeatails);
+
+// order management
 router.get('/orders', adminController.loadOrders);
 router.get('/vieworders', adminController.viewOrders);
 
-
-router.get('/customers', adminController.loadCustomers);
 
 export default router;
