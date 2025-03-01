@@ -167,6 +167,9 @@ const loadEditProducts = async (req, res) => {
     }
 };
 
+const loadShop = async (req, res) => {
+    const products = await Products.find({})
+    res.render('user/shop', {title : "Shop ", products})
+}
 
-
-export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts}
+export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop}

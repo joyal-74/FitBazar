@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import userController from '../controllers/userController.js';
+import productController from "../controllers/productController.js";
 
 
 // home route
@@ -26,5 +27,9 @@ router.get('/resetpass', userController.loadConfirmOtp);
 router.post('/resetpass',userController.changePassword)
 
 router.get("/logout", userController.logoutUser );
+
+
+//shop page
+router.get('/shop', productController.loadShop)
 
 export default router;
