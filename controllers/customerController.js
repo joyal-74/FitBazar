@@ -21,7 +21,7 @@ export const toggleBlockStatus = async (req, res) => {
         const id = req.query.user;
         const { isBlocked } = req.body;
 
-        const customer = await User.findById(id);
+        const customer = await User.findOne({userId : id});
         if (!customer) {
             return res.status(404).json({ error: "Customer not found" });
         }

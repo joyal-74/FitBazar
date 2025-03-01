@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import userController from '../controllers/userController.js';
-import passport from "passport";
+
 
 // home route
 router.get('/home', userController.getUserHome); 
@@ -9,12 +9,6 @@ router.get('/home', userController.getUserHome);
 // login route
 router.get('/login', userController.loadLogin);
 router.post('/login', userController.userLogin);
-
-
-router.get('/auth/google', passport.authenticate('google',{scope:['profile', 'email']}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect("/home")
-})
 
 // register route
 router.get('/register', userController.loadRegister);

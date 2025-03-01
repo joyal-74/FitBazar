@@ -16,6 +16,7 @@ dotenv.config();
 
 import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js'
+import googleRoutes from './routes/googleRoute.js';
 const PORT = process.env.PORT
 
 app.use(session({
@@ -48,8 +49,9 @@ app.use(express.urlencoded({extended: true}))
 // Connect to MongoDB Atlas
 db();
 
-app.use('/', userRoutes);
+app.use('/user', userRoutes);
 app.use('/admin', adminRoutes);
+app.use('/', googleRoutes);
 
 
 // cannot get page 404 error

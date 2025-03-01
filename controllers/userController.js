@@ -4,17 +4,17 @@ import nodemailer from "nodemailer"
 
 // Home Page Handler
 function getUserHome(req, res) {
-    res.render('home', { title: 'Home Page' });
+    res.render('user/home', { title: 'Home Page' });
 }
 
 // Login Page Handler
 function loadLogin(req, res) {
-    res.render('login', { title: 'Login Page', errorMessage: "" });
+    res.render('user/login', { title: 'Login Page', errorMessage: "" });
 }
 
 // Register Page Handler
 function loadRegister(req, res) {
-    res.render('register', { title: 'Register Page', errorMessage: "" });
+    res.render('user/register', { title: 'Register Page', errorMessage: "" });
 }
 
 
@@ -25,14 +25,14 @@ let userLogin = async (req, res) => {
     // Basic validation
     if (!email || !password) {
         errorMessage = "Email and password are required";
-        return res.render('login', { title: "Login Page", errorMessage });
+        return res.render('user/login', { title: "Login Page", errorMessage });
     }
 
     // Validate email format
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         errorMessage = "Invalid email format";
-        return res.render('login', { title: "Login Page", errorMessage });
+        return res.render('user/login', { title: "Login Page", errorMessage });
     }
 
     try {
@@ -40,24 +40,36 @@ let userLogin = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             errorMessage = "Invalid email or password";
-            return res.render('login', { title: "Login Page", errorMessage });
+            return res.render('user/login', { title: "Login Page", errorMessage });
+        }
+
+        // Ensure password exists before comparing
+        if (!user.password || user.password.trim() === "") {
+            console.warn(`⚠️ User with email ${email} has no password. Redirecting to Google login.`);
+            return res.redirect('/auth/google');  // Redirect to Google login instead of showing error
         }
 
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             errorMessage = "Invalid email or password";
-            return res.render('login', { title: "Login Page", errorMessage });
+            return res.render('user/login', { title: "Login Page", errorMessage });
         }
 
         // Redirect on success
-        return res.redirect('/home');
+        return res.redirect('/user/home');
 
     } catch (err) {
-        console.error(err);
+        console.error("Login Error:", err);
         errorMessage = "Internal server error";
-        return res.render('login', { title: "Login Page", errorMessage });
+        return res.render('user/login', { title: "Login Page", errorMessage });
     }
+};
+
+
+const generateUserId = async () => {
+    const count = await User.countDocuments();
+    return `ID${1000 + count + 1}`;
 };
 
 const userRegister = async (req, res) => {
@@ -66,35 +78,37 @@ const userRegister = async (req, res) => {
 
         // Ensure all fields are provided
         if (!email || !password || !confirmPassword) {
-            return res.render("register", { title: "register page", errorMessage: "All fields are required" });
+            return res.render("user/register", { title: "register page", errorMessage: "All fields are required" });
         }
 
         // Validate email format
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
-            return res.render("register", { title: "register page", errorMessage: "Invalid email format" });
+            return res.render("user/register", { title: "register page", errorMessage: "Invalid email format" });
         }
 
         // Check password length
         if (password.length < 6) {
-            return res.render("register", { title: "register page", errorMessage: "Password must be 6+ characters" });
+            return res.render("user/register", { title: "register page", errorMessage: "Password must be 6+ characters" });
         }
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            return res.render("register", { title: "register page", errorMessage: "Passwords do not match" });
+            return res.render("user/register", { title: "register page", errorMessage: "Passwords do not match" });
         }
 
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             console.log("Email is already in use")
-            return res.render("register", { title: "register page", errorMessage: "Email is already in use" });
+            return res.render("user/register", { title: "register page", errorMessage: "Email is already in use" });
         }
 
         // Hash password before saving
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ email, password: hashedPassword });
+        const userId = await generateUserId()
+        const newUser = new User({ userId, email, password: hashedPassword });
 
         // Save user to DB
         await newUser.save();
@@ -132,10 +146,10 @@ const userRegister = async (req, res) => {
         try {
             await transporter.sendMail(mailOptions);
             console.log("Verification mail sent to:", email);
-            res.redirect("/login");
+            res.redirect("/user/login");
         } catch (error) {
             console.error("Error sending email:", error);
-            res.status(500).render('register', {
+            res.status(500).render('user/register', {
                 title: "register page",
                 errorMessage: "Failed to send mail. Please try again.",
             });
@@ -143,13 +157,13 @@ const userRegister = async (req, res) => {
 
     } catch (err) {
         console.error("Registration error:", err);
-        res.render("register", { title: "register page", errorMessage: "Internal server error" });
+        res.render("user/register", { title: "register page", errorMessage: "Internal server error" });
     }
 };
 
 
 const loadForgetPass = (req, res) => {
-    res.render('forgetPass', { title: 'Forgot Password ?', errorMessage: "" })
+    res.render('user/forgetPass', { title: 'Forgot Password ?', errorMessage: "" })
 }
 
 const generateOtp = async (req, res) => {
@@ -166,7 +180,7 @@ const generateOtp = async (req, res) => {
     const existingUser = await User.findOne({ email });
         if (!existingUser) {
             console.log("This email is not registered yet")
-            return res.render("forgetPass", { title: "register page", errorMessage: "Email not registered" });
+            return res.render("user/forgetPass", { title: "register page", errorMessage: "Email not registered" });
         }
 
 

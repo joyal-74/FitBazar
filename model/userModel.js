@@ -9,6 +9,10 @@ const userSchema = new Schema(
       required : false,
       unique : false
     },
+    userId : {
+      type : String,
+      required : true
+    },
     email: {
       type: String,
       required: true,
@@ -25,7 +29,7 @@ const userSchema = new Schema(
       required : false,
       unique : true
     },
-    prodilePic : {
+    profilePic : {
       type : String,
       required : false,
     },
@@ -49,10 +53,6 @@ const userSchema = new Schema(
       type : Schema.Types.ObjectId,
       ref : "Order"
     }],
-    createdAt : {
-      type : Date,
-      default :Date.now
-    },
     searchHistory : [{
       category : {
         type : Schema.Types.ObjectId,
@@ -69,7 +69,7 @@ const userSchema = new Schema(
         default : Date.now
       }
     }]
-  }
+  },{timestamps : true}
 );
 
 // Create User Model

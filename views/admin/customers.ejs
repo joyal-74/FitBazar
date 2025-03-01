@@ -79,6 +79,7 @@
                             <table class="table table-hover text-center customer-table">
                                 <thead>
                                     <tr>
+                                        <th>User ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
@@ -90,9 +91,10 @@
                                 <tbody>
                                     <% customer.reverse().forEach((customer, index) => { %>
                                     <tr>
-                                        <td><%= customer.name %></td>
+                                        <td><%= customer.userId %></td>
+                                        <td><%= customer.name || "Name not updated" %></td>
                                         <td><%= customer.email %></td>
-                                        <td><%= customer.phone %></td>
+                                        <td><%= customer.phone || "No phone Number" %></td>
                                         <td>₹<%= customer.wallet || 0 %></td>
                                         <td>
                                             <% if (customer.isBlocked) { %>
@@ -103,15 +105,15 @@
                                         </td>
                                         <td>
                                             <% if (customer.isBlocked) { %>
-                                                <a href="#" class="toggle-block me-2" data-id="<%= customer._id %>" data-blocked="true">
+                                                <a href="#" class="toggle-block me-2" data-id="<%= customer.userId %>" data-blocked="true">
                                                     <i class="fa-solid fa-circle-xmark fa-xl" style="color: #ff0000;"></i>
                                                 </a>
                                             <% } else { %>
-                                                <a href="#" class="toggle-block me-2" data-id="<%= customer._id %>" data-blocked="false">
+                                                <a href="#" class="toggle-block me-2" data-id="<%= customer.userId %>" data-blocked="false">
                                                     <i class="fa-solid fa-circle-check fa-xl" style="color: #0a8f3b;"></i>
                                                 </a>
                                             <% } %>
-                                            <a href="/admin/viewcustomers?id=<%= customer._id %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a>
+                                            <a href="/admin/viewcustomers?id=<%= customer.userId %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a>
 
                                         </td>                                        
                                     </tr>
@@ -128,27 +130,43 @@
         document.querySelectorAll(".toggle-block").forEach(button => {
             button.addEventListener("click", async (event) => {
                 event.preventDefault();
-    
+
                 const customerId = button.getAttribute("data-id");
                 const isBlocked = button.getAttribute("data-blocked") === "true";
-    
+
                 try {
                     const response = await fetch(`/admin/customers?user=${customerId}`, {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ isBlocked: !isBlocked })
                     });
-    
+
                     const result = await response.json();
-    
+
                     if (response.ok) {
-                        window.location.reload();
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "success",
+                            title: `Customer ${!isBlocked ? "Blocked" : "Unblocked"} Successfully`,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload(); // Reload after showing success message
+                        });
                     } else {
-                        alert(result.error || "Error updating status");
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed to update status",
+                            text: result.error || "Something went wrong. Try again!",
+                        });
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Something went wrong. Try again!");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Request Failed",
+                        text: "Something went wrong. Please try again later.",
+                    });
                 }
             });
         });

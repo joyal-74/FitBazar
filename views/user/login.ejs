@@ -7,7 +7,7 @@
                 <h2 class="fw-bold mb-5 text-center">Welcome Back</h2>
                 <!-- Google Login -->
                 <div class="google-btn mt-3">
-                    <a href="auth/google"><img src="/google-logo.png" alt="Google Logo">
+                    <a style="text-decoration: none;" href="/auth/google"><img src="/google-logo.png" alt="Google Logo" >
                     Login with Google</a>
                 </div>
 
@@ -17,7 +17,7 @@
                 </div>
 
                 <!-- Login Form -->
-                <form id="loginForm" action="/login" method="POST">
+                <form id="loginForm" action="/user/login" method="POST">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -35,7 +35,7 @@
                         <input type="password" id="password" class="form-control" name="password" placeholder="Password">
                     </div>
                     <div class="mb-3 forgot-password">
-                        <a class="forgot-password" href="/forgetPass">Forgot password?</a>
+                        <a class="forgot-password" href="/user/forgetPass">Forgot password?</a>
                     </div>
                 
                     <button type="submit" class="btn send-btn mt-3">Login</button>
@@ -43,7 +43,7 @@
                 
 
                 <!-- Sign Up -->
-                <p class="signup-text mt-3">New User? <a href="/register">Sign up now..!</a></p>
+                <p class="signup-text mt-3">New User? <a href="/user/register">Sign up now..!</a></p>
             </div>
 
             <!-- Right Side - Image -->
