@@ -22,7 +22,7 @@ const generateProductId = async () => {
 
 const addProducts = async (req, res) => {
     try {
-        let { productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, discountPrice } = req.body;
+        let { productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer } = req.body;
 
         productName = productName?.trim();
         productDescription = productDescription?.trim();
@@ -50,7 +50,7 @@ const addProducts = async (req, res) => {
             weight : productWeight,
             color : productColor,
             price : productPrice,
-            discount : discountPrice
+            productOffer : productOffer
         });
 
         await newProduct.save();
@@ -67,7 +67,7 @@ const addProducts = async (req, res) => {
 
 const editProducts = async (req, res) => {
     try {
-        let { productId, productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, discountPrice, visibility } = req.body;
+        let { productId, productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer, visibility } = req.body;
 
         productName = productName?.trim();
         productDescription = productDescription?.trim();
@@ -106,7 +106,7 @@ const editProducts = async (req, res) => {
         product.color = productColor;
         product.price = parseFloat(productPrice) || 0;
         product.weight = parseFloat(productWeight) || 0;
-        product.discount = discountPrice ? parseFloat(discountPrice) : 0;
+        product.productOffer = productOffer;
         product.visibility = visibility === "true";
         product.productImages = productImages;
 
@@ -168,8 +168,9 @@ const loadEditProducts = async (req, res) => {
 };
 
 const loadShop = async (req, res) => {
-    const products = await Products.find({})
-    res.render('user/shop', {title : "Shop ", products})
+    const category = await Category.find()
+    const product = await Products.find({visibility : true})
+    res.render('user/shop', {title : "Shop ", product, category})
 }
 
 export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop}

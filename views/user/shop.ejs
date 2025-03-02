@@ -1,116 +1,280 @@
-<!DOCTYPE html>
-<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitBazar - Shop</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #3B3389, #4D44AD);
+        }
+        .navbar-brand {
+            font-size: 32px;
+            color: white !important;
+        }
+        
+        .nav-link.active {
+            background-color: #E0DBFC !important;
+            color: #3B3389 !important;
+            border-radius: 20px;
+        }
         .product-img {
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            height: 150px; /* Reduced image height */
             object-fit: contain;
         }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 1rem; /* Reduced font size */
+            font-weight: 600;
+        }
+        
+        .badge {
+            font-size: 0.8rem; /* Reduced badge font size */
+        }
+        .form-range {
+            width: 100%;
+        }
+        #priceRange {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #3ebdc8, #3858a9);
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        /* For Chrome, Safari, Edge */
+        #priceRange::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #bc3ec8, #3858a9); /* Match the main slider */
+        }
+
+        /* For Firefox */
+        #priceRange::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #3ebdc8, #3858a9);
+        }
+
+        /* Thumb Styling */
+        #priceRange::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #3023bb;
+            cursor: pointer;
+            margin-top: -6px; /* Align with the track */
+        }
+
+        #priceRange::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #ff5722;
+            cursor: pointer;
+        }
+        .custom-outline-btn {
+            color: #4132e6;
+            border: 1.5px solid #4132e6;
+            background: transparent;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.8em;
+        }
+
+        .custom-outline-btn:hover {
+            background: #4132e6;
+            color: white;
+        }
+
     </style>
 </head>
-<body>
-    
+<body class="bg-light">
+
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-light shadow-sm">
+    <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container d-flex flex-column">
-            <!-- First Line: Logo, Search Bar, Cart, Sign-Up -->
             <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" style="font-size: 32px; color: #3B3389;" href="#">FitBazar</a>
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
                 <form class="d-flex w-50">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #4D44AD;"><i class="fa-solid fa-magnifying-glass" style="color: white;"></i></button>
+                    <button class="btn" type="submit" style="background-color: #4D44AD;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: white;"></i>
+                    </button>
                 </form>
                 <div class="d-flex align-items-center">
-                    <a href="#" class="btn btn-outline-secondary me-3">🛒</a>
-                    <a href="#" class="btn"  style="background-color: #4D44AD; color: white;">Sign Up</a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <a href="#" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
                 </div>
             </div>
-    
-            <!-- Second Line: Navigation Links -->
+
             <div class="w-100 d-flex justify-content-start mt-2">
                 <ul class="nav gap-5 align-items-center">
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="#" style="background-color: #4D44AD; color: white;">Shop</a>
+                        <a class="nav-link active btn py-1 px-4" href="#">Shop</a>
                     </li>
-                    
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">Customer Support</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
                 </ul>
             </div>
-            
         </div>
     </nav>
-    
+
+    <!-- Category Navigation
+    <div class="container my-5 w-100">
+        <ul class="nav justify-content-center border-bottom pb-2 gap-5">
+            <li class="nav-item"><a class="nav-link active btn px-3 py-1 fw-bold text-dark" style="background-color: #E0DBFC;" href="#">Gym Equipment</a></li>
+            <li class="nav-item"><a class="nav-link px-3 py-1" href="#" style="color: #000;">Sports Gear</a></li>
+            <li class="nav-item"><a class="nav-link text-dark px-3 py-1" href="#">Yoga & Wellness</a></li>
+            <li class="nav-item"><a class="nav-link text-dark px-3 py-1" href="#">Health & Nutrition</a></li>
+            <li class="nav-item"><a class="nav-link text-dark px-3 py-1" href="#">Martial Arts</a></li>
+            <li class="nav-item"><a class="nav-link text-dark px-3 py-1" href="#">Adventure</a></li>
+        </ul>
+    </div> -->
+
     <div class="container-fluid mt-4">
-        <!-- Category Navigation Bar -->
-        <div class="container my-3 w-75">
-            <ul class="nav justify-content-center border-bottom pb-2">
-                <h5 class="text-dark fw-bold" href="#">Unleash Your Potential – Shop the Best from FitBazar!</a>
-            </ul>
+        <!-- Heading -->
+        <div class="container-fluid text-center mb-5">
+            <h2 class="fw-bold" style="color: #3B3389;">Unleash Your Potential – Shop the Best from FitBazar!</h2>
         </div>
 
         <div class="row mx-5">
-
-            
             <!-- Sidebar Filters -->
             <aside class="col-md-2">
-                <h5>Filter items</h5>
+                <h5 class="mb-3">Filter items</h5>
                 <div>
                     <h6>Category</h6>
                     <ul class="list-unstyled">
-                        <li><input type="checkbox"> Strength Training</li>
-                        <li><input type="checkbox"> Cardio Accessories</li>
-                        <li><input type="checkbox"> Yoga & Pilates</li>
+                        <% category.forEach(category => { %>
+                            <li><input type="checkbox"> <%= category.name %></li>
+                        <% }); %>
                     </ul>
-                    <h6>Price</h6>
-                    <input type="range" class="form-range">
+                    <h6 class="mt-3">Price</h6>
+                    <div class="mb-4 w-75">
+                        <input type="range" class="form-range" min="0" max="10000" step="100" id="priceRange">
+                        <div class="d-flex justify-content-between fw-bold">
+                            <small id="minValue">₹0</small>
+                            <small id="currValue"></small>
+                            <small id="maxValue">₹10,000</small>
+                        </div>
+                    </div>
+
+                    <h6>Brand</h6>
+                    <h6>Brand</h6>
+                    <ul class="list-unstyled">
+                        <% 
+                            // Extract unique brands using Set
+                            const uniqueBrands = [...new Set(product.map(p => p.brand))]; 
+                        %>
+                        <% uniqueBrands.forEach(brand => { %>
+                            <li><input type="checkbox"> <%= brand %></li>
+                        <% }); %>
+                    </ul>
+                    <button type="submit" class="btn text-white" style="background-color: #3023bb;">Apply Filters</button>
                 </div>
             </aside>
-            
+
             <!-- Product Grid -->
-            <main class="col-md-9 mb-3">
-                <div class="d-flex justify-content-between">
-                    <h4>Trending Products</h4>
-                    <button>Sort ></button>
+            <main class="col-md-10 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <!-- Label -->
+                    <h5 class="fw-bold mb-0" style="color: #3B3389;">All Products</h5>
+                
+                    <!-- Sort Options -->
+                    <div class="d-flex align-items-center">
+                        <label for="sortSelect" class="me-2 fw-semibold text-muted">Sort by:</label>
+                        <select id="sortSelect" class="form-select form-select-sm" style="width: 160px;">
+                            <option selected>Best Selling</option>
+                            <option value="priceLowToHigh">Price: Low to High</option>
+                            <option value="priceHighToLow">Price: High to Low</option>
+                            <option value="aToZ">A - Z</option>
+                            <option value="zToA">Z - A</option>
+                            <option value="ratingHighToLow">Top Rated</option>
+                            <option value="newest">Newest Arrivals</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div class="row" id="product-container">
-                    <!-- Products loaded dynamically -->
+                    <% product.forEach(product => { %>
+                        <div class="col-md-3 col-lg-3 my-3">
+                            <div class="card shadow-sm p-2">
+                                <!-- Image Container with Offer Badge -->
+                                <div class="position-relative">
+                                    <img src="/uploads/products/<%= product.productImages[0] %>" 
+                                         class="product-img card-img-top mx-auto d-block" 
+                                         style="height: 250px; object-fit: cover;">
+
+                                    <% if (product.productOffer > 0) { %>
+                                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
+                                            <%= product.productOffer %>% OFF
+                                        </span>
+                                    <% } %>
+                                </div>
+                
+                                <div class="card-body p-2">
+                                    <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
+                                    <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)</p>
+                                    <p class="d-flex align-items-center gap-2 mb-2">
+                                        <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></strong> 
+                                        <del class="text-muted small">₹<%= product.price %></del>
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn w-50 btn-sm custom-outline-btn">
+                                            <i class="fa fa-cart-shopping me-2"></i> Add to Cart
+                                        </button>
+                                        <button class="btn w-50 btn-sm text-white" style="background-color: #4132e6; font-size: 0.8em;">
+                                            <i class="fa fa-bolt me-2"></i> Buy Now
+                                        </button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
                 </div>
+                
+                
+                <!-- Show More Button -->
+                <div class="d-flex w-100 justify-content-center mt-3">
+                    <% if (product.length > 3) { %>
+                        <button id="show-more-btn" class="btn btn-outline-secondary px-4 py-2">
+                            Show More
+                        </button>
+                    <% } %>
+                </div>
+                
             </main>
         </div>
     </div>
-    
     <script>
-        // Sample products (replace with backend data)
-        const products = [
-            { id: 1, name: "Dumbbell - 2kg x 2", price: 2199, discount: 3579, rating: 4, image: "img1.jpg" },
-            { id: 2, name: "Dumbbell - 15kg", price: 2389, discount: 3579, rating: 3, image: "img2.jpg" },
-        ];
-        
-        const productContainer = document.getElementById("product-container");
-        products.forEach(product => {
-            productContainer.innerHTML += `
-                <div class="col-md-4 col-lg-3 mb-4">
-                    <div class="card shadow-sm">
-                        <img src="${product.image}" class="product-img card-img-top">
-                        <div class="card-body">
-                            <h6 class="card-title">${product.name}</h6>
-                            <p class="text-warning">⭐ ${product.rating}</p>
-                            <p><strong>₹${product.price}</strong> <del>₹${product.discount}</del></p>
-                            <button class="btn btn-primary w-100">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>`;
+        const priceRange = document.getElementById("priceRange");
+        const minValue = document.getElementById("minValue");
+        const maxValue = document.getElementById("currValue");
+    
+        priceRange.addEventListener("input", function () {
+            let selectedValue = parseInt(this.value);
+            minValue.textContent = `₹0`;
+            currValue.textContent = `₹${selectedValue.toLocaleString()}`;
         });
     </script>
-    
 </body>
 </html>
