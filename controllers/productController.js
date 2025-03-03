@@ -168,9 +168,34 @@ const loadEditProducts = async (req, res) => {
 };
 
 const loadShop = async (req, res) => {
-    const category = await Category.find()
-    const product = await Products.find({visibility : true})
-    res.render('user/shop', {title : "Shop ", product, category})
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 20;
+        const skip = (page - 1) * limit;
+
+        const category = await Category.find();
+
+        const totalProducts = await Products.countDocuments({ visibility: true });
+
+        const product = await Products.find({ visibility: true }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.render('user/shop', {title: "Shop", product, category, currentPage: page, totalPages, totalProducts});
+
+    } catch (error) {
+        console.error("Error loading shop:", error);
+        res.status(500).send("Error fetching products");
+    }
+};
+
+const loadproductDetails = async (req,res) => {
+    const { productId, category } = req.query;
+
+    const product = await Products.findOne({productId})
+    const relateproducts = await Products.find({category}).limit(4);
+
+    res.render('user/productdetails', {title : "productDetails", product, relateproducts})
 }
 
-export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop}
+export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails}

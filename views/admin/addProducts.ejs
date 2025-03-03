@@ -67,18 +67,28 @@
                                     <% }) %>
                                 </select>
                             </div>
-                        </div>
 
-                        <!-- Stock Quantity & Brand -->
-                        <div class="mb-3 d-flex gap-3">
-                            <div class="w-50">
-                                <label for="productStock" class="form-label mb-1">Stock</label>
-                                <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity">
-                            </div>
+                            <!-- brand  -->
                             <div class="w-50">
                                 <label for="brand" class="form-label mb-1">Brand</label>
                                 <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
                             </div>
+                        </div>
+
+                        <!-- Stock Quantity & Brand -->
+                        <div class="mb-3 d-flex gap-3">
+                            <div class="w-100">
+                                <label for="productStock" class="form-label mb-1">Stock</label>
+                                <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity">
+                            </div>
+                            <div class="w-100">
+                                <label for="basePrice" class="form-label mb-1">Base Price</label>
+                                <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
+                            </div>
+                            <div class="w-100">
+                                <label for="discountPrice" class="form-label mb-1">Discount Percentage (%)</label>
+                                <input type="number" id="productOffer" name="productOffer" class="form-control form-control-sm" placeholder="Enter discount">
+                            </div>   
                         </div>
 
                         <!-- Product Description & specs -->
@@ -94,19 +104,38 @@
                         </div>
 
                         <!-- Image & Size -->
-                        <div class="mb-3 d-flex gap-3">
-                            <div class="w-50">
-                                <label class="form-label mb-1">Images</label>
-                                <input type="file" class="form-control form-control-sm" id="productImages" name="productImages" multiple>
+                        <div class="mb-3 d-flex gap-3">                            
+                            <div class="mb-3 w-100">
+                                <label for="productImages" class="form-label">Upload new images</label>
+                                <div class="input-group">
+                                    <!-- Custom Button -->
+                                    <button class="btn btn-outline-secondary" type="button" id="customFileButton">
+                                        <i class="px-3 fa-solid fa-upload"></i>
+                                    </button>
+                        
+                                    <!-- Hidden File Input -->
+                                    <input type="file" class="form-control d-none" id="productImages" name="productImages" multiple onchange="updateFileNames(event)">
+                        
+                                    <!-- Display Selected File Names -->
+                                    <span class="form-control d-flex align-items-center" id="fileNamesDisplay">No files chosen</span>
+                                </div>
                             </div>
-                            <div class="w-50">
-                                <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
-                                <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size">
-                            </div>
+                        
+                            <!-- Selected Image Preview -->
+                            <div class="mb-3 w-100">
+                                <label class="form-label">Selected Images</label>
+                                <div id="imagePreview" class="d-flex flex-wrap gap-2 border p-2 rounded" style="min-height: 60px;">
+                                    <span class="text-muted">No images selected</span>
+                                </div>
+                            </div> 
                         </div>
 
                         <!-- Color, Material, Weight -->
                         <div class="mb-3 d-flex gap-3">
+                            <div class="w-100">
+                                <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
+                                <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size">
+                            </div>
                             <div class="w-100">
                                 <label class="form-label mb-1">Color</label>
                                 <input type="text" id="productColor" name="productColor" class="form-control form-control-sm" placeholder="Enter color">
@@ -118,18 +147,6 @@
                             <div class="w-100">
                                 <label class="form-label mb-1">Weight</label>
                                 <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight">
-                            </div>
-                        </div>
-
-                        <!-- Base & Discount Price -->
-                        <div class="mb-3 d-flex gap-3">
-                            <div class="w-50">
-                                <label for="basePrice" class="form-label mb-1">Base Price</label>
-                                <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
-                            </div>
-                            <div class="w-50">
-                                <label for="discountPrice" class="form-label mb-1">Discount Percentage (%)</label>
-                                <input type="number" id="productOffer" name="productOffer" class="form-control form-control-sm" placeholder="Enter discount">
                             </div>
                         </div>
 
@@ -146,6 +163,45 @@
 </div>
 
 <script>
+   document.getElementById("customFileButton").addEventListener("click", function () {
+    document.getElementById("productImages").click();
+});
+
+// Update the file names display and show image previews
+function updateFileNames(event) {
+    const files = event.target.files;
+    const fileNamesDisplay = document.getElementById("fileNamesDisplay");
+    const imagePreview = document.getElementById("imagePreview");
+
+    // Clear previous previews
+    imagePreview.innerHTML = "";
+
+    if (files.length > 0) {
+        // Display file names
+        const fileNames = Array.from(files).map(file => file.name).join(", ");
+        fileNamesDisplay.textContent = fileNames;
+
+        // Loop through selected files and create image previews
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("img-thumbnail");
+                img.classList.add("m-0");
+                img.style.width = "50px";  // Adjust width as needed
+                img.style.height = "50px"; // Maintain aspect ratio
+                img.style.objectFit = "cover";
+                imagePreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        fileNamesDisplay.textContent = "No files chosen";
+        imagePreview.innerHTML = '<span class="text-muted">No images selected</span>';
+    }
+}
+
     document.getElementById("addProductForm")?.addEventListener("submit", async function (event) {
                 event.preventDefault();
         

@@ -72,6 +72,9 @@ const productSchema = new Schema({
         enum : ["Available" , "Out of Stock", "Unavailable"],
         required : false,
         default : "Available",
+    },
+    tags :{
+        type : String,
     }
 },{timestamps : true})
 
