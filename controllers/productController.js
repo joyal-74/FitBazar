@@ -221,35 +221,61 @@ const loadproductDetails = async (req,res) => {
     res.render('user/productdetails', {title : "productDetails", product, relateproducts})
 }
 
-const loadfilter = async(req,res)=>{
-    let query = {};
-
-    // 1️⃣ Filter by Category (if selected)
-    if (req.query.category) {
-        query.category = { $in: Array.isArray(req.query.category) ? req.query.category : [req.query.category] };
-    }
-
-    // 2️⃣ Filter by Price (if selected)
-    if (req.query.price) {
-        query.price = { $lte: parseInt(req.query.price) }; // Less than or equal to selected price
-    }
-
-    // 3️⃣ Filter by Brand (if selected)
-    if (req.query.brand) {
-        query.brand = { $in: Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand] };
-    }
-
-    // 4️⃣ Filter by Availability
-    if (!req.query.availability) {
-        query.stock = { $gt: 0 }; // Only in-stock products
-    }
-
+const loadfilter = async (req, res) => {
     try {
-        const products = await Products.find(query);
-        res.render("product-list", { products, category }); // Pass filtered products to EJS
-    } catch (err) {
-        res.status(500).send("Error fetching products");
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = 20;
+        const skip = (page - 1) * limit;
+
+
+        let filter = {};
+
+        // Destructure request body
+        let { category, price, brand, availability } = req.body;
+        console.log(price)
+
+        if (category && category.length > 0) {
+            filter.category = { $in: Array.isArray(category) ? category : [category] };
+        }
+
+        if (price) {
+            filter.$expr = {
+                $lte: [
+                    { $subtract: ["$price", { $multiply: ["$price", { $divide: ["$productOffer", 100] }] }] },
+                    parseInt(price)
+                ]
+            };
+        }
+
+        if (brand && brand.length > 0) {
+            filter.brand = { $in: Array.isArray(brand) ? brand : [brand] };
+        }
+
+        if (!availability) {
+            filter.stock = { $gt: 0 }; // Only in-stock products
+        }
+
+        console.log("filter Object:", filter); // Debugging
+
+        // Fetch products from DB based on filter
+        const product = await Products.find(filter);
+
+        // Fetch categories to maintain the filters UI state
+        const categories = await Category.find({ visibility: true });
+
+        const totalProducts = await Products.countDocuments(filter);
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        // Render shop page with filtered products
+        res.render("user/shop", { title: "Shop", product, category: categories, appliedFilters: req.body, currentPage: page, totalPages });
+
+    } catch (error) {
+        console.error("Error applying filters:", error);
+        res.status(500).send("Error fetching filtered products.");
     }
-}
+};
+
 
 export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails, loadfilter}
