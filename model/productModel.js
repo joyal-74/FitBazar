@@ -44,16 +44,16 @@ const productSchema = new Schema({
         default: 1,
     },
     color : {
-        type : String,
+        type : [String],
         required : false
     },
     size : {
-        type : String,
-        required : false
+        type : [String],
+        default: [],
     },
     weight : {
-        type : String,
-        required : false,
+        type : [String],
+        default: [],
     },
     material : {
         type : String,

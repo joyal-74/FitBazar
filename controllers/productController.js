@@ -8,12 +8,32 @@ const __dirname = path.dirname(__filename);
 
 const loadaddProducts = async (req, res) => {
     try {
-        const category = await Category.find({visibility : true});
-        res.render('admin/addProducts', {title : "Add new Products", cat : category})
+        const categories = await Category.find({ visibility: true });
+
+        // Define size and weight options for each category
+        const categoryAttributes = {};
+        categories.forEach(category => {
+            categoryAttributes[category.name] = {
+                sizes: category.attributes.sizes || [],
+                weights: category.attributes.weights || []
+            };
+        });
+
+        res.render("admin/addProducts", { 
+            title: "Add New Product", 
+            category : categories, 
+            categoryAttributes 
+        });
+
     } catch (error) {
-        console.error(error.message)
+        console.error("Error loading add product page:", error.message);
+        res.status(500).render("admin/errorPage", { 
+            title: "Error", 
+            message: "Internal Server Error. Please try again later." 
+        });
     }
-}
+};
+
 
 const generateProductId = async () => {
     const count = await Products.countDocuments();
@@ -23,6 +43,8 @@ const generateProductId = async () => {
 const addProducts = async (req, res) => {
     try {
         let { productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer } = req.body;
+
+        const colors = productColor ? productColor.split(',').map(color => color.trim()) : [];
 
         productName = productName?.trim();
         productDescription = productDescription?.trim();
@@ -48,7 +70,7 @@ const addProducts = async (req, res) => {
             stock : productStock,
             size : productSize,
             weight : productWeight,
-            color : productColor,
+            color : colors,
             price : productPrice,
             productOffer : productOffer
         });
@@ -69,6 +91,7 @@ const editProducts = async (req, res) => {
     try {
         let { productId, productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer, visibility } = req.body;
 
+        const colors = productColor ? productColor.split(',').map(color => color.trim()) : [];
         productName = productName?.trim();
         productDescription = productDescription?.trim();
 
@@ -103,7 +126,7 @@ const editProducts = async (req, res) => {
         product.category = productCategory;
         product.stock = parseInt(productStock) || 0;
         product.size = productSize;
-        product.color = productColor;
+        product.color = colors;
         product.price = parseFloat(productPrice) || 0;
         product.weight = parseFloat(productWeight) || 0;
         product.productOffer = productOffer;
@@ -198,4 +221,35 @@ const loadproductDetails = async (req,res) => {
     res.render('user/productdetails', {title : "productDetails", product, relateproducts})
 }
 
-export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails}
+const loadfilter = async(req,res)=>{
+    let query = {};
+
+    // 1️⃣ Filter by Category (if selected)
+    if (req.query.category) {
+        query.category = { $in: Array.isArray(req.query.category) ? req.query.category : [req.query.category] };
+    }
+
+    // 2️⃣ Filter by Price (if selected)
+    if (req.query.price) {
+        query.price = { $lte: parseInt(req.query.price) }; // Less than or equal to selected price
+    }
+
+    // 3️⃣ Filter by Brand (if selected)
+    if (req.query.brand) {
+        query.brand = { $in: Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand] };
+    }
+
+    // 4️⃣ Filter by Availability
+    if (!req.query.availability) {
+        query.stock = { $gt: 0 }; // Only in-stock products
+    }
+
+    try {
+        const products = await Products.find(query);
+        res.render("product-list", { products, category }); // Pass filtered products to EJS
+    } catch (err) {
+        res.status(500).send("Error fetching products");
+    }
+}
+
+export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails, loadfilter}

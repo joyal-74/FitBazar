@@ -31,10 +31,14 @@ const categoryInfo = async (req, res) => {
 
 const addCategory = async (req, res) => {
     try {
-        let { addCategoryName, addCategoryDescription, addDiscountPrice, addVisibilityStatus } = req.body;
+        let { addCategoryName, addCategoryDescription, addDiscountPrice, addVisibilityStatus, addWeights, addSizes } = req.body;
 
         addCategoryName = addCategoryName?.trim();
         addCategoryDescription = addCategoryDescription?.trim();
+
+        const sizes = addSizes ? addSizes.split(',').map(size => size.trim()) : [];
+        const weights = addWeights ? addWeights.split(',').map(weight => weight.trim()) : [];
+
 
         if (!addCategoryName || !addCategoryDescription) {
             return res.status(400).json({ error: "Category Name and Description are required." });
@@ -53,7 +57,8 @@ const addCategory = async (req, res) => {
             description: addCategoryDescription,
             thumbnail: thumbnail,
             categoryOffer: addDiscountPrice || 0,
-            visibility: addVisibilityStatus
+            visibility: addVisibilityStatus,
+            attributes: { sizes, weights }
         });
 
         await newCategory.save();

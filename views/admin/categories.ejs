@@ -113,6 +113,20 @@
                                             <input type="number" class="form-control" id="addDiscountPrice" name="addDiscountPrice" placeholder="Enter Discount (Optional)">
                                         </div>
                                     </div>
+
+                                    <!-- Sizes and Weights -->
+                                    <div class="d-flex gap-3">
+                                        <div class="mb-3 w-100">
+                                            <label for="addSizes" class="form-label">Sizes (Comma Separated)</label>
+                                            <input type="text" class="form-control" id="addSizes" name="addSizes" placeholder="Enter sizes (e.g., S,M,L,XL)">
+                                        </div>
+                                        <div class="mb-3 w-100">
+                                            <label for="addWeights" class="form-label">Weights (Comma Separated)</label>
+                                            <input type="text" class="form-control" id="addWeights" name="addWeights" placeholder="Enter weights (e.g., 2kg,5kg,10kg)">
+                                        </div>
+                                    </div>
+
+
                                     <!-- Error Message Container -->
                                     <p id="errorMessageContainer1" class="text-danger text-center d-none">
                                         <span id="errorText1"></span>
@@ -161,6 +175,18 @@
                                         <div class="w-50">
                                             <label for="discountPrice" class="form-label">Discount/Offers (%)</label>
                                             <input type="number" class="form-control" id="discountPrice" name="discountPrice" placeholder="Enter Discount (Optional)">
+                                        </div>
+                                    </div>
+
+                                    <!-- Sizes and Weights -->
+                                    <div class="d-flex gap-3">
+                                        <div class="mb-3 w-100">
+                                            <label for="editSizes" class="form-label">Sizes (Comma Separated)</label>
+                                            <input type="text" class="form-control" id="editSizes" name="editSizes" placeholder="Enter sizes (e.g., S,M,L,XL)">
+                                        </div>
+                                        <div class="mb-3 w-100">
+                                            <label for="editWeights" class="form-label">Weights (Comma Separated)</label>
+                                            <input type="text" class="form-control" id="editWeights" name="editWeights" placeholder="Enter weights (e.g., 2kg,5kg,10kg)">
                                         </div>
                                     </div>
 
@@ -223,12 +249,10 @@
                                                 </div>
                                             </div> -->
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <!-- Visible (Eye) Icon: Shown when visibility is TRUE -->
                                                 <p style="color: #3e29a8; margin: 0;" class="<%= category.visibility ? '' : 'd-none' %>">
                                                     <i class="fa-solid fa-eye"></i>
-                                                </p>
-                                            
-                                                <!-- Hidden (Eye-slash) Icon: Shown when visibility is FALSE -->
+                                                </p>   
+
                                                 <p style="color: #9c9999; margin: 0;" class="<%= category.visibility ? 'd-none' : '' %>">
                                                     <i class="fa-solid fa-eye-slash"></i>
                                                 </p>
@@ -239,7 +263,14 @@
                                                 class="btn btn-sm btn-outline-danger me-2" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#editCategoryModal"
-                                                onclick="openEditModal('<%= category.name %>', '<%= category.description %>', '<%= category.categoryOffer %>', '<%= category.visibility %>')">
+                                                onclick="openEditModal(
+                                                    '<%= category.name %>', 
+                                                    '<%= category.description %>', 
+                                                    '<%= category.categoryOffer %>', 
+                                                    '<%= category.visibility %>',
+                                                    <%= JSON.stringify(category.attributes.sizes) %>, 
+                                                    <%= JSON.stringify(category.attributes.weights) %>
+                                                )">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
                                         </td>
@@ -287,7 +318,7 @@
     </div>
 
     <script>
-        function openEditModal(name, description, discount, visibility) {
+        function openEditModal(name, description, discount, visibility, size, weight) {
             document.getElementById("originalCategoryName").value = name;
             document.getElementById("editCategoryName").value = name;
             document.getElementById("editCategoryDescription").value = description;
@@ -297,6 +328,8 @@
         
             document.getElementById("editCategoryDescription").dispatchEvent(new Event("input"));
             document.getElementById("discountPrice").dispatchEvent(new Event("input"));
+            document.getElementById("editSizes").value = size;
+            document.getElementById("editWeights").value = weight;
         }
 
         document.getElementById("removeThumbnail")?.addEventListener("click", function () {

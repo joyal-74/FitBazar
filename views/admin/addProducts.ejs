@@ -53,23 +53,24 @@
                 <div class="card-body p-2">
                     <form id="addProductForm" enctype="multipart/form-data">
                         <div class="mb-3 d-flex gap-3">
-                            <div class="w-50">
+                            <div class="w-100">
                                 <label for="productName" class="form-label mb-1">Product Name</label>
                                 <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name">
                             </div>
 
                             <!-- Category Selection -->
-                            <div class="w-50">
+                            <div class="w-100">
                                 <label for="productCategory" class="form-label mb-1">Category</label>
                                 <select class="form-select form-select-sm" id="productCategory" name="productCategory">
-                                    <% cat.forEach(category => { %>
+                                    <option hidden>Select category</option>
+                                    <% category.forEach(category => { %>
                                         <option value="<%= category.name %>"><%= category.name %></option>
                                     <% }) %>
                                 </select>
                             </div>
 
                             <!-- brand  -->
-                            <div class="w-50">
+                            <div class="w-100">
                                 <label for="brand" class="form-label mb-1">Brand</label>
                                 <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
                             </div>
@@ -132,22 +133,34 @@
 
                         <!-- Color, Material, Weight -->
                         <div class="mb-3 d-flex gap-3">
-                            <div class="w-100">
+                            <!-- <div class="w-100">
                                 <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
                                 <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size">
                             </div>
                             <div class="w-100">
-                                <label class="form-label mb-1">Color</label>
+                                <label class="form-label mb-1">Weight</label>
+                                <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight">
+                            </div> -->
+
+                            <!-- Size/Weight Selection -->
+                            <div class="w-100">
+                                <label class="form-label mb-1">Select Size/Weight</label>
+                                <div id="attributeContainer">
+                                    <!-- Default input for custom values -->
+                                    <input type="text" class="form-control form-control-sm" name="customValue" placeholder="Enter custom size or weight">
+                                </div>
+                            </div>
+                            
+
+                            <div class="w-100">
+                                <label class="form-label mb-1">Color <span style="font-size: 0.8em;">(Multiple color by comma)</span></label>
                                 <input type="text" id="productColor" name="productColor" class="form-control form-control-sm" placeholder="Enter color">
                             </div>
                             <div class="w-100">
                                 <label class="form-label mb-1">Material</label>
                                 <input type="text" id="productMeterial" name="productMeterial" class="form-control form-control-sm" placeholder="Enter material">
                             </div>
-                            <div class="w-100">
-                                <label class="form-label mb-1">Weight</label>
-                                <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight">
-                            </div>
+                            
                         </div>
 
                         <!-- Submit Button -->
@@ -163,84 +176,116 @@
 </div>
 
 <script>
-   document.getElementById("customFileButton").addEventListener("click", function () {
-    document.getElementById("productImages").click();
-});
+    const categorySelect = document.getElementById('productCategory');
+    const attributeContainer = document.getElementById('attributeContainer');
+    const categoryAttributes = <%- JSON.stringify(categoryAttributes) %>;
 
-// Update the file names display and show image previews
-function updateFileNames(event) {
-    const files = event.target.files;
-    const fileNamesDisplay = document.getElementById("fileNamesDisplay");
-    const imagePreview = document.getElementById("imagePreview");
+    categorySelect.addEventListener('change', (event) => {
+        const selectedCategory = event.target.value;
+        const attributes = categoryAttributes[selectedCategory] || { sizes: [], weights: [] };
 
-    // Clear previous previews
-    imagePreview.innerHTML = "";
+        let html = '';
+        if (attributes.sizes.length > 0) {
+            html = `
+                <select class="form-select form-select-sm" name="size">
+                    <option value="" hidden>Select Size</option>
+                    ${attributes.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
+                </select>
+            `;
+        } else if (attributes.weights.length > 0) {
+            html = `
+                <select class="form-select form-select-sm" name="weight">
+                    <option value="" hidden>Select Weight</option>
+                    ${attributes.weights.map(weight => `<option value="${weight}">${weight}</option>`).join('')}
+                </select>
+            `;
+        } else {
+            html = `<input type="text" class="form-control form-control-sm" name="customValue" placeholder="Enter custom size or weight">`;
+        }
 
-    if (files.length > 0) {
-        // Display file names
-        const fileNames = Array.from(files).map(file => file.name).join(", ");
-        fileNamesDisplay.textContent = fileNames;
+        attributeContainer.innerHTML = html;
+    });
 
-        // Loop through selected files and create image previews
-        Array.from(files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.classList.add("img-thumbnail");
-                img.classList.add("m-0");
-                img.style.width = "50px";  // Adjust width as needed
-                img.style.height = "50px"; // Maintain aspect ratio
-                img.style.objectFit = "cover";
-                imagePreview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    } else {
-        fileNamesDisplay.textContent = "No files chosen";
-        imagePreview.innerHTML = '<span class="text-muted">No images selected</span>';
+
+
+    document.getElementById("customFileButton").addEventListener("click", function () {
+        document.getElementById("productImages").click();
+    });
+
+    // Update the file names display and show image previews
+    function updateFileNames(event) {
+        const files = event.target.files;
+        const fileNamesDisplay = document.getElementById("fileNamesDisplay");
+        const imagePreview = document.getElementById("imagePreview");
+
+        // Clear previous previews
+        imagePreview.innerHTML = "";
+
+        if (files.length > 0) {
+            // Display file names
+            const fileNames = Array.from(files).map(file => file.name).join(", ");
+            fileNamesDisplay.textContent = fileNames;
+
+            // Loop through selected files and create image previews
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("img-thumbnail");
+                    img.classList.add("m-0");
+                    img.style.width = "50px";
+                    img.style.height = "50px";
+                    img.style.objectFit = "cover";
+                    imagePreview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        } else {
+            fileNamesDisplay.textContent = "No files chosen";
+            imagePreview.innerHTML = '<span class="text-muted">No images selected</span>';
+        }
     }
-}
 
     document.getElementById("addProductForm")?.addEventListener("submit", async function (event) {
-                event.preventDefault();
-        
-                const formData = new FormData(this);
+        event.preventDefault();
 
-                try {
-                    const response = await fetch("/admin/addProducts", {
-                        method: "POST",
-                        body: formData
-                    });
-        
-                    const result = await response.json();
-        
-                    if (response.ok) {
-                        Swal.fire({
-                            position: "top-center",
-                            icon: "success",
-                            title: "Product added successfully!",
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            window.location.href = '/admin/products'
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: result.error || "An unexpected error occurred.",
-                        });
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops!",
-                        text: "Something went wrong. Please try again.",
-                    });
-                }
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch("/admin/addProducts", {
+                method: "POST",
+                body: formData
             });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    position: "top-center",
+                    icon: "success",
+                    title: "Product added successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = '/admin/products'
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: result.error || "An unexpected error occurred.",
+                });
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops!",
+                text: "Something went wrong. Please try again.",
+            });
+        }
+    });  
 </script>
 
 </body>

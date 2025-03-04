@@ -26,6 +26,10 @@ const categorySchema = new Schema({
     itemsCount : {
         type : Number,
         default : 0,
+    },
+    attributes : {
+        sizes : [String],
+        weights : [String]
     }
 },{ timestamps: true })
 

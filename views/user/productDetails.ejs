@@ -1,133 +1,137 @@
 
+
+    
 <head>
-    
-    <head>
-        <style>
-            body {
-                background-color: #f8f9fa;
-            }
-            .navbar {
-                background: linear-gradient(90deg, #3B3389, #4D44AD);
-            }
-            .navbar-brand {
-                font-size: 32px;
-                color: white !important;
-            }
-            
-            .nav-link.active {
-                background-color: #E0DBFC !important;
-                color: #3B3389 !important;
-                border-radius: 20px;
-            }
-            
-            .custom-outline-btn {
-                color: #4132e6;
-                border: 1.5px solid #4132e6;
-                background: transparent;
-                transition: all 0.3s ease-in-out;
-                font-size: 0.8em;
-            }
-    
-            .custom-outline-btn:hover {
-                background: #4132e6;
-                color: white;
-            }
-            .container-fluid {
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .buy-now-btn {
-                background: linear-gradient(to right, #9c3ec8, #3858a9);
-                border: none;
-                font-size: 0.8em;
-                transition: all 0.3s ease-in-out;
-            }
-            .buy-now-btn:hover {
-                background: linear-gradient(to right, #6c28b6, #283a8a);
-            }
-            .nav-tabs {
-                border-bottom: 2px solid #ddd;
-            }
-            .nav-tabs .nav-link {
-                color: #555;
-                font-weight: bold;
-            }
-            .nav-tabs .nav-link.active {
-                color: #000;
-                border-bottom: 2px solid #007bff;
-            }
-            
-            .card {
-                border-radius: 8px;
-                background: #ffffff; /* Changed to white */
-                border: 1px solid #e0e0e0; /* Added a light border */
-                box-shadow: none; /* Removed shadow */
-            }
-            .copy-btn {
-                font-size: 12px;
-            }
-    
-            /* Updated color for the footer */
-            footer {
-                background-color: #3B3389; /* Dark purple */
-            }
-    
-            /* Updated color for the product details section */
-            .product-details .card {
-                background-color: #f8f9fa; /* Light gray */
-                border: 1px solid #e0e0e0; /* Light border */
-            }
-    
-            /* Updated color for the related products section */
-            #product-container .card {
-                background-color: #ffffff; /* White */
-                border: 1px solid #e0e0e0; /* Light border */
-            }
-            .add-to-cart-btn {
-                background: linear-gradient(to right, #9c3ec8, #3858a9);
-                border: none;
-                transition: all 0.3s ease-in-out;
-            }
-            /* Magnify effect on hover */
-            .thumbnail {
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                border-radius: 8px; /* Rounded corners */
-            }
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #3B3389, #4D44AD);
+        }
+        .navbar-brand {
+            font-size: 32px;
+            color: white !important;
+        }
+        
+        .nav-link.active {
+            background-color: #E0DBFC !important;
+            color: #3B3389 !important;
+            border-radius: 20px;
+        }
+        
+        .custom-outline-btn {
+            color: #4132e6;
+            border: 1.5px solid #4132e6;
+            background: transparent;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.8em;
+        }
 
-            .thumbnail:hover {
-                transform: scale(1.01); /* Magnify by 20% */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
-                z-index: 1; /* Bring the thumbnail to the front */
-            }
-            /* Zoom Container */
-            .zoom-container {
-                position: relative;
-                overflow: hidden;
-                border-radius: 10px;
-            }
+        .custom-outline-btn:hover {
+            background: #4132e6;
+            color: white;
+        }
+        .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .buy-now-btn {
+            background: linear-gradient(to right, #9c3ec8, #3858a9);
+            border: none;
+            font-size: 0.8em;
+            transition: all 0.3s ease-in-out;
+        }
+        .buy-now-btn:hover {
+            background: linear-gradient(to right, #6c28b6, #283a8a);
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+        .nav-tabs .nav-link {
+            color: #555;
+            font-weight: bold;
+        }
+        .nav-tabs .nav-link.active {
+            color: #000;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .card {
+            border-radius: 8px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: none;
+        }
+        .copy-btn {
+            font-size: 12px;
+        }
 
-            /* Zoom Image */
-            .zoom-image {
-                transition: transform 0.1s ease;
-                cursor: zoom-in;
-            }
+        footer {
+            background-color: #3B3389;
+        }
 
-            /* Zoom Lens */
-            .zoom-lens {
-                position: absolute;
-                border: 1px solid #ddd;
-                background: rgba(255, 255, 255, 0.184);
-                pointer-events: none;
-                display: none;
-                width: 150px; /* Size of the lens */
-                height: 150px;
-            }
-            .nav-tabs .nav-link.active {
-                border-radius: 8px 8px 0 0;
-}
-        </style>
+        .product-details .card {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0; 
+        }
 
+        #product-container .card {
+            background-color: #ffffff; 
+            border: 1px solid #e0e0e0; 
+        }
+        .add-to-cart-btn {
+            background: linear-gradient(to right, #9c3ec8, #3858a9);
+            border: none;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .thumbnail {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px; 
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.01); 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            z-index: 1;
+        }
+        /* Zoom Container */
+        .zoom-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        /* Zoom Image */
+        .zoom-image {
+            transition: transform 0.1s ease;
+            cursor: zoom-in;
+        }
+
+        
+        .zoom-lens {
+            position: absolute;
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.184);
+            pointer-events: none;
+            display: none;
+            width: 150px;
+            height: 150px;
+        }
+        .nav-tabs .nav-link.active {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .color-btn.active {
+            background-color: #6c757d;
+            color: white;
+            border-color: #6c757d;
+        }
+
+    </style>
 </head>
+
 <body class="bg-white">
 
     <!-- Navbar -->
@@ -197,10 +201,24 @@
                         <button class="btn btn-outline-secondary w-50"><i class="fa fa-heart me-2"></i>Add to Wishlist</button>
                     </div>
         
-                    <!-- Quantity Selector -->
-                    <div class="my-3">
-                        <label for="quantity" class="form-label fw-bold">Quantity:</label>
-                        <input type="number" id="quantity" name="quantity" class="form-control w-25" min="1" value="1">
+                    <!-- Quantity & colors -->
+                    <div class="d-flex w-100">
+                        <div class="my-3 w-100">
+                            <label for="quantity" class="form-label fw-bold">Quantity :</label>
+                            <input type="number" id="quantity" name="quantity" class="form-control w-50" min="1" value="1">
+                        </div>
+                        <div class="my-3 w-100">
+                            <label class="form-label fw-bold">Colors:</label>
+                            <div class="d-flex flex-wrap">
+                                <% product.color.forEach((color, index) => { %>
+                                    <button class="btn btn-outline-secondary color-btn me-2 px-1" 
+                                            data-color="<%= color %>"
+                                            onclick="selectColor('<%= color %>', '<%= index %>')">
+                                        <%= color %>
+                                    </button>
+                                <% }); %>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card p-3 bg-light border">
@@ -479,11 +497,12 @@
             const thumbnails = document.querySelectorAll(".thumbnail");
 
             thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener("click", function () {
+                thumbnail.addEventListener("mousemove", function () {
                     mainImage.src = this.src; // Change main image source to clicked thumbnail
                 });
             });
         });
+
         document.querySelectorAll('.copy-btn').forEach(button => {
             button.addEventListener('click', function() {
                 let couponCode = this.getAttribute('data-code');
@@ -529,7 +548,7 @@
             zoomLens.style.display = "block";
 
             // Zoom the image
-            zoomImage.style.transform = "scale(1.5)"; // Adjust the zoom level
+            zoomImage.style.transform = "scale(2)"; // Adjust the zoom level
             zoomImage.style.transformOrigin = `${x}px ${y}px`;
         });
 
@@ -548,6 +567,11 @@
         });
     });
 
+    function selectColor(color, index) {
+        document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.color-btn')[index].classList.add('active');
+        console.log("Selected Color:", color);
+    }
 
     </script>
     
