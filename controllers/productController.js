@@ -56,7 +56,7 @@ const addProducts = async (req, res) => {
 
         let productImages = [];
         if (req.files) {
-            productImages = req.files.map(file => file.filename);
+            productImages = req.files.map(file => file.path);
         }
 
         const newProduct = new Products({
@@ -95,30 +95,20 @@ const editProducts = async (req, res) => {
         productName = productName?.trim();
         productDescription = productDescription?.trim();
 
+        // Find product by ID
         const product = await Products.findOne({ productId: productId });
         if (!product) {
             return res.status(404).json({ error: "Product not found." });
         }
 
+        // Retain existing images if no new ones are uploaded
         let productImages = product.productImages;
-
         if (req.files && req.files.length > 0) {
-            await Promise.all(
-                product.productImages.map(async (image) => {
-                    const oldImagePath = path.join(__dirname, "..", "public", "uploads", "products", image);
-                    try {
-                        await fs.promises.unlink(oldImagePath);
-                        console.log("Deleted:", oldImagePath);
-                    } catch (err) {
-                        console.error("Error deleting file:", oldImagePath, err);
-                    }
-                })
-            );
-
-            productImages = req.files.map(file => file.filename);
+            productImages = req.files.map(file => file.path);  // Cloudinary stores file paths (URLs)
             console.log("New uploaded images:", productImages);
         }
 
+        // Update product fields
         product.name = productName;
         product.description = productDescription;
         product.specifications = productSpec;
@@ -130,9 +120,10 @@ const editProducts = async (req, res) => {
         product.price = parseFloat(productPrice) || 0;
         product.weight = parseFloat(productWeight) || 0;
         product.productOffer = productOffer;
-        product.visibility = visibility === "true";
+        product.visibility = visibility === "true"; // Convert string to boolean
         product.productImages = productImages;
 
+        // Save updated product
         await product.save();
 
         return res.status(200).json({ 
@@ -145,6 +136,7 @@ const editProducts = async (req, res) => {
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 const productInfo = async (req, res) => {
     try {
@@ -190,28 +182,6 @@ const loadEditProducts = async (req, res) => {
     }
 };
 
-const loadShop = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = 20;
-        const skip = (page - 1) * limit;
-
-        const category = await Category.find();
-
-        const totalProducts = await Products.countDocuments({ visibility: true });
-
-        const product = await Products.find({ visibility: true }).sort({ createdAt: -1 }).skip(skip).limit(limit);
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.render('user/shop', {title: "Shop", product, category, currentPage: page, totalPages, totalProducts});
-
-    } catch (error) {
-        console.error("Error loading shop:", error);
-        res.status(500).send("Error fetching products");
-    }
-};
-
 const loadproductDetails = async (req,res) => {
     const { productId, category } = req.query;
 
@@ -221,61 +191,87 @@ const loadproductDetails = async (req,res) => {
     res.render('user/productdetails', {title : "productDetails", product, relateproducts})
 }
 
-const loadfilter = async (req, res) => {
-    try {
+const getSortQuery = (sortOption) => {
+    switch (sortOption) {
+        case "priceLowToHigh": return { salePrice: 1 };
+        case "priceHighToLow": return { salePrice: -1 };
+        case "aToZ": return { name: 1 };
+        case "zToA": return { name: -1 };
+        case "ratingHighToLow": return { rating: -1 };
+        default: return { createdAt: -1 };
+    }
+};
 
+const loadShop = async (req, res) => {
+    try {
         const page = parseInt(req.query.page) || 1;
         const limit = 20;
         const skip = (page - 1) * limit;
 
-
-        let filter = {};
-
-        // Destructure request body
-        let { category, price, brand, availability } = req.body;
-        console.log(price)
-
-        if (category && category.length > 0) {
-            filter.category = { $in: Array.isArray(category) ? category : [category] };
+        // Extract filters from req.query
+        let filter = { visibility: true };
+        if (req.query.result) {
+            filter.name = { $regex: req.query.result, $options: "i" };
         }
-
-        if (price) {
+        if (req.query.category) {
+            filter.category = req.query.category;
+        }
+        if (req.query.price) {
             filter.$expr = {
                 $lte: [
                     { $subtract: ["$price", { $multiply: ["$price", { $divide: ["$productOffer", 100] }] }] },
-                    parseInt(price)
+                    parseInt(req.query.price)
                 ]
             };
         }
-
-        if (brand && brand.length > 0) {
-            filter.brand = { $in: Array.isArray(brand) ? brand : [brand] };
+        if (req.query.brand) {
+            filter.brand = req.query.brand;
         }
-
-        if (!availability) {
+        if (req.query.availability) {
             filter.stock = { $gt: 0 }; // Only in-stock products
         }
 
-        console.log("filter Object:", filter); // Debugging
+        // Sorting
+        const sortOption = req.query.sort || "newest";
+        let sortQuery = {};
+        if (sortOption === "priceLowToHigh") sortQuery = { salePrice: 1 };
+        else if (sortOption === "priceHighToLow") sortQuery = { salePrice: -1 };
+        else if (sortOption === "aToZ") sortQuery = { name: 1 };
+        else if (sortOption === "zToA") sortQuery = { name: -1 };
+        else if (sortOption === "ratingHighToLow") sortQuery = { rating: -1 };
+        else sortQuery = { createdAt: -1 };
 
-        // Fetch products from DB based on filter
-        const product = await Products.find(filter);
+        // Fetch products
+        const product = await Products.aggregate([
+            { $match: filter },
+            { $addFields: { salePrice: { $subtract: ["$price", { $multiply: ["$price", { $divide: ["$productOffer", 100] }] }] } } },
+            { $sort: sortQuery },
+            { $skip: skip },
+            { $limit: limit }
+        ]);
 
-        // Fetch categories to maintain the filters UI state
         const categories = await Category.find({ visibility: true });
-
+        const brands = await Products.find().distinct("brand");
         const totalProducts = await Products.countDocuments(filter);
-
         const totalPages = Math.ceil(totalProducts / limit);
 
-        // Render shop page with filtered products
-        res.render("user/shop", { title: "Shop", product, category: categories, appliedFilters: req.body, currentPage: page, totalPages });
+        res.render("user/shop", {
+            title: "Shop",
+            product,
+            brands,
+            category: categories,
+            appliedFilters: req.query,
+            currentPage: page,
+            totalPages,
+            sortOption
+        });
 
     } catch (error) {
-        console.error("Error applying filters:", error);
-        res.status(500).send("Error fetching filtered products.");
+        console.error("Error loading shop:", error);
+        res.status(500).send("Error fetching products");
     }
 };
 
 
-export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails, loadfilter}
+
+export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails}

@@ -146,7 +146,7 @@
                 <ul class="nav gap-5 align-items-center">
                     <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="#">Shop</a>
+                        <a class="nav-link active btn py-1 px-4" href="/user/shop">Shop</a>
                     </li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
@@ -178,61 +178,62 @@
             <!-- Sidebar Filters -->
             <aside class="col-md-2">
                 <h5 class="mb-3">Filter items</h5>
-                <form id="filterForm" action="/user/products" method="post">
-                    <div>
-                        <!-- Category Filter -->
-                        <h6>Category</h6>
-                        <ul class="list-unstyled">
-                            <% category.forEach(cat => { %>
-                                <li>
-                                    <input type="checkbox" name="category" value="<%= cat.name %>"
-                                        <%= appliedFilters.category && appliedFilters.category.includes(cat.name) ? "checked" : "" %> >
-                                    <%= cat.name %>
-                                </li>
-                            <% }); %>
-                        </ul>
+                <form id="filterForm" action="/user/shop" method="get">
+                    <!-- Preserve search and sorting -->
+                    <input type="hidden" name="result" value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
+                    <input type="hidden" name="sort" value="<%= appliedFilters && appliedFilters.sort ? appliedFilters.sort : 'newest' %>">
                 
-                        <!-- Price Range -->
-                        <h6 class="mt-3">Price</h6>
-                        <div class="mb-4 w-75">
-                            <input type="range" class="form-range" min="0" max="10000" step="100" id="priceRange" name="price"
-                                value="<%= appliedFilters.price ? appliedFilters.price : 5000 %>"
-                                oninput="updatePrice(this.value)">
-                            <div class="d-flex justify-content-between fw-bold">
-                                <small id="minValue">₹0</small>
-                                <small id="currValue">₹<%= appliedFilters.price ? appliedFilters.price : 5000 %></small>
-                                <small id="maxValue">₹10,000</small>
-                            </div>
-                        </div>
-                
-                        <!-- Brand Filter -->
-                        <h6>Brand</h6>
-                        <ul class="list-unstyled">
-                            <% 
-                                const uniqueBrands = [...new Set(product.map(p => p.brand))]; // Get all brands
-                            %>
-                            <% uniqueBrands.forEach(brand => { %>
-                                <li>
-                                    <input type="checkbox" name="brand" value="<%= brand %>"
-                                        <%= appliedFilters.brand && appliedFilters.brand.includes(brand) ? "checked" : "" %> >
-                                    <%= brand %>
-                                </li>
-                            <% }); %>
-                        </ul>
-                
-                        <!-- Availability Filter -->
-                        <ul class="list-unstyled">
-                            <h6>Availability</h6>
+                    <!-- Category Filter -->
+                    <h6>Category</h6>
+                    <ul class="list-unstyled">
+                        <% category.forEach(cat => { %>
                             <li>
-                                <input type="checkbox" name="availability" value="outOfStock"
-                                    <%= appliedFilters.availability === "outOfStock" ? "checked" : "" %> >
-                                Include out of Stock
+                                <input type="checkbox" name="category" value="<%= cat.name %>"
+                                    <%= appliedFilters && appliedFilters.category && appliedFilters.category.includes(cat.name) ? "checked" : "" %>>
+                                <%= cat.name %>
                             </li>
-                        </ul>
+                        <% }); %>
+                    </ul>
                 
-                        <button type="submit" class="btn text-white" style="background-color: #3023bb;">Apply Filters</button>
+                    <!-- Price Range -->
+                    <h6 class="mt-3">Price</h6>
+                    <div class="mb-4 w-75">
+                        <input type="range" class="form-range" min="0" max="10000" step="100" id="priceRange" name="price"
+                            value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 5000 %>">
+                        <div class="d-flex justify-content-between fw-bold">
+                            <small id="minValue">₹0</small>
+                            <small id="currValue">₹<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 5000 %></small>
+                            <small id="maxValue">₹10,000</small>
+                        </div>
                     </div>
+                
+                    <!-- Brand Filter -->
+                    <h6>Brand</h6>
+                    <ul class="list-unstyled">
+                        <% brands.forEach(brand => { %>
+                            <li>
+                                <input type="checkbox" name="brand" value="<%= brand %>"
+                                    <%= appliedFilters && appliedFilters.brand && appliedFilters.brand.includes(brand) ? "checked" : "" %>>
+                                <%= brand %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                
+                    <!-- Availability Filter -->
+                    <ul class="list-unstyled">
+                        <h6>Availability</h6>
+                        <li>
+                            <input type="checkbox" name="availability" value="outOfStock"
+                                <%= appliedFilters && appliedFilters.availability ? "checked" : "" %>>
+                            Include out of Stock
+                        </li>
+                    </ul>
+                
+                    <button type="submit" class="btn text-white w-75" style="background-color: #3023bb; border-radius: 28px;">
+                        Apply Filters
+                    </button>
                 </form>
+                                
                              
             </aside>
 
@@ -241,21 +242,40 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <!-- Label -->
                     <h5 class="fw-bold mb-0" style="color: #3B3389;">All Products</h5>
+
+                    <form id="searchProductForm" action="/user/shop" method="get" class="d-flex">
+                        <input type="hidden" name="category" value="<%= appliedFilters && appliedFilters.category ? appliedFilters.category : '' %>">
+                        <input type="hidden" name="price" value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : '' %>">
+                        <input type="hidden" name="brand" value="<%= appliedFilters && appliedFilters.brand ? appliedFilters.brand : '' %>">
+                        <input type="hidden" name="availability" value="<%= appliedFilters && appliedFilters.availability ? appliedFilters.availability : '' %>">
+                        <input type="hidden" name="sort" value="<%= appliedFilters && appliedFilters.sort ? appliedFilters.sort : 'newest' %>">
+                    
+                        <input class="form-control me-2" type="search" name="result" placeholder="Search products"
+                            value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
+                        <button class="btn" type="submit" style="background-color: #3B3389;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                    
                 
                     <!-- Sort Options -->
-                    <div class="d-flex align-items-center">
-                        <label for="sortSelect" class="me-2 fw-semibold text-muted">Sort by:</label>
-                        <select id="sortSelect" class="form-select form-select-sm" style="width: 160px;">
-                            <option selected>Best Selling</option>
-                            <option value="priceLowToHigh">Price: Low to High</option>
-                            <option value="priceHighToLow">Price: High to Low</option>
-                            <option value="aToZ">Name: A - Z</option>
-                            <option value="zToA">Name: Z - A</option>
-                            <option value="ratingHighToLow">Top Rated</option>
-                            <option value="newest">Newest Arrivals</option>
+                    <form id="sortForm" action="/user/shop" method="get">
+                        <!-- Preserve filters and search when sorting -->
+                        <input type="hidden" name="result" value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
+                        <input type="hidden" name="category" value="<%= appliedFilters && appliedFilters.category ? appliedFilters.category : '' %>">
+                        <input type="hidden" name="price" value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : '' %>">
+                        <input type="hidden" name="brand" value="<%= appliedFilters && appliedFilters.brand ? appliedFilters.brand : '' %>">
+                        <input type="hidden" name="availability" value="<%= appliedFilters && appliedFilters.availability ? appliedFilters.availability : '' %>">
+                    
+                        <select name="sort" class="form-select" onchange="this.form.submit()">
+                            <option value="newest" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest</option>
+                            <option value="priceLowToHigh" <%= sortOption === 'priceLowToHigh' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="priceHighToLow" <%= sortOption === 'priceHighToLow' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="aToZ" <%= sortOption === 'aToZ' ? 'selected' : '' %>>A to Z</option>
+                            <option value="zToA" <%= sortOption === 'zToA' ? 'selected' : '' %>>Z to A</option>
+                            <option value="ratingHighToLow" <%= sortOption === 'ratingHighToLow' ? 'selected' : '' %>>Rating: High to Low</option>
                         </select>
-                    </div>
-
+                    </form>
                     
                 </div>
                 
@@ -266,7 +286,7 @@
                                 <div class="card shadow-sm p-2">
                                     <!-- Image Container with Offer Badge -->
                                     <div class="position-relative">
-                                        <img src="/uploads/products/<%= product.productImages[0] %>" 
+                                        <img src="<%= product.productImages[0] %>" 
                                              class="product-img card-img-top mx-auto d-block" 
                                              style="height: 250px; object-fit: cover;">
                 
@@ -421,9 +441,34 @@
             minValue.textContent = `₹0`;
             currValue.textContent = `₹${selectedValue.toLocaleString()}`;
         });
+
         function updatePrice(value) {
             document.getElementById("currValue").textContent = "₹" + value;
         }
+
+        document.getElementById("sortSelect").addEventListener("change", function() {
+            const selectedSort = this.value;
+            const form = document.getElementById("filterForm");
+            form.action = `/user/shop?sort=${selectedSort}`;
+            form.submit();
+        });
+
+        document.getElementById("searchProductForm")?.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const query = document.getElementById("searchbar").value.trim();
+            const currentUrl = new URL(window.location.href);
+
+            // Preserve existing filters in the URL
+            if (query) {
+                currentUrl.searchParams.set("result", query);
+            } else {
+                currentUrl.searchParams.delete("result");
+            }
+
+            window.location.href = currentUrl.toString(); // Redirect with filters + search applied
+        });
+
     </script>
 </body>
 </html>
