@@ -144,9 +144,9 @@
 
             <div class="w-100 d-flex justify-content-start mt-2">
                 <ul class="nav gap-5 align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="/user/shop">Shop</a>
+                        <a class="nav-link active btn py-1 px-4" href="/shop">Shop</a>
                     </li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
@@ -178,7 +178,7 @@
             <!-- Sidebar Filters -->
             <aside class="col-md-2">
                 <h5 class="mb-3">Filter items</h5>
-                <form id="filterForm" action="/user/shop" method="get">
+                <form id="filterForm" action="/shop" method="get">
                     <!-- Preserve search and sorting -->
                     <input type="hidden" name="result" value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
                     <input type="hidden" name="sort" value="<%= appliedFilters && appliedFilters.sort ? appliedFilters.sort : 'newest' %>">
@@ -246,7 +246,7 @@
                     <!-- Label -->
                     <h5 class="fw-bold mb-0" style="color: #3B3389;">All Products</h5>
 
-                    <form id="searchProductForm" action="/user/shop" method="get" class="d-flex">
+                    <form id="searchProductForm" action="/shop" method="get" class="d-flex">
                         <input type="hidden" name="category" value="<%= appliedFilters && appliedFilters.category ? appliedFilters.category : '' %>">
                         <input type="hidden" name="price" value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : '' %>">
                         <input type="hidden" name="brand" value="<%= appliedFilters && appliedFilters.brand ? appliedFilters.brand : '' %>">
@@ -262,7 +262,7 @@
                     
                 
                     <!-- Sort Options -->
-                    <form id="sortForm" action="/user/shop" method="get">
+                    <form id="sortForm" action="/shop" method="get">
                         <!-- Preserve filters and search when sorting -->
                         <input type="hidden" name="result" value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
                         <input type="hidden" name="category" value="<%= appliedFilters && appliedFilters.category ? appliedFilters.category : '' %>">
@@ -285,7 +285,7 @@
                 <div class="row" id="product-container">
                     <% product.forEach(product => { %>
                         <div class="col-md-3 col-lg-3 my-3">
-                            <a href="/user/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
+                            <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
                                 <div class="card shadow-sm p-2">
                                     <!-- Image Container with Offer Badge -->
                                     <div class="position-relative">
@@ -452,7 +452,7 @@
         document.getElementById("sortSelect").addEventListener("change", function() {
             const selectedSort = this.value;
             const form = document.getElementById("filterForm");
-            form.action = `/user/shop?sort=${selectedSort}`;
+            form.action = `/shop?sort=${selectedSort}`;
             form.submit();
         });
 

@@ -4,16 +4,6 @@
             <!-- Left Side - Login Form -->
             <div class="w-50 px-5 py-5">
                 <h2 class="fw-bold mb-5 text-center">Create Account</h2>
-                <!-- Google Login -->
-                <div class="google-btn mt-3">
-                    <img src="/google-logo.png" alt="Google Logo">
-                    Signup with Google
-                </div>
-
-                <!-- Divider -->
-                <div class="divider">
-                    <span>or</span>
-                </div>
 
                 <!-- register Form -->
                 <form action="/user/register" method="POST" id="registerForm">
@@ -25,6 +15,10 @@
                             <span id="errorText"></span>
                         <% } %>
                     </p>
+
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Full Name" id="name" name="fullName">
+                    </div>
 
                     <div class="mb-3">
                         <input type="email" class="form-control" placeholder="Email" id="email" name="email">

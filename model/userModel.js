@@ -26,16 +26,14 @@ const userSchema = new Schema(
     },
     phone : {
       type : String,
-      required : false,
-      unique : true
+      required : false
     },
     profilePic : {
       type : String,
       required : false,
     },
     googleId :{
-      type : String,
-      unique : true
+      type : String
     },
     isBlocked : {
       type : Boolean,

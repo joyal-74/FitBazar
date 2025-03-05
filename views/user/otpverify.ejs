@@ -17,7 +17,7 @@
                 <div id="timer" class="text-center mt-3" style="font-size: 1em; color: rgb(81, 2, 2);"></div>
 
                 <!-- OTP Input Fields -->
-                <form action="/otpverify" method="POST" id="otpverifyForm">
+                <form action="/user/otpverify" method="POST" id="otpverifyForm">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -42,7 +42,7 @@
                 </form>
 
                 <!-- Go back to login -->
-                <h4 class="go-back mt-4"><a href="/login">Go back to Login page</a></h4>
+                <h4 class="go-back mt-4"><a href="/user/login">Go back to Login page</a></h4>
             </div>
         </div>
         <p class="text-center pt-4 logo-text-bottom">FitBazar</p>

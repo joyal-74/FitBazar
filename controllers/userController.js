@@ -1,10 +1,12 @@
 import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
+import Category from '../model/categoryModel.js'
 import nodemailer from "nodemailer"
 
 // Home Page Handler
-function getUserHome(req, res) {
-    res.render('user/home', { title: 'Home Page' });
+const getUserHome = async (req, res)=> {
+    const category = await Category.find();
+    res.render('home', { title: 'Home Page', category });
 }
 
 // Login Page Handler
@@ -74,7 +76,7 @@ const generateUserId = async () => {
 
 const userRegister = async (req, res) => {
     try {
-        const { email, password, confirmPassword } = req.body;
+        const { email, password, confirmPassword, fullName } = req.body;
 
         // Ensure all fields are provided
         if (!email || !password || !confirmPassword) {
@@ -108,7 +110,7 @@ const userRegister = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = await generateUserId()
-        const newUser = new User({ userId, email, password: hashedPassword });
+        const newUser = new User({ userId, email, password: hashedPassword, name: fullName });
 
         // Save user to DB
         await newUser.save();
@@ -171,7 +173,7 @@ const generateOtp = async (req, res) => {
 
     // Validate email
     if (!email) {
-        return res.status(400).render('forgetPass', {
+        return res.status(400).render('user/forgetPass', {
             title: "Forgot Password",
             errorMessage: "Email is required",
         });
@@ -229,10 +231,10 @@ const generateOtp = async (req, res) => {
     try {
         await transporter.sendMail(mailOptions);
         console.log("OTP sent successfully to:", email);
-        res.redirect("/otpverify");
+        res.redirect("/user/otpverify");
     } catch (error) {
         console.error("Error sending email:", error);
-        res.status(500).render('forgetPass', {
+        res.status(500).render('user/forgetPass', {
             title: "Forgot Password",
             errorMessage: "Failed to send OTP. Please try again.",
         });
@@ -241,7 +243,7 @@ const generateOtp = async (req, res) => {
 
 
 const loadOtpVerify = (req, res) => {
-    res.render('otpverify', { title: "otp verify page" , errorMessage: ""})
+    res.render('user/otpverify', { title: "otp verify page" , errorMessage: ""})
 }
 
 const verifyOtp = (req, res) => {
@@ -259,14 +261,14 @@ const verifyOtp = (req, res) => {
 
     // Validate the OTP
     if (!formOtp || !sentOtp) {
-        return res.status(400).render('otpverify', {
+        return res.status(400).render('user/otpverify', {
             title: 'Change Password',
             errorMessage: "Invalid OTP. Please try again.",
         });
     }
 
     if (formOtp === "expired") {
-        return res.status(400).render('otpverify', {
+        return res.status(400).render('user/otpverify', {
             title: 'Change Password',
             errorMessage: "OTP Exprired. Please try again.",
         });
@@ -275,9 +277,9 @@ const verifyOtp = (req, res) => {
     // Compare the OTPs (ensure both are strings)
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
-        res.redirect('/resetpass'); // Redirect to the reset password page
+        res.redirect('/user/resetpass'); // Redirect to the reset password page
     } else {
-        res.status(400).render('otpverify', {
+        res.status(400).render('user/otpverify', {
             title: 'Change Password',
             errorMessage: "OTP does not match. Please try again.",
         });
@@ -286,7 +288,7 @@ const verifyOtp = (req, res) => {
 
 
 let loadConfirmOtp = (req, res) => {
-    res.render('resetpass', { title: 'Confirm Password ?', errorMessage: "" })
+    res.render('user/resetpass', { title: 'Confirm Password ?', errorMessage: "" })
 }
 
 
@@ -299,23 +301,23 @@ const changePassword = async (req, res) => {
 
         // Ensure all fields are provided
         if (!newPassword || !confirmPassword) {
-            return res.render("resetpass", { title: "Confirm Password page", errorMessage: "All fields are required" });
+            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "All fields are required" });
         }
 
         // Check password length
         if (newPassword.length < 6) {
-            return res.render("resetpass", { title: "Confirm Password page", errorMessage: "Password must be 6+ characters" });
+            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Password must be 6+ characters" });
         }
 
         // Check if passwords match
         if (newPassword !== confirmPassword) {
-            return res.render("resetpass", { title: "Confirm Password page", errorMessage: "Passwords do not match" });
+            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Passwords do not match" });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
             console.log("User not found for email:", email);
-            return res.render("resetpass", {
+            return res.render("user/resetpass", {
                 title: "Reset Password",
                 errorMessage: "User not found",
             });
@@ -329,11 +331,11 @@ const changePassword = async (req, res) => {
         await user.save();
 
         // Redirect on success
-        res.redirect("/login");
+        res.redirect("/user/login");
 
     } catch (err) {
         console.error("Registration error:", err);
-        res.render("resetpass", { title: "Confirm Password page", errorMessage: "Internal server error" });
+        res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Internal server error" });
     }
 };
 
@@ -343,7 +345,7 @@ const logoutUser = (req, res) => {
         if (err) {
             return res.send("Error destroying session");
         }
-        res.reder('login', { title: "login page", errorMessage: "Session destroyed. You are logged out." });
+        res.reder('user/login', { title: "login page", errorMessage: "Session destroyed. You are logged out." });
     });
 };
 

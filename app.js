@@ -17,6 +17,8 @@ dotenv.config();
 import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js'
 import googleRoutes from './routes/googleRoute.js';
+import homeRoute from './routes/homeRoute.js'
+
 const PORT = process.env.PORT
 
 app.use(session({
@@ -52,7 +54,8 @@ db();
 
 app.use('/user', userRoutes);
 app.use('/admin', adminRoutes);
-app.use('/', googleRoutes);
+app.use('/auth', googleRoutes);
+app.use('/', homeRoute);
 
 
 // cannot get page 404 error

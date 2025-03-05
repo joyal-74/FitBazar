@@ -7,7 +7,7 @@
                 <p class="mb-4">Please confirm your password</p>
 
                 <!-- Change Password Form -->
-                <form class="text-center" method="POST" id="confirmPasswordForm" action="/resetpass">
+                <form class="text-center" method="POST" id="confirmPasswordForm" action="/user/resetpass">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -30,7 +30,7 @@
                 </form>
 
                 <!-- Go back to login -->
-                <p class="change-password-go-back mt-5"><a href="/login">Go back to Login page</a></p>
+                <p class="change-password-go-back mt-5"><a href="/user/login">Go back to Login page</a></p>
             </div>
 
             <!-- Right Side - Image -->

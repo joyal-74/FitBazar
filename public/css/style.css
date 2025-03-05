@@ -592,3 +592,19 @@
     padding-left: 0;
     padding-right: 0;
 }
+
+.feature-box {
+    text-align: center;
+    padding: 20px;
+}
+.feature-box i {
+    font-size: 32px;
+    color: #6a4bb4;
+    margin-bottom: 10px;
+}
+.divider {
+    width: 1px;
+    background-color: #ddd;
+    height: 80px; /* Adjust height as needed */
+    margin: auto;
+}

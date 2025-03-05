@@ -1,10 +1,6 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
-import fs from 'fs';
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 const loadaddProducts = async (req, res) => {
     try {
@@ -27,7 +23,7 @@ const loadaddProducts = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading add product page:", error.message);
-        res.status(500).render("admin/errorPage", { 
+        res.status(500).render("404", { 
             title: "Error", 
             message: "Internal Server Error. Please try again later." 
         });
@@ -188,8 +184,10 @@ const loadproductDetails = async (req,res) => {
     const product = await Products.findOne({productId})
     const relateproducts = await Products.find({category}).limit(4);
 
-    res.render('user/productdetails', {title : "productDetails", product, relateproducts})
+    res.render('productdetails', {title : "productDetails", product, relateproducts})
 }
+
+// shop pages and product details
 
 const loadShop = async (req, res) => {
     try {
@@ -244,7 +242,7 @@ const loadShop = async (req, res) => {
         const totalProducts = await Products.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / limit);
 
-        res.render("user/shop", {
+        res.render("shop", {
             title: "Shop",
             product,
             brands,
