@@ -120,7 +120,7 @@
                                             <% if (product.productImages && product.productImages.length > 0) { %>
                                                 <% product.productImages.forEach((image, index) => { %>
                                                     <div class="position-relative">
-                                                        <img src="/uploads/products/<%= image %>" alt="Product Image" class="img-thumbnail" width="60" height="60">
+                                                        <img src="<%= image %>" alt="Product Image" class="img-thumbnail" width="60" height="60">
                                                     </div>
                                                 <% }); %>
                                             <% } else { %>

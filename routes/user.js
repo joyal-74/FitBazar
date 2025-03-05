@@ -32,6 +32,5 @@ router.get("/logout", userController.logoutUser );
 //shop page
 router.get('/shop', productController.loadShop)
 router.get('/product', productController.loadproductDetails)
-router.post('/products', productController.loadfilter)
 
 export default router;

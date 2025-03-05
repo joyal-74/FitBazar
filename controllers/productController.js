@@ -191,17 +191,6 @@ const loadproductDetails = async (req,res) => {
     res.render('user/productdetails', {title : "productDetails", product, relateproducts})
 }
 
-const getSortQuery = (sortOption) => {
-    switch (sortOption) {
-        case "priceLowToHigh": return { salePrice: 1 };
-        case "priceHighToLow": return { salePrice: -1 };
-        case "aToZ": return { name: 1 };
-        case "zToA": return { name: -1 };
-        case "ratingHighToLow": return { rating: -1 };
-        default: return { createdAt: -1 };
-    }
-};
-
 const loadShop = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;

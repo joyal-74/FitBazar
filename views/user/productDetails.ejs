@@ -172,14 +172,14 @@
                 <div class="col-md-5 me-3">
                     <!-- Main Product Image with Zoom Container -->
                     <div class="zoom-container" style="position: relative; overflow: hidden; border-radius: 10px;">
-                        <img id="mainImage" src="/uploads/products/<%= product.productImages[0] %>" class="img-fluid zoom-image" alt="Product Name" style="border-radius: 10px; height: 480px;">
+                        <img id="mainImage" src="<%= product.productImages[0] %>" class="img-fluid zoom-image" alt="Product Name" style="border-radius: 10px; height: 480px;">
                         <div class="zoom-lens" style="position: absolute; border: 1px solid #ddd; background: rgba(255, 255, 255, 0.5); pointer-events: none; display: none;"></div>
                     </div>
                 
                     <!-- Thumbnails -->
                     <div class="d-flex gap-2 mt-2">
                         <% product.productImages.forEach((image, index) => { %>
-                            <img src="/uploads/products/<%= image %>" class="img-thumbnail thumbnail" style="width: 80px; cursor: pointer;">
+                            <img src="<%= image %>" class="img-thumbnail thumbnail" style="width: 80px; cursor: pointer;">
                         <% }) %>
                     </div>
                 </div>
@@ -374,7 +374,7 @@
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
                                 <div class="position-relative">
-                                    <img src="/uploads/products/<%= product.productImages[0] %>" 
+                                    <img src="<%= product.productImages[0] %>" 
                                          class="product-img card-img-top mx-auto d-block" 
                                          style="height: 240px; width: auto; object-fit: cover;">
             
