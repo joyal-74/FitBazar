@@ -3,9 +3,8 @@ import express from "express";
 const router = express.Router();
 import adminController from '../controllers/adminController.js';
 import categoryController from '../controllers/categoryController.js'
-import categoryMiddlewere from '../middleware/ccategoryMiddlewere.js'
 import productController from "../controllers/productController.js";
-import upload from "../middleware/productMiddleware.js";
+import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 
 
@@ -16,8 +15,8 @@ router.get('/dashboard', adminController.loadDashboard);
 
 // category Management
 router.get('/categories', categoryController.categoryInfo);
-router.post('/categories', categoryMiddlewere.upload.single("addThumbnail"), categoryController.addCategory);
-router.put('/categories', categoryMiddlewere.upload.single('editThumbnail'),categoryController.editCategory);
+router.post('/categories', upload.single("addThumbnail"), categoryController.addCategory);
+router.put('/categories', upload.single('editThumbnail'),categoryController.editCategory);
 router.get('/categories/filter', categoryController.filterCategories);
 
 // product management

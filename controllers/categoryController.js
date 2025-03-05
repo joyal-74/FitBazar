@@ -50,7 +50,7 @@ const addCategory = async (req, res) => {
         }
 
         addVisibilityStatus = addVisibilityStatus === "Active";
-        const thumbnail = req.file ? req.file.filename : null;
+        const thumbnail = req.file ? req.file.path : null;
 
         const newCategory = new Category({
             name: addCategoryName,
@@ -77,22 +77,11 @@ const addCategory = async (req, res) => {
 const editCategory = async (req, res) => {
     try {
         const { categoryName, editCategoryName, editCategoryDescription, discountPrice, editVisibilityStatus } = req.body;
-        let thumbnail = req.file ? req.file.filename : null;
+        let thumbnail = req.file ? req.file.path : null;
 
         const category = await Category.findOne({ name: categoryName });
         if (!category) {
             return res.status(404).json({ error: "Category not found." });
-        }
-
-        if ((req.file) && category.thumbnail) {
-            const oldThumbnailPath = path.join(__dirname, "..", "public", "uploads", category.thumbnail);
-            fs.unlink(oldThumbnailPath, (err) => {
-                if (err) {
-                    console.error("Failed to delete old thumbnail:", err);
-                } else {
-                    console.log("Old thumbnail deleted successfully:", oldThumbnailPath);
-                }
-            });
         }
 
         if (!req.file) {

@@ -210,7 +210,10 @@
                     <!-- Brand Filter -->
                     <h6>Brand</h6>
                     <ul class="list-unstyled">
-                        <% brands.forEach(brand => { %>
+                        <% 
+                            const uniqueBrands = [...new Set(brands)]; // Remove duplicates
+                            uniqueBrands.forEach(brand => { 
+                        %>
                             <li>
                                 <input type="checkbox" name="brand" value="<%= brand %>"
                                     <%= appliedFilters && appliedFilters.brand && appliedFilters.brand.includes(brand) ? "checked" : "" %>>

@@ -1,34 +1,34 @@
 <body>
     
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-light shadow-sm">
+    <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container d-flex flex-column">
-            <!-- First Line: Logo, Search Bar, Cart, Sign-Up -->
             <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" style="font-size: 32px; color: #3B3389;" href="#">FitBazar</a>
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
                 <form class="d-flex w-50">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #4D44AD;"><i class="fa-solid fa-magnifying-glass" style="color: white;"></i></button>
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
                 </form>
                 <div class="d-flex align-items-center">
-                    <a href="#" class="btn btn-outline-secondary me-3">🛒</a>
-                    <a href="#" class="btn"  style="background-color: #4D44AD; color: white;">Sign Up</a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <a href="#" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
                 </div>
             </div>
-    
-            <!-- Second Line: Navigation Links -->
+
             <div class="w-100 d-flex justify-content-start mt-2">
                 <ul class="nav gap-5 align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/user/home">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="#" style="background-color: #4D44AD; color: white;">Home</a>
+                        <a class="nav-link text-white" href="/user/shop">Shop</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="/user/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#">Customer Support</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
                 </ul>
             </div>
-            
         </div>
     </nav>
     
@@ -43,8 +43,8 @@
                     to stay fit and conquer new challenges.
                 </h4>
                 <div class="mt-4 d-flex gap-3">
-                    <a href="#" class="btn px-4 py-2" style="background-color: #4D44AD; color: white;">Shop Now</a>
-                    <a href="#" class="btn btn-outline-light px-4 py-2">Explore →</a>
+                    <a href="/user/shop" class="btn px-4 py-2" style="background-color: #4D44AD; color: white;">Shop Now</a>
+                    <a href="/user/shop" class="btn btn-outline-light px-4 py-2">Explore →</a>
                 </div>
             </div>
             <div class="w-50 d-flex justify-content-end">

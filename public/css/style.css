@@ -561,3 +561,34 @@
     object-fit: contain;
 }
 
+
+.navbar {
+    background: linear-gradient(90deg, #3B3389, #4D44AD);
+}
+.navbar-brand {
+    font-size: 32px;
+    color: white !important;
+}
+
+.user-nav-text {
+    background-color: #E0DBFC !important;
+    color: #3B3389 !important;
+    border-radius: 20px;
+}
+
+.custom-outline-btn {
+    color: #4132e6;
+    border: 1.5px solid #4132e6;
+    background: transparent;
+    transition: all 0.3s ease-in-out;
+    font-size: 0.8em;
+}
+
+.custom-outline-btn:hover {
+    background: #4132e6;
+    color: white;
+}
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}

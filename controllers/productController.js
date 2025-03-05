@@ -105,7 +105,7 @@ const editProducts = async (req, res) => {
         let productImages = product.productImages;
         if (req.files && req.files.length > 0) {
             productImages = req.files.map(file => file.path);  // Cloudinary stores file paths (URLs)
-            console.log("New uploaded images:", productImages);
+            // console.log("New uploaded images:", productImages);
         }
 
         // Update product fields

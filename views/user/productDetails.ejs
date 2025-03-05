@@ -529,18 +529,16 @@
         const zoomImage = document.getElementById("mainImage");
         const zoomLens = document.querySelector(".zoom-lens");
 
-        // Show lens and zoom effect on mouse move
         zoomContainer.addEventListener("mousemove", function (e) {
             const containerRect = zoomContainer.getBoundingClientRect();
             const imageRect = zoomImage.getBoundingClientRect();
 
-            // Calculate mouse position relative to the image
             const x = e.clientX - containerRect.left;
             const y = e.clientY - containerRect.top;
 
             // Ensure the lens stays within the image boundaries
-            const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150)); // 75 = half of lens width
-            const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150)); // 75 = half of lens height
+            const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
+            const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
 
             // Move the lens
             zoomLens.style.left = `${lensX}px`;
@@ -548,7 +546,7 @@
             zoomLens.style.display = "block";
 
             // Zoom the image
-            zoomImage.style.transform = "scale(2)"; // Adjust the zoom level
+            zoomImage.style.transform = "scale(2)";
             zoomImage.style.transformOrigin = `${x}px ${y}px`;
         });
 
