@@ -1,126 +1,9 @@
 
 <head>
-    
+    <link rel="stylesheet" href="/css/product.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            background: linear-gradient(90deg, #3B3389, #4D44AD);
-        }
-        .navbar-brand {
-            font-size: 32px;
-            color: white !important;
-        }
         
-        .nav-link.active {
-            background-color: #E0DBFC !important;
-            color: #3B3389 !important;
-            border-radius: 20px;
-        }
-        .product-img {
-            width: 100%;
-            height: 150px; /* Reduced image height */
-            object-fit: contain;
-        }
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: none;
-            border-radius: 10px;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        .card-title {
-            font-size: 1rem; /* Reduced font size */
-            font-weight: 600;
-        }
-        
-        .badge {
-            font-size: 0.8rem; /* Reduced badge font size */
-        }
-        .form-range {
-            width: 100%;
-        }
-        #priceRange {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #3ebdc8, #3858a9);
-            outline: none;
-            transition: background 0.3s;
-        }
-
-        /* For Chrome, Safari, Edge */
-        #priceRange::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #bc3ec8, #3858a9); /* Match the main slider */
-        }
-
-        /* For Firefox */
-        #priceRange::-moz-range-track {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #3ebdc8, #3858a9);
-        }
-
-        /* Thumb Styling */
-        #priceRange::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            border: 3px solid #3023bb;
-            cursor: pointer;
-            margin-top: -6px; /* Align with the track */
-        }
-
-        #priceRange::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            border: 3px solid #ff5722;
-            cursor: pointer;
-        }
-        .custom-outline-btn {
-            color: #4132e6;
-            border: 1.5px solid #4132e6;
-            background: transparent;
-            transition: all 0.3s ease-in-out;
-            font-size: 0.8em;
-        }
-
-        .custom-outline-btn:hover {
-            background: #4132e6;
-            color: white;
-        }
-        .container-fluid {
-            padding-left: 0;
-            padding-right: 0;
-        }
-        .pagination .page-link {
-            color: #4132e6;
-        }
-        .pagination .page-item.active .page-link {
-            background-color: #4132e6;
-            border-color: #4132e6;
-        }
-        .pagination .page-link:hover {
-            background-color: #2d4e97;
-            color: white;
-        }
-
-
-        
-
-    </style>
+        </style>
 </head>
 <body class="bg-light">
 
@@ -146,7 +29,7 @@
                 <ul class="nav gap-5 align-items-center">
                     <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="/shop">Shop</a>
+                        <a class="nav-link active btn btn-light user-nav-text py-1 px-4" href="/shop">Shop</a>
                     </li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
@@ -195,10 +78,10 @@
                         <% }); %>
                     </ul>
                 
-                    <!-- Price Range -->
+                   <!-- Price Range -->
                     <h6 class="mt-3">Price</h6>
                     <div class="mb-4 w-75">
-                        <input type="range" class="form-range" min="0" max="10000" step="100" id="priceRange" name="price"
+                        <input type="range" class="form-range custom-range" min="0" max="10000" step="100" id="priceRange" name="price"
                             value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 5000 %>">
                         <div class="d-flex justify-content-between fw-bold">
                             <small id="minValue">₹0</small>
@@ -206,7 +89,7 @@
                             <small id="maxValue">₹10,000</small>
                         </div>
                     </div>
-                
+
                     <!-- Brand Filter -->
                     <h6>Brand</h6>
                     <ul class="list-unstyled">

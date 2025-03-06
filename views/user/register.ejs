@@ -21,7 +21,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <input type="email" class="form-control" placeholder="Email" id="email" name="email">
+                        <input type="email" class="form-control" placeholder="Email Address" id="email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Phone Number" id="email" name="phone">
                     </div>
                     <div class="mb-3">
                         <input type="password" class="form-control" placeholder="Password" id="password"
@@ -53,6 +56,7 @@
         document.getElementById("registerForm").addEventListener("submit", function (event) {
             let email = document.getElementById("email").value.trim();
             let password = document.getElementById("password").value.trim();
+            let phone = document.getElementById("phone").value.trim();
             let confirmPassword = document.getElementById("confirmPassword").value.trim();
             let errorMessageContainer = document.getElementById("errorMessageContainer");
             let errorText = document.getElementById("errorText");
@@ -72,6 +76,13 @@
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 errorText.innerText = "Invalid email format";
+                errorMessageContainer.classList.remove("d-none");
+                event.preventDefault(); // Stop form submission
+                return;
+            }
+
+            if (phone.length < 10) {
+                errorText.innerText = "Phone Number should be 10 characters";
                 errorMessageContainer.classList.remove("d-none");
                 event.preventDefault(); // Stop form submission
                 return;

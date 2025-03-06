@@ -24,7 +24,7 @@ function loadRegister(req, res) {
 
 let userLogin = async (req, res) => {
     const { email, password } = req.body;
-    let errorMessage = ""; // Store general error message
+    let errorMessage = "";
 
     // Basic validation
     if (!email || !password) {
@@ -51,6 +51,11 @@ let userLogin = async (req, res) => {
         if (!user.password || user.password.trim() === "") {
             console.warn(`⚠️ User with email ${email} has no password. Redirecting to Google login.`);
             return res.redirect('/auth/google');  // Redirect to Google login instead of showing error
+        }
+
+        if (user.isBlocked) {
+            errorMessage = "Your account has been blocked. Please contact support.";
+            return res.render('user/login', { title: "Login Page", errorMessage });
         }
 
         // Verify password
@@ -81,43 +86,35 @@ const generateUserId = async () => {
 
 const userRegister = async (req, res) => {
     try {
-        const { email, password, confirmPassword, fullName } = req.body;
+        const { email, password, confirmPassword, fullName, phone } = req.body;
 
-        // Ensure all fields are provided
         if (!email || !password || !confirmPassword) {
             return res.render("user/register", { title: "register page", errorMessage: "All fields are required" });
         }
 
-        // Validate email format
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             return res.render("user/register", { title: "register page", errorMessage: "Invalid email format" });
         }
 
-        // Check password length
         if (password.length < 6) {
             return res.render("user/register", { title: "register page", errorMessage: "Password must be 6+ characters" });
         }
 
-        // Check if passwords match
         if (password !== confirmPassword) {
             return res.render("user/register", { title: "register page", errorMessage: "Passwords do not match" });
         }
 
-        // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             console.log("Email is already in use")
             return res.render("user/register", { title: "register page", errorMessage: "Email is already in use" });
         }
 
-        // Hash password before saving
-
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = await generateUserId()
-        const newUser = new User({ userId, email, password: hashedPassword, name: fullName });
+        const newUser = new User({ userId, email, password: hashedPassword, name: fullName, phone });
 
-        // Save user to DB
         await newUser.save();
 
         const transporter = nodemailer.createTransport({
@@ -128,7 +125,6 @@ const userRegister = async (req, res) => {
             },
         });
     
-        // Email options
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
@@ -149,13 +145,10 @@ const userRegister = async (req, res) => {
         };
     
         
-        // Send the email
         try {
             await transporter.sendMail(mailOptions);
-            console.log("Verification mail sent to:", email);
             res.redirect("/user/login");
         } catch (error) {
-            console.error("Error sending email:", error);
             res.status(500).render('user/register', {
                 title: "register page",
                 errorMessage: "Failed to send mail. Please try again.",
@@ -173,36 +166,12 @@ const loadForgetPass = (req, res) => {
     res.render('user/forgetPass', { title: 'Forgot Password ?', errorMessage: "" })
 }
 
-const generateOtp = async (req, res) => {
-    const { email } = req.body;
 
-    // Validate email
-    if (!email) {
-        return res.status(400).render('user/forgetPass', {
-            title: "Forgot Password",
-            errorMessage: "Email is required",
-        });
-    }
+// Function to generate a 4-digit OTP
+const generateOtpCode = () => Math.floor(1000 + Math.random() * 9000);
 
-    const existingUser = await User.findOne({ email });
-        if (!existingUser) {
-            console.log("This email is not registered yet")
-            return res.render("user/forgetPass", { title: "register page", errorMessage: "Email not registered" });
-        }
-
-
-    // Generate a 4-digit OTP
-    const genOTP = () => {
-        return Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit OTP
-    };
-
-    const otp = genOTP();
-
-    // Store the OTP and email in the session
-    req.session.otp = otp;
-    req.session.email = email;
-
-    // Configure nodemailer transporter
+// Function to send OTP via email
+const sendOtpEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
@@ -211,7 +180,6 @@ const generateOtp = async (req, res) => {
         },
     });
 
-    // Email options
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
@@ -223,7 +191,7 @@ const generateOtp = async (req, res) => {
                 <p>Your One-Time Password (OTP) for verifying your account on FitBazar is:</p>
                 <p style="font-size: 24px; font-weight: bold; color:#2118cc;">${otp}</p>
                 <p>Please use this OTP to complete your verification process. This OTP is valid for a limited time.</p>
-                <p>If you did not request to reset password, please ignore this email.</p>
+                <p>If you did not request to reset your password, please ignore this email.</p>
                 <p>Best regards,<br>The FitBazar Team</p>
                 <hr style="border: 0; border-top: 1px solid #eee;">
                 <p style="font-size: 12px; color: #777;">This is an automated message. Please do not reply to this email.</p>
@@ -231,20 +199,79 @@ const generateOtp = async (req, res) => {
         `,
     };
 
-    
-    // Send the email
+    await transporter.sendMail(mailOptions);
+};
+
+// Common function to generate and send OTP
+const handleOtpGeneration = async (req, res, redirectPage) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).render("user/forgetPass", {
+            title: "Forgot Password",
+            errorMessage: "Email is required",
+        });
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (!existingUser) {
+        console.log("This email is not registered yet");
+        return res.render("user/forgetPass", {
+            title: "Register Page",
+            errorMessage: "Email not registered",
+        });
+    }
+
+    // Generate OTP and store in session
+    const otp = generateOtpCode();
+    console.log("Generated OTP:", otp);
+
+    req.session.otp = otp;
+    req.session.email = email;
+
     try {
-        await transporter.sendMail(mailOptions);
-        console.log("OTP sent successfully to:", email);
-        res.redirect("/user/otpverify");
+        await sendOtpEmail(email, otp);
+        res.redirect(redirectPage);
     } catch (error) {
-        console.error("Error sending email:", error);
-        res.status(500).render('user/forgetPass', {
+        console.error("OTP Sending Error:", error);
+        res.status(500).render("user/forgetPass", {
             title: "Forgot Password",
             errorMessage: "Failed to send OTP. Please try again.",
         });
     }
 };
+
+const newOtpGeneration = async (req, res, redirectPage) => {
+
+    // Generate OTP and store in session
+    const otp = generateOtpCode();
+    console.log("New OTP:", otp);
+
+    req.session.otp = otp;
+    const email = req.session.email;
+
+    try {
+        await sendOtpEmail(email, otp);
+        return res.json({ success: true, message: "OTP sent successfully" });
+    } catch (error) {
+        console.error("OTP Sending Error:", error);
+        res.status(500).render("user/forgetPass", {
+            title: "Forgot Password",
+            errorMessage: "Failed to send OTP. Please try again.",
+        });
+    }
+};
+
+// Route Handlers
+const generateOtp = async (req, res) => {
+    await handleOtpGeneration(req, res, "/user/otpverify");
+};
+
+const resendOtp = async (req, res) => {
+    await newOtpGeneration(req, res, "/user/otpverify");
+};
+
 
 
 const loadOtpVerify = (req, res) => {
@@ -254,13 +281,10 @@ const loadOtpVerify = (req, res) => {
 const verifyOtp = (req, res) => {
     const { otp1, otp2, otp3, otp4 } = req.body;
 
-    // Combine the OTP digits into a single string
     const formOtp = `${otp1}${otp2}${otp3}${otp4}`;
 
-    // Retrieve the OTP stored in the session
-    const sentOtp = req.session.otp; // Ensure this is initialized
+    const sentOtp = req.session.otp;
 
-    // Debugging: Log the OTPs
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
 
@@ -279,10 +303,9 @@ const verifyOtp = (req, res) => {
         });
     }
 
-    // Compare the OTPs (ensure both are strings)
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
-        res.redirect('/user/resetpass'); // Redirect to the reset password page
+        res.redirect('/user/resetpass');
     } else {
         res.status(400).render('user/otpverify', {
             title: 'Change Password',
@@ -304,17 +327,14 @@ const changePassword = async (req, res) => {
         const email = req.session.email;
         console.log(email)
 
-        // Ensure all fields are provided
         if (!newPassword || !confirmPassword) {
             return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "All fields are required" });
         }
 
-        // Check password length
         if (newPassword.length < 6) {
             return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Password must be 6+ characters" });
         }
 
-        // Check if passwords match
         if (newPassword !== confirmPassword) {
             return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Passwords do not match" });
         }
@@ -328,14 +348,11 @@ const changePassword = async (req, res) => {
             });
         }
 
-        // Hash the new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // Update the user's password
         user.password = hashedPassword;
         await user.save();
 
-        // Redirect on success
         res.redirect("/user/login");
 
     } catch (err) {
@@ -354,4 +371,4 @@ const logoutUser = (req, res) => {
     });
 };
 
-export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, loadForgetPass, loadConfirmOtp, changePassword, loadOtpVerify, logoutUser, generateOtp, verifyOtp };
+export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, resendOtp, loadForgetPass, loadConfirmOtp, changePassword, loadOtpVerify, logoutUser, generateOtp, verifyOtp };

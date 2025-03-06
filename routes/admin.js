@@ -15,24 +15,24 @@ router.get('/logout', adminController.logout);
 router.get('/dashboard', adminAuth.checkSession, adminController.loadDashboard);
 
 // category Management
-router.get('/categories', categoryController.categoryInfo);
+router.get('/categories',adminAuth.checkSession, categoryController.categoryInfo);
 router.post('/categories', upload.single("addThumbnail"), categoryController.addCategory);
 router.put('/categories', upload.single('editThumbnail'),categoryController.editCategory);
-router.get('/categories/filter', categoryController.filterCategories);
+router.get('/categories/filter', adminAuth.checkSession, categoryController.filterCategories);
 
 // product management
-router.get('/products', productController.productInfo);
-router.get('/addProducts', productController.loadaddProducts);
+router.get('/products', adminAuth.checkSession, productController.productInfo);
+router.get('/addProducts', adminAuth.checkSession, productController.loadaddProducts);
 router.post('/addProducts',upload.array('productImages'),productController.addProducts);
-router.get('/editProducts/:productId', productController.loadEditProducts);
+router.get('/editProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
 router.put('/editProducts',upload.array('productImages'),productController.editProducts);
 
 // user management
-router.get('/customers', customerController.userInfo);
+router.get('/customers',adminAuth.checkSession, customerController.userInfo);
 router.put("/customers", customerController.toggleBlockStatus);
-router.get('/viewcustomers', customerController.userDeatails);
+router.get('/viewcustomers',adminAuth.checkSession, customerController.userDeatails);
 router.post('/viewcustomers', customerController.changeBlockStatus);
-router.get('/customers/filter', customerController.filterCustomers);
+router.get('/customers/filter',adminAuth.checkSession, customerController.filterCustomers);
 
 
 

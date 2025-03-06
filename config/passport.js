@@ -25,7 +25,6 @@ passport.use(
                     await user.save();
                 }
 
-                // Store user in session after authentication
                 req.session.user = user
 
                 return done(null, user);

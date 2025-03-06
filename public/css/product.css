@@ -1,0 +1,210 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #3B3389, #4D44AD);
+}
+
+.navbar-brand {
+    font-size: 32px;
+    color: white !important;
+}
+
+.nav-link.active {
+    background-color: #E0DBFC !important;
+    color: #3B3389 !important;
+    border-radius: 20px;
+}
+
+.custom-outline-btn {
+    color: #4132e6;
+    border: 1.5px solid #4132e6;
+    background: transparent;
+    transition: all 0.3s ease-in-out;
+    font-size: 0.8em;
+}
+
+.custom-outline-btn:hover {
+    background: #4132e6;
+    color: white;
+}
+
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.buy-now-btn, .add-to-cart-btn {
+    background: linear-gradient(to right, #9c3ec8, #3858a9);
+    border: none;
+    font-size: 0.8em;
+    transition: all 0.3s ease-in-out;
+}
+
+.buy-now-btn:hover, .add-to-cart-btn:hover {
+    background: linear-gradient(to right, #6c28b6, #283a8a);
+}
+
+.nav-tabs {
+    border-bottom: 2px solid #ddd;
+}
+
+.nav-tabs .nav-link {
+    color: #555;
+    font-weight: bold;
+}
+
+.nav-tabs .nav-link.active {
+    color: #000;
+    border-bottom: 2px solid #007bff;
+    border-radius: 8px 8px 0 0;
+}
+
+.card {
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.product-details .card, #product-container .card {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+}
+
+.thumbnail {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+}
+
+.thumbnail:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.zoom-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.zoom-image {
+    transition: transform 0.1s ease;
+    cursor: zoom-in;
+}
+
+.zoom-lens {
+    position: absolute;
+    border: 1px solid #ddd;
+    background: rgba(255, 255, 255, 0.184);
+    pointer-events: none;
+    display: none;
+    width: 150px;
+    height: 150px;
+}
+
+.color-btn.active {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.breadcrumb {
+    font-size: 0.8em;
+}
+
+.product-img {
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+}
+
+.badge {
+    font-size: 0.8rem;
+}
+
+.form-range, #priceRange {
+    width: 100%;
+}
+
+
+
+.pagination .page-link {
+    color: #4132e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #4132e6;
+    border-color: #4132e6;
+}
+
+.pagination .page-link:hover {
+    background-color: #2d4e97;
+    color: white;
+}
+
+footer {
+    background-color: #3B3389;
+}
+
+/* Custom Range Slider Styling */
+.custom-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}
+
+/* Track before the thumb */
+.custom-range::-webkit-slider-runnable-track {
+    background: linear-gradient(to right, #da22ff 0%, #2f1b9d 100%);
+    height: 8px;
+    border-radius: 5px;
+}
+
+/* Thumb (Handle) - Chrome, Safari, Edge */
+.custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #d322ff;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -5px;
+}
+
+/* Thumb (Handle) - Firefox */
+.custom-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #8522ff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Hover Effect */
+.custom-range:hover {
+    opacity: 1;
+}
+
+/* Active Thumb */
+.custom-range:active::-webkit-slider-thumb {
+    background: #7a1ba9;
+}

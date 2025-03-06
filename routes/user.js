@@ -13,8 +13,8 @@ router.post('/register', userController.userRegister);
 
 router.get('/forgetPass', userController.loadForgetPass);
 
-router.post('/sendmail', userController.generateOtp)
-
+router.post('/sendmail', userController.generateOtp);
+router.post('/resendOtp', userController.resendOtp);
 
 router.get('/otpverify', userController.loadOtpVerify);
 router.post('/otpverify', userController.verifyOtp)

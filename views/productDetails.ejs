@@ -1,135 +1,5 @@
-
-
-    
 <head>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            background: linear-gradient(90deg, #3B3389, #4D44AD);
-        }
-        .navbar-brand {
-            font-size: 32px;
-            color: white !important;
-        }
-        
-        .nav-link.active {
-            background-color: #E0DBFC !important;
-            color: #3B3389 !important;
-            border-radius: 20px;
-        }
-        
-        .custom-outline-btn {
-            color: #4132e6;
-            border: 1.5px solid #4132e6;
-            background: transparent;
-            transition: all 0.3s ease-in-out;
-            font-size: 0.8em;
-        }
-
-        .custom-outline-btn:hover {
-            background: #4132e6;
-            color: white;
-        }
-        .container-fluid {
-            padding-left: 0;
-            padding-right: 0;
-        }
-        .buy-now-btn {
-            background: linear-gradient(to right, #9c3ec8, #3858a9);
-            border: none;
-            font-size: 0.8em;
-            transition: all 0.3s ease-in-out;
-        }
-        .buy-now-btn:hover {
-            background: linear-gradient(to right, #6c28b6, #283a8a);
-        }
-        .nav-tabs {
-            border-bottom: 2px solid #ddd;
-        }
-        .nav-tabs .nav-link {
-            color: #555;
-            font-weight: bold;
-        }
-        .nav-tabs .nav-link.active {
-            color: #000;
-            border-bottom: 2px solid #007bff;
-        }
-        
-        .card {
-            border-radius: 8px;
-            background: #ffffff;
-            border: 1px solid #e0e0e0;
-            box-shadow: none;
-        }
-        .copy-btn {
-            font-size: 12px;
-        }
-
-        footer {
-            background-color: #3B3389;
-        }
-
-        .product-details .card {
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0; 
-        }
-
-        #product-container .card {
-            background-color: #ffffff; 
-            border: 1px solid #e0e0e0; 
-        }
-        .add-to-cart-btn {
-            background: linear-gradient(to right, #9c3ec8, #3858a9);
-            border: none;
-            transition: all 0.3s ease-in-out;
-        }
-        
-        .thumbnail {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-radius: 8px; 
-        }
-
-        .thumbnail:hover {
-            transform: scale(1.01); 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-            z-index: 1;
-        }
-        /* Zoom Container */
-        .zoom-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        /* Zoom Image */
-        .zoom-image {
-            transition: transform 0.1s ease;
-            cursor: zoom-in;
-        }
-
-        
-        .zoom-lens {
-            position: absolute;
-            border: 1px solid #ddd;
-            background: rgba(255, 255, 255, 0.184);
-            pointer-events: none;
-            display: none;
-            width: 150px;
-            height: 150px;
-        }
-        .nav-tabs .nav-link.active {
-            border-radius: 8px 8px 0 0;
-        }
-
-        .color-btn.active {
-            background-color: #6c757d;
-            color: white;
-            border-color: #6c757d;
-        }
-
-    </style>
+     <link rel="stylesheet" href="/css/product.css">
 </head>
 
 <body class="bg-white">
@@ -156,7 +26,7 @@
                 <ul class="nav gap-5 align-items-center">
                     <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active btn py-1 px-4" href="/shop">Shop</a>
+                        <a class="nav-link active user-nav-text btn py-1 px-4" href="/shop">Shop</a>
                     </li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
@@ -165,6 +35,18 @@
             </div>
         </div>
     </nav>
+
+    <div class="container mt-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item m-0"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item m-0"><a href="/shop">Shop</a></li>
+                <li class="breadcrumb-item m-0"><a href="/shop?category=<%= product.category %>"><%= product.category %></a></li>
+                <li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+            </ol>
+        </nav>
+    </div>
+    
 
     <main>
         <div class="container mt-5">
@@ -370,7 +252,7 @@
             <div class="row" id="product-container">
                 <% relateproducts.forEach(product => { %>
                     <div class="col-md-3 col-lg-3 my-3">
-                        <a href="/user/product?productId=<%= product.productId %>" class="text-decoration-none text-dark">
+                        <a href="/product?productId=<%= product.productId %>" class="text-decoration-none text-dark">
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
                                 <div class="position-relative">

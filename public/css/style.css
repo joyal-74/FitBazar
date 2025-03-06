@@ -690,3 +690,17 @@
 .illustration {
     height: 350px;
 }
+
+
+.resend-link {
+    color: #0c088b !important;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.resend-link.disabled {
+    color: lightgray !important;
+    pointer-events: none;
+    cursor: not-allowed;
+}
