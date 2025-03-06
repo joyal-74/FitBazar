@@ -28,21 +28,22 @@
 
 <!-- Sidebar + Main Content -->
 <div class="container-fluid w-100">
-    <div class="row">
+    <div class="row g-0">
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
-            <ul class="nav flex-column mt-3 gap-2">
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-boxes me-2"></i>Categories</a></li>
-                <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fas fa-tags me-2"></i>Products</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fas fa-box me-2"></i>Orders</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
             </ul>
         </nav>
+        
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">

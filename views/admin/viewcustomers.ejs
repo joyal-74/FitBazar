@@ -29,44 +29,62 @@
     <!-- Sidebar + Main Content -->
     <!-- Sidebar + Main Content Wrapper -->
     <div class="container-fluid">
-        <div class="row">
+        <div class="row g-0">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
                 <ul class="nav flex-column mt-3 gap-2">
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
-                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
                     <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
                 </ul>
             </nav>
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                <h2>Customer Details</h2>
+                <h3 class="fw-semibold my-3">Customer Details</h3>
 
                 <div class="row">
                     <!-- Profile Card -->
                     <div class="col-md-4">
                         <div class="profile-card">
                             <div class="text-center">
-                                <img src="<%=customer.profilePic%>" class="rounded-circle mb-2" alt="User">
+                                <img src="<%= (customer.profilePic && customer.profilePic.trim() !== '') ? customer.profilePic : '/placeholder.jpg' %>" 
+                                    alt="User" 
+                                    width="70" height="70"
+                                    class="rounded-circle mb-2"
+                                    onerror="this.onerror=null; this.src='/placeholder.jpg';">
+
+                                
                                 <h4><%= customer.name %></h4>
-                                <span class="status-badge"><%= customer.isBlocked%></span>
+                                <span class="status-badge"><%= customer.isBlocked ? 'Blocked' : 'Active' %></span>
                             </div>
                             <hr>
-                            <p><strong>Customer ID:</strong> ID-011221</p>
+                            
+                            <p><strong>Customer ID:</strong> <%= customer.userId ? customer.userId : customer.userId %></p>
                             <p><strong>Email:</strong> <%= customer.email %></p>
-                            <p><strong>Address:</strong> Kozhikode, Kerala, India</p>
-                            <p><strong>Phone:</strong> +91 7306950587</p>
+                            <p><strong>Address:</strong> <%= customer.address && customer.address.trim() !== '' ? customer.address : 'Not yet updated' %></p>
+                            <p><strong>Phone:</strong> <%= customer.phone ? customer.phone : 'Not yet updated' %></p>
                             <p><strong>Last Transaction:</strong> 12 Dec 2025</p>
-                            <p><strong>Last Online:</strong> 1 Day Ago</p>
-                            <button class="btn btn-danger w-50"><%= customer.isBlocked%></button>
+                        
+                            <!-- Center the Button -->
+                            <div class="d-flex justify-content-center mt-3">
+                                <form action="/admin/viewcustomers" method="POST" id="block-unblock-form">
+                                    <input type="hidden" name="userId" value="<%= customer.userId %>">
+                                    <input type="hidden" name="isBlocked" value="<%= customer.isBlocked ? 'false' : 'true' %>">
+                                    <button type="submit" class="btn w-100 <%= customer.isBlocked ? 'btn-danger' : 'btn-success' %>">
+                                        <%= customer.isBlocked ? 'Unblock' : 'Block' %>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
+                        
+                        
                     </div>
 
                     <!-- Orders & Transactions -->
@@ -75,15 +93,14 @@
                             <div class="col-md-6">
                                 <div class="profile-card text-center">
                                     <h5>Total Orders</h5>
-                                    <h2>2,400</h2>
+                                    <h2>0</h2>
                                     
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="profile-card text-center">
                                     <h5>Total Balance</h5>
-                                    <h2>₹10,000.00</h2>
-                                    
+                                    <h2>₹0.00</h2>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +108,7 @@
                         <!-- Transaction History Table -->
                         <div class="profile-card">
                             <div class="d-flex justify-content-between">
-                                <h5>Transaction History</h5>
+                                <h5>Order History</h5>
                                 <div>
                                     <button class="btn btn-light btn-sm">Select Date</button>
                                     <button class="btn btn-light btn-sm">Filters</button>
@@ -139,5 +156,28 @@
             </main>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("block-unblock-form").addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const isBlocked = this.querySelector("input[name='isBlocked']").value === "true";
+
+                    const result = await Swal.fire({
+                        title: isBlocked ? "Unblock User?" : "Block User?",
+                        text: `Are you sure you want to ${isBlocked ? "unblock" : "block"} this user?`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: isBlocked ? "#28a745" : "#d33",
+                        cancelButtonColor: "#6c757d",
+                        confirmButtonText: isBlocked ? "Yes, Unblock" : "Yes, Block",
+                    });
+
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+    </script>
 
 </body>

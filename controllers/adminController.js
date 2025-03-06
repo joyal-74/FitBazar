@@ -38,6 +38,8 @@ const adminLogin = async (req, res) => {
             return res.render('admin/login', { title: "Login Page", errorMessage });
         }
 
+        req.session.admin = admin;
+
         // Redirect on success
         return res.render('admin/dashboard',{ title : "dashboard", errorMessage: ""});
 
@@ -48,8 +50,20 @@ const adminLogin = async (req, res) => {
     }
 };
 
+const logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error destroying session:", err);
+            return res.status(500).send("Error logging out.");
+        }
+        res.clearCookie("connect.sid");
+        res.redirect("/admin/login");
+    });
+};
+
+
 function loadDashboard(req, res) {
-    res.render('admin/dashboard', { title: 'Admin dashboard', errorMessage: "" });
+    res.render('admin/dashboard', { title: 'Admin dashboard', errorMessage: "", admin: req.session.admin });
 }
 
 function loadOrders(req, res) {
@@ -67,4 +81,4 @@ function loadCustomers(req, res) {
 }
 
 
-export default { loadLogin, adminLogin, loadDashboard, loadOrders, viewOrders, loadCustomers }
+export default { loadLogin, adminLogin, loadDashboard, loadOrders, viewOrders, loadCustomers, logout }

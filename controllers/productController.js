@@ -97,11 +97,9 @@ const editProducts = async (req, res) => {
             return res.status(404).json({ error: "Product not found." });
         }
 
-        // Retain existing images if no new ones are uploaded
         let productImages = product.productImages;
         if (req.files && req.files.length > 0) {
-            productImages = req.files.map(file => file.path);  // Cloudinary stores file paths (URLs)
-            // console.log("New uploaded images:", productImages);
+            productImages = req.files.map(file => file.path);           
         }
 
         // Update product fields
@@ -116,7 +114,7 @@ const editProducts = async (req, res) => {
         product.price = parseFloat(productPrice) || 0;
         product.weight = parseFloat(productWeight) || 0;
         product.productOffer = productOffer;
-        product.visibility = visibility === "true"; // Convert string to boolean
+        product.visibility = visibility === "true";
         product.productImages = productImages;
 
         // Save updated product
@@ -136,28 +134,62 @@ const editProducts = async (req, res) => {
 
 const productInfo = async (req, res) => {
     try {
-        const searchQuery = req.query.q || "";
-        
         const page = parseInt(req.query.page) || 1;
         const limit = 8;
         const skip = (page - 1) * limit;
+        const filter = {};
 
-        const category = await Category.find({visibility : true});
+        const categories = await Category.find();
 
-        const productData = await Products.find({ name: { $regex: searchQuery, $options: "i" }}).sort({ createdAt: -1 }).skip(skip).limit(limit);
+        if (req.query.category && req.query.category !== "all") {
+            filter.category = req.query.category;
+        }
 
-        const totalProducts = await Products.countDocuments({ name: { $regex: searchQuery, $options: "i" }});
+        if (req.query.stock === "1") {
+            filter.stock = { $gt: 0 };
+        } else if (req.query.stock === "2") {
+            filter.stock = { $eq: 0 };
+        }
 
+        if (req.query.status === "1") {
+            filter.visibility = true;
+        } else if (req.query.status === "2") {
+            filter.visibility = false;
+        }
+
+        if (req.query.query) {
+            const searchRegex = new RegExp(req.query.query, "i");
+            filter.name = searchRegex;
+        }
+
+        const products = await Products.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        const totalProducts = await Products.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / limit);
 
-        res.render("admin/products", {title: "Product", errorMessage: "", cat : category, product: productData, currentPage: page,
-            totalPages: totalPages, totalProducts: totalProducts, searchQuery: searchQuery
+        res.render("admin/products", {
+            title: "Products",
+            errorMessage: "",
+            product: products,
+            cat: categories,
+            currentPage: page,
+            totalPages: totalPages,
+            totalProducts: totalProducts,
+            selectedCategory: req.query.category || "all",
+            selectedStock: req.query.stock || "all",
+            selectedStatus: req.query.status || "all",
+            searchQuery: req.query.query || "",
         });
+
     } catch (error) {
-        console.error("Search error:", error);
+        console.error("Product info fetch error:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 
 const loadEditProducts = async (req, res) => {

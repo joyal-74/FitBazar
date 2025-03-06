@@ -2,7 +2,7 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container d-flex align-items-center justify-content-between">
+        <div class="container d-flex align-items-center justify-content-between px-3">
             <!-- Logo -->
             <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
 
@@ -25,24 +25,24 @@
         </div>
     </nav>
 
-
     <!-- Sidebar + Main Content Wrapper -->
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid p-0">
+        <div class="row g-0">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
-                <ul class="nav flex-column mt-3 gap-2">
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
-                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="#"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link " href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
                 </ul>
             </nav>
+            
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
@@ -53,24 +53,23 @@
                     <!-- Filter by Category -->
                     <div class="d-flex gap-2">
                         <div class="flex-grow-1" style="max-width: 180px;">
-                            <select class="form-select">
-                                <option selected disabled hidden>Filter ⇅</option>
-                                <option value="1">All</option>
-                                <option value="2">Active</option>
-                                <option value="3">Blocked</option>
+                            <select class="form-select filter-select">
+                                <option value="all" <%= selectedFilter === "all" ? "selected" : "" %>>All</option>
+                                <option value="false" <%= selectedFilter === "false" ? "selected" : "" %>>Active</option>
+                                <option value="true" <%= selectedFilter === "true" ? "selected" : "" %>>Blocked</option>
                             </select>
                         </div>
+                        
                     </div>
 
                     <!-- Search Bar -->
                     <form class="d-flex search-container flex-grow-1" id="searchForm" style="max-width: 300px;">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchval">
                         <button class="btn" type="submit" style="background-color: #3e29a8;">
                             <i class="fas fa-search text-white"></i>
                         </button>
                     </form>
                 </div>
-
 
                 <!-- Products Table -->
                 <div class="card">
@@ -113,8 +112,7 @@
                                                     <i class="fa-solid fa-circle-check fa-xl" style="color: #0a8f3b;"></i>
                                                 </a>
                                             <% } %>
-                                            <a href="/admin/viewcustomers?id=<%= customer.userId %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a>
-
+                                            <a href="/admin/viewcustomers?user=<%= customer.userId %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a>
                                         </td>                                        
                                     </tr>
                                     <% }) %>
@@ -126,6 +124,7 @@
             </main>
         </div>
     </div>
+
     <script>
         document.querySelectorAll(".toggle-block").forEach(button => {
             button.addEventListener("click", async (event) => {
@@ -134,42 +133,96 @@
                 const customerId = button.getAttribute("data-id");
                 const isBlocked = button.getAttribute("data-blocked") === "true";
 
-                try {
-                    const response = await fetch(`/admin/customers?user=${customerId}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ isBlocked: !isBlocked })
-                    });
+                // Show confirmation prompt before blocking/unblocking
+                const confirmAction = await Swal.fire({
+                    title: `Are you sure?`,
+                    text: `Do you want to ${isBlocked ? "unblock" : "block"} this customer?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: `Yes, ${isBlocked ? "unblock" : "block"}!`,
+                    cancelButtonText: "Cancel"
+                });
 
-                    const result = await response.json();
-
-                    if (response.ok) {
-                        Swal.fire({
-                            position: "top-center",
-                            icon: "success",
-                            title: `Customer ${!isBlocked ? "Blocked" : "Unblocked"} Successfully`,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload(); // Reload after showing success message
+                // If user clicks "OK", proceed with blocking/unblocking
+                if (confirmAction.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/customers?user=${customerId}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ isBlocked: !isBlocked })
                         });
-                    } else {
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            Swal.fire({
+                                position: "top-center",
+                                icon: "success",
+                                title: `Customer ${!isBlocked ? "Blocked" : "Unblocked"} Successfully`,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload(); // Reload after showing success message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Failed to update status",
+                                text: result.error || "Something went wrong. Try again!",
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
                         Swal.fire({
                             icon: "error",
-                            title: "Failed to update status",
-                            text: result.error || "Something went wrong. Try again!",
+                            title: "Request Failed",
+                            text: "Something went wrong. Please try again later.",
                         });
                     }
-                } catch (error) {
-                    console.error("Error:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Request Failed",
-                        text: "Something went wrong. Please try again later.",
-                    });
                 }
             });
         });
+
+        document.querySelector('.filter-select').addEventListener('change', function () {
+            const filterValue = this.value;
+            let query = '';
+
+            if (filterValue === 'false') {
+                query = '?isBlocked=false';  // "Active" users mean isBlocked = false
+            } else if (filterValue === 'true') {
+                query = '?isBlocked=true';  // "Blocked" users mean isBlocked = true
+            }
+
+            window.location.href = `/admin/customers${query}`;
+        });
+
+        document.getElementById('searchForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const searchQuery = document.getElementById('searchval').value.trim();
+            const currentUrl = new URL(window.location.href);
+            
+            // Preserve existing filter and pagination
+            const isBlocked = currentUrl.searchParams.get("isBlocked") || "all";
+            const page = currentUrl.searchParams.get("page") || 1;
+
+            try {
+                let queryParams = new URLSearchParams();
+                
+                if (searchQuery) {
+                    queryParams.set("query", searchQuery);
+                }
+                if (isBlocked !== "all") {
+                    queryParams.set("isBlocked", isBlocked);
+                }
+                queryParams.set("page", page);
+
+                window.location.href = `/admin/customers?${queryParams.toString()}`;
+            } catch (error) {
+                console.log(error);
+            }
+        });
     </script> 
 </body>
-

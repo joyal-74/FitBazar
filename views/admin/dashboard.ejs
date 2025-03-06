@@ -1,4 +1,4 @@
-<body>
+<body class="bg-light">
 
 
 <!-- Navbar -->
@@ -18,7 +18,7 @@
                 <a href="#" class="me-3 notification-icon">
                     <i class="fa-regular fa-lg fa-bell" style="color: #ffffff;"></i>
                 </a>
-                <a href="#" class="avathar">
+                <a href="#" class="avathar me-3">
                     <i class="fa-solid fa-circle-user fa-xl" style="color: #ffffff;"></i>
                 </a>
             </div>
@@ -28,28 +28,28 @@
 
     <!-- Sidebar + Main Content in the same row -->
     <div class="container-fluid">
-        <div class="row">
+        <div class="row g-0">
             <!-- Sidebar -->
-            <nav id="sidebarNav" class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2 collapse show">
-                <ul class="nav flex-column mt-3 gap-2">
-                    <li class="nav-item btn admin-btns w-75 p-0"><a class="nav-link active text-white" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/categories"><i class="fas fa-grid-2 me-2"></i>Categories</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/products"><i class="fas fa-tags me-2"></i>Products</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/customers"><i class="fas fa-user me-2"></i>Customers</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="/admin/orders"><i class="fas fa-bag-shopping me-2"></i>Orders</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                    <li class="nav-item ps-4"><a class="nav-link text-dark" href="#"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
                 </ul>
-            </nav>
+            </nav>            
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-5 mt-4">
                 <div class="row g-4">
                     <div class="col-md-6 col-xl-3">
                         <div class="card shadow-sm p-3 d-flex align-items-center">
-                            <div class="icon-container p-3 bg-warning text-white"><i class="fas fa-users fa-lg"></i></div>
+                            <div class="icon-container p-3 bg-danger text-white"><i class="fas fa-users fa-lg"></i></div>
                             <div class="ms-3">
                                 <p class="text-muted mb-1">Total Clients</p>
                                 <h5>6389</h5>
@@ -58,28 +58,28 @@
                     </div>
                     <div class="col-md-6 col-xl-3">
                         <div class="card shadow-sm p-3 d-flex align-items-center">
-                            <div class="icon-container p-3 bg-success text-white"><i class="fas fa-wallet fa-lg"></i></div>
+                            <div class="icon-container p-3 bg-primary text-white"><i class="fas fa-wallet fa-lg p-1"></i></div>
                             <div class="ms-3">
-                                <p class="text-muted mb-1">Account Balance</p>
-                                <h5>$46,760.89</h5>
+                                <p class="text-muted mb-1">Total Sales</p>
+                                <h5>46,760</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-xl-3">
                         <div class="card shadow-sm p-3 d-flex align-items-center">
-                            <div class="icon-container p-3 bg-warning text-white"><i class="fas fa-users fa-lg"></i></div>
+                            <div class="icon-container p-3 bg-warning text-white"><i class="fa-solid fa-dumbbell fa-lg"></i></i></div>
                             <div class="ms-3">
-                                <p class="text-muted mb-1">Total Clients</p>
+                                <p class="text-muted mb-1">Total Orders</p>
                                 <h5>6389</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-xl-3">
                         <div class="card shadow-sm p-3 d-flex align-items-center">
-                            <div class="icon-container p-3 bg-success text-white"><i class="fas fa-wallet fa-lg"></i></div>
+                            <div class="icon-container p-3 bg-success text-white"><i class="fa-solid fa-chart-pie-simple fa-lg px-1"></i></div>
                             <div class="ms-3">
-                                <p class="text-muted mb-1">Account Balance</p>
-                                <h5>$46,760.89</h5>
+                                <p class="text-muted mb-1">Products Sold</p>
+                                <h5>676</h5>
                             </div>
                         </div>
                     </div>

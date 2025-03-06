@@ -1,12 +1,14 @@
 import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
 import Category from '../model/categoryModel.js'
+import Products from "../model/productModel.js";
 import nodemailer from "nodemailer"
 
 // Home Page Handler
 const getUserHome = async (req, res)=> {
     const category = await Category.find();
-    res.render('home', { title: 'Home Page', category });
+    const product = await Products.find({visibility : true}).sort({createdAt : -1}).limit(8)
+    res.render('home', { title: 'Home Page', category, product, user: req.session.user });
 }
 
 // Login Page Handler
@@ -58,8 +60,11 @@ let userLogin = async (req, res) => {
             return res.render('user/login', { title: "Login Page", errorMessage });
         }
 
+        req.session.user = user
+
+        console.log(req.session.user)
         // Redirect on success
-        return res.redirect('/user/home');
+        return res.redirect('/home');
 
     } catch (err) {
         console.error("Login Error:", err);
