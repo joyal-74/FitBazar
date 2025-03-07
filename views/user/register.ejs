@@ -24,7 +24,7 @@
                         <input type="email" class="form-control" placeholder="Email Address" id="email" name="email">
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Phone Number" id="email" name="phone">
+                        <input type="text" class="form-control" placeholder="Phone Number" id="phone" name="phone">
                     </div>
                     <div class="mb-3">
                         <input type="password" class="form-control" placeholder="Password" id="password"
@@ -54,6 +54,8 @@
 
     <script>
         document.getElementById("registerForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
             let email = document.getElementById("email").value.trim();
             let password = document.getElementById("password").value.trim();
             let phone = document.getElementById("phone").value.trim();
@@ -65,11 +67,12 @@
             errorText.innerText = "";
             errorMessageContainer.classList.add("d-none");
 
+            let isValid = true;
+
             if (!email || !password) {
                 errorText.innerText = "Email and password are required";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
-                return;
+                isValid = false;
             }
 
             // Validate email format
@@ -77,30 +80,31 @@
             if (!emailPattern.test(email)) {
                 errorText.innerText = "Invalid email format";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
-                return;
+                isValid = false;
             }
 
-            if (phone.length < 10) {
-                errorText.innerText = "Phone Number should be 10 characters";
+            if (phone.length !== 10) { // Ensuring exactly 10 digits
+                errorText.innerText = "Phone Number should be exactly 10 characters";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
-                return;
+                isValid = false;
             }
 
             if (password.length < 6) {
-                errorText.innerText = "Password must be 6+ characters";
+                errorText.innerText = "Password must be at least 6 characters";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
-                return;
+                isValid = false;
             }
 
             if (password !== confirmPassword) {
-                errorText.innerText = "Password do not match";
+                errorText.innerText = "Passwords do not match";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
-                return;
+                isValid = false;
+            }
+
+            if (isValid) {
+                this.submit();
             }
         });
+
     </script>
 </body>

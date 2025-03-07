@@ -84,39 +84,50 @@ const generateUserId = async () => {
     return `ID${1000 + count + 1}`;
 };
 
+// Function to generate a 4-digit OTP
+const generateOtpCode = () => Math.floor(1000 + Math.random() * 9000);
+
 const userRegister = async (req, res) => {
     try {
-        const { email, password, confirmPassword, fullName, phone } = req.body;
+        const { email, password, fullName, phone } = req.body;
 
-        if (!email || !password || !confirmPassword) {
-            return res.render("user/register", { title: "register page", errorMessage: "All fields are required" });
-        }
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
-            return res.render("user/register", { title: "register page", errorMessage: "Invalid email format" });
-        }
-
-        if (password.length < 6) {
-            return res.render("user/register", { title: "register page", errorMessage: "Password must be 6+ characters" });
-        }
-
-        if (password !== confirmPassword) {
-            return res.render("user/register", { title: "register page", errorMessage: "Passwords do not match" });
-        }
-
+        // Check if email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log("Email is already in use")
-            return res.render("user/register", { title: "register page", errorMessage: "Email is already in use" });
+            console.log("Email is already in use");
+            return res.status(400).render("user/register", { 
+                title: "Register Page", 
+                errorMessage: "Email is already in use" 
+            });
         }
 
+        // Hash password and generate user ID
         const hashedPassword = await bcrypt.hash(password, 10);
-        const userId = await generateUserId()
-        const newUser = new User({ userId, email, password: hashedPassword, name: fullName, phone });
+        const userId = await generateUserId();
 
+        // Create new user
+        const newUser = new User({ userId, email, password: hashedPassword, name: fullName, phone });
         await newUser.save();
 
+        // Generate OTP
+        const otp = generateOtpCode();
+        console.log("Generated OTP:", otp);
+
+        // Store OTP in session (for later verification)
+        req.session.otp = otp;
+        req.session.otpEmail = email;
+        req.session.requestFrom = "register";
+
+        // Check for environment variables
+        if (!process.env.EMAIL || !process.env.PASSWORD) {
+            console.error("Missing email credentials in environment variables.");
+            return res.status(500).render("user/register", { 
+                title: "Register Page", 
+                errorMessage: "Server email configuration error. Please try again later." 
+            });
+        }
+
+        // Configure nodemailer
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -124,51 +135,56 @@ const userRegister = async (req, res) => {
                 pass: process.env.PASSWORD,
             },
         });
-    
+
+        // Email content
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: "Your FitBazar account successfully created",
+            subject: "Verify Your Email for FitBazar",
             html: `
                 <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #2118cc;">FitBazar Account successfully created</h2>
+                    <h2 style="color: #2118cc;">FitBazar Account Verification</h2>
                     <p>Hello,</p>
-                    <p>Your fitbazar account Email is:</p>
-                    <p style="font-size: 12px; font-weight: bold; color:#2118cc;">Email : ${email}</p>
-                    <p>Please use mail to complete your login process.</p>
-                    <h5>If you did not put this login request, please contact - <span color:#2118cc;><a>fitbazarapplication@gmail.com.</a></span></h5>
+                    <p>Your registered FitBazar email is:</p>
+                    <p style="font-size: 12px; font-weight: bold; color:#2118cc;">${email}</p>
+                    <p>Your One-Time Password (OTP) for account verification:</p>
+                    <p style="font-size: 24px; font-weight: bold; color:#2118cc;">${otp}</p>
+                    <p>Please use this OTP to complete your registration process.</p>
+                    <h5>If you did not request this registration, please contact - <a href="mailto:fitbazarapplication@gmail.com">fitbazarapplication@gmail.com</a></h5>
                     <p>Best regards,<br>The FitBazar Team</p>
                     <hr style="border: 0; border-top: 1px solid #eee;">
-                    <p style="font-size: 12px; color: #777;">This is an automated message. Please do not reply to this email.</p>
+                    <p style="font-size: 12px; color: #777;">This is an automated message. Please do not reply.</p>
                 </div>
             `,
         };
-    
-        
+
+        // Send Email
         try {
             await transporter.sendMail(mailOptions);
-            res.redirect("/user/login");
+            return res.render("user/otpverify", { title: "otp verify", errorMessage: "" });
         } catch (error) {
-            res.status(500).render('user/register', {
-                title: "register page",
-                errorMessage: "Failed to send mail. Please try again.",
+            console.error("Email sending error:", error);
+            return res.status(500).render("user/register", {
+                title: "Register Page",
+                errorMessage: "Failed to send verification email. Please try again.",
             });
-        }        
+        }
 
     } catch (err) {
         console.error("Registration error:", err);
-        res.render("user/register", { title: "register page", errorMessage: "Internal server error" });
+        return res.status(500).render("user/register", { 
+            title: "Register Page", 
+            errorMessage: "Internal server error. Please try again later." 
+        });
     }
 };
+
 
 
 const loadForgetPass = (req, res) => {
     res.render('user/forgetPass', { title: 'Forgot Password ?', errorMessage: "" })
 }
 
-
-// Function to generate a 4-digit OTP
-const generateOtpCode = () => Math.floor(1000 + Math.random() * 9000);
 
 // Function to send OTP via email
 const sendOtpEmail = async (email, otp) => {
@@ -229,6 +245,7 @@ const handleOtpGeneration = async (req, res, redirectPage) => {
 
     req.session.otp = otp;
     req.session.email = email;
+    req.session.requestFrom = "forgot-password"; 
 
     try {
         await sendOtpEmail(email, otp);
@@ -238,6 +255,7 @@ const handleOtpGeneration = async (req, res, redirectPage) => {
         res.status(500).render("user/forgetPass", {
             title: "Forgot Password",
             errorMessage: "Failed to send OTP. Please try again.",
+            requestFrom : "register"
         });
     }
 };
@@ -265,6 +283,7 @@ const newOtpGeneration = async (req, res, redirectPage) => {
 
 // Route Handlers
 const generateOtp = async (req, res) => {
+
     await handleOtpGeneration(req, res, "/user/otpverify");
 };
 
@@ -275,20 +294,25 @@ const resendOtp = async (req, res) => {
 
 
 const loadOtpVerify = (req, res) => {
-    res.render('user/otpverify', { title: "otp verify page" , errorMessage: ""})
+    res.render('user/otpverify', { title: "Verify OTP", errorMessage : "" });
 }
 
 const verifyOtp = (req, res) => {
-    const { otp1, otp2, otp3, otp4 } = req.body;
+    const { otp1, otp2, otp3, otp4} = req.body;
 
+    const requestFrom = req.session.requestFrom;
+
+    // Combine the OTP digits into a single string
     const formOtp = `${otp1}${otp2}${otp3}${otp4}`;
 
+    // Retrieve the OTP stored in the session
     const sentOtp = req.session.otp;
 
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
+    console.log(requestFrom)
 
-    // Validate the OTP
+    // Validate if OTP exists
     if (!formOtp || !sentOtp) {
         return res.status(400).render('user/otpverify', {
             title: 'Change Password',
@@ -296,23 +320,24 @@ const verifyOtp = (req, res) => {
         });
     }
 
-    if (formOtp === "expired") {
-        return res.status(400).render('user/otpverify', {
-            title: 'Change Password',
-            errorMessage: "OTP Exprired. Please try again.",
-        });
-    }
-
+    // Check if the OTP matches
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
-        res.redirect('/user/resetpass');
+
+        if(requestFrom == "register"){
+            return res.redirect('/user/login');
+        }else {
+            return res.redirect('/user/resetpass');
+        }
     } else {
-        res.status(400).render('user/otpverify', {
+        // OTP does not match
+        return res.status(400).render('user/otpverify', {
             title: 'Change Password',
             errorMessage: "OTP does not match. Please try again.",
         });
     }
 };
+
 
 
 let loadConfirmOtp = (req, res) => {

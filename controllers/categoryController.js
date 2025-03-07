@@ -49,6 +49,10 @@ const addCategory = async (req, res) => {
             return res.status(409).json({ error: "Category already exists." });
         }
 
+        if (addCategoryName === existingCategory.name) {
+            return res.status(409).json({ error: "Category already exists." });
+        }
+
         addVisibilityStatus = addVisibilityStatus === "Active";
         const thumbnail = req.file ? req.file.path : null;
 
@@ -79,21 +83,31 @@ const editCategory = async (req, res) => {
         const { categoryName, editCategoryName, editCategoryDescription, discountPrice, editVisibilityStatus } = req.body;
         let thumbnail = req.file ? req.file.path : null;
 
+        editCategoryDescription = editCategoryDescription?.trim();
+        // Find existing category by current name
         const category = await Category.findOne({ name: categoryName });
         if (!category) {
             return res.status(404).json({ error: "Category not found." });
         }
 
-        if (!req.file) {
-            thumbnail = category.thumbnail;
+        const existingCategory = await Category.findOne({ name: editCategoryName });
+        if (existingCategory && existingCategory._id.toString() !== category._id.toString()) {
+            return res.status(400).json({ nameError: "Category name already exists." });
+        }
+        if(!editCategoryDescription){
+            console.log("Category should need a description")
+            return res.status(400).json({ descriptionError: "Category should need a description" });
         }
 
+        // Retain existing thumbnail if no new file is uploaded
+        thumbnail = req.file ? req.file.path : category.thumbnail;
+
+        // Update category fields
         category.name = editCategoryName;
         category.description = editCategoryDescription;
-        category.categoryOffer = discountPrice ? parseFloat(discountPrice) : 0;
-        category.visibility = editVisibilityStatus === "Active";
+        category.categoryOffer = discountPrice ? parseFloat(discountPrice) || 0 : 0;
+        category.visibility = editVisibilityStatus?.toLowerCase() === "active";
         category.thumbnail = thumbnail;
-
 
         await category.save();
 
@@ -103,6 +117,7 @@ const editCategory = async (req, res) => {
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 
 const filterCategories = async (req, res) => {

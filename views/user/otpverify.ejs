@@ -85,53 +85,53 @@
 
     // Resend OTP Click Event
     document.getElementById("resendOtpLink").addEventListener("click", function (event) {
-    // event.preventDefault(); // Prevent default link behavior
-    console.log("Resend OTP link clicked");
+        event.preventDefault(); // Prevent default link behavior
+        console.log("Resend OTP link clicked");
 
-    // Check if the link is disabled
-    if (this.classList.contains("disabled")) {
-        console.log("Link is disabled");
-        return;
-    }
+        // Check if the link is disabled
+        if (this.classList.contains("disabled")) {
+            console.log("Link is disabled");
+            return;
+        }
 
-    console.log("Sending request to /user/resendOtp");
+        console.log("Sending request to /user/resendOtp");
 
-    // Send a request to resend OTP
-    fetch("/user/resendOtp", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: sessionStorage.getItem("email") }) // Ensure email is stored
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Data received", data);
-        if (data.success) {
-            Swal.fire({
-                icon: "success",
-                title: "Success!",
-                text: "New OTP sent successfully!",
-            });
-            startTimer(); // Restart the timer
-        } else {
+        // Send a request to resend OTP
+        fetch("/user/resendOtp", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: sessionStorage.getItem("email") }) // Ensure email is stored
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Data received", data);
+            if (data.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: "New OTP sent successfully!",
+                });
+                startTimer(); // Restart the timer
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: data.message,
+                });
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
             Swal.fire({
                 icon: "error",
-                title: "Error!",
-                text: data.message,
+                title: "Oops!",
+                text: "An error occurred. Please try again.",
             });
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Oops!",
-            text: "An error occurred. Please try again.",
         });
-    });
 
-});
+    });
 
     // OTP Input Navigation
     function moveToNext(current, nextId) {
