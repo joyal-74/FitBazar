@@ -3,10 +3,21 @@
         <div class="d-flex login-div flex-md-row align-items-center">
             <!-- Left Side - Login Form -->
             <div class="w-50 px-5 py-5">
-                <h2 class="fw-bold mb-5 text-center">Create Account</h2>
+                <h2 class="fw-bold mb-md-5 mb-3 text-center">Create Account</h2>
+
+                <!-- Google Login -->
+                <div class="google-btn mt-3 bg-white">
+                    <a style="text-decoration: none; color: #000;" href="/auth/google"><img src="/google-logo.png" alt="Google Logo" >
+                    Signup with Google</a>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>or</span>
+                </div>
 
                 <!-- register Form -->
-                <form action="/user/register" method="POST" id="registerForm">
+                <form id="registerForm">
                     <!-- Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -49,14 +60,14 @@
                 </div>
             </div>
         </div>
-        <p class="text-center logo-text-bottom">FitBazar</p>
     </div>
 
     <script>
-        document.getElementById("registerForm").addEventListener("submit", function (event) {
+        document.getElementById("registerForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
             let email = document.getElementById("email").value.trim();
+            let fullName = document.getElementById("name").value.trim();
             let password = document.getElementById("password").value.trim();
             let phone = document.getElementById("phone").value.trim();
             let confirmPassword = document.getElementById("confirmPassword").value.trim();
@@ -73,6 +84,14 @@
                 errorText.innerText = "Email and password are required";
                 errorMessageContainer.classList.remove("d-none");
                 isValid = false;
+                return;
+            }
+
+            if (!fullName) {
+                errorText.innerText = "Fullname Required";
+                errorMessageContainer.classList.remove("d-none");
+                isValid = false;
+                return;
             }
 
             // Validate email format
@@ -81,30 +100,67 @@
                 errorText.innerText = "Invalid email format";
                 errorMessageContainer.classList.remove("d-none");
                 isValid = false;
+                return;
             }
 
             if (phone.length !== 10) { // Ensuring exactly 10 digits
                 errorText.innerText = "Phone Number should be exactly 10 characters";
                 errorMessageContainer.classList.remove("d-none");
                 isValid = false;
+                return;
             }
 
             if (password.length < 6) {
                 errorText.innerText = "Password must be at least 6 characters";
                 errorMessageContainer.classList.remove("d-none");
                 isValid = false;
+                return;
             }
 
             if (password !== confirmPassword) {
                 errorText.innerText = "Passwords do not match";
                 errorMessageContainer.classList.remove("d-none");
                 isValid = false;
+                return;
             }
 
-            if (isValid) {
-                this.submit();
+            const registerData = {
+                fullName: fullName,
+                phone: phone,
+                email: email,
+                password: password
+            };
+
+            try {
+                const response = await fetch("/user/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(registerData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Something went wrong");
+                }
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Registration Successful",
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                // Redirect after 2 seconds
+                setTimeout(() => {
+                    window.location.href = "/user/otpverify";
+                }, 4000);
+
+            } catch (error) {
+                errorText.innerText = error.message;
+                errorMessageContainer.classList.remove("d-none");
             }
         });
-
     </script>
 </body>

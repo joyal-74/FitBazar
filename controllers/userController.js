@@ -94,11 +94,7 @@ const userRegister = async (req, res) => {
         // Check if email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log("Email is already in use");
-            return res.status(400).render("user/register", { 
-                title: "Register Page", 
-                errorMessage: "Email is already in use" 
-            });
+            return res.status(400).json({ error: "Email is already in use" });
         }
 
         // Hash password and generate user ID
@@ -121,10 +117,7 @@ const userRegister = async (req, res) => {
         // Check for environment variables
         if (!process.env.EMAIL || !process.env.PASSWORD) {
             console.error("Missing email credentials in environment variables.");
-            return res.status(500).render("user/register", { 
-                title: "Register Page", 
-                errorMessage: "Server email configuration error. Please try again later." 
-            });
+            return res.status(500).json({ error: "Server email configuration error. Please try again later." });
         }
 
         // Configure nodemailer
@@ -161,23 +154,18 @@ const userRegister = async (req, res) => {
         // Send Email
         try {
             await transporter.sendMail(mailOptions);
-            return res.render("user/otpverify", { title: "otp verify", errorMessage: "" });
+            return res.status(200).json({ message: "Registration successful. OTP sent to email." });
         } catch (error) {
             console.error("Email sending error:", error);
-            return res.status(500).render("user/register", {
-                title: "Register Page",
-                errorMessage: "Failed to send verification email. Please try again.",
-            });
+            return res.status(500).json({ error: "Failed to send verification email. Please try again." });
         }
 
     } catch (err) {
         console.error("Registration error:", err);
-        return res.status(500).render("user/register", { 
-            title: "Register Page", 
-            errorMessage: "Internal server error. Please try again later." 
-        });
+        return res.status(500).json({ error: "Internal server error. Please try again later." });
     }
 };
+
 
 
 
