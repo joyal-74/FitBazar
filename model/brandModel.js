@@ -9,16 +9,8 @@ const brandSchema = new Schema({
     brandImage : {
         type : [String],
         required : true,
-    },
-    isActive : {
-        type : Boolean,
-        default : true,
-    },
-    createdAt : {
-        type : Date,
-        default : Date.now
     }
-})
+},{timestamps : true})
 
 
 const Brand = mongoose.Model("Brand", brandSchema)

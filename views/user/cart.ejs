@@ -1,0 +1,135 @@
+<body>
+
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
+                </form>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <!-- Display Font Awesome user icon if user is logged in -->
+                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                    <% } else { %>
+                        <!-- Display "Sign Up" button if user is not logged in -->
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-5">
+        <h3 class="fw-bold">Discover items in your cart</h3>
+
+        <div class="row g-4">
+            <!-- Cart Section -->
+            <div class="col-md-8">
+                <!-- Cart Item 1 -->
+                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="/product1.jpg" alt="Dumbbell" class="rounded me-3" width="80" height="80">
+                            <div>
+                                <strong>Dumbbell - 20 kg</strong>
+                                <p class="mb-0">₹ 2199</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary">-</button>
+                            <span class="px-3 py-1 border rounded">1</span>
+                            <button class="btn btn-outline-secondary">+</button>
+                            <strong>₹ 2199</strong>
+                        </div>
+                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
+                    </div>
+                </div>
+
+                <!-- Cart Item 2 -->
+                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="/product2.jpg" alt="Kettlebell" class="rounded me-3" width="80" height="80">
+                            <div>
+                                <strong>Kettlebell - 15 kg</strong>
+                                <p class="mb-0">₹ 1699</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary">-</button>
+                            <span class="px-3 py-1 border rounded">2</span>
+                            <button class="btn btn-outline-secondary">+</button>
+                            <strong>₹ 3689</strong>
+                        </div>
+                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
+                    </div>
+                </div>
+                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="/product2.jpg" alt="Kettlebell" class="rounded me-3" width="80" height="80">
+                            <div>
+                                <strong>Kettlebell - 15 kg</strong>
+                                <p class="mb-0">₹ 1699</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-outline-secondary">-</button>
+                            <span class="px-3 py-1 border rounded">2</span>
+                            <button class="btn btn-outline-secondary">+</button>
+                            <strong>₹ 3689</strong>
+                        </div>
+                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm border-0 rounded gap-3" style="background-color: #F0F0F0;">
+                    <h5 class="fw-bold">Order Summary</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>1x Dumbbell - 20 kg</span>
+                        <span>₹ 2199</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>2x Kettlebells - 15 kg</span>
+                        <span>₹ 3689</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-success">
+                        <span>Delivery Charges</span>
+                        <span>₹ Free</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Platform Fee</span>
+                        <span>₹ 0</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold">Total</span>
+                        <strong>₹ 5818</strong>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-3" style="background-color: #6C5DD3; border: none;">Continue</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>

@@ -224,7 +224,7 @@ const loadproductDetails = async (req,res) => {
 const loadShop = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 5;
+        const limit = 12;
         const skip = (page - 1) * limit;
 
         // Extract filters from req.query
@@ -247,7 +247,7 @@ const loadShop = async (req, res) => {
             filter.brand = req.query.brand;
         }
         if (req.query.availability) {
-            filter.stock = { $gt: 0 }; // Only in-stock products
+            filter.stock = { $gt: 0 }; 
         }
 
         // Sorting
@@ -290,7 +290,6 @@ const loadShop = async (req, res) => {
         res.status(500).send("Error fetching products");
     }
 };
-
 
 
 export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails}

@@ -8,10 +8,12 @@ import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
 
+// admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
 router.post('/login', adminController.adminLogin);
 router.get('/logout', adminController.logout);
 
+// dashboard
 router.get('/dashboard', adminAuth.checkSession, adminController.loadDashboard);
 
 // category Management

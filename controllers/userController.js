@@ -331,10 +331,9 @@ const verifyOtp = (req, res) => {
             });
         }
     } else {
-        // OTP does not match
-        return res.status(400).render('user/otpverify', {
-            title: 'Change Password',
-            errorMessage: "OTP does not match. Please try again.",
+        return res.status(400).json({
+            success: false,
+            message: "OTP does not match. Please try again.",
         });
     }
 };
@@ -349,43 +348,48 @@ let loadConfirmOtp = (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const { newPassword, confirmPassword } = req.body;
-
         const email = req.session.email;
-        console.log(email)
 
+        console.log(email);
+
+        // ✅ Validation checks
         if (!newPassword || !confirmPassword) {
-            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "All fields are required" });
+            return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
         if (newPassword.length < 6) {
-            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Password must be 6+ characters" });
+            return res.status(400).json({ success: false, message: "Password must be 6+ characters" });
         }
 
         if (newPassword !== confirmPassword) {
-            return res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Passwords do not match" });
+            return res.status(400).json({ success: false, message: "Passwords do not match" });
         }
 
+        // ✅ Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             console.log("User not found for email:", email);
-            return res.render("user/resetpass", {
-                title: "Reset Password",
-                errorMessage: "User not found",
-            });
+            return res.status(404).json({ success: false, message: "User not found" });
         }
 
+        // ✅ Hash and update password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-
         user.password = hashedPassword;
         await user.save();
 
-        res.redirect("/user/login");
+        // ✅ Respond with success and redirect URL
+        res.status(200).json({ 
+            success: true, 
+            message: "Password changed successfully",
+            redirectUrl: "/user/login"
+        });
 
     } catch (err) {
-        console.error("Registration error:", err);
-        res.render("user/resetpass", { title: "Confirm Password page", errorMessage: "Internal server error" });
+        console.error("Password change error:", err);
+        res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
 
 
 const logoutUser = (req, res) => {
@@ -397,4 +401,5 @@ const logoutUser = (req, res) => {
     });
 };
 
-export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, resendOtp, loadForgetPass, loadConfirmOtp, changePassword, loadOtpVerify, logoutUser, generateOtp, verifyOtp };
+export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, resendOtp, loadForgetPass, 
+                 loadConfirmOtp, changePassword, loadOtpVerify, logoutUser, generateOtp, verifyOtp };

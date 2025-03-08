@@ -7,7 +7,7 @@
                 <p class="mb-4">Please confirm your password</p>
 
                 <!-- Change Password Form -->
-                <form class="text-center" method="POST" id="confirmPasswordForm" action="/user/resetpass">
+                <form class="text-center" id="confirmPasswordForm">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -20,11 +20,11 @@
                     </p>
 
                     <div class="mb-4">
-                        <input type="password" class="form-control" placeholder="New Password" name="newPassword">
+                        <input type="password" class="form-control" placeholder="New Password"  id="newPassword" name="newPassword">
                     </div>
                     <div class="mb-4">
                         <input type="password" class="form-control" placeholder="Confirm Password"
-                            name="confirmPassword">
+                            name="confirmPassword"  id="confirmPassword">
                     </div>
                     <button type="submit" class="btn send-btn">Change Password</button>
                 </form>
@@ -46,31 +46,68 @@
 
     <script>
         document.getElementById("confirmPasswordForm").addEventListener("submit", function (event) {
-            let newPassword = document.getElementById("newPassword").value.trim();
-            let confirmPassword = document.getElementById("confirmPassword").value.trim();
-            let errorMessageContainer = document.getElementById("errorMessageContainer");
-            let errorText = document.getElementById("errorText");
+            event.preventDefault();
+            const newPassword = document.getElementById("newPassword").value.trim();
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            const errorMessageContainer = document.getElementById("errorMessageContainer");
+            const errorText = document.getElementById("errorText");
 
             if (!newPassword || !confirmPassword) {
                 errorText.innerText = "All fields are required";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
                 return;
             }
 
             if (newPassword.length < 6) {
                 errorText.innerText = "Password must be 6+ characters";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
                 return;
             }
 
             if (newPassword !== confirmPassword) {
                 errorText.innerText = "Password do not match";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
                 return;
             }
+
+            fetch("/user/resetpass", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ newPassword, confirmPassword })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || "password change failed");
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success!",
+                        text: "Password changed successfully!",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || "Password change failed");
+                }
+            })
+            .catch(error => {
+                console.error("PAssword change Error:", error);
+                
+                errorText.innerText = error.message;
+                errorMessageContainer.classList.remove("d-none");
+            });
         });
     </script>
 </body>

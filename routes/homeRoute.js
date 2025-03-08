@@ -5,7 +5,7 @@ import productController from "../controllers/productController.js";
 
 
 //session handled home route
-router.get('/home', userController.getUserHome);
+router.get('/', userController.getUserHome);
 
 //shop page
 router.get('/shop', productController.loadShop)

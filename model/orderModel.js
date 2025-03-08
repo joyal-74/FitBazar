@@ -48,17 +48,12 @@ const orderSchema = new Schema({
         required : true,
         enum : ['Pending',"Shipped", 'Delivered','Cancelled','Return Request','Returned']
     },
-    createdAt : {
-        type : Date,
-        default : Date.now,
-        required : true,
-    },
     couponApplied : {
         type : Boolean,
         default : false
     }
-})
+},{timestamps: true})
 
-const Order = mongoose.model("User", orderSchema)
+const Order = mongoose.model("Order", orderSchema)
 
 export default Order;

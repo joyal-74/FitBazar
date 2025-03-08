@@ -24,7 +24,7 @@
 
             <div class="w-100 d-flex justify-content-start mt-2">
                 <ul class="nav gap-5 align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
                     <li class="nav-item">
                         <a class="nav-link active user-nav-text btn py-1 px-4" href="/shop">Shop</a>
                     </li>
@@ -39,10 +39,10 @@
     <div class="container mt-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item m-0"><a href="/home">Home</a></li>
-                <li class="breadcrumb-item m-0"><a href="/shop">Shop</a></li>
-                <li class="breadcrumb-item m-0"><a href="/shop?category=<%= product.category %>"><%= product.category %></a></li>
-                <li class="breadcrumb-item active" aria-current="page"><%= product.name %></li>
+                <li class="breadcrumb-item m-0"><a href="/" class="text-dark text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item m-0"><a href="/shop" class="text-dark text-decoration-none">Shop</a></li>
+                <li class="breadcrumb-item m-0"><a href="/shop?category=<%= product.category %>" class="text-dark text-decoration-none"><%= product.category %></a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a class="text-dark text-decoration-none"><%= product.name %></a></li>
             </ol>
         </nav>
     </div>

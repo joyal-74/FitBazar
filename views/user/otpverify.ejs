@@ -132,6 +132,12 @@
         })
         .catch(error => {
             console.error("OTP Verification Error:", error);
+
+            document.getElementById('otp1').value = "";
+            document.getElementById('otp2').value = "";
+            document.getElementById('otp3').value = "";
+            document.getElementById('otp4').value = "";
+
             Swal.fire({
                 icon: "error",
                 title: "Oops!",
