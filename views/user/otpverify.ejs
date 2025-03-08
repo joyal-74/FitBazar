@@ -16,7 +16,7 @@
                 <!-- Timer Display -->
 
                 <!-- OTP Input Fields -->
-                <form action="/user/otpverify" method="POST" id="otpverifyForm">
+                <form id="otpverifyForm">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -83,9 +83,67 @@
         }, 1000);
     }
 
+
+    
+
+    document.getElementById("otpverifyForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        console.log("Sending request to /user/otpverify");
+
+        const otp1 = document.getElementById('otp1').value;
+        const otp2 = document.getElementById('otp2').value;
+        const otp3 = document.getElementById('otp3').value;
+        const otp4 = document.getElementById('otp4').value;
+
+        const otpData = { otp1, otp2, otp3, otp4 };
+
+        fetch("/user/otpverify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(otpData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || "OTP verification failed");
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: "Email verified successfully!",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                setTimeout(() => {
+                    window.location.href = data.redirectUrl;
+                }, 3000);
+            } else {
+                throw new Error(data.message || "OTP verification failed");
+            }
+        })
+        .catch(error => {
+            console.error("OTP Verification Error:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops!",
+                text: error.message
+            });
+        });
+
+    });
+
     // Resend OTP Click Event
     document.getElementById("resendOtpLink").addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default link behavior
+        event.preventDefault();
         console.log("Resend OTP link clicked");
 
         // Check if the link is disabled
@@ -102,7 +160,7 @@
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email: sessionStorage.getItem("email") }) // Ensure email is stored
+            body: JSON.stringify({ email: sessionStorage.getItem("email") })
         })
         .then(response => response.json())
         .then(data => {

@@ -2,8 +2,8 @@
     <div class="container log-container row">
         <div class="d-flex login-div flex-md-row align-items-center">
             <!-- Left Side - Login Form -->
-            <div class="w-50 px-5 py-5">
-                <h2 class="fw-bold mb-md-5 mb-3 text-center">Create Account</h2>
+            <div class="w-50 px-5 py-5 py-md-3">
+                <h2 class="fw-bold mb-md-4 mb-3 mt-3 text-center">Create Account</h2>
 
                 <!-- Google Login -->
                 <div class="google-btn mt-3 bg-white">
@@ -66,70 +66,56 @@
         document.getElementById("registerForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            let email = document.getElementById("email").value.trim();
-            let fullName = document.getElementById("name").value.trim();
-            let password = document.getElementById("password").value.trim();
-            let phone = document.getElementById("phone").value.trim();
-            let confirmPassword = document.getElementById("confirmPassword").value.trim();
-            let errorMessageContainer = document.getElementById("errorMessageContainer");
-            let errorText = document.getElementById("errorText");
+            const email = document.getElementById("email").value.trim();
+            const fullName = document.getElementById("name").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            const errorMessageContainer = document.getElementById("errorMessageContainer");
+            const errorText = document.getElementById("errorText");
 
-            // Clear previous error message
+
             errorText.innerText = "";
             errorMessageContainer.classList.add("d-none");
-
-            let isValid = true;
 
             if (!email || !password) {
                 errorText.innerText = "Email and password are required";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
             if (!fullName) {
-                errorText.innerText = "Fullname Required";
+                errorText.innerText = "Full name is required";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
-            // Validate email format
             let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 errorText.innerText = "Invalid email format";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
-            if (phone.length !== 10) { // Ensuring exactly 10 digits
-                errorText.innerText = "Phone Number should be exactly 10 characters";
+            if (!/^\d{10}$/.test(phone)) {
+                errorText.innerText = "Phone number should be exactly 10 digits";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
             if (password.length < 6) {
                 errorText.innerText = "Password must be at least 6 characters";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
             if (password !== confirmPassword) {
                 errorText.innerText = "Passwords do not match";
                 errorMessageContainer.classList.remove("d-none");
-                isValid = false;
                 return;
             }
 
-            const registerData = {
-                fullName: fullName,
-                phone: phone,
-                email: email,
-                password: password
-            };
+            const registerData = { fullName, phone, email, password};
 
             try {
                 const response = await fetch("/user/register", {
@@ -152,10 +138,9 @@
                     showConfirmButton: false
                 });
 
-                // Redirect after 2 seconds
                 setTimeout(() => {
                     window.location.href = "/user/otpverify";
-                }, 4000);
+                }, 2000);
 
             } catch (error) {
                 errorText.innerText = error.message;

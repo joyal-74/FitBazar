@@ -343,6 +343,15 @@
 }
 
 
+/*Otp page*/
+
+
+
+
+
+
+/*Home page*/
+
 .hero-section {
     padding: 40px 0;
 }
@@ -366,22 +375,29 @@
     background-color: #1b1372;
     /* padding: 8px 16px; */
 }
+
 .sidebar {
     height: 90.5vh;
 }
+
 .sidebar-big {
     height: 100.5vh;
 }
+
 .avathar {
     color: #493cd0;
 }
+
 .card {
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.table th, .table td {
+
+.table th,
+.table td {
     vertical-align: middle;
 }
+
 .badge {
     font-size: 0.9rem;
     padding: 0.5em 0.75em;
@@ -390,12 +406,15 @@
 .icon-container {
     border-radius: 50%;
 }
+
 .search-bar {
     max-width: 100px;
 }
 
 @media (max-width: 768px) {
-    .search-container, .notification-icon {
+
+    .search-container,
+    .notification-icon {
         display: none;
     }
 }
@@ -405,7 +424,7 @@
     color: white;
 }
 
-.add-product-btn:hover{
+.add-product-btn:hover {
     background-color: #2c1d76;
     color: white;
 }

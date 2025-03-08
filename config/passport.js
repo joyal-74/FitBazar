@@ -4,6 +4,11 @@ import User from "../model/userModel.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+const generateUserId = async () => {
+    const count = await User.countDocuments();
+    return `ID${1000 + count + 1}`;
+};
+
 passport.use(
     new GoogleStrategy(
         {
@@ -15,12 +20,14 @@ passport.use(
         async (req, accessToken, refreshToken, profile, done) => {
             try {
                 let user = await User.findOne({ googleId: profile.id });
+                const userId = await generateUserId();
 
                 if (!user) {
                     user = new User({
                         name: profile.displayName,
                         email: profile.emails[0].value,
                         googleId: profile.id,
+                        userId,
                     });
                     await user.save();
                 }

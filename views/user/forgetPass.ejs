@@ -8,7 +8,7 @@
                     reset your password.</p>
 
                 <!-- Forgot Password Form -->
-                <form class="text-center" action="/user/sendmail" method="POST" id="resetForm">
+                <form class="text-center" id="resetForm">
                     <!-- Single Error Message Display -->
                     <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
                         <% if (errorMessage) { %>
@@ -21,8 +21,7 @@
                     </p>
 
                     <div class="mb-4">
-                        <input type="email" class="form-control" placeholder="Email address" id="email" name="email"
-                            required>
+                        <input type="text" class="form-control" placeholder="Email address" id="email" name="email">
                     </div>
 
 
@@ -46,32 +45,67 @@
 
     <script>
         document.getElementById("resetForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
             const email = document.getElementById("email").value.trim();
             const errorMessageContainer = document.getElementById("errorMessageContainer");
             const errorText = document.getElementById("errorText");
 
-            // Clear previous error message
             errorText.innerText = "";
             errorMessageContainer.classList.add("d-none");
 
-            // Validate email
             if (!email) {
                 errorText.innerText = "Email is required";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
                 return;
             }
 
-            // Validate email format
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 errorText.innerText = "Invalid email format";
                 errorMessageContainer.classList.remove("d-none");
-                event.preventDefault(); // Stop form submission
                 return;
             }
 
-            // If validation passes, the form will submit normally
+            fetch("/user/sendmail", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || "OTP sending failed");
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success!",
+                        text: "OTP sent successfully!",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || "OTP verification failed");
+                }
+            })
+            .catch(error => {
+                console.error("OTP Verification Error:", error);
+                
+                errorText.innerText = error.message;
+                errorMessageContainer.classList.remove("d-none");
+            });
         });
+
     </script>
 </body>

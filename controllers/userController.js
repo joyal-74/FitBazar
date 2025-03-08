@@ -114,7 +114,7 @@ const userRegister = async (req, res) => {
         req.session.otpEmail = email;
         req.session.requestFrom = "register";
 
-        // Check for environment variables
+
         if (!process.env.EMAIL || !process.env.PASSWORD) {
             console.error("Missing email credentials in environment variables.");
             return res.status(500).json({ error: "Server email configuration error. Please try again later." });
@@ -207,13 +207,13 @@ const sendOtpEmail = async (email, otp) => {
 };
 
 // Common function to generate and send OTP
-const handleOtpGeneration = async (req, res, redirectPage) => {
+const handleOtpGeneration = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-        return res.status(400).render("user/forgetPass", {
-            title: "Forgot Password",
-            errorMessage: "Email is required",
+        return res.status(400).json({
+            success: false,
+            message: "Email is required",
         });
     }
 
@@ -221,9 +221,9 @@ const handleOtpGeneration = async (req, res, redirectPage) => {
 
     if (!existingUser) {
         console.log("This email is not registered yet");
-        return res.render("user/forgetPass", {
-            title: "Register Page",
-            errorMessage: "Email not registered",
+        return res.status(400).json({
+            success: false,
+            message: "Email not registered",
         });
     }
 
@@ -233,20 +233,24 @@ const handleOtpGeneration = async (req, res, redirectPage) => {
 
     req.session.otp = otp;
     req.session.email = email;
-    req.session.requestFrom = "forgot-password"; 
+    req.session.requestFrom = "forgot-password";
 
     try {
         await sendOtpEmail(email, otp);
-        res.redirect(redirectPage);
+        return res.status(200).json({
+            success: true,
+            message: "OTP sent successfully",
+            redirectUrl: "/user/otpverify",
+        });
     } catch (error) {
         console.error("OTP Sending Error:", error);
-        res.status(500).render("user/forgetPass", {
-            title: "Forgot Password",
-            errorMessage: "Failed to send OTP. Please try again.",
-            requestFrom : "register"
+        return res.status(500).json({
+            success: false,
+            message: "Failed to send OTP. Please try again.",
         });
     }
 };
+
 
 const newOtpGeneration = async (req, res, redirectPage) => {
 
@@ -290,17 +294,16 @@ const verifyOtp = (req, res) => {
 
     const requestFrom = req.session.requestFrom;
 
-    // Combine the OTP digits into a single string
+
     const formOtp = `${otp1}${otp2}${otp3}${otp4}`;
 
-    // Retrieve the OTP stored in the session
+
     const sentOtp = req.session.otp;
 
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
     console.log(requestFrom)
 
-    // Validate if OTP exists
     if (!formOtp || !sentOtp) {
         return res.status(400).render('user/otpverify', {
             title: 'Change Password',
@@ -312,10 +315,20 @@ const verifyOtp = (req, res) => {
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
 
-        if(requestFrom == "register"){
-            return res.redirect('/user/login');
-        }else {
-            return res.redirect('/user/resetpass');
+        if (requestFrom === "register") {
+            console.log("Redirecting to login page...");
+            return res.status(200).json({
+                success: true,
+                message: "OTP verified successfully! Now login to your account",
+                redirectUrl: '/user/login'
+            });
+        } else {
+            console.log("Redirecting to password reset page...");
+            return res.status(200).json({
+                success: true,
+                message: "OTP verified successfully!",
+                redirectUrl: '/user/resetpass'
+            });
         }
     } else {
         // OTP does not match
