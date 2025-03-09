@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 import Admin from "../model/adminModel.js";
+import { INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+
 
 // Login Page Handler
 function loadLogin(req, res) {
@@ -54,7 +56,7 @@ const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error("Error destroying session:", err);
-            return res.status(500).send("Error logging out.");
+            return res.status(INTERNAL_SERVER_ERROR).send("Error logging out.");
         }
         res.clearCookie("connect.sid");
         res.redirect("/admin/login");

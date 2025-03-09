@@ -1,125 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmed - FitBazar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            padding: 20px;
+        }
+        .confirmation-icon {
+            font-size: 48px;
+            color: #4CAF50;
+        }
+        .btn-primary {
+            background-color: #6C5DD3;
+            border: none;
+            border-radius: 16px;
+            padding: 8px 24px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #5848C2;
+        }
+        .btn-outline-primary {
+            border-radius: 16px;
+            padding: 8px 24px;
+            font-size: 14px;
+            border: 1px solid #6C5DD3;
+            color: #6C5DD3;
+        }
+        .btn-outline-primary:hover {
+            background-color: #6C5DD3;
+            color: #fff;
+        }
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        h5, h6 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        p, span {
+            font-size: 14px;
+        }
+    </style>
+</head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm bg-white">
-        <div class="container">
-            <!-- Brand Logo -->
-            <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
-    
-            <!-- Toggle Button for Offcanvas -->
-            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-    
-            <!-- Offcanvas Navbar -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-    
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav me-auto align-items-lg-center gap-2">
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
-                        </li>
-                    </ul>
-    
-                    <!-- Search Form -->
-                    <form class="d-flex mt-3 mt-lg-0">
-                        <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
-                        <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
-                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                        </button>
-                    </form>
-    
-                    <!-- Icons and User Section -->
-                    <div class="d-flex align-items-center mt-3 mt-lg-0">
-                        <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                        <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                        <% if (user) { %>
-                            <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                                <i class="fa-solid fa-user"></i>
-                            </a>
-                        <% } else { %>
-                            <a href="/user/register" class="btn btn-outline-primary" style="border-radius: 20px;">Sign Up</a>
-                        <% } %>
-                    </div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg shadow-sm bg-white">
+    <div class="container">
+        <!-- Brand Logo -->
+        <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
+
+        <!-- Toggle Button for Offcanvas -->
+        <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Offcanvas Navbar -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="offcanvas-body">
+                <ul class="navbar-nav me-auto align-items-lg-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link text-white py-2 px-3" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
+                    </li>
+                </ul>
+
+                <!-- Search Form -->
+                <form class="d-flex mt-3 mt-lg-0">
+                    <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
+                </form>
+
+                <!-- Icons and User Section -->
+                <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
+                            <i class="fa-solid fa-user"></i>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-outline-primary" style="border-radius: 20px;">Sign Up</a>
+                    <% } %>
                 </div>
             </div>
         </div>
-    </nav>
-    
+    </div>
+</nav>
 
-    <!-- Order Confirmation Section -->
-    <main class="container mt-5">
-        <div class="row justify-content-center">
-            <!-- Left: Confirmation Icon and Message -->
-            <div class="col-md-4">
-                <div class="card p-4 border-0 shadow-sm text-center" style="background-color: #F9F9F9; border-radius: 16px;">
-                    <!-- Confirmation Icon -->
-                    <div class="mb-4">
-                        <i class="fas fa-check-circle text-success" style="font-size: 64px;"></i>
-                    </div>
+<!-- Main Content -->
+<div class="container d-flex justify-content-center align-items-center gap-2" style="min-height: 91vh;">
+    <div class="card col-md-10">
+        <!-- Confirmation Header -->
+        <div class="text-center mb-4">
+            <i class="fas fa-check-circle confirmation-icon"></i>
+            <h4 class="fw-bold mt-3">Order Confirmed!</h4>
+            <p class="text-muted mb-0">Thank you for your purchase. Your order has been placed successfully.</p>
+        </div>
 
-                    <!-- Confirmation Message -->
-                    <h2 class="fw-bold mb-3" style="color: #3B3389;">Order Confirmed!</h2>
-                    <p class="text-muted mb-4">Your order has been successfully placed. Thank you for shopping with us!</p>
-
-                    <!-- Call to Action -->
-                    <div class="d-grid gap-3">
-                        <a href="/shop" class="btn btn-outline-primary" style="border-radius: 12px; font-weight: 500;">Continue Shopping</a>
-                        <a href="/orders" class="btn text-white" style="background-color: #6C5DD3; border-radius: 12px; font-weight: 500;">View Orders</a>
-                    </div>
+        <!-- Order Summary and Shipping Address -->
+        <div class="row mb-4">
+            <!-- Left: Order Summary -->
+            <div class="col-md-6">
+                <h5 class="mb-3">Order Summary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Order ID:</span>
+                    <span>#123456789</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Order Date:</span>
+                    <span>March 09, 2025</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Total Amount:</span>
+                    <span>₹ 5,828</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Payment Method:</span>
+                    <span>Razorpay</span>
                 </div>
             </div>
 
-            <!-- Right: Order Summary and Shipping Address -->
-            <div class="col-md-8">
-                <!-- Order Summary -->
-                <div class="card p-4 mb-4 border-0 shadow-sm" style="background-color: #F9F9F9; border-radius: 16px;">
-                    <h5 class="fw-bold mb-4" style="color: #3B3389;">Order Summary</h5>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Order ID</span>
-                        <span class="fw-medium">#123456789</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Order Date</span>
-                        <span class="fw-medium">October 10, 2023</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Total Amount</span>
-                        <span class="fw-medium">₹ 5828</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Payment Method</span>
-                        <span class="fw-medium">Razorpay</span>
-                    </div>
+            <!-- Right: Shipping Address -->
+            <div class="col-md-6">
+                <h5 class="mb-3">Shipping Address</h5>
+                <div>
+                    <strong>JOYAL KURIAKOSE</strong>
                 </div>
-
-                <!-- Shipping Address -->
-                <div class="card p-4 border-0 shadow-sm" style="background-color: #F9F9F9; border-radius: 16px;">
-                    <h5 class="fw-bold mb-4" style="color: #3B3389;">Shipping Address</h5>
-                    <div class="mb-2">
-                        <strong class="text-white">JOYAL KURIAKOSE</strong>
-                    </div>
-                    <p class="text-muted mb-0" style="font-size: 14px; line-height: 1.6;">
-                        Thekkemathoor (h) Pasukkadave (po) kavilumpara (via) Kozhikode (dist),<br>
-                        Pasukkadave, Pasukkadave, Kerala - 673513
-                    </p>
-                </div>
+                <p class="text-muted mb-0">
+                    Thekkemathoor (h), Pasukkadave (po),<br>
+                    kavilumpara (via), Kozhikode,<br>
+                    Kerala - 673513
+                </p>
             </div>
         </div>
-    </main>
+
+        <!-- Product Details -->
+        <div class="mb-4">
+            <h5 class="mb-3">Product Details</h5>
+            <div class="d-flex align-items-center border-bottom py-2">
+                <img src="https://via.placeholder.com/60" alt="Product Image" class="product-img me-3">
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">Fitness Dumbbell Set</h6>
+                    <p class="text-muted mb-0">Product ID: <span class="fw-bold">P123456</span></p>
+                    <p class="text-muted mb-0">Qty: 2</p>
+                </div>
+                <span class="fw-bold">₹ 2,500</span>
+            </div>
+            <div class="d-flex align-items-center border-bottom py-2">
+                <img src="https://via.placeholder.com/60" alt="Product Image" class="product-img me-3">
+                <div class="flex-grow-1">
+                    <h6 class="mb-1">Resistance Band Set</h6>
+                    <p class="text-muted mb-0">Product ID: <span class="fw-bold">P123457</span></p>
+                    <p class="text-muted mb-0">Qty: 1</p>
+                </div>
+                <span class="fw-bold">₹ 828</span>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/shop" class="btn btn-outline-primary">Continue Shopping</a>
+            <a href="/orders" class="btn btn-primary">View Orders</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

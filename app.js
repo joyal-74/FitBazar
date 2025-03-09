@@ -61,4 +61,5 @@ app.use((req, res, next) => {
     res.status(404).render("404",{title : "Page not found"});
 });
 
-app.listen(PORT,()=> console.log(`server running on ${PORT}`))
+app.listen(PORT,()=> console.log(`server running on ${PORT} 
+http://localhost:4000/`))

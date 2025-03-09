@@ -1,4 +1,5 @@
 import User from '../model/userModel.js'
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 
 
 
@@ -45,7 +46,7 @@ const userInfo = async (req, res) => {
 
     } catch (error) {
         console.error("User info fetch error:", error);
-        res.status(500).json({ error: "Internal server error." });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -66,16 +67,16 @@ const toggleBlockStatus = async (req, res) => {
 
         const customer = await User.findOne({userId : id});
         if (!customer) {
-            return res.status(404).json({ error: "Customer not found" });
+            return res.status(NOT_FOUND).json({ error: "Customer not found" });
         }
 
         customer.isBlocked = isBlocked;
         await customer.save();
 
-        res.status(200).json({ message: "Status updated successfully" });
+        res.status(OK).json({ message: "Status updated successfully" });
     } catch (error) {
         console.error("Error updating status:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
     }
 };
 
@@ -116,7 +117,7 @@ const filterCustomers = async (req, res) => {
 
     } catch (error) {
         console.error("Filter error:", error);
-        res.status(500).json({ error: "Internal server error." });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -127,7 +128,7 @@ const changeBlockStatus = async (req, res) => {
 
         const customer = await User.findOne({ userId });
         if (!customer) {
-            return res.status(404).json({ error: "Customer not found" });
+            return res.status(NOT_FOUND).json({ error: "Customer not found" });
         }
 
         customer.isBlocked = isBlocked === "true"; // Convert string to boolean
@@ -136,7 +137,7 @@ const changeBlockStatus = async (req, res) => {
         res.redirect(`/admin/viewcustomers?user=${userId}`); // Redirect back to customer page
     } catch (error) {
         console.error("Error updating status:", error);
-        res.status(500).send("Internal Server Error"); // Simple error handling
+        res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error"); // Simple error handling
     }
 };
     

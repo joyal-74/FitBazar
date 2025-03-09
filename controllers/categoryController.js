@@ -1,9 +1,6 @@
 import Category from "../model/categoryModel.js";
-import fs from 'fs';
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { OK,  NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CONFLICT } from '../config/statusCodes.js'
+
 
 const categoryInfo = async (req, res) => {
     try {
@@ -24,7 +21,7 @@ const categoryInfo = async (req, res) => {
         });
     } catch (error) {
         console.error("Search error:", error);
-        res.status(500).json({ error: "Internal server error." });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -41,16 +38,16 @@ const addCategory = async (req, res) => {
 
 
         if (!addCategoryName || !addCategoryDescription) {
-            return res.status(400).json({ error: "Category Name and Description are required." });
+            return res.status(BAD_REQUEST).json({ error: "Category Name and Description are required." });
         }
 
         const existingCategory = await Category.findOne({ name: addCategoryName });
         if (existingCategory) {
-            return res.status(409).json({ error: "Category already exists." });
+            return res.status(CONFLICT).json({ error: "Category already exists." });
         }
 
         if (addCategoryName === existingCategory.name) {
-            return res.status(409).json({ error: "Category already exists." });
+            return res.status(CONFLICT).json({ error: "Category already exists." });
         }
 
         addVisibilityStatus = addVisibilityStatus === "Active";
@@ -69,11 +66,11 @@ const addCategory = async (req, res) => {
         console.log("Uploaded file:", req.file);
         console.log("Request body:", req.body);
 
-        return res.status(201).json({ message: "Category added successfully." });
+        return res.status(CREATED).json({ message: "Category added successfully." });
 
     } catch (error) {
         console.error("Add Category Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -87,16 +84,16 @@ const editCategory = async (req, res) => {
         // Find existing category by current name
         const category = await Category.findOne({ name: categoryName });
         if (!category) {
-            return res.status(404).json({ error: "Category not found." });
+            return res.status(NOT_FOUND).json({ error: "Category not found." });
         }
 
         const existingCategory = await Category.findOne({ name: editCategoryName });
         if (existingCategory && existingCategory._id.toString() !== category._id.toString()) {
-            return res.status(400).json({ nameError: "Category name already exists." });
+            return res.status(BAD_REQUEST).json({ nameError: "Category name already exists." });
         }
         if(!editCategoryDescription){
             console.log("Category should need a description")
-            return res.status(400).json({ descriptionError: "Category should need a description" });
+            return res.status(BAD_REQUEST).json({ descriptionError: "Category should need a description" });
         }
 
         // Retain existing thumbnail if no new file is uploaded
@@ -111,10 +108,10 @@ const editCategory = async (req, res) => {
 
         await category.save();
 
-        return res.status(200).json({ message: "Category updated successfully!" });
+        return res.status(OK).json({ message: "Category updated successfully!" });
     } catch (error) {
         console.error("Edit category error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -146,7 +143,7 @@ const filterCategories = async (req, res) => {
 
     } catch (error) {
         console.error("Filter error:", error);
-        res.status(500).json({ error: "Internal server error." });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 

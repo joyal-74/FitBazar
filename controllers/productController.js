@@ -1,6 +1,6 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
-
+import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 
 const loadaddProducts = async (req, res) => {
     try {
@@ -23,7 +23,7 @@ const loadaddProducts = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading add product page:", error.message);
-        res.status(500).render("404", { 
+        res.status(INTERNAL_SERVER_ERROR).render("NOT_FOUND", { 
             title: "Error", 
             message: "Internal Server Error. Please try again later." 
         });
@@ -47,7 +47,7 @@ const addProducts = async (req, res) => {
         let productId = await generateProductId();
 
         if (!productName || !productDescription) {
-            return res.status(400).json({ error: "Product Name and Description are required." });
+            return res.status(BAD_REQUEST).json({ error: "Product Name and Description are required." });
         }
 
         let productImages = [];
@@ -75,11 +75,11 @@ const addProducts = async (req, res) => {
 
         await Category.findOneAndUpdate({name : productCategory},{$inc : {itemsCount : 1}})
 
-        return res.status(201).json({ message: "Product added successfully." });
+        return res.status(CREATED).json({ message: "Product added successfully." });
 
     } catch (error) {
         console.error("Add product Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 }
 
@@ -94,7 +94,7 @@ const editProducts = async (req, res) => {
         // Find product by ID
         const product = await Products.findOne({ productId: productId });
         if (!product) {
-            return res.status(404).json({ error: "Product not found." });
+            return res.status(NOT_FOUND).json({ error: "Product not found." });
         }
 
         let productImages = product.productImages;
@@ -120,14 +120,14 @@ const editProducts = async (req, res) => {
         // Save updated product
         await product.save();
 
-        return res.status(200).json({ 
+        return res.status(OK).json({ 
             message: "Product updated successfully!", 
             updatedProduct: product 
         });
 
     } catch (error) {
         console.error("Edit product error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -186,7 +186,7 @@ const productInfo = async (req, res) => {
 
     } catch (error) {
         console.error("Product info fetch error:", error);
-        res.status(500).json({ error: "Internal server error." });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -200,13 +200,13 @@ const loadEditProducts = async (req, res) => {
         const category = await Category.find({ visibility: true });
 
         if (!product) {
-            return res.status(404).send("Product not found.");
+            return res.status(NOT_FOUND).send("Product not found.");
         }
 
         res.render('admin/editProducts', { title: "Edit Products", product, cat: category });
     } catch (error) {
         console.error("Error fetching product:", error);
-        res.status(500).send("Internal Server Error");
+        res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 };
 
@@ -287,7 +287,7 @@ const loadShop = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading shop:", error);
-        res.status(500).send("Error fetching products");
+        res.status(INTERNAL_SERVER_ERROR).send("Error fetching products");
     }
 };
 

@@ -3,6 +3,8 @@ import User from "../model/userModel.js";
 import Category from '../model/categoryModel.js'
 import Products from "../model/productModel.js";
 import nodemailer from "nodemailer"
+import { OK,  NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+
 
 // Home Page Handler
 const getUserHome = async (req, res)=> {
@@ -94,7 +96,7 @@ const userRegister = async (req, res) => {
         // Check if email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ error: "Email is already in use" });
+            return res.status(BAD_REQUEST).json({ error: "Email is already in use" });
         }
 
         // Hash password and generate user ID
@@ -117,7 +119,7 @@ const userRegister = async (req, res) => {
 
         if (!process.env.EMAIL || !process.env.PASSWORD) {
             console.error("Missing email credentials in environment variables.");
-            return res.status(500).json({ error: "Server email configuration error. Please try again later." });
+            return res.status(INTERNAL_SERVER_ERROR).json({ error: "Server email configuration error. Please try again later." });
         }
 
         // Configure nodemailer
@@ -154,15 +156,15 @@ const userRegister = async (req, res) => {
         // Send Email
         try {
             await transporter.sendMail(mailOptions);
-            return res.status(200).json({ message: "Registration successful. OTP sent to email." });
+            return res.status(OK).json({ message: "Registration successful. OTP sent to email." });
         } catch (error) {
             console.error("Email sending error:", error);
-            return res.status(500).json({ error: "Failed to send verification email. Please try again." });
+            return res.status(INTERNAL_SERVER_ERROR).json({ error: "Failed to send verification email. Please try again." });
         }
 
     } catch (err) {
         console.error("Registration error:", err);
-        return res.status(500).json({ error: "Internal server error. Please try again later." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error. Please try again later." });
     }
 };
 
@@ -211,7 +213,7 @@ const handleOtpGeneration = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-        return res.status(400).json({
+        return res.status(BAD_REQUEST).json({
             success: false,
             message: "Email is required",
         });
@@ -221,7 +223,7 @@ const handleOtpGeneration = async (req, res) => {
 
     if (!existingUser) {
         console.log("This email is not registered yet");
-        return res.status(400).json({
+        return res.status(BAD_REQUEST).json({
             success: false,
             message: "Email not registered",
         });
@@ -237,14 +239,14 @@ const handleOtpGeneration = async (req, res) => {
 
     try {
         await sendOtpEmail(email, otp);
-        return res.status(200).json({
+        return res.status(OK).json({
             success: true,
             message: "OTP sent successfully",
             redirectUrl: "/user/otpverify",
         });
     } catch (error) {
         console.error("OTP Sending Error:", error);
-        return res.status(500).json({
+        return res.status(INTERNAL_SERVER_ERROR).json({
             success: false,
             message: "Failed to send OTP. Please try again.",
         });
@@ -266,7 +268,7 @@ const newOtpGeneration = async (req, res, redirectPage) => {
         return res.json({ success: true, message: "OTP sent successfully" });
     } catch (error) {
         console.error("OTP Sending Error:", error);
-        res.status(500).render("user/forgetPass", {
+        res.status(INTERNAL_SERVER_ERROR).render("user/forgetPass", {
             title: "Forgot Password",
             errorMessage: "Failed to send OTP. Please try again.",
         });
@@ -305,7 +307,7 @@ const verifyOtp = (req, res) => {
     console.log(requestFrom)
 
     if (!formOtp || !sentOtp) {
-        return res.status(400).render('user/otpverify', {
+        return res.status(BAD_REQUEST).render('user/otpverify', {
             title: 'Change Password',
             errorMessage: "Invalid OTP. Please try again.",
         });
@@ -317,21 +319,21 @@ const verifyOtp = (req, res) => {
 
         if (requestFrom === "register") {
             console.log("Redirecting to login page...");
-            return res.status(200).json({
+            return res.status(OK).json({
                 success: true,
                 message: "OTP verified successfully! Now login to your account",
                 redirectUrl: '/user/login'
             });
         } else {
             console.log("Redirecting to password reset page...");
-            return res.status(200).json({
+            return res.status(OK).json({
                 success: true,
                 message: "OTP verified successfully!",
                 redirectUrl: '/user/resetpass'
             });
         }
     } else {
-        return res.status(400).json({
+        return res.status(BAD_REQUEST).json({
             success: false,
             message: "OTP does not match. Please try again.",
         });
@@ -352,33 +354,29 @@ const changePassword = async (req, res) => {
 
         console.log(email);
 
-        // ✅ Validation checks
         if (!newPassword || !confirmPassword) {
-            return res.status(400).json({ success: false, message: "All fields are required" });
+            return res.status(BAD_REQUEST).json({ success: false, message: "All fields are required" });
         }
 
         if (newPassword.length < 6) {
-            return res.status(400).json({ success: false, message: "Password must be 6+ characters" });
+            return res.status(BAD_REQUEST).json({ success: false, message: "Password must be 6+ characters" });
         }
 
         if (newPassword !== confirmPassword) {
-            return res.status(400).json({ success: false, message: "Passwords do not match" });
+            return res.status(BAD_REQUEST).json({ success: false, message: "Passwords do not match" });
         }
 
-        // ✅ Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             console.log("User not found for email:", email);
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(NOT_FOUND).json({ success: false, message: "User not found" });
         }
 
-        // ✅ Hash and update password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         await user.save();
 
-        // ✅ Respond with success and redirect URL
-        res.status(200).json({ 
+        res.status(OK).json({ 
             success: true, 
             message: "Password changed successfully",
             redirectUrl: "/user/login"
@@ -386,7 +384,7 @@ const changePassword = async (req, res) => {
 
     } catch (err) {
         console.error("Password change error:", err);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
     }
 };
 
