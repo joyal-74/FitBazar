@@ -4,14 +4,14 @@ import multer from "multer";
 
 
 const storage = new CloudinaryStorage({
-    cloudinary,
+    cloudinary: cloudinary,
     params: {
-        folder: "fitbazar-products",
-        format: async () => "png",
-        public_id: (req, file) => file.originalname.split(".")[0],
-        transformation: [{ width: 500, height: 500, crop: "fill" }]
-    }
+      folder: "fitbazar_products",
+      allowed_formats: ["jpg", "png", "jpeg", "webp"],
+      transformation: [{ width: 500, height: 500, crop: "limit" }],
+    },
 });
+
 
 const upload = multer({ storage });
 

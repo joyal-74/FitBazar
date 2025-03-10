@@ -1,66 +1,66 @@
 <body>
 
     <!-- Navbar -->
-<nav class="navbar navbar-expand-lg shadow-sm bg-white">
-    <div class="container">
-        <!-- Brand Logo -->
-        <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
+    <nav class="navbar navbar-expand-lg shadow-sm bg-white">
+        <div class="container">
+            <!-- Brand Logo -->
+            <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
 
-        <!-- Toggle Button for Offcanvas -->
-        <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <!-- Toggle Button for Offcanvas -->
+            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!-- Offcanvas Navbar -->
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
+            <!-- Offcanvas Navbar -->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
 
-            <div class="offcanvas-body">
-                <ul class="navbar-nav me-auto align-items-lg-center gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link text-white py-2 px-3" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
-                    </li>
-                </ul>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav me-auto align-items-lg-center gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link text-white py-2 px-3" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
+                        </li>
+                    </ul>
 
-                <!-- Search Form -->
-                <form class="d-flex mt-3 mt-lg-0">
-                    <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
+                    <!-- Search Form -->
+                    <form class="d-flex mt-3 mt-lg-0">
+                        <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
+                        <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                        </button>
+                    </form>
 
-                <!-- Icons and User Section -->
-                <div class="d-flex align-items-center mt-3 mt-lg-0">
-                    <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                            <i class="fa-solid fa-user"></i>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-outline-primary" style="border-radius: 20px;">Sign Up</a>
-                    <% } %>
+                    <!-- Icons and User Section -->
+                    <div class="d-flex align-items-center mt-3 mt-lg-0">
+                        <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                        <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                        <% if (user) { %>
+                            <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                        <% } else { %>
+                            <a href="/user/register" class="btn btn-outline-primary" style="border-radius: 20px;">Sign Up</a>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 
     <main class="container mt-5">

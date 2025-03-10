@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 const {Schema} = mongoose;
 
+const variantSchema = new Schema({
+    attributeName: String,
+    attributeValue: String,
+    images: [String],
+});
+
 const productSchema = new Schema({
     productId : {
         type : String,
@@ -43,26 +49,6 @@ const productSchema = new Schema({
         type : Number,
         default: 1,
     },
-    color : {
-        type : [String],
-        required : false
-    },
-    size : {
-        type : [String],
-        default: [],
-    },
-    weight : {
-        type : [String],
-        default: [],
-    },
-    material : {
-        type : String,
-        required : false
-    },
-    productImages : {
-        type : [String],
-        required : false,
-    },
     visibility : {
         type : Boolean,
         default : true,
@@ -73,9 +59,8 @@ const productSchema = new Schema({
         required : false,
         default : "Available",
     },
-    tags :{
-        type : String,
-    }
+    variants: [variantSchema],
+
 },{timestamps : true})
 
 

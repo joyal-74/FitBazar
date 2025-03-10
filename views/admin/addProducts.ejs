@@ -1,293 +1,547 @@
+<head>
 
+    <style>
+        /* Enhanced General Styles */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            background: #ffffff;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 68px;
+            border-right: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        .sidebar-link {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 5px 10px;
+            transition: all 0.3s;
+        }
+        .sidebar-link:hover {
+            background: #f0f2f5;
+            color: #4a00e0 !important;
+        }
+        .sidebar-link.active {
+            background: #4a00e0;
+            color: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(74, 0, 224, 0.2);
+        }
+
+        /* Card Styling */
+        .add-product-form {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #4a00e0;
+            box-shadow: 0 0 8px rgba(74, 0, 224, 0.2);
+        }
+        .form-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Variant Styling */
+        .variant-item {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        .variant-item:hover {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(45deg, #4a00e0, #8e2de2);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 20px;
+        }
+        .btn-outline-primary {
+            border-radius: 8px;
+        }
+        .btn-outline-primary:hover {
+            background: #4a00e0;
+            color: #fff;
+            border-color: #4a00e0;
+        }
+
+        /* Image Upload Styling */
+        .image-upload-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .image-upload-slot {
+            position: relative;
+            flex: 1;
+            aspect-ratio: 1 / 1;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            max-width: 120px;
+        }
+        .image-upload-dropzone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .image-upload-dropzone.dragover {
+            background: #e9ecef;
+            border-color: #4a00e0;
+        }
+        .image-upload-dropzone i {
+            font-size: 20px;
+            color: #4a00e0;
+        }
+        .image-upload-dropzone p {
+            font-size: 12px;
+            color: #666;
+        }
+        .image-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .image-preview .remove-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .image-preview .remove-image-btn:hover {
+            opacity: 1;
+        }
+        .image-upload-slot.filled .image-upload-dropzone {
+            display: none;
+        }
+        .image-upload-slot.filled .image-preview {
+            display: block;
+        }
+    </style>
+</head>
 <body class="bg-light">
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container d-flex align-items-center justify-content-between">
-        <!-- Logo -->
-        <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
-
-        <!-- Navbar Toggler for Mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Navbar Items -->
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <div class="d-flex align-items-center">
-                <a href="#" class="me-3 notification-icon">
-                    <i class="fa-regular fa-lg fa-bell" style="color: #ffffff;"></i>
-                </a>
-                <a href="#" class="avathar">
-                    <i class="fa-solid fa-circle-user fa-xl" style="color: #ffffff;"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Sidebar + Main Content -->
-<div class="container-fluid w-100">
-    <div class="row g-0">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
-            <ul class="nav flex-column mt-3">
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
-                <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
-            </ul>
-        </nav>
-        
-
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
-            <h1 class="h3 mb-4 fw-bold">Add Product</h1>
-
-            <!-- Add Product Form -->
-            <div class="card add-product-form p-4">
-                <div class="card-body p-2">
-                    <form id="addProductForm" enctype="multipart/form-data">
-                        <div class="mb-3 d-flex gap-3">
-                            <div class="w-100">
-                                <label for="productName" class="form-label mb-1">Product Name</label>
-                                <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name">
-                            </div>
-
-                            <!-- Category Selection -->
-                            <div class="w-100">
-                                <label for="productCategory" class="form-label mb-1">Category</label>
-                                <select class="form-select form-select-sm" id="productCategory" name="productCategory">
-                                    <option hidden>Select category</option>
-                                    <% category.forEach(category => { %>
-                                        <option value="<%= category.name %>"><%= category.name %></option>
-                                    <% }) %>
-                                </select>
-                            </div>
-
-                            <!-- brand  -->
-                            <div class="w-100">
-                                <label for="brand" class="form-label mb-1">Brand</label>
-                                <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
-                            </div>
-                        </div>
-
-                        <!-- Stock Quantity & Brand -->
-                        <div class="mb-3 d-flex gap-3">
-                            <div class="w-100">
-                                <label for="productStock" class="form-label mb-1">Stock</label>
-                                <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity">
-                            </div>
-                            <div class="w-100">
-                                <label for="basePrice" class="form-label mb-1">Base Price</label>
-                                <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
-                            </div>
-                            <div class="w-100">
-                                <label for="discountPrice" class="form-label mb-1">Discount Percentage (%)</label>
-                                <input type="number" id="productOffer" name="productOffer" class="form-control form-control-sm" placeholder="Enter discount">
-                            </div>   
-                        </div>
-
-                        <!-- Product Description & specs -->
-                        <div class="d-flex gap-3">
-                            <div class="mb-3 w-100">
-                                <label for="productDescription" class="form-label mb-1">Description</label>
-                                <textarea class="form-control form-control-sm" id="productDescription" name="productDescription" rows="2" placeholder="Enter description"></textarea>
-                            </div>
-                            <div class="mb-3  w-100">
-                                <label for="productDescription" class="form-label mb-1">Specifications</label>
-                                <textarea class="form-control form-control-sm" id="productSpec" name="productSpec" rows="2" placeholder="Enter Specifications"></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Image & Size -->
-                        <div class="mb-3 d-flex gap-3">                            
-                            <div class="mb-3 w-100">
-                                <label for="productImages" class="form-label">Upload new images</label>
-                                <div class="input-group">
-                                    <!-- Custom Button -->
-                                    <button class="btn btn-outline-secondary" type="button" id="customFileButton">
-                                        <i class="px-3 fa-solid fa-upload"></i>
-                                    </button>
-                        
-                                    <!-- Hidden File Input -->
-                                    <input type="file" class="form-control d-none" id="productImages" name="productImages" multiple onchange="updateFileNames(event)">
-                        
-                                    <!-- Display Selected File Names -->
-                                    <span class="form-control d-flex align-items-center" id="fileNamesDisplay">No files chosen</span>
-                                </div>
-                            </div>
-                        
-                            <!-- Selected Image Preview -->
-                            <div class="mb-3 w-100">
-                                <label class="form-label">Selected Images</label>
-                                <div id="imagePreview" class="d-flex flex-wrap gap-2 border p-2 rounded" style="min-height: 60px;">
-                                    <span class="text-muted">No images selected</span>
-                                </div>
-                            </div> 
-                        </div>
-
-                        <!-- Color, Material, Weight -->
-                        <div class="mb-3 d-flex gap-3">
-                            <!-- <div class="w-100">
-                                <label class="form-label mb-1">Size <span style="font-size: 0.8rem;">(in cm/inch or S/M/L/XL)</span></label>
-                                <input type="text" class="form-control form-control-sm" id="productSize" name="productSize" placeholder="Enter size">
-                            </div>
-                            <div class="w-100">
-                                <label class="form-label mb-1">Weight</label>
-                                <input type="text" id="productWeight" name="productWeight" class="form-control form-control-sm" placeholder="Enter weight">
-                            </div> -->
-
-                            <!-- Size/Weight Selection -->
-                            <div class="w-100">
-                                <label class="form-label mb-1">Select Size/Weight</label>
-                                <div id="attributeContainer">
-                                    <!-- Default input for custom values -->
-                                    <input type="text" class="form-control form-control-sm" name="customValue" placeholder="Enter custom size or weight">
-                                </div>
-                            </div>
-                            
-
-                            <div class="w-100">
-                                <label class="form-label mb-1">Color <span style="font-size: 0.8em;">(Multiple color by comma)</span></label>
-                                <input type="text" id="productColor" name="productColor" class="form-control form-control-sm" placeholder="Enter color">
-                            </div>
-                            <div class="w-100">
-                                <label class="form-label mb-1">Material</label>
-                                <input type="text" id="productMeterial" name="productMeterial" class="form-control form-control-sm" placeholder="Enter material">
-                            </div>
-                            
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-sm btn-primary">Add Product</button>
-                        </div>
-                    </form>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm fixed-top">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 notification-icon">
+                        <i class="fa-regular fa-lg fa-bell" style="color: #ffffff;"></i>
+                    </a>
+                    <a href="#" class="avathar">
+                        <i class="fa-solid fa-circle-user fa-xl" style="color: #ffffff;"></i>
+                    </a>
                 </div>
             </div>
+        </div>
+    </nav>
 
-        </main>
+    <!-- Sidebar + Main Content -->
+    <div class="container-fluid w-100">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto" style="margin-top: 70px;">
+                <h1 class="mb-4" style="font-size: 2rem; font-weight: 700; color: #333; letter-spacing: -0.5px;">
+                    Add New Product
+                </h1>
+
+                <!-- Product Form -->
+                <div class="card add-product-form">
+                    <div class="card-body p-4">
+                        <form id="addProductForm" enctype="multipart/form-data">
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="productName" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name">
+                                </div>
+                                <div class="w-100">
+                                    <label for="productCategory" class="form-label mb-2">Category</label>
+                                    <select class="form-select form-select-sm" id="productCategory" name="productCategory">
+                                        <option hidden>Select category</option>
+                                        <% category.forEach(category => { %>
+                                            <option value="<%= category.name %>"><%= category.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <div class="w-100">
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
+                                </div>
+                            </div>
+
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="productStock" class="form-label">Stock</label>
+                                    <input type="number" class="form-control form-control-sm" id="productStock" name="productStock" placeholder="Enter quantity">
+                                </div>
+                                <div class="w-100">
+                                    <label for="basePrice" class="form-label">Base Price</label>
+                                    <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
+                                </div>
+                                <div class="w-100">
+                                    <label for="discountPrice" class="form-label">Discount Percentage (%)</label>
+                                    <input type="number" id="productOffer" name="productOffer" class="form-control form-control-sm" placeholder="Enter discount">
+                                </div>
+                            </div>
+
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="productDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="productDescription" name="productDescription" placeholder="Enter description"></textarea>
+                                </div>
+                                <div class="w-100">
+                                    <label for="productSpec" class="form-label">Specifications</label>
+                                    <textarea class="form-control" id="productSpec" name="productSpec" placeholder="Enter specifications"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Variant Section -->
+                            <div class="mb-4">
+                                <label class="form-label">Product Variants</label>
+                                <div id="variantContainer">
+                                    <div class="variant-item mb-3">
+                                        <div class="d-flex gap-3 align-items-end mb-3">
+                                            <div class="w-100">
+                                                <label class="form-label">Attribute Name</label>
+                                                <input type="text" class="form-control form-control-sm" name="variantAttribute[]" placeholder="e.g., Size, Color, Weight">
+                                            </div>
+                                            <div class="w-100">
+                                                <label class="form-label">Attribute Value</label>
+                                                <input type="text" class="form-control form-control-sm" name="variantValue[]" placeholder="e.g., Small, Red, 500g">
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-danger remove-variant" disabled>
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="w-100 mb-3">
+                                            <label class="form-label">Variant Images (Max 4)</label>
+                                            <div class="image-upload-row">
+                                                <div class="image-upload-slot" data-slot="1">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="2">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="3">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="4">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="addVariantButton" class="btn btn-sm btn-outline-primary mt-2">
+                                    <i class="fas fa-plus me-1"></i> Add Variant
+                                </button>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Add Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
-</div>
 
-<script>
-    const categorySelect = document.getElementById('productCategory');
-    const attributeContainer = document.getElementById('attributeContainer');
-    const categoryAttributes = <%- JSON.stringify(categoryAttributes) %>;
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Form Submission
+            const addProductForm = document.getElementById("addProductForm");
+            if (addProductForm) {
+                addProductForm.addEventListener("submit", async function (event) {
+                    event.preventDefault();
 
-    categorySelect.addEventListener('change', (event) => {
-        const selectedCategory = event.target.value;
-        const attributes = categoryAttributes[selectedCategory] || { sizes: [], weights: [] };
-
-        let html = '';
-        if (attributes.sizes.length > 0) {
-            html = `
-                <select class="form-select form-select-sm" name="size">
-                    <option value="" hidden>Select Size</option>
-                    ${attributes.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
-                </select>
-            `;
-        } else if (attributes.weights.length > 0) {
-            html = `
-                <select class="form-select form-select-sm" name="weight">
-                    <option value="" hidden>Select Weight</option>
-                    ${attributes.weights.map(weight => `<option value="${weight}">${weight}</option>`).join('')}
-                </select>
-            `;
-        } else {
-            html = `<input type="text" class="form-control form-control-sm" name="customValue" placeholder="Enter custom size or weight">`;
-        }
-
-        attributeContainer.innerHTML = html;
-    });
+                    const formData = new FormData(this);
 
 
+                    for (let [key, value] of formData.entries()) {
+                        console.log(key, value);
+                    }
 
-    document.getElementById("customFileButton").addEventListener("click", function () {
-        document.getElementById("productImages").click();
-    });
+                    try {
+                        const response = await fetch("/admin/addProducts", {
+                            method: "POST",
+                            body: formData,
+                        });
 
-    // Update the file names display and show image previews
-    function updateFileNames(event) {
-        const files = event.target.files;
-        const fileNamesDisplay = document.getElementById("fileNamesDisplay");
-        const imagePreview = document.getElementById("imagePreview");
+                        const result = await response.json();
 
-        // Clear previous previews
-        imagePreview.innerHTML = "";
-
-        if (files.length > 0) {
-            // Display file names
-            const fileNames = Array.from(files).map(file => file.name).join(", ");
-            fileNamesDisplay.textContent = fileNames;
-
-            // Loop through selected files and create image previews
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.classList.add("img-thumbnail");
-                    img.classList.add("m-0");
-                    img.style.width = "50px";
-                    img.style.height = "50px";
-                    img.style.objectFit = "cover";
-                    imagePreview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        } else {
-            fileNamesDisplay.textContent = "No files chosen";
-            imagePreview.innerHTML = '<span class="text-muted">No images selected</span>';
-        }
-    }
-
-    document.getElementById("addProductForm")?.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const formData = new FormData(this);
-
-        try {
-            const response = await fetch("/admin/addProducts", {
-                method: "POST",
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                Swal.fire({
-                    position: "top-center",
-                    icon: "success",
-                    title: "Product added successfully!",
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = '/admin/products'
-                });
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: result.error || "An unexpected error occurred.",
+                        if (response.ok) {
+                            Swal.fire({
+                                position: "top-center",
+                                icon: "success",
+                                title: "Product added successfully!",
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                window.location.href = "/admin/products";
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: result.error || "An unexpected error occurred.",
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops!",
+                            text: "Something went wrong. Please try again.",
+                        });
+                    }
                 });
             }
-        } catch (error) {
-            console.error("Error:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Oops!",
-                text: "Something went wrong. Please try again.",
-            });
-        }
-    });  
-</script>
 
+            // Variant Management
+            const variantContainer = document.getElementById("variantContainer");
+            const addVariantButton = document.getElementById("addVariantButton");
+
+            if (variantContainer && addVariantButton) {
+                addVariantButton.addEventListener("click", function () {
+                    const variantItem = document.createElement("div");
+                    variantItem.className = "variant-item mb-3";
+                    variantItem.innerHTML = `
+                        <div class="d-flex gap-3 align-items-end mb-3">
+                            <div class="w-100">
+                                <label class="form-label">Attribute Name</label>
+                                <input type="text" class="form-control form-control-sm" name="variantAttribute[]" placeholder="e.g., Size, Color, Weight">
+                            </div>
+                            <div class="w-100">
+                                <label class="form-label">Attribute Value</label>
+                                <input type="text" class="form-control form-control-sm" name="variantValue[]" placeholder="e.g., Small, Red, 500g">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger remove-variant">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="w-100 mb-3">
+                            <label class="form-label">Variant Images (Max 4)</label>
+                            <div class="image-upload-row">
+                                <div class="image-upload-slot" data-slot="1">
+                                    <div class="image-upload-dropzone">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <p class="mb-0">Add Image</p>
+                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                    </div>
+                                    <div class="image-preview"></div>
+                                </div>
+                                <div class="image-upload-slot" data-slot="2">
+                                    <div class="image-upload-dropzone">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <p class="mb-0">Add Image</p>
+                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                    </div>
+                                    <div class="image-preview"></div>
+                                </div>
+                                <div class="image-upload-slot" data-slot="3">
+                                    <div class="image-upload-dropzone">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <p class="mb-0">Add Image</p>
+                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                    </div>
+                                    <div class="image-preview"></div>
+                                </div>
+                                <div class="image-upload-slot" data-slot="4">
+                                    <div class="image-upload-dropzone">
+                                        <i class="fa-solid fa-upload"></i>
+                                        <p class="mb-0">Add Image</p>
+                                        <input type="file" class="d-none" name="variantImages[]" accept="image/*">
+                                    </div>
+                                    <div class="image-preview"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    variantContainer.appendChild(variantItem);
+                    setupImageSlots(variantItem.querySelector(".image-upload-row"));
+                    updateRemoveButtons();
+                });
+
+                variantContainer.addEventListener("click", function (event) {
+                    if (
+                        event.target.classList.contains("remove-variant") ||
+                        event.target.parentElement.classList.contains("remove-variant")
+                    ) {
+                        const variantItem = event.target.closest(".variant-item");
+                        variantItem.remove();
+                        updateRemoveButtons();
+                    }
+                });
+
+                function updateRemoveButtons() {
+                    const removeButtons = variantContainer.querySelectorAll(".remove-variant");
+                    removeButtons.forEach((button) => (button.disabled = removeButtons.length <= 1));
+                }
+
+                // Initialize existing variant
+                const existingVariant = variantContainer.querySelector(".variant-item");
+                if (existingVariant) {
+                    setupImageSlots(existingVariant.querySelector(".image-upload-row"));
+                }
+
+                // Initial remove button state
+                updateRemoveButtons();
+            }
+
+            // Image Upload Functions
+            function setupImageSlots(container) {
+                const slots = container.querySelectorAll(".image-upload-slot");
+
+                slots.forEach((slot) => {
+                    const dropzone = slot.querySelector(".image-upload-dropzone");
+                    const input = slot.querySelector('input[type="file"]');
+                    const preview = slot.querySelector(".image-preview");
+
+                    // Click to upload
+                    dropzone.addEventListener("click", () => input.click());
+
+                    // Drag and drop events
+                    dropzone.addEventListener("dragover", (e) => {
+                        e.preventDefault();
+                        dropzone.classList.add("dragover");
+                    });
+
+                    dropzone.addEventListener("dragleave", () => {
+                        dropzone.classList.remove("dragover");
+                    });
+
+                    dropzone.addEventListener("drop", (e) => {
+                        e.preventDefault();
+                        dropzone.classList.remove("dragover");
+                        const file = e.dataTransfer.files[0];
+                        if (file && file.type.startsWith("image/")) {
+                            handleImage(file, preview, input);
+                        }
+                    });
+
+                    // File input change
+                    input.addEventListener("change", () => {
+                        const file = input.files[0];
+                        if (file && file.type.startsWith("image/")) {
+                            handleImage(file, preview, input);
+                        }
+                    });
+                });
+            }
+
+            function handleImage(file, preview, input) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove-image-btn">×</button>
+                    `;
+                    preview.parentElement.classList.add("filled");
+
+                    const removeBtn = preview.querySelector(".remove-image-btn");
+                    removeBtn.addEventListener("click", () => {
+                        preview.innerHTML = "";
+                        preview.parentElement.classList.remove("filled");
+                        input.value = ""; // Clear the input
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
-

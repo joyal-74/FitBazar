@@ -1,6 +1,7 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
+import helperFunctions from '../helpers/helperFunctions.js';
 
 const loadaddProducts = async (req, res) => {
     try {
@@ -38,12 +39,26 @@ const generateProductId = async () => {
 
 const addProducts = async (req, res) => {
     try {
-        let { productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer } = req.body;
+        let uploadImages = helperFunctions.uploadImages;
+        const { productName, productCategory, productBrand, productStock, productPrice, productOffer, productDescription, productSpec, variantAttribute, variantValue } = req.body;
 
-        const colors = productColor ? productColor.split(',').map(color => color.trim()) : [];
+        const allVariantImages = req.files ? await uploadImages(req.files) : [];
 
-        productName = productName?.trim();
-        productDescription = productDescription?.trim();
+        const variantCount = variantAttribute.length;
+        const imagesPerVariant = Math.min(4, Math.ceil(allVariantImages.length / variantCount));
+
+        const variants = variantAttribute.map((attr, index) => {
+            const startIdx = index * imagesPerVariant;
+            const endIdx = startIdx + imagesPerVariant;
+            const images = allVariantImages.slice(startIdx, endIdx);
+        
+            return {
+                attributeName: attr,
+                attributeValue: variantValue[index],
+                images,
+            };
+        });
+
         let productId = await generateProductId();
 
         if (!productName || !productDescription) {
@@ -62,13 +77,10 @@ const addProducts = async (req, res) => {
             specifications : productSpec,
             brand : productBrand,
             category : productCategory,
-            productImages: productImages,
             stock : productStock,
-            size : productSize,
-            weight : productWeight,
-            color : colors,
             price : productPrice,
-            productOffer : productOffer
+            productOffer : productOffer,
+            variants
         });
 
         await newProduct.save();
@@ -85,37 +97,48 @@ const addProducts = async (req, res) => {
 
 const editProducts = async (req, res) => {
     try {
-        let { productId, productName, productDescription, productSpec, productStock, productCategory, productBrand, productSize, productWeight, productColor, productPrice, productOffer, visibility } = req.body;
+        let { productId, productName, productCategory, productBrand, productStock, productPrice, productOffer, productDescription, productSpec, visibility, variantAttribute, variantValue, removedImages } = req.body;
 
-        const colors = productColor ? productColor.split(',').map(color => color.trim()) : [];
-        productName = productName?.trim();
-        productDescription = productDescription?.trim();
+        const parsedRemovedImages = removedImages ? JSON.parse(removedImages) : [];
 
-        // Find product by ID
+        let uploadImages = helperFunctions.uploadImages;
+        const newImages = req.files ? await uploadImages(req.files) : [];
+        const variantCount = variantAttribute.length;
+    
+        // Fetch existing product
         const product = await Products.findOne({ productId: productId });
-        if (!product) {
-            return res.status(NOT_FOUND).json({ error: "Product not found." });
-        }
+        if (!product) return res.status(NOT_FOUND).json({ error: "Product not found" });
 
-        let productImages = product.productImages;
-        if (req.files && req.files.length > 0) {
-            productImages = req.files.map(file => file.path);           
-        }
+        // Update variants
+        const updatedVariants = variantAttribute.map((attr, index) => {
+            const existingVariant = product.variants[index] || {};
+            const variantImagesField = `variantImages[${index}][]`;
+            const newVariantImages = req.files.filter(file => file.fieldname === variantImagesField).map(file => file.path);
+    
+            // Filter out removed images from existing ones
+            const remainingImages = existingVariant.images ? existingVariant.images.filter(img => !parsedRemovedImages.includes(img)) : [];
+            const combinedImages = [...remainingImages, ...newVariantImages].slice(0, 4); // Max 4 images
+    
+            return {
+            attributeName: attr,
+            attributeValue: variantValue[index],
+            images: combinedImages,
+            };
+        });
 
         // Update product fields
+
+
         product.name = productName;
+        product.category = productCategory;
+        product.brand = productBrand;
+        product.stock = Number(productStock);
+        product.price = Number(productPrice);
+        product.productOffer = Number(productOffer || 0);
         product.description = productDescription;
         product.specifications = productSpec;
-        product.brand = productBrand;
-        product.category = productCategory;
-        product.stock = parseInt(productStock) || 0;
-        product.size = productSize;
-        product.color = colors;
-        product.price = parseFloat(productPrice) || 0;
-        product.weight = parseFloat(productWeight) || 0;
-        product.productOffer = productOffer;
         product.visibility = visibility === "true";
-        product.productImages = productImages;
+        product.variants = updatedVariants;
 
         // Save updated product
         await product.save();

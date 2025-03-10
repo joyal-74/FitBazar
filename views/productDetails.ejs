@@ -54,13 +54,13 @@
                 <div class="col-md-5 me-3">
                     <!-- Main Product Image with Zoom Container -->
                     <div class="zoom-container" style="position: relative; overflow: hidden; border-radius: 10px;">
-                        <img id="mainImage" src="<%= product.productImages[0] %>" class="img-fluid zoom-image" alt="Product Name" style="border-radius: 10px; height: 480px;">
+                        <img id="mainImage" src="<%= product.variants[0].images[0] %>" class="img-fluid zoom-image" alt="Product Name" style="border-radius: 10px; height: 480px;">
                         <div class="zoom-lens" style="position: absolute; border: 1px solid #ddd; background: rgba(255, 255, 255, 0.5); pointer-events: none; display: none;"></div>
                     </div>
                 
                     <!-- Thumbnails -->
                     <div class="d-flex gap-2 mt-2">
-                        <% product.productImages.forEach((image, index) => { %>
+                        <% product.variants[0].images.forEach((image, index) => { %>
                             <img src="<%= image %>" class="img-thumbnail thumbnail" style="width: 80px; cursor: pointer;">
                         <% }) %>
                     </div>
@@ -92,13 +92,15 @@
                         <div class="my-3 w-100">
                             <label class="form-label fw-bold">Colors:</label>
                             <div class="d-flex flex-wrap">
-                                <% product.color.forEach((color, index) => { %>
-                                    <button class="btn btn-outline-secondary color-btn me-2 px-1" 
-                                            data-color="<%= color %>"
-                                            onclick="selectColor('<%= color %>', '<%= index %>')">
-                                        <%= color %>
-                                    </button>
-                                <% }); %>
+                                <% product.variants.forEach((variant, index) => { %>
+                                    <% if (variant.attributeName === 'Color') { %>
+                                        <button class="btn btn-outline-secondary color-btn me-2 px-1" 
+                                                data-color="<%= variant.attributeValue %>"
+                                                onclick="selectColor('<%= variant.attributeValue %>', '<%= index %>')">
+                                            <%= variant.attributeValue %>
+                                        </button>
+                                    <% } %>
+                                <% }); %>                                
                             </div>
                         </div>
                     </div>
@@ -256,7 +258,7 @@
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
                                 <div class="position-relative">
-                                    <img src="<%= product.productImages[0] %>" 
+                                    <img src=""<%= product.variants[1].images[1] %>" 
                                          class="product-img card-img-top mx-auto d-block" 
                                          style="height: 240px; width: auto; object-fit: cover;">
             
