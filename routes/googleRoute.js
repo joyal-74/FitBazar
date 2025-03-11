@@ -10,7 +10,7 @@ router.get('/google/callback',passport.authenticate('google',{failureRedirect:'/
         name: req.user.name,
         email: req.user.email,
     };
-    res.redirect("/home")
+    res.redirect("/")
 })
 
 export default router;

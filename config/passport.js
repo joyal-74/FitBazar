@@ -33,6 +33,7 @@ passport.use(
                 }
 
                 req.session.user = user
+                // console.log(req.session.user._id)
 
                 return done(null, user);
             } catch (error) {

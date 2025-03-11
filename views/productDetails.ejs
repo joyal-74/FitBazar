@@ -59,9 +59,9 @@
                     </div>
                 
                     <!-- Thumbnails -->
-                    <div class="d-flex gap-2 mt-2">
+                    <div class="d-flex gap-2 mt-2 thumb-container">
                         <% product.variants[0].images.forEach((image, index) => { %>
-                            <img src="<%= image %>" class="img-thumbnail thumbnail" style="width: 80px; cursor: pointer;">
+                            <img src="<%= image %>" class="img-thumbnail thumbnail" style="width: 80px; height: 80px; cursor: pointer;">
                         <% }) %>
                     </div>
                 </div>
@@ -96,7 +96,8 @@
                                     <% if (variant.attributeName === 'Color') { %>
                                         <button class="btn btn-outline-secondary color-btn me-2 px-1" 
                                                 data-color="<%= variant.attributeValue %>"
-                                                onclick="selectColor('<%= variant.attributeValue %>', '<%= index %>')">
+                                                data-image="<%= variant.images[0] %>"
+                                                onclick="selectColor('<%= variant.attributeValue %>', <%= index %>)">
                                             <%= variant.attributeValue %>
                                         </button>
                                     <% } %>
@@ -258,7 +259,7 @@
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
                                 <div class="position-relative">
-                                    <img src=""<%= product.variants[1].images[1] %>" 
+                                    <img src=""<%= product.variants[1].images[0] %>" 
                                          class="product-img card-img-top mx-auto d-block" 
                                          style="height: 240px; width: auto; object-fit: cover;">
             
@@ -376,85 +377,71 @@
     </div>
 
     <script>
+
+        const product = <%- JSON.stringify(product) %>;
+
+        function selectColor(color, index) {
+            console.log(`Selected color: ${color}`);
+
+            const selectedVariant = product.variants[index];
+            
+            if (selectedVariant && selectedVariant.images) {
+                const mainImage = document.getElementById('mainImage');
+                mainImage.src = selectedVariant.images[0];
+
+                const thumbnails = document.querySelectorAll('.thumbnail');
+                thumbnails.forEach((thumbnail, i) => {
+                    if (selectedVariant.images[i]) {
+                        thumbnail.src = selectedVariant.images[i];
+                        thumbnail.style.display = 'block';
+                    } else {
+                        thumbnail.style.display = 'none';
+                    }
+                });
+            } else {
+                console.error('No images found for the selected color');
+            }
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            const zoomContainer = document.querySelector(".zoom-container");
+            const zoomImage = document.getElementById("mainImage");
+            const zoomLens = document.querySelector(".zoom-lens");
+    
+            zoomContainer.addEventListener("mousemove", function (e) {
+                const containerRect = zoomContainer.getBoundingClientRect();
+                const imageRect = zoomImage.getBoundingClientRect();
+    
+                const x = e.clientX - containerRect.left;
+                const y = e.clientY - containerRect.top;
+    
+                const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
+                const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
+    
+                zoomLens.style.left = `${lensX}px`;
+                zoomLens.style.top = `${lensY}px`;
+                zoomLens.style.display = "block";
+    
+                zoomImage.style.transform = "scale(2)";
+                zoomImage.style.transformOrigin = `${x}px ${y}px`;
+            });
+    
+            zoomContainer.addEventListener("mouseleave", function () {
+                zoomLens.style.display = "none";
+                zoomImage.style.transform = "scale(1)";
+            });
+        });
+    
         document.addEventListener("DOMContentLoaded", function () {
             const mainImage = document.getElementById("mainImage");
             const thumbnails = document.querySelectorAll(".thumbnail");
-
+    
             thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener("mousemove", function () {
-                    mainImage.src = this.src; // Change main image source to clicked thumbnail
+                thumbnail.addEventListener("mouseover", function () {
+                    mainImage.src = this.src;
                 });
             });
         });
-
-        document.querySelectorAll('.copy-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                let couponCode = this.getAttribute('data-code');
-                navigator.clipboard.writeText(couponCode).then(() => {
-                    Swal.fire({
-                        title: "Coupon Copied!",
-                        text: `Use code "${couponCode}" at checkout.`,
-                        icon: "success",
-                        confirmButtonText: "OK"
-                    });
-                }).catch(err => {
-                    Swal.fire({
-                        title: "Oops!",
-                        text: "Failed to copy the coupon code.",
-                        icon: "error",
-                        confirmButtonText: "Try Again"
-                    });
-                });
-            });
-        });
-   
-    document.addEventListener("DOMContentLoaded", function () {
-        const zoomContainer = document.querySelector(".zoom-container");
-        const zoomImage = document.getElementById("mainImage");
-        const zoomLens = document.querySelector(".zoom-lens");
-
-        zoomContainer.addEventListener("mousemove", function (e) {
-            const containerRect = zoomContainer.getBoundingClientRect();
-            const imageRect = zoomImage.getBoundingClientRect();
-
-            const x = e.clientX - containerRect.left;
-            const y = e.clientY - containerRect.top;
-
-            // Ensure the lens stays within the image boundaries
-            const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
-            const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
-
-            // Move the lens
-            zoomLens.style.left = `${lensX}px`;
-            zoomLens.style.top = `${lensY}px`;
-            zoomLens.style.display = "block";
-
-            // Zoom the image
-            zoomImage.style.transform = "scale(2)";
-            zoomImage.style.transformOrigin = `${x}px ${y}px`;
-        });
-
-        // Hide lens and reset zoom on mouse leave
-        zoomContainer.addEventListener("mouseleave", function () {
-            zoomLens.style.display = "none";
-            zoomImage.style.transform = "scale(1)";
-        });
-
-        // Update main image when a thumbnail is clicked
-        const thumbnails = document.querySelectorAll(".thumbnail");
-        thumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener("click", function () {
-                zoomImage.src = this.src; // Change main image source to clicked thumbnail
-            });
-        });
-    });
-
-    function selectColor(color, index) {
-        document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.color-btn')[index].classList.add('active');
-        console.log("Selected Color:", color);
-    }
-
     </script>
     
 </body>

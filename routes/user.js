@@ -24,9 +24,15 @@ router.post('/otpverify', userController.verifyOtp)
 router.get('/resetpass', userController.loadConfirmOtp);
 router.post('/resetpass',userController.changePassword)
 
+
+//address management
 router.get('/profile', profileController.loadprofile);
 router.get('/address',profileController.loadAddress);
+router.post('/address',profileController.addAddress);
 router.get('/addAddress',profileController.loadAddAddress);
+router.get('/editaddress', profileController.loadEditAddress);
+router.put('/address', profileController.editAddress);
+router.delete('/address', profileController.deleteAddress);
 router.get('/coupons', profileController.loadCoupons);
 router.get('/privacy', profileController.loadPrivacy);
 
