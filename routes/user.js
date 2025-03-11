@@ -3,6 +3,7 @@ const router = express.Router();
 import userController from '../controllers/userController.js';
 import profileController from "../controllers/profileController.js";
 import cartControlller from '../controllers/cartController.js'
+import upload from "../middleware/imageUpload.js";
 
 
 // login route
@@ -24,9 +25,14 @@ router.post('/otpverify', userController.verifyOtp)
 router.get('/resetpass', userController.loadConfirmOtp);
 router.post('/resetpass',userController.changePassword)
 
+// profile management
+router.get('/profile', profileController.loadprofile);
+router.get('/profileU', profileController.loadUpdateProfile);
+router.put('/profile', upload.single('profilePic'), profileController.updateProfile)
+router.post('/sendotp', profileController.sendOTP);
+router.post('/verifymail', profileController.verifyOTP);
 
 //address management
-router.get('/profile', profileController.loadprofile);
 router.get('/address',profileController.loadAddress);
 router.post('/address',profileController.addAddress);
 router.get('/addAddress',profileController.loadAddAddress);

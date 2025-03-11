@@ -71,7 +71,7 @@ let userLogin = async (req, res) => {
 
         console.log(req.session.user)
         // Redirect on success
-        return res.redirect('/home');
+        return res.redirect('/');
 
     } catch (err) {
         console.error("Login Error:", err);

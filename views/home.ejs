@@ -1,62 +1,40 @@
 <body>
     
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm bg-white">
-        <div class="container">
-            <!-- Brand Logo -->
-            <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
-
-            <!-- Toggle Button for Offcanvas -->
-            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Offcanvas Navbar -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav me-auto align-items-lg-center gap-2">
-                        <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/home">Home</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
-                        </li>
-                    </ul>
-
-                    <!-- Search Form -->
-                    <form class="d-flex mt-3 mt-lg-0">
-                        <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
-                        <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
-                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                        </button>
-                    </form>
-
-                    <!-- Icons and User Section -->
-                    <div class="d-flex align-items-center mt-3 mt-lg-0">
-                        <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                        <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                        <% if (user) { %>
-                            <!-- Display Font Awesome user icon if user is logged in -->
-                            <a href="/user/profile" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                                <i class="fa-solid fa-user"></i>
-                            </a>
-                        <% } else { %>
-                            <!-- Display "Sign Up" button if user is not logged in -->
-                            <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                        <% } %>
-                    </div>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
+                            href="/home">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
+                </form>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %> 
                 </div>
             </div>
         </div>

@@ -2,14 +2,137 @@ import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
 import Addresses from '../model/addressModel.js'
 import Address from "../model/addressModel.js";
+import nodemailer from "nodemailer"
 
 
 const loadprofile = async (req,res) => {
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
-    const [firstName, lastName] = user.name.split(' ')
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+    // console.log(userId)
+    console.log(req.session.user);
+
+    if (!userId) return res.redirect('/user/login');
+
+    const user = await User.findOne({_id : userId})
+    const [firstName, lastName] = user.name.split(' ');
     res.render('user/profile',{title : "User Pofile", user, firstName, lastName })
 }
+
+const loadUpdateProfile = async (req,res) => {
+    const userId = req.query.userId;
+
+    const user = await User.findOne({ userId : userId});
+    const [firstName, lastName] = user.name.split(' ');
+    res.render('user/profileU',{title : "Edit Pofile", user, firstName, lastName })
+}
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+    },
+});
+
+const generateOTP = () => {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+};
+
+const sendOTPMail = async (email, otp) => {
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Your OTP for FitBazar Profile Update',
+        text: `Your OTP is: ${otp}. It is valid for 5 minutes.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
+const sendOTP = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    const otp = generateOTP();
+    req.session.emailOtp = otp;
+    console.log(otp)
+
+    try {
+        await sendOTPMail(email, otp);
+        res.json({ success: true, message: 'OTP sent successfully' });
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        res.status(500).json({ success: false, error: 'Failed to send OTP' });
+    }
+}
+
+const verifyOTP = (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ success: false, error: 'Email and OTP are required' });
+    }
+
+    const storedData = req.session.emailOtp;
+
+    console.log(storedData)
+    console.log(otp)
+
+    if (!storedData) {
+        return res.status(400).json({ success: false, error: 'No OTP found for this email' });
+    }
+
+    if (storedData === otp) {
+        delete req.session.emailOtp;
+        return res.json({ success: true, message: 'OTP verified successfully' });
+    }
+
+    res.status(400).json({ success: false, error: 'Invalid OTP' });
+}
+
+
+// to edit profile details
+const updateProfile = async (req,res) => {
+    try {
+        let { firstName, lastName, email, name, phone, bio, gender } = req.body;
+        const userId = req.query.id;
+
+        const user = await User.findOne({userId : userId});
+        console.log(userId);
+        
+        console.log(user);
+        
+        if (req.file) {
+            user.profilePic = req.file.path;
+        }
+
+        if(email !== user.email){
+
+        }
+
+        name = `${firstName} ${lastName}`
+
+        user.name = name;
+        user.email = email;
+        user.phone = phone;
+        user.bio = bio;
+        user.gender = gender;
+
+        await user.save();
+        
+        req.session.user = user
+
+        return res.status(200).json({ message: "Profile updated successfully", user });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+
+}
+
 
 const loadAddress = async (req, res) => {
     const userId = req.session.user?.id || "";
@@ -33,19 +156,7 @@ const loadAddress = async (req, res) => {
 
 const addAddress = async (req, res) => {
     try {
-        const {
-            fullName,
-            phone,
-            addressLine1,
-            addressLine2,
-            landmark,
-            city,
-            state,
-            country,
-            altNumber,
-            addressType,
-            zipCode
-        } = req.body;
+        const {fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode} = req.body;
 
         const userId = req.session.user.id;
 
@@ -56,7 +167,6 @@ const addAddress = async (req, res) => {
         let userAddress = await Address.findOne({ userId });
 
         if (!userAddress) {
-            // If no address document exists for the user, create a new one
             userAddress = new Address({
                 userId,
                 details: []
@@ -151,7 +261,6 @@ const editAddress = async (req,res) => {
             return res.status(400).json({ error: "All required fields must be filled." });
         }
 
-
         let userAddress = await Address.findOne({ userId });
 
         userAddress.details[index] = {
@@ -210,4 +319,5 @@ const loadPrivacy = async (req,res) => {
     res.render('user/privacy', {title : "coupons", user})
 }
 
-export default {loadprofile, loadAddress, loadAddAddress, loadEditAddress, editAddress, deleteAddress, loadCoupons, loadPrivacy, addAddress};
+export default {loadprofile, loadUpdateProfile, verifyOTP, sendOTP, updateProfile, loadAddress, loadAddAddress,
+     loadEditAddress, editAddress, deleteAddress, loadCoupons, loadPrivacy, addAddress};

@@ -1,266 +1,372 @@
 <head>
     <style>
         /* Sidebar container */
-.sidebar-profile {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-}
+        .sidebar-profile {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+        }
 
-/* Sidebar section heading */
-.sidebar-heading {
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    margin: 18px 0;
-    display: block;
-}
+        /* Sidebar section heading */
+        .sidebar-heading {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin: 18px 0;
+            display: block;
+        }
 
-/* Sidebar link styles */
-.sidebar-linkz {
-    color: #333;
-    padding: 12px 14px;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    display: flex;
-    align-items: center;
-}
+        /* Sidebar link styles */
+        .sidebar-linkz {
+            color: #333;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
 
-.sidebar-linkz i {
-    width: 20px;
-    color: #3b3389;
-}
+        .sidebar-linkz i {
+            width: 20px;
+            color: #3b3389;
+        }
 
-/* Hover and active states */
-.sidebar-linkz:hover {
-    background-color: #e0dbfc;
-    color: #3b3389;
-}
+        /* Hover and active states */
+        .sidebar-linkz:hover {
+            background-color: #e0dbfc;
+            color: #3b3389;
+        }
 
-.sidebar-linkz.active {
-    background-color: #3b3389;
-    color: #fff;
-}
+        .sidebar-linkz.active {
+            background-color: #3b3389;
+            color: #fff;
+        }
 
 
-/* Avatar and greeting text */
-.sidebar-profile .d-flex {
-    align-items: center;
-}
+        /* Avatar and greeting text */
+        .sidebar-profile .d-flex {
+            align-items: center;
+        }
 
-.sidebar-profile img {
-    object-fit: cover;
-    border: 2px solid #e0dbfc;
-}
+        .sidebar-profile img {
+            object-fit: cover;
+            border: 2px solid #e0dbfc;
+        }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .sidebar-profile {
-        padding: 15px;
-    }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar-profile {
+                padding: 15px;
+            }
 
-    .sidebar-linkz {
-        font-size: 14px;
-        padding: 10px 12px;
-    }
-}
+            .sidebar-linkz {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+        }
 
-/* Form input styling */
-.form-control {
-        border-radius: 8px;
-        border: 1px solid #e0dbfc;
-        padding: 10px 12px;
-        transition: border-color 0.3s ease;
-    }
+        /* Form input styling */
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #e0dbfc;
+            padding: 10px 12px;
+            transition: border-color 0.3s ease;
+        }
 
-    .form-control:focus {
-        border-color: #3b3389;
-        box-shadow: 0 0 0 3px rgba(59, 51, 137, 0.1);
-    }
+        .form-control:focus {
+            border-color: #3b3389;
+            box-shadow: 0 0 0 3px rgba(59, 51, 137, 0.1);
+        }
 
-    /* Radio button styling */
-    .form-check-input {
-        border-color: #3b3389;
-    }
+        /* Radio button styling */
+        .form-check-input {
+            border-color: #3b3389;
+        }
 
-    .form-check-input:checked {
-        background-color: #3b3389;
-        border-color: #3b3389;
-    }
+        .form-check-input:checked {
+            background-color: #3b3389;
+            border-color: #3b3389;
+        }
 
-    /* Button styling */
-    .btn-primary {
-        background-color: #3b3389;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        transition: background-color 0.3s ease;
-    }
+        /* Button styling */
+        .btn-primary {
+            background-color: #3b3389;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-primary:hover {
-        background-color: #2a2467;
-    }
+        .btn-primary:hover {
+            background-color: #2a2467;
+        }
 
-    .btn-secondary {
-        background-color: #f8f9fa;
-        border: 1px solid #e0dbfc;
-        color: #3b3389;
-        padding: 10px 20px;
-        border-radius: 8px;
-        transition: background-color 0.3s ease;
-    }
+        .btn-secondary {
+            background-color: #f8f9fa;
+            border: 1px solid #e0dbfc;
+            color: #3b3389;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
 
-    .btn-secondary:hover {
-        background-color: #e0dbfc;
-    }
+        .btn-secondary:hover {
+            background-color: #e0dbfc;
+        }
+
+        .profile-card {
+            border-radius: 12px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .profile-header {
+            border-bottom: 1px solid #e0dbfc;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            border: 3px solid #e0dbfc;
+            object-fit: cover;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-label {
+            color: #555;
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 15px;
+            word-break: break-word;
+        }
+
+        .stats-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0dbfc;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0dbfc;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #3b3389;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .recent-activity {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0dbfc;
+        }
+
+        .activity-item {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 
 <body>
-    
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg shadow-sm">
-    <div class="container d-flex flex-column">
-        <div class="d-flex w-100 justify-content-between align-items-center">
-            <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-            <ul class="nav align-items-center">
-                <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/home">Home</a></li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/shop">Shop</a>
-                </li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                    <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                </button>
-            </form>
-            <div class="d-flex align-items-center">
-                <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                <% if (user) { %>
-                    <!-- Display Font Awesome user icon if user is logged in -->
-                    <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                        <i class="fa-solid fa-user"></i>
-                    </a>
-                <% } else { %>
-                    <!-- Display "Sign Up" button if user is not logged in -->
-                    <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                <% } %>
-            </div>
-        </div>
 
-        <!-- <div class="w-100 d-flex justify-content-center mt-2">
-            <ul class="nav gap-5 align-items-center">
-                <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/home">Home</a></li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="/shop">Shop</a>
-                </li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-            </ul>
-        </div> -->
-    </div>
-</nav>
-
-<main class="container mt-4">
-    <div class="row g-5">
-        <!-- Sidebar -->
-        <div class="col-md-3">
-            <div class="sidebar-profile p-3">
-                <div class="d-flex align-items-center mb-5">
-                    <img src="/placeholder.jpg" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                    <span>Hello, <strong>Joyal</strong></span>
-                </div>
-
-                <nav class="nav flex-column gap-3">
-                    <a href="/orders" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-box me-2"></i>My Orders
-                    </a>
-                    <a href="/user/profile" class="nav-link sidebar-linkz active">
-                        <i class="fa-solid fa-user me-2" style="color: #fff;"></i>Profile Information
-                    </a>
-                    <a href="/user/address" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
-                    </a>
-                    <a href="/wallet" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-key me-2"></i>Privacy Settings
-                    </a>
-                    <a href="/coupons" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-ticket me-2"></i>My Coupons
-                    </a>
-                    <a href="/reviews" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
-                    </a>
-                    <a href="/wallet" class="nav-link sidebar-linkz">
-                        <i class="fa-solid fa-wallet me-2"></i>My Wallet
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-
-        <!-- Profile Form -->
-        <div class="col-md-9">
-            <div class="card p-5 h-100" style="border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                <h4 class="mb-4" style="color: #3B3389;">Personal Information</h4>
-                <form id="profileForm" method="POST" action="/profile/update">
-                    <!-- First Name and Last Name -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" name="firstName" class="form-control" value="<%= firstName %>">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" class="form-control" value="<%= lastName %>">
-                        </div>
-                    </div>
-        
-                    <!-- Gender -->
-                    <div class="mb-4">
-                        <label class="form-label">Gender</label>
-                        <div class="d-flex gap-3">
-                            <div class="form-check">
-                                <input type="radio" id="male" name="gender" value="Male" class="form-check-input" <%= user.gender === 'Male' ? 'checked' : '' %>>
-                                <label for="male" class="form-check-label">Male</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="radio" id="female" name="gender" value="Female" class="form-check-input" <%= user.gender === 'Female' ? 'checked' : '' %>>
-                                <label for="female" class="form-check-label">Female</label>
-                            </div>
-                        </div>
-                    </div>
-        
-                    <!-- Email Address -->
-                    <div class="mb-4">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>" readonly>
-                    </div>
-        
-                    <!-- Mobile Number -->
-                    <div class="mb-4">
-                        <label for="phone" class="form-label">Mobile Number</label>
-                        <input type="tel" id="phone" name="phone" class="form-control" value="<%= user.phone %>" readonly>
-                    </div>
-        
-                    <!-- Buttons -->
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary" style="background-color: #3B3389; border: none;">Save</button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.reload();">Cancel</button>
-                    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
+                            href="/home">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
                 </form>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %> 
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </nav>
 
+    <main class="container mt-4">
+        <div class="row g-5">
+            <div class="col-md-3">
+                <div class="sidebar-profile p-3">
+                    <div class="d-flex align-items-center mb-5">
+                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50"
+                            height="50">
+                        <span>Hello, <strong>
+                                <%= firstName %>
+                            </strong></span>
+                    </div>
 
+                    <nav class="nav flex-column gap-3">
+                        <a href="/orders" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-box me-2"></i>My Orders
+                        </a>
+                        <a href="/user/profile" class="nav-link sidebar-linkz active">
+                            <i class="fa-solid fa-user me-2" style="color: #fff;"></i>Profile Information
+                        </a>
+                        <a href="/user/address" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
+                        </a>
+                        <a href="/wallet" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-key me-2"></i>Privacy Settings
+                        </a>
+                        <a href="/coupons" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-ticket me-2"></i>My Coupons
+                        </a>
+                        <a href="/reviews" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
+                        </a>
+                        <a href="/wallet" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-wallet me-2"></i>My Wallet
+                        </a>
+                    </nav>
+                </div>
+            </div>
 
+            <!-- Optimized Profile Display -->
+            <div class="col-md-9">
+                <div class="profile-card">
+                    <div class="profile-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="Profile Picture"
+                                class="rounded-circle profile-avatar me-3" width="80" height="80">
+                            <div>
+                                <h4 style="color: #3B3389; margin: 0;">
+                                    <%= user.name %>
+                                </h4>
+                                <div class="mt-1"><small class="text-muted">Member since <%= new
+                                            Date(user.createdAt).toLocaleDateString() %></small></div>
+                            </div>
+                        </div>
+                        <a href="/user/profileU?userId=<%= user.userId %>" class="btn btn-primary">
+                            <i class="fa-solid fa-pen me-2"></i>Edit Profile
+                        </a>
+                    </div>
+
+                    <div class="info-grid" style="margin-top: 50px;">
+                        <div class="info-item">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">
+                                <%= user.email %>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Mobile Number</div>
+                            <div class="info-value">
+                                <%= user.phone || 'Not provided' %>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value">
+                                <%= user.gender || 'Not specified' %>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Bio</div>
+                            <div class="info-value">
+                                <%= user.bio || 'No bio provided' %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Content: Stats -->
+                    <div class="stats-section">
+                        <h5 style="color: #3B3389; margin-bottom: 15px;">Your Stats</h5>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">
+                                    <%= user.ordersCount || 0 %>
+                                </div>
+                                <div class="stat-label">Orders Placed</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">
+                                    <%= user.reviewsCount || 0 %>
+                                </div>
+                                <div class="stat-label">Reviews Written</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">₹<%= user.totalSpent || '0.00' %>
+                                </div>
+                                <div class="stat-label">Total Spent</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
