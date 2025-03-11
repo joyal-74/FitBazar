@@ -8,9 +8,13 @@ import { OK,  NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../config/st
 
 // Home Page Handler
 const getUserHome = async (req, res)=> {
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+    const user = await User.findOne({ _id : userId});
     const category = await Category.find();
-    const product = await Products.find({visibility : true}).sort({createdAt : -1}).limit(8)
-    res.render('home', { title: 'Home Page', category, product, user: req.session.user });
+    const product = await Products.find({visibility : true}).sort({createdAt : -1}).limit(8);
+
+    res.render('home', { title: 'Home Page', category, product, user });
 }
 
 // Login Page Handler

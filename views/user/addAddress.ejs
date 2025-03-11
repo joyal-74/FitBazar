@@ -129,8 +129,12 @@
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                     <% if (user) { %>
-                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                            <i class="fa-solid fa-user"></i>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
                         </a>
                     <% } else { %>
                         <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
@@ -146,8 +150,8 @@
             <div class="col-md-3">
                 <div class="sidebar-profile p-3">
                     <div class="d-flex align-items-center mb-5">
-                        <img src="/placeholder.jpg" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                        <span>Hello, <strong>Joyal</strong></span>
+                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
+                        <span>Hello, <strong><%= firstName %></strong></span>
                     </div>
                     <nav class="nav flex-column gap-3">
                         <a href="/orders" class="nav-link sidebar-linkz"><i class="fa-solid fa-box me-2"></i>My Orders</a>

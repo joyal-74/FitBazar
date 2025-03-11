@@ -109,10 +109,6 @@ const updateProfile = async (req,res) => {
             user.profilePic = req.file.path;
         }
 
-        if(email !== user.email){
-
-        }
-
         name = `${firstName} ${lastName}`
 
         user.name = name;
@@ -135,10 +131,14 @@ const updateProfile = async (req,res) => {
 
 
 const loadAddress = async (req, res) => {
-    const userId = req.session.user?.id || "";
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
     console.log(userId)
 
     if (!userId) return res.redirect('/user/login');
+
+    const user = await User.findOne({_id : userId})
+
+    const [firstName, lastName] = user.name.split(' ');
 
     try {
         const addresses = await Addresses.find({ userId : userId });
@@ -146,7 +146,8 @@ const loadAddress = async (req, res) => {
         res.render('user/address', {
             title: 'Manage Addresses',
             addresses,
-            user: req.session.user
+            user,
+            firstName, lastName
         });
     } catch (error) {
         console.error('Error loading addresses:', error);
@@ -158,7 +159,7 @@ const addAddress = async (req, res) => {
     try {
         const {fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode} = req.body;
 
-        const userId = req.session.user.id;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
             return res.status(400).json({ error: "All required fields must be filled." });
@@ -203,20 +204,26 @@ const addAddress = async (req, res) => {
 
 const loadAddAddress = async (req,res)=>{
 
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    res.render('user/addAddress', {title : "Address", user})
+    const user = await User.findOne({_id : userId})
+
+    const [firstName, lastName] = user.name.split(' ');
+
+    res.render('user/addAddress', {title : "Address", user, firstName, lastName});
 }
 
 const loadEditAddress = async (req, res) => {
     try {
         const { id, index } = req.query;
         
-        const user = req.session.user;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        const user = await User.findOne({_id : userId})
         if (!user) {
             return res.status(401).json({ error: "Unauthorized" });
         }
+
+        const [firstName, lastName] = user.name.split(' ');
 
         const address = await Address.findOne({ 
             userId: id,
@@ -238,7 +245,7 @@ const loadEditAddress = async (req, res) => {
             address: selectedAddress,
             user,
             addressId: id,
-            index
+            index, firstName, lastName
         });
     } catch (error) {
         console.error("Error loading address:", error);
