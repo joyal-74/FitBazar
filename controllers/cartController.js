@@ -10,11 +10,11 @@ const addItemToCart = async (req, res) => {
 
         console.log(req.body);
 
-        const product = await Products.findOne({ productId: productId });
+        const product = await Products.findOne({ productId: productId, visibility : true });
         console.log(product);
 
         if (!product) {
-            return res.status(404).json({ error: "Product not found" });
+            return res.status(404).json({ error: "Product not found unable to add to cart" });
         }
 
         const name = product.name;
@@ -70,9 +70,9 @@ const addItemToCart = async (req, res) => {
 
         }
         await User.findByIdAndUpdate(userId, {
-            $addToSet: { cart: cart._id }
+            $set: { cart: cart._id }
         });
-
+        
         return res.status(200).json({ message: "Item added to cart successfully!" });
     } catch (error) {
         console.error("Add to cart error:", error);

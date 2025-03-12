@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Cart from "./cartModel.js";
 const { Schema } = mongoose
 
 // Define User Schema
