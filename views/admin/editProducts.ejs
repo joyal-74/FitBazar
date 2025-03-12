@@ -461,13 +461,11 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-        let cropper;
-            let currentInput; // Track the file input being cropped
-            let currentPreview; // Track the preview div being updated
+            let cropper;
+            let currentInput; 
+            let currentPreview;
 
 
-
-            // Form Submission (Edit Product)
             const editProductForm = document.getElementById("editProductForm");
             if (editProductForm) {
                 editProductForm.addEventListener("submit", async function (event) {
@@ -478,11 +476,15 @@
                     document.querySelectorAll(".remove-image-btn[data-removed]").forEach(btn => {
                         removedImages.push(btn.getAttribute("data-image-url"));
                     });
+                    
                     formData.append("removedImages", JSON.stringify(removedImages));
 
                     try {
-                        const response = await fetch(`/admin/editProducts/${document.getElementById("productId").value}`, {
+                        const response = await fetch(`/admin/products/${document.getElementById("productId").value}`, {
                             method: "PUT",
+                            headers: {
+                            "Accept": "application/json"
+                        },
                             body: formData,
                         });
                         const result = await response.json();

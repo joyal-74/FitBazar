@@ -27,7 +27,7 @@ router.get('/products', adminAuth.checkSession, productController.productInfo);
 router.get('/addProducts', adminAuth.checkSession, productController.loadaddProducts);
 router.post('/addProducts',upload.array("variantImages[]", 12),productController.addProducts);
 router.get('/editProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
-router.put('/editProducts',upload.any(),productController.editProducts);
+router.put('/products/:productId',upload.any(),productController.editProducts);
 
 // user management
 router.get('/customers',adminAuth.checkSession, customerController.userInfo);

@@ -42,7 +42,14 @@ router.delete('/address', profileController.deleteAddress);
 router.get('/coupons', profileController.loadCoupons);
 router.get('/privacy', profileController.loadPrivacy);
 
+
+router.post('/addToCart', cartControlller.addItemToCart)
 router.get('/cart', cartControlller.loadCart);
+router.patch('/cart', cartControlller.updateQuantity);
+
+
+
+
 router.get('/checkout', cartControlller.loadCheckout);
 router.get('/checkout', cartControlller.loadCheckout);
 router.get('/payments', cartControlller.loadPayments);

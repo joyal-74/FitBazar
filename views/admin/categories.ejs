@@ -132,6 +132,7 @@
                                     <p id="errorMessageContainer1" class="text-danger text-center d-none">
                                         <span id="errorText1"></span>
                                     </p>
+
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-primary">Add Category</button>
                                     </div>
@@ -337,45 +338,31 @@
             this.value = this.checked ? "true" : "false";
         });
         document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("editCategoryForm")?.addEventListener("submit", async function (event) {
-                event.preventDefault();
-        
+            document.getElementById("editCategoryForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
                 const categoryName = document.getElementById("originalCategoryName").value.trim();
                 const editCategoryName = document.getElementById("editCategoryName").value.trim();
                 const categoryDescription = document.getElementById("editCategoryDescription").value.trim();
-                const discountPrice = document.getElementById("discountPrice").value.trim();
-                const visibilityStatus = document.getElementById("editVisibilityStatus").value;
-                const thumbnail = document.getElementById("editThumbnail");
-        
+
                 const editErrorMessageContainer = document.getElementById("errorMessageContainer2");
                 const editErrorText = document.getElementById("errorText2");
-        
+
                 editErrorText.innerText = "";
                 editErrorMessageContainer.classList.add("d-none");
-        
-                let isValid = true;
-        
+
                 if (!editCategoryName) {
-                    editErrorText.innerText = "Category Name is required.";
-                    isValid = false;
-                } else if (!categoryDescription) {
-                    editErrorText.innerText = "Category Description is required.";
-                    isValid = false;
-                } else if (thumbnail && thumbnail.files.length > 1) {
-                    editErrorText.innerText = "Only one image is allowed.";
-                    isValid = false;
-                } else if (thumbnail && thumbnail.files.length > 0) {
-                    const allowedExtensions = /\.(jpg|jpeg|png)$/i;
-                    if (!allowedExtensions.test(thumbnail.files[0].name)) {
-                        editErrorText.innerText = "Only JPG, JPEG, and PNG files are allowed.";
-                        isValid = false;
-                    }
-                }
-        
-                if (!isValid) {
                     editErrorMessageContainer.classList.remove("d-none");
+                    editErrorText.innerText = "Category Name is required.";
                     return;
                 }
+
+                if (!categoryDescription) {
+                    editErrorMessageContainer.classList.remove("d-none");
+                    editErrorText.innerText = "Category Description is required.";
+                    return;
+                }
+          
 
                 const formData = new FormData(event.target);
                 formData.append('categoryName',categoryName);
@@ -404,7 +391,29 @@
         
             document.getElementById("addCategoryForm")?.addEventListener("submit", async function (event) {
                 event.preventDefault();
-        
+
+                const categoryName = document.getElementById("originalCategoryName").value.trim();
+                const addCategoryName = document.getElementById("addCategoryName").value.trim();
+                const categoryDescription = document.getElementById("addCategoryDescription").value.trim();
+
+                const addErrorMessageContainer = document.getElementById("errorMessageContainer1");
+                const addErrorText = document.getElementById("errorText1");
+
+                addErrorText.innerText = "";
+                addErrorMessageContainer.classList.add("d-none");
+
+                if (!addCategoryName) {
+                    addErrorMessageContainer.classList.remove("d-none");
+                    addErrorText.innerText = "Category Name is required.";
+                    return;
+                }
+
+                if (!categoryDescription) {
+                    addErrorMessageContainer.classList.remove("d-none");
+                    addErrorText.innerText = "Category Description is required.";
+                    return;
+                }
+          
                 const formData = new FormData(this);
         
                 try {

@@ -3,160 +3,148 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm bg-white">
         <div class="container">
-            <!-- Brand Logo -->
             <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
-
-            <!-- Toggle Button for Offcanvas -->
-            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
+            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Offcanvas Navbar -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title fw-bold" id="navbarOffcanvasLabel" style="color: #3B3389;">FitBazar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <h5 class="offcanvas-title fw-bold" style="color: #3B3389;">FitBazar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
                 </div>
-
                 <div class="offcanvas-body">
-                    <ul class="navbar-nav me-auto align-items-lg-center gap-2">
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="/shop">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white py-2 px-3" href="#">Customer Support</a>
-                        </li>
+                    <ul class="navbar-nav me-auto gap-2">
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="/shop">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">Customer Support</a></li>
                     </ul>
 
-                    <!-- Search Form -->
-                    <form class="d-flex mt-3 mt-lg-0">
-                        <input class="form-control me-2 border-0 shadow-sm" type="search" placeholder="Search" aria-label="Search" style="border-radius: 20px;">
-                        <button class="btn" type="submit" style="background-color: #E0DBFC; border-radius: 20px;">
-                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search">
+                        <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
 
-                    <!-- Icons and User Section -->
-                    <div class="d-flex align-items-center mt-3 mt-lg-0">
+                    <div class="d-flex align-items-center">
                         <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                        <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                        <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                         <% if (user) { %>
-                            <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                                <i class="fa-solid fa-user"></i>
+                            <a href="/user/profile" style="color: #3B3389;">
+                                <% if (user.profilePic) { %>
+                                    <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                                <% } else { %>
+                                    <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                                <% } %>
                             </a>
                         <% } else { %>
-                            <a href="/user/register" class="btn btn-outline-primary" style="border-radius: 20px;">Sign Up</a>
-                        <% } %>
+                            <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                        <% } %> 
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
-
+    <!-- Main Section -->
     <main class="container mt-5">
-        <h3 class="fw-bold">Discover items in your cart</h3>
+        <h3 class="fw-bold mb-4 text-dark">Discover Items in Your Cart</h3>
 
         <div class="row g-4">
             <!-- Cart Section -->
             <div class="col-md-8">
-                <!-- Cart Item 1 -->
-                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="/product1.jpg" alt="Dumbbell" class="rounded me-3" width="80" height="80">
-                            <div>
-                                <strong>Dumbbell - 20 kg</strong>
-                                <p class="mb-0">₹ 2199</p>
+                <% if (cart && cart.items && cart.items.length > 0) { %>
+                    <% cart.items.forEach(item => { %>
+                        <div class="card mb-3 shadow-sm border-0 rounded-3 overflow-hidden" style="background-color: #FFFFFF; transition: transform 0.2s;">
+                            <div class="row g-0 align-items-center p-3">
+                                <div class="col-3 col-md-2">
+                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" class="img-fluid rounded" style="max-width: 100px; object-fit: cover;">
+                                </div>
+                                <div class="col-9 col-md-10">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-dark"><%= item.productId.name %></h6>
+                                            <p class="text-muted mb-1 small"><%= item.variants %></p>
+                                            <p class="mb-0 text-primary fw-semibold">₹ <%= item.price %></p>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="input-group input-group-sm" style="width: 120px;">
+                                                <button class="btn btn-outline-secondary" onclick="updateQuantity('<%= item.productId._id %>', -1)" style="border-radius: 8px 0 0 8px;">-</button>
+                                                <input type="text" class="form-control text-center" value="<%= item.quantity %>" readonly style="border-radius: 0; max-width: 50px;">
+                                                <button class="btn btn-outline-secondary" onclick="updateQuantity('<%= item.productId._id %>', 1)" style="border-radius: 0 8px 8px 0;">+</button>
+                                            </div>
+                                            <p class="mb-0 fw-bold text-dark">₹ <%= item.quantity * item.price %></p>
+                                            <button class="btn btn-outline-danger btn-sm rounded-circle" onclick="removeFromCart('<%= item.productId._id %>')" style="width: 36px; height: 36px;">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-outline-secondary">-</button>
-                            <span class="px-3 py-1 border rounded">1</span>
-                            <button class="btn btn-outline-secondary">+</button>
-                            <strong>₹ 2199</strong>
-                        </div>
-                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
+                    <% }) %>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>
+                        <p class="text-muted fs-5">Your cart is empty!</p>
+                        <a href="/shop" class="btn btn-primary mt-2" style="background-color: #6C5DD3;">Start Shopping</a>
                     </div>
-                </div>
-
-                <!-- Cart Item 2 -->
-                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="/product2.jpg" alt="Kettlebell" class="rounded me-3" width="80" height="80">
-                            <div>
-                                <strong>Kettlebell - 15 kg</strong>
-                                <p class="mb-0">₹ 1699</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-outline-secondary">-</button>
-                            <span class="px-3 py-1 border rounded">2</span>
-                            <button class="btn btn-outline-secondary">+</button>
-                            <strong>₹ 3689</strong>
-                        </div>
-                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
-                    </div>
-                </div>
-                <div class="card p-3 mb-3 shadow-sm border-0 rounded" style="background-color: #F8F8F8;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="/product2.jpg" alt="Kettlebell" class="rounded me-3" width="80" height="80">
-                            <div>
-                                <strong>Kettlebell - 15 kg</strong>
-                                <p class="mb-0">₹ 1699</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-outline-secondary">-</button>
-                            <span class="px-3 py-1 border rounded">2</span>
-                            <button class="btn btn-outline-secondary">+</button>
-                            <strong>₹ 3689</strong>
-                        </div>
-                        <button class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Remove</button>
-                    </div>
-                </div>
+                <% } %>
             </div>
-            
 
             <!-- Order Summary -->
             <div class="col-md-4">
-                <div class="card p-4 shadow-sm border-0 rounded gap-3" style="background-color: #F0F0F0;">
-                    <h5 class="fw-bold">Order Summary</h5>
-                    <div class="d-flex justify-content-between">
-                        <span>1x Dumbbell - 20 kg</span>
-                        <span>₹ 2199</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>2x Kettlebells - 15 kg</span>
-                        <span>₹ 3689</span>
-                    </div>
-                    <div class="d-flex justify-content-between text-success">
-                        <span>Delivery Charges</span>
-                        <span>₹ Free</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Platform Fee</span>
-                        <span>₹ 0</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold">Total</span>
-                        <strong>₹ 5818</strong>
-                    </div>
-                    <button class="btn btn-primary w-100 mt-3" style="background-color: #6C5DD3; border: none;">Continue</button>
+                <div class="card p-4 shadow-sm border-0 rounded-3" style="background-color: #F9F9F9;">
+                    <h5 class="fw-bold text-dark mb-3">Order Summary</h5>
+                    <% if (cart && cart.items && cart.items.length > 0) { %>
+                        <% let total = 0; %>
+                        <% cart.items.forEach(item => { %>
+                            <% total += item.quantity * item.price; %>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted"><%= item.quantity %>x <%= item.productId.name %></span>
+                                <span class="text-dark">₹ <%= item.quantity * item.price %></span>
+                            </div>
+                        <% }) %>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Delivery Charges</span>
+                            <span class="text-success fw-semibold">Free</span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold text-dark">Total</span>
+                            <span class="fw-bold text-dark">₹ <%= total %></span>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-4" style="background-color: #6C5DD3; border-radius: 10px; padding: 12px;">Continue to Checkout</button>
+                    <% } else { %>
+                        <p class="text-muted text-center">No items in your cart.</p>
+                    <% } %>
                 </div>
             </div>
         </div>
     </main>
+
+    <script>
+        // Update Quantity
+        async function updateQuantity(productId, change) {
+            const response = await fetch('/user/cart', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId, change })
+            });
+            if (response.ok) window.location.reload();
+        }
+
+        // Remove Item
+        async function removeFromCart(productId) {
+            const response = await fetch('/user/cart', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId })
+            });
+            if (response.ok) window.location.reload();
+        }
+    </script>
 </body>

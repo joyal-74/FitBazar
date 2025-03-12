@@ -303,8 +303,7 @@
                                 <h4 style="color: #3B3389; margin: 0;">
                                     <%= user.name %>
                                 </h4>
-                                <div class="mt-1"><small class="text-muted">Member since <%= new
-                                            Date(user.createdAt).toLocaleDateString() %></small></div>
+                                <div class="mt-1"><small class="text-muted">Member since <%= new Date(user.createdAt).toLocaleDateString() %></small></div>
                             </div>
                         </div>
                         <a href="/user/profileU?userId=<%= user.userId %>" class="btn btn-primary">

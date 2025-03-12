@@ -8,7 +8,7 @@ const storage = new CloudinaryStorage({
     params: {
       folder: "fitbazar_products",
       allowed_formats: ["jpg", "png", "jpeg", "webp"],
-      transformation: [{ width: 500, height: 500, crop: "limit" }],
+      // transformation: [{ width: 500, height: 500, crop: "limit" }],
     },
 });
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Products from './productModel.js' 
 const {Schema} = mongoose;
 
 const cartSchema = new Schema({
@@ -10,8 +11,16 @@ const cartSchema = new Schema({
     items : [{
         productId : {
             type : Schema.Types.ObjectId,
-            ref : "Product",
+            ref : "Products",
             required : true,
+        },
+        name : {
+            type : String,
+            required : true
+        },
+        brand : {
+            type : String,
+            required : true
         },
         quantity : {
             type : Number,
@@ -21,30 +30,18 @@ const cartSchema = new Schema({
             type : Number,
             required : true,
         },
-        status : {
+        stock : {
             type : String,
-            default : "placed",
         },
-        color : {
-            type : String,
-            required : true
-        },
-        variantSize : {
-            type : String,
-            enum : ["S","M","L","XL","XXL"],
-            required : false,
-            default : "M"
-        },
-        variantWeight : {
-            type : String,
-            required : false,
+        variants : {
+            type : String
         },
         productImage : {
-            type : [String],
-            required : true,
+            type : String,
+            required : false,
         },
     }]
-})
+},{timestamps: true});
 
 const Cart = mongoose.model("Cart", cartSchema)
 

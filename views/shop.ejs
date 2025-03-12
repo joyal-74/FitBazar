@@ -12,7 +12,17 @@
         <div class="container d-flex flex-column">
             <div class="d-flex w-100 justify-content-between align-items-center">
                 <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <form class="d-flex w-50">
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
+                            href="/home">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/shop">Shop</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn" type="submit" style="background-color: #E0DBFC;">
                         <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
@@ -20,21 +30,19 @@
                 </form>
                 <div class="d-flex align-items-center">
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <a href="#" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %> 
                 </div>
-            </div>
-
-            <div class="w-100 d-flex justify-content-start mt-2">
-                <ul class="nav gap-5 align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link active btn btn-light user-nav-text py-1 px-4" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
             </div>
         </div>
     </nav>

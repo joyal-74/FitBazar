@@ -56,7 +56,7 @@ let userLogin = async (req, res) => {
         // Ensure password exists before comparing
         if (!user.password || user.password.trim() === "") {
             console.warn(`⚠️ User with email ${email} has no password. Redirecting to Google login.`);
-            return res.redirect('/auth/google');  // Redirect to Google login instead of showing error
+            return res.redirect('/auth/google'); 
         }
 
         if (user.isBlocked) {
@@ -74,7 +74,6 @@ let userLogin = async (req, res) => {
         req.session.user = user
 
         console.log(req.session.user)
-        // Redirect on success
         return res.redirect('/');
 
     } catch (err) {
@@ -107,9 +106,18 @@ const userRegister = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = await generateUserId();
 
-        // Create new user
-        const newUser = new User({ userId, email, password: hashedPassword, name: fullName, phone });
-        await newUser.save();
+
+        const newuser = {
+            userId : userId,
+            email : email,
+            password : hashedPassword,
+            name: fullName, 
+            phone : phone
+        }
+
+        req.session.newuser = newuser
+
+        console.log(req.session.newuser)
 
         // Generate OTP
         const otp = generateOtpCode();
@@ -262,6 +270,7 @@ const newOtpGeneration = async (req, res, redirectPage) => {
 
     // Generate OTP and store in session
     const otp = generateOtpCode();
+
     console.log("New OTP:", otp);
 
     req.session.otp = otp;
@@ -291,11 +300,11 @@ const resendOtp = async (req, res) => {
 
 
 
-const loadOtpVerify = (req, res) => {
+const loadOtpVerify = async (req, res) => {
     res.render('user/otpverify', { title: "Verify OTP", errorMessage : "" });
 }
 
-const verifyOtp = (req, res) => {
+const verifyOtp = async (req, res) => {
     const { otp1, otp2, otp3, otp4} = req.body;
 
     const requestFrom = req.session.requestFrom;
@@ -305,6 +314,9 @@ const verifyOtp = (req, res) => {
 
 
     const sentOtp = req.session.otp;
+
+    const {userId, email, password, name, phone} = req.session.newuser
+    console.log(req.session.newuser)
 
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
@@ -320,6 +332,9 @@ const verifyOtp = (req, res) => {
     // Check if the OTP matches
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
+        const newuser = new User({ userId, email, password, name, phone });
+
+        await newuser.save();
 
         if (requestFrom === "register") {
             console.log("Redirecting to login page...");
