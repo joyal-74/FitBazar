@@ -332,12 +332,13 @@ const verifyOtp = async (req, res) => {
     // Check if the OTP matches
     if (formOtp === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
-        const newuser = new User({ userId, email, password, name, phone });
 
-        await newuser.save();
 
         if (requestFrom === "register") {
-            console.log("Redirecting to login page...");
+            const newuser = new User({ userId, email, password, name, phone });
+            await newuser.save();
+
+            console.log("Register successful Redirecting to login page...");
             return res.status(OK).json({
                 success: true,
                 message: "OTP verified successfully! Now login to your account",

@@ -2,6 +2,7 @@
 import User from "../model/userModel.js";
 import Products from "../model/productModel.js";
 import Cart from "../model/cartModel.js";
+import Address from "../model/addressModel.js";
 
 
 const addItemToCart = async (req, res) => {
@@ -10,17 +11,21 @@ const addItemToCart = async (req, res) => {
 
         console.log(req.body);
 
-        const product = await Products.findOne({ productId: productId, visibility : true });
+        if(!userId){
+            return res.status(401).json({ error: "Please log in to add items to your cart." });
+        }
+
+        const product = await Products.findOne({ productId: productId, visibility: true });
         console.log(product);
 
         if (!product) {
-            return res.status(404).json({ error: "Product not found unable to add to cart" });
+            return res.status(404).json({ error: "Product not found. Unable to add to cart." });
         }
 
         const name = product.name;
         const brand = product.brand;
-        const productImage = product.variants[0].images[0]
-        console.log(productImage)
+        const productImage = product.variants[0].images[0];
+        console.log(productImage);
 
         let cart = await Cart.findOne({ userId: userId });
 
@@ -52,7 +57,7 @@ const addItemToCart = async (req, res) => {
 
             await cart.save();
         } else {
-            const newCart = new Cart({
+            cart = new Cart({
                 userId,
                 items: [{
                     name,
@@ -66,19 +71,20 @@ const addItemToCart = async (req, res) => {
                 }]
             });
 
-            await newCart.save();
+            await cart.save();
 
+            await User.findByIdAndUpdate(userId, {
+                $set: { cart: cart._id }
+            });
         }
-        await User.findByIdAndUpdate(userId, {
-            $set: { cart: cart._id }
-        });
-        
+
         return res.status(200).json({ message: "Item added to cart successfully!" });
     } catch (error) {
         console.error("Add to cart error:", error);
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 const loadCart = async (req, res) => {
     try {
@@ -107,14 +113,12 @@ const updateQuantity = async (req, res) => {
     const { productId, change } = req.body;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    // Find the cart and ensure the item exists within it
     const cart = await Cart.findOne({ userId: userId, 'items.productId': productId });
 
     if (!cart) {
         return res.status(404).json({ message: "Cart or product not found" });
     }
 
-    // Find the specific item
     const item = cart.items.find(item => item.productId.toString() === productId);
 
     if (!item) {
@@ -135,19 +139,122 @@ const updateQuantity = async (req, res) => {
     return res.status(200).json({ message: "Quantity updated successfully", cart });
 };
 
+const deleteFromcart = async (req,res)=> {
+    try {
+        const { productId } = req.body;
+        const userId = req.query.userId;
+    
+        const cart = await Cart.findOneAndUpdate(
+            { userId: userId },
+            { $pull: { items: { productId: productId } } },
+            { new: true }
+        );
 
+        if (!cart) {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+        
+        res.status(200).json({mesage : "Item deleted from cart successfully"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message : 'Internal server error'});
+    }
+}
 
 
 const loadCheckout = async (req, res) => {
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
-    res.render('user/checkout', {title : "Checkout", user});
+    const userId = req.query.userId;
+    console.log(userId)
+
+
+    const user = await User.findOne({_id : userId});
+    const address = await Address.find({userId});
+    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
+
+    // console.log(address)
+    
+    res.render('user/checkout', {title : "Checkout", user, address, cart});
 }
 
+const checkoutDetails = async (req,res) => {
+    const {selectedAddress} = req.body
+    console.log('selectedAddress', selectedAddress);
+
+    req.session.deliveryAddress = selectedAddress;
+
+    res.redirect('/user/payments')
+}
+
+// will implement later
+const loadCheckoutUp = async (req, res) => {
+    try {
+        const { id, index } = req.query;
+
+        
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        const user = await User.findOne({_id : userId})
+        if (!user) {
+            return res.status(401).json({ error: "Please Login to continue" });
+        }
+
+        const address = await Address.findOne({ userId: id });
+
+        if (!address) {
+            return res.status(404).json({ error: "Address not found" });
+        }
+
+        const selectedAddress = address.details[index];
+        // console.log(selectedAddress);
+
+        if (!selectedAddress) {
+            return res.status(404).json({ error: "Address details not found" });
+        }
+
+        res.render('user/checkout-Up', { 
+            title: "Edit Address",
+            address: selectedAddress,
+            user,
+            addressId: id,
+            index,
+        });
+    } catch (error) {
+        console.error("Error loading address:", error);
+        res.status(500).json({ 
+            error: "Internal Server Error",
+            message: error.message 
+        });
+    }
+};
+
 const loadPayments = async (req, res) => {
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
-    res.render('user/payment', {title : "Checkout", user});
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+    const user = await User.findOne({userId});
+
+    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
+
+    res.render('user/payment', {title : "Checkout", user, cart});
+}
+
+const paymentSuccess = async (req,res) => {
+    const { paymentMethod } = req.body;
+    const addressId = req.session.deliveryAddress
+
+    if(paymentMethod == 'cod'){
+        const address = await Address.findOne({
+            details: { $elemMatch: { _id: addressId } }
+        });
+
+        if (address) {
+            console.log(address)
+            return res.status(200).json({ message: 'Order placed successfully' });
+        } else {
+            return res.status(404).json({ error: 'Address not found' });
+        }
+    }else{
+        return res.status(400).json({error : "Payment method not implemented"});
+    }
+
 }
 
 const confirmOrder = async (req, res) => {
@@ -156,4 +263,4 @@ const confirmOrder = async (req, res) => {
     res.render('user/confirmOrder', {title : "Checkout", user});
 }
 
-export default {loadCart, updateQuantity, addItemToCart, loadCheckout, loadPayments, confirmOrder};
+export default {loadCart, updateQuantity, addItemToCart, deleteFromcart, loadCheckout, checkoutDetails, loadCheckoutUp, loadPayments, paymentSuccess , confirmOrder};

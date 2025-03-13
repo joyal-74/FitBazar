@@ -215,7 +215,9 @@ const loadAddAddress = async (req,res)=>{
 
 const loadEditAddress = async (req, res) => {
     try {
-        const { id, index } = req.query;
+        const { id, index, from } = req.query;
+
+        console.log(from)
         
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
@@ -245,7 +247,8 @@ const loadEditAddress = async (req, res) => {
             address: selectedAddress,
             user,
             addressId: id,
-            index, firstName, lastName
+            index, firstName, lastName,
+            from
         });
     } catch (error) {
         console.error("Error loading address:", error);
@@ -259,7 +262,7 @@ const loadEditAddress = async (req, res) => {
 
 const editAddress = async (req,res) => {
     try {
-        const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index } = req.body;
+        const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index, from } = req.body;
 
 
         const userId = req.session.user.id;
@@ -285,7 +288,12 @@ const editAddress = async (req,res) => {
 
         await userAddress.save();
 
-        return res.status(200).json({ message: "Address updated successfully" });
+        if(from === 'checkout'){
+            return res.status(200).json({ message: "Address updated successfully", redirectUrl: `/user/checkout?userId=${userId}` });
+        }else{
+            return res.status(200).json({ message: "Address updated successfully", redirectUrl: '/user/address' });
+
+        }
 
     } catch (error) {
         console.error("Error updating address:", error);

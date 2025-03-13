@@ -1,60 +1,76 @@
 <head>
     <style>
-        /* Sidebar container */
-        .sidebar-profile {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        /* Sidebar link styles */
-        .sidebar-linkz {
-            color: #333;
-            padding: 12px 14px;
-            font-size: 15px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+        /* Progress Bar */
+        .progress-step {
             display: flex;
             align-items: center;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active i,
+        .progress-step.active span {
+            color: #6C5DD3 !important;
+            font-weight: 600;
+        }
+        .progress-arrow {
+            color: #D3D3D3;
+            font-size: 1.2rem;
+            margin: 0 20px;
         }
 
-        .sidebar-linkz i {
-            width: 20px;
-            color: #3b3389;
+        /* Address Card */
+        .address-card {
+            background: #F8F8FC;
+            border-radius: 12px;
         }
-
-        .sidebar-linkz:hover {
-            background-color: #e0dbfc;
-            color: #3b3389;
+        .address-card .form-check-input:checked + .form-check-label {
+            font-weight: 600;
+            color: #6C5DD3;
         }
-
-        .sidebar-linkz.active {
-            background-color: #3b3389;
-            color: #fff;
-        }
-
-        /* Form input styling */
-        .form-control {
+        .address-card .badge {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            padding: 5px 10px;
             border-radius: 8px;
-            border: 1px solid #e0dbfc;
-            padding: 10px 12px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .form-control:focus {
-            border-color: #3b3389;
-            box-shadow: 0 0 0 3px rgba(59, 51, 137, 0.1);
-            outline: none;
+        /* Add New Address Link */
+        .add-address {
+            font-weight: 500;
+            color: #6C5DD3;
+            transition: color 0.2s ease;
+        }
+        .add-address:hover {
+            color: #8A7DE8;
+            text-decoration: none;
         }
 
-        /* Required field indicator */
-        .form-label.required::after {
-            content: " *";
-            color: #e63946;
+        /* Order Summary */
+        .order-summary {
+            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            border-radius: 12px;
+            position: sticky;
+            top: 20px;
         }
-
-        /* Button styling */
+        .order-summary .btn-primary {
+            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease;
+        }
+        .order-summary .btn-primary:hover {
+            transform: scale(1.02);
+        }
+        .coupon-input .btn-outline-secondary {
+            border-radius: 0 8px 8px 0;
+            transition: background-color 0.2s ease;
+        }
+        .coupon-input .btn-outline-secondary:hover {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            border-color: #6C5DD3;
+        }
         .btn-primary {
             background-color: #3b3389;
             border: none;
@@ -62,12 +78,10 @@
             border-radius: 8px;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
         .btn-primary:hover {
             background-color: #2a2467;
             transform: translateY(-1px);
         }
-
         .btn-secondary {
             background-color: #f8f9fa;
             border: 1px solid #e0dbfc;
@@ -76,7 +90,6 @@
             border-radius: 8px;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
         .btn-secondary:hover {
             background-color: #e0dbfc;
             transform: translateY(-1px);
@@ -88,32 +101,26 @@
             gap: 20px;
             flex-wrap: wrap;
         }
-
         .form-group-pair .mb-3 {
             flex: 1;
             min-width: 200px;
         }
-
         .card {
             border: none;
             outline: none;
         }
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .form-group-pair {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
+
     </style>
 </head>
+
 <body>
+    <!-- Navbar (unchanged) -->
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container d-flex flex-column">
             <div class="d-flex w-100 justify-content-between align-items-center">
                 <a class="navbar-brand fw-bold" href="#">FitBazar</a>
                 <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
@@ -129,12 +136,8 @@
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                     <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
+                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
+                            <i class="fa-solid fa-user"></i>
                         </a>
                     <% } else { %>
                         <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
@@ -144,31 +147,15 @@
         </div>
     </nav>
 
-    <main class="container mt-4">
-        <div class="row g-5">
-            <!-- Sidebar -->
-            <div class="col-md-3">
-                <div class="sidebar-profile p-3">
-                    <div class="d-flex align-items-center mb-5">
-                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                        <span>Hello, <strong><%= firstName %></strong></span>
-                    </div>
-                    <nav class="nav flex-column gap-3">
-                        <a href="/orders" class="nav-link sidebar-linkz"><i class="fa-solid fa-box me-2"></i>My Orders</a>
-                        <a href="/user/profile" class="nav-link sidebar-linkz"><i class="fa-solid fa-user me-2"></i>Profile Information</a>
-                        <a href="/addresses" class="nav-link sidebar-linkz active"><i class="fa-solid fa-location-dot me-2" style="color: #fff;"></i>Manage Addresses</a>
-                        <a href="/wallet" class="nav-link sidebar-linkz"><i class="fa-solid fa-key me-2"></i>Privacy Settings</a>
-                        <a href="/coupons" class="nav-link sidebar-linkz"><i class="fa-solid fa-ticket me-2"></i>My Coupons</a>
-                        <a href="/reviews" class="nav-link sidebar-linkz"><i class="fa-solid fa-star me-2"></i>My Reviews & Ratings</a>
-                        <a href="/wallet" class="nav-link sidebar-linkz"><i class="fa-solid fa-wallet me-2"></i>My Wallet</a>
-                    </nav>
-                </div>
-            </div>
+    <!-- Main Section -->
+    <main class="container my-5">
+        <div class="row gx-5 gy-2">
+            <!-- Delivery Address Section -->
+            <div class="col-md-8">
+                    <h4 class="fw-bold mb-4 text-dark">Edit Delivery Address</h4>
+                    
 
-            <!-- Add New Address Form -->
-            <div class="col-md-9">
-                <div class="py-3 px-5 h-100" style="border-radius: 12px; background-color: #ffffff;">
-                    <h4 class="mb-4" style="color: #3B3389;">Edit Address</h4>
+                <div class="p-4 address-card">
                     <form id="editAddressForm">
                         <input type="hidden" name="addressId" id="addressId" value="<%= addressId %>">
                         <input type="hidden" name="index" id="index" value="<%= index %>">
@@ -253,89 +240,61 @@
                             </div>
                         </div>
                     
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="d-flex gap-2 justify-content-between">
-                                <input type="hidden" name="pageFrom" id="pageFrom" value="<%= from %>">
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">Save Address</button>
                                 <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
                             </div>
-                            <div class="mb-3">
-                                <div class="d-flex gap-3">
-                                    <input type="radio" id="home" name="addressType" value="home"
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="form-check">
+                                    <input type="radio" id="home" name="addressType" value="home" class="form-check-input"
                                         <%= address.addressType === 'home' ? 'checked' : '' %>>
-                                    <label for="home">Home</label>
-                    
-                                    <input type="radio" id="work" name="addressType" value="work"
+                                    <label for="home" class="form-check-label">Home</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" id="work" name="addressType" value="work" class="form-check-input"
                                         <%= address.addressType === 'work' ? 'checked' : '' %>>
-                                    <label for="work">Work</label>
+                                    <label for="work" class="form-check-label">Work</label>
                                 </div>
                             </div>
                         </div>
                     </form>
-                    
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm border-0 order-summary">
+                    <h5 class="fw-bold mb-4 text-dark" style="font-size: 1.5rem;">Order Summary</h5>
+                    <% if (orderItems && orderItems.length > 0) { %>
+                        <% orderItems.forEach(item => { %>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted" style="font-size: 0.95rem;">
+                                    <%= item.quantity %>x <%= item.name %> - <%= item.weight %> kg
+                                </span>
+                                <span class="fw-medium">₹ <%= item.price.toLocaleString('en-IN') %></span>
+                            </div>
+                        <% }) %>
+                        <hr class="my-4" style="border-color: #E0E0E0;">
+                        <div class="mb-4">
+                            <label for="coupon" class="form-label fw-medium">Enter Coupon Code</label>
+                            <div class="input-group coupon-input">
+                                <input type="text" id="coupon" class="form-control" placeholder="Paste your code here" style="border-radius: 8px 0 0 8px;">
+                                <button class="btn btn-outline-secondary" type="button">Apply</button>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
+                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">
+                                ₹ <%= orderItems.reduce((total, item) => total + (item.price * item.quantity), 0).toLocaleString('en-IN') %>
+                            </span>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted">No items in cart</p>
+                    <% } %>
+                    <button class="btn btn-primary w-100 mt-4" <%= (!orderItems || orderItems.length === 0) ? 'disabled' : '' %>>Proceed to Payment</button>
                 </div>
             </div>
         </div>
     </main>
-    <script>
-        document.getElementById("editAddressForm").addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const fullName = document.getElementById('fullName').value;
-            const addressLine1 = document.getElementById('addressLine1').value;
-            const addressLine2 = document.getElementById('addressLine2').value;
-            const phone = document.getElementById('phone').value;
-            const landmark = document.getElementById('landmark').value;
-            const city = document.getElementById('city').value;
-            const state = document.getElementById('state').value;
-            const country = document.getElementById('country').value;
-            const altNumber = document.getElementById('altNumber').value;
-            const zipCode = document.getElementById('zipCode').value;
-            const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
-            const index = document.getElementById('index').value;
-            const from = document.getElementById('pageFrom').value;
-
-
-            const formData = {
-                fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, zipCode, addressType, index, from
-            }
-
-            console.log(from)
-
-            try {
-                const response = await fetch('/user/address', {
-                    method : 'PUT',
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    },
-                    body : JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || "Something went wrong");
-                }
-
-                Swal.fire({
-                    icon: "success",
-                    text: data.message,
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-
-                setTimeout(() => {
-                    window.location.href = data.redirectUrl;
-                }, 2000);
-
-
-            } catch (error) {
-                console.log(error);
-                Swal.fire({
-                icon: "error",
-                text: "An error occurred. Please try again.",
-            })
-            }
-        });
-    </script>
 </body>

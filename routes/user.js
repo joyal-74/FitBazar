@@ -46,13 +46,18 @@ router.get('/privacy', profileController.loadPrivacy);
 router.post('/addToCart', cartControlller.addItemToCart)
 router.get('/cart', cartControlller.loadCart);
 router.patch('/cart', cartControlller.updateQuantity);
-
+router.delete('/cart', cartControlller.deleteFromcart);
 
 
 
 router.get('/checkout', cartControlller.loadCheckout);
-router.get('/checkout', cartControlller.loadCheckout);
+router.post('/checkout', cartControlller.checkoutDetails);
+
+router.get('/checkout-Up', cartControlller.loadCheckoutUp);
+
 router.get('/payments', cartControlller.loadPayments);
+router.post('/payments', cartControlller.paymentSuccess);
+
 router.get('/confirmOrder', cartControlller.confirmOrder);
 
 

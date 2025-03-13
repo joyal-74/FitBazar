@@ -1,13 +1,95 @@
-<body>
+<head>
+    <style>
+        /* Progress Bar */
+        .progress-step {
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active i,
+        .progress-step.active span {
+            color: #6C5DD3 !important;
+            font-weight: 600;
+        }
+        .progress-arrow {
+            color: #D3D3D3;
+            font-size: 1.2rem;
+            margin: 0 20px;
+        }
+        /* Quantity Buttons */
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #E0E0E0;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            color: #6C5DD3;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-btn:hover {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            border-color: #6C5DD3;
+        }
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        .quantity-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            min-width: 40px;
+            text-align: center;
+        }
 
-    <!-- Navbar -->
+        /* Cart Item Card */
+        .cart-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 12px !important;
+        }
+        .cart-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        /* Remove Button */
+        .remove-btn {
+            transition: all 0.3s ease;
+        }
+        .remove-btn:hover {
+            background-color: #dc3545 !important;
+            color: #FFFFFF !important;
+            border-color: #dc3545 !important;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            border-radius: 12px !important;
+            position: sticky;
+            top: 20px;
+        }
+        .checkout-btn {
+            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
+            transition: transform 0.2s ease;
+        }
+        .checkout-btn:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar (unchanged) -->
     <nav class="navbar navbar-expand-lg shadow-sm bg-white">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
             <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas">
                 <div class="offcanvas-header">
                     <h5 class="offcanvas-title fw-bold" style="color: #3B3389;">FitBazar</h5>
@@ -21,14 +103,12 @@
                         <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">About Us</a></li>
                         <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">Customer Support</a></li>
                     </ul>
-
                     <form class="d-flex">
                         <input class="form-control me-2" type="search" placeholder="Search">
                         <button class="btn" type="submit" style="background-color: #E0DBFC;">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
-
                     <div class="d-flex align-items-center">
                         <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
                         <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
@@ -49,36 +129,67 @@
         </div>
     </nav>
 
-    <!-- Main Section -->
-    <main class="container mt-5">
-        <h3 class="fw-bold mb-4 text-dark">Discover Items in Your Cart</h3>
+    
 
-        <div class="row g-4">
+    <!-- Main Section -->
+    <main class="container my-5">
+        <div class="d-flex justify-content-between w-100 align-items-center mb-3" style="padding: 16px; border-radius: 10px;">
+            <h4 class="fw-bold mb-0 text-dark">Discover Items in your Cart</h4>
+            <div class="d-flex justify-content-center align-items-center gap-3">
+                <div class="progress-step active">
+                    <i class="fas fa-shopping-cart text-muted me-1" style="font-size: 1rem;"></i>
+                    <span class="fw-medium" style="font-size: 0.8rem;">Cart</span>
+                </div>
+                <i class="fas fa-arrow-right progress-arrow text-muted"></i>
+                <div class="progress-step">
+                    <i class="fas fa-truck me-1" style="font-size: 0.9rem;"></i>
+                    <span style="font-size: 0.9rem;">Shipping</span>
+                </div>
+                <i class="fas fa-arrow-right progress-arrow text-muted"></i>
+                <div class="progress-step">
+                    <i class="fas fa-credit-card text-muted me-1" style="font-size: 0.9rem;"></i>
+                    <span class="fw-medium" style="font-size: 0.9rem;">Payments</span>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="row g-5">
             <!-- Cart Section -->
             <div class="col-md-8">
                 <% if (cart && cart.items && cart.items.length > 0) { %>
                     <% cart.items.forEach(item => { %>
-                        <div class="card mb-3 shadow-sm border-0 rounded-3 overflow-hidden" style="background-color: #FFFFFF; transition: transform 0.2s;">
-                            <div class="row g-0 align-items-center p-3">
+                        <div class="card mb-4 shadow-sm border-0 cart-item" style="background: linear-gradient(to right, #FFFFFF, #F8F8FC);">
+                            <div class="row g-0 align-items-center px-4 py-2">
                                 <div class="col-3 col-md-2">
-                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" class="img-fluid rounded" style="max-width: 100px; object-fit: cover;">
+                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" 
+                                         class="img-fluid rounded" style="max-width: 100px; object-fit: cover; border: 1px solid #EDEDED;">
                                 </div>
                                 <div class="col-9 col-md-10">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                                         <div>
-                                            <h6 class="fw-bold mb-1 text-dark"><%= item.productId.name %></h6>
-                                            <p class="text-muted mb-1 small"><%= item.variants %></p>
-                                            <p class="mb-0 text-primary fw-semibold">₹ <%= item.price %></p>
+                                            <h6 class="fw-bold mb-2 text-dark" style="font-size: 1.25rem;"><%= item.productId.name %></h6>
+                                            <p class="text-muted mb-2 small"><%= item.variants %></p>
+                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 1.1rem;">₹ <%= item.price.toLocaleString('en-IN') %></p>
+                                            <input type="hidden" id="userId" value="<%= user._id %>">
                                         </div>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="input-group input-group-sm" style="width: 120px;">
-                                                <button class="btn btn-outline-secondary" onclick="updateQuantity('<%= item.productId._id %>', -1)" style="border-radius: 8px 0 0 8px;">-</button>
-                                                <input type="text" class="form-control text-center" value="<%= item.quantity %>" readonly style="border-radius: 0; max-width: 50px;">
-                                                <button class="btn btn-outline-secondary" onclick="updateQuantity('<%= item.productId._id %>', 1)" style="border-radius: 0 8px 8px 0;">+</button>
+                                        <div class="d-flex align-items-center gap-4">
+                                            <div class="quantity-control d-flex align-items-center gap-2">
+                                                <button class="quantity-btn" 
+                                                        onclick="updateQuantity('<%= item.productId._id %>', -1)">
+                                                    <i class="fa-solid fa-minus" style="font-size: 12px;"></i>
+                                                </button>
+                                                <span class="quantity-display"><%= item.quantity %></span>
+                                                <button class="quantity-btn" 
+                                                        onclick="updateQuantity('<%= item.productId._id %>', 1)">
+                                                    <i class="fa-solid fa-plus" style="font-size: 12px;"></i>
+                                                </button>
                                             </div>
-                                            <p class="mb-0 fw-bold text-dark">₹ <%= item.quantity * item.price %></p>
-                                            <button class="btn btn-outline-danger btn-sm rounded-circle" onclick="removeFromCart('<%= item.productId._id %>')" style="width: 36px; height: 36px;">
-                                                <i class="fa-solid fa-trash"></i>
+                                            <p class="mb-0 fw-bold text-dark" style="font-size: 1.1rem; width: 70px;">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></p>
+                                            <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn" 
+                                                    onclick="removeFromCart('<%= item.productId._id %>')" 
+                                                    style="width: 38px; height: 38px;">
+                                                <i class="fa-solid fa-trash" style="font-size: 14px;"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -87,39 +198,43 @@
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <div class="text-center py-5">
-                        <i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>
-                        <p class="text-muted fs-5">Your cart is empty!</p>
-                        <a href="/shop" class="btn btn-primary mt-2" style="background-color: #6C5DD3;">Start Shopping</a>
+                    <div class="text-center py-5 bg-light rounded-3">
+                        <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4"></i>
+                        <p class="text-muted fs-4 fw-medium">Your cart is empty!</p>
+                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2" style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">Start Shopping</a>
                     </div>
                 <% } %>
             </div>
 
             <!-- Order Summary -->
             <div class="col-md-4">
-                <div class="card p-4 shadow-sm border-0 rounded-3" style="background-color: #F9F9F9;">
-                    <h5 class="fw-bold text-dark mb-3">Order Summary</h5>
+                <div class="card p-4 shadow-sm border-0 order-summary">
+                    <h5 class="fw-bold text-dark mb-4" style="font-size: 1.5rem;">Order Summary</h5>
                     <% if (cart && cart.items && cart.items.length > 0) { %>
                         <% let total = 0; %>
                         <% cart.items.forEach(item => { %>
                             <% total += item.quantity * item.price; %>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted"><%= item.quantity %>x <%= item.productId.name %></span>
-                                <span class="text-dark">₹ <%= item.quantity * item.price %></span>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted" style="font-size: 0.95rem;"><%= item.quantity %>x <%= item.productId.name %></span>
+                                <span class="text-dark fw-medium">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></span>
                             </div>
                         <% }) %>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Delivery Charges</span>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
                             <span class="text-success fw-semibold">Free</span>
                         </div>
-                        <hr class="my-3">
+                        <hr class="my-4" style="border-color: #E0E0E0;">
                         <div class="d-flex justify-content-between">
-                            <span class="fw-bold text-dark">Total</span>
-                            <span class="fw-bold text-dark">₹ <%= total %></span>
+                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
+                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">₹ <%= total.toLocaleString('en-IN') %></span>
                         </div>
-                        <button class="btn btn-primary w-100 mt-4" style="background-color: #6C5DD3; border-radius: 10px; padding: 12px;">Continue to Checkout</button>
+                        <button class="btn checkout-btn w-100 mt-4" 
+                                onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')" 
+                                style="border-radius: 12px; padding: 12px; font-size: 1.1rem; color: #FFFFFF;">
+                            Continue to Checkout
+                        </button>
                     <% } else { %>
-                        <p class="text-muted text-center">No items in your cart.</p>
+                        <p class="text-muted text-center fs-5">No items in your cart.</p>
                     <% } %>
                 </div>
             </div>
@@ -139,12 +254,18 @@
 
         // Remove Item
         async function removeFromCart(productId) {
-            const response = await fetch('/user/cart', {
+            const userId = document.getElementById('userId').value;
+            const response = await fetch(`/user/cart?userId=${userId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ productId })
             });
             if (response.ok) window.location.reload();
+        }
+
+        // Go to Checkout
+        function goToCheckout(cartId, userId) {
+            window.location.href = `/user/checkout?cartId=${cartId}&userId=${userId}`;
         }
     </script>
 </body>

@@ -1,3 +1,34 @@
+<head>
+    <style>
+        /* Order Summary */
+        .order-summary {
+            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            border-radius: 12px;
+            position: sticky;
+            top: 20px;
+        }
+        .order-summary .btn-primary {
+            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease;
+        }
+        .order-summary .btn-primary:hover {
+            transform: scale(1.02);
+        }
+        .coupon-input .btn-outline-secondary {
+            border-radius: 0 5px 5px 0;
+            transition: background-color 0.2s ease;
+        }
+        .coupon-input .btn-outline-secondary:hover {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            border-color: #6C5DD3;
+        }
+    </style>
+</head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm">
@@ -54,123 +85,171 @@
 
     <!-- Payment Section -->
     <main class="container mt-4">
-        <div class="row g-4">
-            <!-- Payment Methods -->
-            <div class="col-md-8">
-                <h4 class="fw-bold mb-4">Select Payment Method</h4>
-                
-                <!-- Razorpay -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="razorpay" checked>
-                        <label class="form-check-label w-100" for="razorpay">
-                            <div class="d-flex align-items-center">
-                                <img src="/razorpay.png" alt="Razorpay" class="me-3" width="24">
-                                <div>
-                                    <strong>Razorpay</strong>
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">joyalk74@oksbi</p>
+        <form id="paymentForm">
+            <div class="row g-4">
+                <!-- Payment Methods -->
+                <div class="col-md-8">
+                    <h4 class="fw-bold mb-4">Select Payment Method</h4>
+                    
+                    <!-- Razorpay -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="razorpay" id="razorpay" checked>
+                            <label class="form-check-label w-100" for="razorpay">
+                                <div class="d-flex align-items-center">
+                                    <img src="/razorpay.png" alt="Razorpay" class="me-3" width="24">
+                                    <div>
+                                        <strong>Razorpay</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 14px;">joyalk74@oksbi</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </label>
+                            </label>
+                        </div>
+                    </div>
+            
+                    <!-- Google Pay / UPI -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="gpay" id="gpay">
+                            <label class="form-check-label w-100" for="gpay">
+                                <div class="d-flex align-items-center">
+                                    <img src="/google-logo.png" alt="Google Pay" class="me-3" width="24">
+                                    <div>
+                                        <strong>UPI Payment</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 14px;">Pay by any UPI app</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+            
+                    <!-- Credit/Debit Card -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="card" id="card">
+                            <label class="form-check-label w-100" for="card">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-credit-card me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <strong>Credit/Debit/ATM Card</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 14px;">Add any secure card by RBI guidelines</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+            
+                    <!-- Wallets -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="wallet" id="wallet">
+                            <label class="form-check-label w-100" for="wallet">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-wallet me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <strong>Wallets</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 14px;">Use your FitBazar wallet</p>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+            
+                    <!-- Cash on Delivery -->
+                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="cod" id="cod">
+                            <label class="form-check-label w-100" for="cod">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-money-bill-wave me-3" style="font-size: 24px;"></i>
+                                    <div>
+                                        <strong>Cash on Delivery</strong>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Google Pay / UPI -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="gpay">
-                        <label class="form-check-label w-100" for="gpay">
-                            <div class="d-flex align-items-center">
-                                <img src="/google-logo.png" alt="Google Pay" class="me-3" width="24">
-                                <div>
-                                    <strong>UPI Payment</strong>
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">Pay by any UPI app</p>
+    
+                <!-- Price Summary -->
+                <div class="col-md-4">
+                    <div class="card p-3 shadow-sm border-0 order-summary mb-3" style="margin-top: 52px;">
+                        <h5 class="fw-bold text-dark mb-4">Price Details</h5>
+                        <% if (cart && cart.items && cart.items.length > 0) { %>
+                            <% let total = 0; %>
+                            <% cart.items.forEach(item => { %>
+                                <% total += item.quantity * item.price; %>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted" style="font-size: 0.95rem;"><%= item.quantity %>x <%= item.productId.name %></span>
+                                    <span class="text-dark fw-medium">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></span>
                                 </div>
+                            <% }) %>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
+                                <span class="text-success fw-semibold">Free</span>
                             </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Credit/Debit Card -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="card">
-                        <label class="form-check-label w-100" for="card">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-credit-card me-3" style="font-size: 24px;"></i>
-                                <div>
-                                    <strong>Credit/Debit/ATM Card</strong>
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">Add any secure card by RBI guidelines</p>
-                                </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted" style="font-size: 0.95rem;">Platform Fee</span>
+                                <span class="text-success fw-semibold">₹ 0</span>
                             </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Wallets -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="wallet">
-                        <label class="form-check-label w-100" for="wallet">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-wallet me-3" style="font-size: 24px;"></i>
-                                <div>
-                                    <strong>Wallets</strong>
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">Use your FitBazar wallet</p>
-                                </div>
+                            <hr class="my-2" style="border-color: #E0E0E0;">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-bold text-dark" style="font-size: 1.2rem;">Grand Total</span>
+                                <span class="fw-bold text-dark" style="font-size: 1.2rem;">₹ <%= total.toLocaleString('en-IN') %></span>
                             </div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Cash on Delivery -->
-                <div class="card py-4 px-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod">
-                        <label class="form-check-label w-100" for="cod">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-money-bill-wave me-3" style="font-size: 24px;"></i>
-                                <div>
-                                    <strong>Cash on Delivery</strong>
-                                </div>
-                            </div>
-                        </label>
+                            
+                            <!-- Combined submit button -->
+                            <button type="submit" class="btn btn-primary w-100 mt-4">Place Order</button>
+                        <% } else { %>
+                            <p class="text-muted text-center fs-5">No items in your cart.</p>
+                        <% } %>
                     </div>
                 </div>
             </div>
-
-            <!-- Price Summary -->
-            <div class="col-md-4" style="margin-top: 78px;">
-                <div class="card p-4 shadow-sm border-0" style="background-color: #F8F8F8;">
-                    <h5 class="fw-bold mb-4">Price Details</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Price (2 items)</span>
-                        <span>₹ 5818</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Delivery Charges</span>
-                        <span class="text-success">FREE</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Platform fee</span>
-                        <span>₹ 0</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Delivery tip</span>
-                        <span>₹ 10</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Coupon applied</span>
-                        <span>₹ 10</span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <strong>Grand Total</strong>
-                        <strong>₹ 5828</strong>
-                    </div>
-                    <button class="btn w-100 mt-3" style="background-color: #6C5DD3; color: white;">Place Order</button>
-                </div>
-            </div>
-        </div>
+        </form>
     </main>
+
+    <script>
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            try{
+                const response = await fetch('/user/payments',{
+                    method : 'POST',
+                    headers : {
+                        'content-type' : 'application/json',
+                    },
+                    body : JSON.stringify({paymentMethod : paymentMethod})
+                })
+                const data = await response.json();
+
+                if(!response.ok){
+                    Swal.fire({
+                    text : data.error,
+                    icon : "warning",
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+                }else{
+                    Swal.fire({
+                        text : data.message,
+                        icon : "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    })
+                }
+            } catch(error) {
+                console.log(error)
+                Swal.fire({
+                    text : data.message,
+                    icon : "error",
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+            }
+        })
+    </script>
+    
 </body>

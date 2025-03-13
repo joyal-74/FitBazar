@@ -1,135 +1,263 @@
+<head>
+    <style>
+        /* Progress Bar */
+        .progress-step {
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active i,
+        .progress-step.active span {
+            color: #6C5DD3 !important;
+            font-weight: 600;
+        }
+        .progress-arrow {
+            color: #D3D3D3;
+            font-size: 1.2rem;
+            margin: 0 20px;
+        }
+
+        /* Address Card */
+        .address-card {
+            background: #F8F8FC;
+            border-radius: 12px;
+        }
+
+        .address-card .form-check-input:checked + .form-check-label {
+            font-weight: 600;
+            color: #6C5DD3;
+        }
+        .address-card .badge {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        /* Add New Address Link */
+        .add-address {
+            font-weight: 500;
+            color: #6C5DD3;
+            transition: color 0.2s ease;
+        }
+        .add-address:hover {
+            color: #8A7DE8;
+            text-decoration: none;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            border-radius: 12px;
+            position: sticky;
+            top: 20px;
+        }
+        .order-summary .btn-primary {
+            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease;
+        }
+        .order-summary .btn-primary:hover {
+            transform: scale(1.02);
+        }
+        .coupon-input .btn-outline-secondary {
+            border-radius: 0 5px 5px 0;
+            transition: background-color 0.2s ease;
+        }
+        .coupon-input .btn-outline-secondary:hover {
+            background-color: #6C5DD3;
+            color: #FFFFFF;
+            border-color: #6C5DD3;
+        }
+    </style>
+</head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                            <i class="fa-solid fa-user"></i>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
+    <nav class="navbar navbar-expand-lg shadow-sm bg-white">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#" style="color: #3B3389;">FitBazar</a>
+            <button class="navbar-toggler border-0 shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvas">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title fw-bold" style="color: #3B3389;">FitBazar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav me-auto gap-2">
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="/shop">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">Deals/Offers</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link text-white py-2 px-3" href="#">Customer Support</a></li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search">
+                        <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                    <div class="d-flex align-items-center">
+                        <a href="#" class="mx-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                        <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                        <% if (user) { %>
+                            <a href="/user/profile" style="color: #3B3389;">
+                                <% if (user.profilePic) { %>
+                                    <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                                <% } else { %>
+                                    <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                                <% } %>
+                            </a>
+                        <% } else { %>
+                            <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                        <% } %> 
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Progress Bar -->
-    <div class="container mt-4">
-        <div class="d-flex justify-content-center align-items-center">
-            <!-- Cart -->
-            <div class="d-flex align-items-center me-3">
-                <i class="fas fa-shopping-cart text-warning me-2"></i>
-                <span class="fw-bold">Cart</span>
-            </div>
-            <i class="fas fa-arrow-right text-primary me-3"></i>
-            <!-- Shipping -->
-            <div class="d-flex align-items-center me-3">
-                <i class="fas fa-truck text-primary me-2"></i>
-                <span class="text-primary fw-bold">Shipping</span>
-            </div>
-            <i class="fas fa-arrow-right text-secondary me-3"></i>
-            <!-- Payments -->
-            <div class="d-flex align-items-center">
-                <i class="fas fa-credit-card text-secondary me-2"></i>
-                <span class="fw-bold">Payments</span>
-            </div>
-        </div>
-    </div>
-
-    <main class="container mt-4">
-        <div class="row g-4">
-            <!-- Delivery Address Section -->
-            <div class="col-md-8">
-                <h4 class="fw-bold mb-4">Select Delivery Address</h4>
-                <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="address" id="address1" checked>
-                        <label class="form-check-label w-100" for="address1">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>JOYAL KURIAKOSE</strong> 7306950587
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">
-                                        Thekkemathoor (h) Pasukkadave (po) kavilumpara (via) Kozhikode (dist),<br>
-                                        Pasukkadave, Pasukkadave, Kerala - 673513
-                                    </p>
-                                </div>
-                                <span class="badge bg-secondary">Home</span>
-                            </div>
-                        </label>
+    <!-- Main Section -->
+    <main class="container my-5">
+        <div class="row gx-5 gy-2">
+            <!-- Delivery Address Section Header -->
+            <div class="d-flex justify-content-between w-100 align-items-center" style="padding: 16px; border-radius: 10px;">
+                <h4 class="fw-bold mb-0 text-dark">Select Delivery Address</h4>
+                <div class="d-flex justify-content-center align-items-center gap-3">
+                    <div class="progress-step">
+                        <i class="fas fa-shopping-cart text-muted me-1" style="font-size: 1rem;"></i>
+                        <span class="fw-medium" style="font-size: 0.8rem;">Cart</span>
+                    </div>
+                    <i class="fas fa-arrow-right progress-arrow text-muted"></i>
+                    <div class="progress-step active">
+                        <i class="fas fa-truck me-1" style="font-size: 0.9rem;"></i>
+                        <span style="font-size: 0.9rem;">Shipping</span>
+                    </div>
+                    <i class="fas fa-arrow-right progress-arrow text-muted"></i>
+                    <div class="progress-step">
+                        <i class="fas fa-credit-card text-muted me-1" style="font-size: 0.9rem;"></i>
+                        <span class="fw-medium" style="font-size: 0.9rem;">Payments</span>
                     </div>
                 </div>
-                
-                <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="address" id="address2">
-                        <label class="form-check-label w-100" for="address2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>JOYAL KURIAKOSE</strong> 7306950587
-                                    <p class="mb-0 text-muted" style="font-size: 14px;">
-                                        Thekkemathoor (h) Pasukkadave (po) kavilumpara (via) Kozhikode (dist),<br>
-                                        Pasukkadave, Pasukkadave, Kerala - 673513
-                                    </p>
-                                </div>
-                                <span class="badge bg-secondary">Work</span>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-
-                <a href="#" class="d-block text-primary mt-3">
-                    <i class="fas fa-plus me-2"></i>Add a new address
-                </a>
             </div>
 
-            <!-- Order Summary -->
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm border-0" style="background-color: #F8F8F8; margin-top: 52px;">
-                    <h5 class="fw-bold mb-4">Order Summary</h5>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>1x Dumbbell - 20 kg</span>
-                        <span>₹ 2199</span>
+            <!-- Form wrapping the entire row -->
+            <form action="/user/checkout" method="post" id="checkoutForm">
+                <div class="row gx-5 gy-2">
+                    <!-- Address Selection -->
+                    <div class="col-md-8">
+                        <% if (address.length > 0) { %>
+                            <% address.forEach((address) => { %>
+                                <% address.details.forEach((detail, index) => { %>
+                                    <div class="card p-4 mb-4 border-0 shadow-sm address-card">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="selectedAddress" 
+                                                id="address<%= detail._id %>" value="<%= detail._id %>" 
+                                                <%= index === 0 ? 'checked' : '' %>>
+                                            <label class="form-check-label w-100" for="address<%= detail._id %>">
+                                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                                    <div>
+                                                        <strong><%= detail.name.toUpperCase() %></strong> 
+                                                        <span class="text-muted"><%= detail.phone %></span>
+                                                        <p class="mb-0 text-muted mt-1" style="font-size: 0.95rem; line-height: 1.4;">
+                                                            <%= detail.addressLine1 %>, <%= detail.addressLine2 %>,<br>
+                                                            <%= detail.city %>, <%= detail.state %> - <%= detail.pincode %>
+                                                            <% if (detail.landmark) { %>
+                                                                <br>Landmark: <%= detail.landmark %>
+                                                            <% } %>
+                                                        </p>
+                                                        <% if (detail.altPhone) { %>
+                                                            <p class="mb-0 text-muted" style="font-size: 0.95rem;">
+                                                                Alt Phone: <%= detail.altPhone %>
+                                                            </p>
+                                                        <% } %>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="badge">
+                                                            <%= detail.addressType.charAt(0).toUpperCase() + detail.addressType.slice(1) %>
+                                                        </span>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li>
+                                                                    <a class="dropdown-item" href="/user/checkout-Up?id=<%= address.userId %>&index=<%= index %>">
+                                                                        Edit
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% }) %>
+                            <a href="/user/addAddress" class="d-block add-address">
+                                <i class="fas fa-plus me-2"></i>Add a new address
+                            </a>
+                        <% } else { %>
+                            <div class="text-center py-5">
+                                <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color: #6c5dd3;"></i>
+                                <p class="fs-5 text-muted">No addresses found. Add a new address to get started!</p>
+                                <a href="/user/addAddress" class="d-block add-address">
+                                    <i class="fas fa-plus me-2"></i>Add a new address
+                                </a>
+                            </div>
+                        <% } %>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>2x Kettlebells - 15 kg</span>
-                        <span>₹ 3689</span>
-                    </div>
-                    <hr>
-                    <div class="mb-3">
-                        <label for="coupon" class="form-label">Enter Coupon Code</label>
-                        <div class="input-group">
-                            <input type="text" id="coupon" class="form-control" placeholder="Paste your code here">
-                            <button class="btn btn-outline-secondary" type="button">Apply</button>
+
+                    <!-- Order Summary -->
+                    <div class="col-md-4">
+                        <div class="card p-3 shadow-sm border-0 order-summary">
+                            <h5 class="fw-bold text-dark mb-4">Order Summary</h5>
+                            <% if (cart && cart.items && cart.items.length > 0) { %>
+                                <% let total = 0; %>
+                                <% cart.items.forEach(item => { %>
+                                    <% total += item.quantity * item.price; %>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="text-muted" style="font-size: 0.95rem;"><%= item.quantity %>x <%= item.productId.name %></span>
+                                        <span class="text-dark fw-medium">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></span>
+                                    </div>
+                                <% }) %>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
+                                    <span class="text-success fw-semibold">Free</span>
+                                </div>
+                                <hr class="my-2" style="border-color: #E0E0E0;">
+                                <div class="mb-2">
+                                    <label for="coupon" class="form-label fw-medium" style="font-size: 0.9rem;">Enter Coupon Code</label>
+                                    <div class="input-group coupon-input">
+                                        <input type="text" id="coupon" name="coupon" class="form-control form-control-sm px-3" 
+                                            placeholder="Paste your code here" 
+                                            style="border-radius: 6px 0 0 6px; height: 52px; font-size: 0.9rem;">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" 
+                                            style="border-radius: 0 6px 6px 0; height: 52px; font-size: 0.9rem;">
+                                            Apply
+                                        </button>
+                                    </div>
+                                </div>
+                                <hr class="my-2" style="border-color: #E0E0E0;">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
+                                    <span class="fw-bold text-dark" style="font-size: 1.2rem;">₹ <%= total.toLocaleString('en-IN') %></span>
+                                </div>
+                                <input type="hidden" name="userId" value="<%= user._id %>">
+                                <button type="submit" class="btn btn-primary w-100 mt-4" 
+                                    <%= (!cart || cart.length === 0) ? 'disabled' : '' %>>Proceed to Payment</button>
+                            <% } else { %>
+                                <p class="text-muted text-center fs-5">No items in your cart.</p>
+                            <% } %>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold">Total</span>
-                        <strong>₹ 5818</strong>
-                    </div>
-                    <button class="btn btn-primary w-100 mt-3" style="background-color: #6C5DD3; border: none;">
-                        Proceed to Payment
-                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     </main>
 </body>
