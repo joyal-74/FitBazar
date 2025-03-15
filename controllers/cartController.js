@@ -193,12 +193,12 @@ const loadAddShoppingAddress = async(req,res) => {
 
         const user = await User.findOne({_id : userId})
 
-        const order = await Order.findOne({ userId }).populate({
-            path: 'orderItems.product',
+        const cart = await Cart.findOne({ userId }).populate({
+            path: 'items',
             select: 'name price brand variants'
         }).sort({ createdAt: -1 });
 
-        const orderItems = order.orderItems
+        const orderItems = cart.items
     
         res.render('user/shoppingAddress', {title : "Address", user, orderItems});
     } catch (error) {
@@ -257,86 +257,73 @@ const loadshoppingAddress = async (req,res) => {
     try {
         const { id, index } = req.query;
 
-        
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {
             return res.status(401).json({ error: "Please Login to continue" });
         }
 
-        const address = await Address.findOne({ userId: id });
+        const address = await Address.findOne({ userId });
 
         if (!address) {
             return res.status(404).json({ error: "Address not found" });
         }
 
         const selectedAddress = address.details[index];
-        // console.log(selectedAddress);
+        console.log(selectedAddress);
 
         if (!selectedAddress) {
             return res.status(404).json({ error: "Address details not found" });
         }
 
-        const order = await Order.findOne({ userId }).populate({
-            path: 'orderItems.product',
+        const cart = await Cart.findOne({ userId }).populate({
+            path: 'items',
             select: 'name price brand variants'
         }).sort({ createdAt: -1 });
 
-        const orderItems = order.orderItems
+        const orderItems = cart.items
 
-        res.render('user/shoppingAddress', { 
-            title: "Add new Address",
-            address: selectedAddress,
-            user,
-            addressId: id,
-            orderItems,
-            index,
-        });
+        res.render('user/checkout-Up', { title: "Add new Address",address: selectedAddress,user, addressId: id,orderItems,index });
+
     } catch (error) {
         console.error("Error loading address:", error);
-        res.status(500).json({ 
-            error: "Internal Server Error",
-            message: error.message 
-        });
+        res.status(500).json({ error: "Internal Server Error", message: error.message });
     }
 }
 
 const editshoppingAddress = async (req,res) =>{
     console.log('---------')
     try {
-            const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index, from } = req.body;
-    
-            console.log(req.body)
+        const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index } = req.body;
 
-            const userId = req.session.user.id;
-    
-            if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
-                return res.status(400).json({ error: "All required fields must be filled." });
-            }
-    
-            let userAddress = await Address.findOne({ userId });
-    
-            userAddress.details[index] = {
-                addressType,
-                name: fullName,
-                addressLine1,
-                addressLine2,
-                city,
-                landmark,
-                state,
-                pincode: zipCode,
-                phone,
-                altPhone: altNumber,
-            };
-    
-            await userAddress.save();
-            return res.status(200).json({ message: "Address updated" , redirectUrl: `/user/checkout?userId=${userId}`});
-    
-    
-        } catch (error) {
-            console.error("Error updating address:", error);
-            return res.status(500).json({ error: error.message || "Address editing error" });
-        }
+        console.log(req.body)
+
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        let userAddress = await Address.findOne({ userId });
+
+        userAddress.details[index] = {
+            addressType,
+            name: fullName,
+            addressLine1,
+            addressLine2,
+            city,
+            landmark,
+            state,
+            country,
+            pincode: zipCode,
+            phone,
+            altPhone: altNumber,
+        };
+
+        await userAddress.save();
+        return res.status(200).json({ message: "Address updated" , redirectUrl: `/user/checkout?userId=${userId}`});
+
+
+    } catch (error) {
+        console.error("Error updating address:", error);
+        return res.status(500).json({ error: error.message || "Address editing error" });
+    }
 }
 
 

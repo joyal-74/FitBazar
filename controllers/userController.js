@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
 import Category from '../model/categoryModel.js'
 import Products from "../model/productModel.js";
-import nodemailer from "nodemailer"
 import { OK,  NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 import sendEmail from "../helpers/emailhelper.js";
 import emailTemplate from "../helpers/emailTemplate.js";
@@ -21,12 +20,12 @@ const getUserHome = async (req, res)=> {
 
 // Login Page Handler
 function loadLogin(req, res) {
-    res.render('user/login', { title: 'Login Page', errorMessage: "" });
+    res.render('user/login', { title: 'Login Page' });
 }
 
 // Register Page Handler
 function loadRegister(req, res) {
-    res.render('user/register', { title: 'Register Page', errorMessage: "" });
+    res.render('user/register', { title: 'Register Page' });
 }
 
 
