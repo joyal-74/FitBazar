@@ -8,11 +8,14 @@ const orderSchema = new Schema({
         type : String,
         default : () => uuidv4()
     },
+    userId : {
+        type : Schema.Types.ObjectId,
+        ref : "User",
+    },
     orderItems : [{
         product : {
             type : Schema.Types.ObjectId,
-            ref : "Product",
-            unique : true
+            ref : "Products",
         },
         quantity : {
             type : Number,
@@ -21,6 +24,19 @@ const orderSchema = new Schema({
         price : {
             type : Number,
             default : 0
+        },
+        name : {
+            type : String,
+            required : true
+        },
+        brand : {
+            type : String,
+        },
+        variants : {
+            type : String
+        },
+        productImage : {
+            type : String
         }
     }],
     totalPrice : {
@@ -30,10 +46,6 @@ const orderSchema = new Schema({
     discount : {
         type : Number,
         default : 0,
-    },
-    finalAmount : {
-        type : Number,
-        required : true
     },
     address : {
         type : Schema.Types.ObjectId,
@@ -51,6 +63,9 @@ const orderSchema = new Schema({
     couponApplied : {
         type : Boolean,
         default : false
+    },
+    paymentMethod : {
+        type : String
     }
 },{timestamps: true})
 

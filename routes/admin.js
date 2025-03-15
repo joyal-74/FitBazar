@@ -40,6 +40,8 @@ router.get('/customers/filter',adminAuth.checkSession, customerController.filter
 
 // order management
 router.get('/orders', adminController.loadOrders);
+router.patch('/orders', adminController.updateStatus);
+
 router.get('/vieworders', adminController.viewOrders);
 
 

@@ -3,7 +3,72 @@ import User from "../model/userModel.js";
 import Addresses from '../model/addressModel.js'
 import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
+import Order from "../model/orderModel.js";
 
+
+const loadOrders = async (req,res) => {
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        const user = await User.findOne({_id : userId})
+
+        if (!userId) {
+            return res.status(401).redirect('/user/login');
+        }
+        const [firstName, lastName] = user.name.split(' ');
+        const orders = await Order.find({ userId })
+                .populate({
+                    path: 'orderItems.product',
+                    select: 'name price brand variants'
+                })
+                .sort({ createdAt: -1 });
+
+        console.log(orders)
+
+        res.render('user/orders',{title : "My Orders",orders, user, firstName});
+
+    } catch (error) {
+        console.error('Error loading orders:', error.message);
+    }
+}
+
+
+const loadOrderDetails = async (req,res)=> {
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        
+        const orderId = req.query.id;
+
+
+
+        if (!userId) {
+            return res.status(401).redirect('/user/login');
+        }
+
+        const user = await User.findOne({_id : userId})
+
+        const [firstName, lastName] = user.name.split(' ');
+
+        const order = await Order.findOne({ orderId });
+
+        const addressId = order.address
+
+        console.log(addressId)
+
+        const addresses = await Address.findOne(
+            { 'details._id': addressId },
+            { details: { $elemMatch: { _id: addressId } } }
+        );
+        
+        const address = addresses?.details?.[0] || null;
+        
+
+        res.render('user/orderdetails',{title : "My Orders",order, address, user, firstName});
+
+    } catch (error) {
+        console.error('Error loading orders:', error.message);
+    }
+}
 
 const loadprofile = async (req,res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
@@ -334,5 +399,5 @@ const loadPrivacy = async (req,res) => {
     res.render('user/privacy', {title : "coupons", user})
 }
 
-export default {loadprofile, loadUpdateProfile, verifyOTP, sendOTP, updateProfile, loadAddress, loadAddAddress,
+export default {loadOrders, loadOrderDetails, loadprofile, loadUpdateProfile, verifyOTP, sendOTP, updateProfile, loadAddress, loadAddAddress,
      loadEditAddress, editAddress, deleteAddress, loadCoupons, loadPrivacy, addAddress};

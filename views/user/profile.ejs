@@ -52,7 +52,6 @@
 
         .sidebar-profile img {
             object-fit: cover;
-            border: 2px solid #e0dbfc;
         }
 
         /* Responsive adjustments */
@@ -130,7 +129,6 @@
         }
 
         .profile-avatar {
-            border: 3px solid #e0dbfc;
             object-fit: cover;
         }
 
@@ -237,7 +235,7 @@
                 </form>
                 <div class="d-flex align-items-center">
                     <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                     <% if (user) { %>
                         <a href="/user/profile" style="color: #3B3389;">
                             <% if (user.profilePic) { %>
@@ -267,7 +265,7 @@
                     </div>
 
                     <nav class="nav flex-column gap-3">
-                        <a href="/orders" class="nav-link sidebar-linkz">
+                        <a href="/user/orders" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-box me-2"></i>My Orders
                         </a>
                         <a href="/user/profile" class="nav-link sidebar-linkz active">

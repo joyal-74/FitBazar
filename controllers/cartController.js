@@ -3,6 +3,8 @@ import User from "../model/userModel.js";
 import Products from "../model/productModel.js";
 import Cart from "../model/cartModel.js";
 import Address from "../model/addressModel.js";
+import mongoose from "mongoose";
+import Order from "../model/orderModel.js";
 
 
 const addItemToCart = async (req, res) => {
@@ -131,7 +133,7 @@ const updateQuantity = async (req, res) => {
     } else if (change < 0 && item.quantity > 1) {
         item.quantity -= 1;
     } else if (change < 0 && item.quantity === 1) {
-        return res.status(400).json({ message: "Cannot reduce quantity below 1" });
+        return res.status(200).json({ message: "Quantity unchanged as it’s already at minimum", cart });
     }
 
     await cart.save();
@@ -185,6 +187,159 @@ const checkoutDetails = async (req,res) => {
     res.redirect('/user/payments')
 }
 
+const loadAddShoppingAddress = async(req,res) => {
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        const user = await User.findOne({_id : userId})
+
+        const order = await Order.findOne({ userId }).populate({
+            path: 'orderItems.product',
+            select: 'name price brand variants'
+        }).sort({ createdAt: -1 });
+
+        const orderItems = order.orderItems
+    
+        res.render('user/shoppingAddress', {title : "Address", user, orderItems});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const addShoppingAddress = async (req,res) =>{
+    try {
+        const {fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode} = req.body;
+
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
+            return res.status(400).json({ error: "All required fields must be filled." });
+        }
+
+        let userAddress = await Address.findOne({ userId });
+
+        if (!userAddress) {
+            userAddress = new Address({
+                userId,
+                details: []
+            });
+        }
+
+        const newIndex = userAddress.details.length;
+
+        userAddress.details.push({
+            index: newIndex,
+            userId,
+            addressType,
+            name: fullName,
+            addressLine1,
+            addressLine2,
+            city,
+            landmark,
+            state,
+            pincode: zipCode,
+            phone,
+            altPhone: altNumber
+        });
+
+        await userAddress.save();
+
+        return res.status(201).json({ message: "Address added successfully" , redirectUrl: `/user/checkout?userId=${userId}` });
+
+    } catch (error) {
+        console.error("Error adding address:", error);
+        return res.status(500).json({ error: error.message || "Address creation error" });
+    }
+}
+
+
+const loadshoppingAddress = async (req,res) => {
+    try {
+        const { id, index } = req.query;
+
+        
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        const user = await User.findOne({_id : userId})
+        if (!user) {
+            return res.status(401).json({ error: "Please Login to continue" });
+        }
+
+        const address = await Address.findOne({ userId: id });
+
+        if (!address) {
+            return res.status(404).json({ error: "Address not found" });
+        }
+
+        const selectedAddress = address.details[index];
+        // console.log(selectedAddress);
+
+        if (!selectedAddress) {
+            return res.status(404).json({ error: "Address details not found" });
+        }
+
+        const order = await Order.findOne({ userId }).populate({
+            path: 'orderItems.product',
+            select: 'name price brand variants'
+        }).sort({ createdAt: -1 });
+
+        const orderItems = order.orderItems
+
+        res.render('user/shoppingAddress', { 
+            title: "Add new Address",
+            address: selectedAddress,
+            user,
+            addressId: id,
+            orderItems,
+            index,
+        });
+    } catch (error) {
+        console.error("Error loading address:", error);
+        res.status(500).json({ 
+            error: "Internal Server Error",
+            message: error.message 
+        });
+    }
+}
+
+const editshoppingAddress = async (req,res) =>{
+    console.log('---------')
+    try {
+            const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index, from } = req.body;
+    
+            console.log(req.body)
+
+            const userId = req.session.user.id;
+    
+            if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
+                return res.status(400).json({ error: "All required fields must be filled." });
+            }
+    
+            let userAddress = await Address.findOne({ userId });
+    
+            userAddress.details[index] = {
+                addressType,
+                name: fullName,
+                addressLine1,
+                addressLine2,
+                city,
+                landmark,
+                state,
+                pincode: zipCode,
+                phone,
+                altPhone: altNumber,
+            };
+    
+            await userAddress.save();
+            return res.status(200).json({ message: "Address updated" , redirectUrl: `/user/checkout?userId=${userId}`});
+    
+    
+        } catch (error) {
+            console.error("Error updating address:", error);
+            return res.status(500).json({ error: error.message || "Address editing error" });
+        }
+}
+
+
 // will implement later
 const loadCheckoutUp = async (req, res) => {
     try {
@@ -227,26 +382,61 @@ const loadCheckoutUp = async (req, res) => {
 };
 
 const loadPayments = async (req, res) => {
-    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    const user = await User.findOne({userId});
+        const user = await User.findOne({_id : userId});
 
-    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
+        const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 
-    res.render('user/payment', {title : "Checkout", user, cart});
+        res.render('user/payment', {title : "Checkout", user, cart});
+    } catch (error) {
+        console.error('Error loading payment:', error);
+        res.redirect('/404');
+    }
 }
 
 const paymentSuccess = async (req,res) => {
-    const { paymentMethod } = req.body;
-    const addressId = req.session.deliveryAddress
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+    const { couponApplied, paymentMethod } = req.body;
+
+    const addressId = req.session.deliveryAddress;
+    const objectId = new mongoose.Types.ObjectId(addressId);
+
+    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 
     if(paymentMethod == 'cod'){
-        const address = await Address.findOne({
-            details: { $elemMatch: { _id: addressId } }
-        });
+        const address = await Address.findOne(
+            { 'details._id': objectId },
+            { 'details.$': 1 }
+        );
 
         if (address) {
-            console.log(address)
+            
+            const order = new Order({
+                userId,
+                orderItems: cart.items.map(item => ({
+                    product: item.productId._id,
+                    name : item.name,
+                    quantity: item.quantity,
+                    price: item.productId.price,
+                    variants : item.variants,
+                    brand : item.brand,
+                    productImage : item.productImage
+                })),
+                totalPrice: cart.items.reduce((sum, item) => sum + item.quantity * item.productId.price, 0),
+                paymentMethod,
+                address : addressId,
+                status: 'Pending',
+                couponApplied
+                });
+
+            await order.save();
+
+
+            await Cart.findByIdAndDelete(cart._id);
+
             return res.status(200).json({ message: 'Order placed successfully' });
         } else {
             return res.status(404).json({ error: 'Address not found' });
@@ -254,13 +444,40 @@ const paymentSuccess = async (req,res) => {
     }else{
         return res.status(400).json({error : "Payment method not implemented"});
     }
-
 }
 
 const confirmOrder = async (req, res) => {
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
-    res.render('user/confirmOrder', {title : "Checkout", user});
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+    
+        if (!userId) {
+            console.error('User ID is missing in session.');
+            return res.status(400).render('error', { message: 'Invalid session. Please log in again.' });
+        }
+        
+        const user = await User.findOne({_id : userId});
+
+        const order = await Order.findOne({ userId }).populate({
+            path: 'orderItems.product',
+            select: 'name price brand variants'
+        }).sort({ createdAt: -1 });
+
+        const addressId = order.address
+        const orderItems = order.orderItems
+
+        const address = await Address.findOne(
+            { 'details._id': addressId },
+            { 'details.$': 1 }
+        );
+
+        const shippingAddress = address.details[0];
+
+        return res.render('user/confirmOrder', {title : "Checkout", user, shippingAddress, order, orderItems});
+    } catch (error) {
+        console.error(`Error confirming order: ${error.message}`);
+        return res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
+    }
 }
 
-export default {loadCart, updateQuantity, addItemToCart, deleteFromcart, loadCheckout, checkoutDetails, loadCheckoutUp, loadPayments, paymentSuccess , confirmOrder};
+export default {loadCart, updateQuantity, addItemToCart, deleteFromcart, loadCheckout, addShoppingAddress,
+    checkoutDetails, loadAddShoppingAddress, loadshoppingAddress, editshoppingAddress, loadCheckoutUp, loadPayments, paymentSuccess , confirmOrder};

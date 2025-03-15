@@ -3,6 +3,7 @@ const router = express.Router();
 import userController from '../controllers/userController.js';
 import profileController from "../controllers/profileController.js";
 import cartControlller from '../controllers/cartController.js'
+import refundController from '../controllers/refundController.js'
 import upload from "../middleware/imageUpload.js";
 
 
@@ -53,13 +54,23 @@ router.delete('/cart', cartControlller.deleteFromcart);
 router.get('/checkout', cartControlller.loadCheckout);
 router.post('/checkout', cartControlller.checkoutDetails);
 
-router.get('/checkout-Up', cartControlller.loadCheckoutUp);
+router.get('/shoppingAddressAdd', cartControlller.loadAddShoppingAddress);
+router.post('/shoppingAddress', cartControlller.addShoppingAddress);
+
+router.get('/shoppingAddress', cartControlller.loadshoppingAddress);
+router.put('/shoppingAddress', cartControlller.editshoppingAddress);
 
 router.get('/payments', cartControlller.loadPayments);
 router.post('/payments', cartControlller.paymentSuccess);
 
 router.get('/confirmOrder', cartControlller.confirmOrder);
 
+router.get('/orders', profileController.loadOrders);
+router.get('/orderDetails', profileController.loadOrderDetails);
+
+router.post('/orders/return', refundController.requestRefund);
+router.patch('/orders/cancel', refundController.cancelOrder);
+router.get('/orders/invoice', refundController.generateInvoice);
 
 
 router.get("/logout", userController.logoutUser );

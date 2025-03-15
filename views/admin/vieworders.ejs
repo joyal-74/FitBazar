@@ -15,10 +15,10 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="d-flex align-items-center">
                     <a href="#" class="me-3 notification-icon">
-                        <i class="fa-regular fa-lg fa-bell" style="color: #ffffff;"></i>
+                        <i class="fa-regular fa-lg fa-bell" style="color: #3e29a8;"></i>
                     </a>
                     <a href="#" class="avathar">
-                        <i class="fa-solid fa-circle-user fa-xl" style="color: #ffffff;"></i>
+                        <i class="fa-solid fa-circle-user fa-xl" style="color: #3e29a8;"></i>
                     </a>
                 </div>
             </div>
@@ -27,7 +27,7 @@
 
     <!-- Sidebar + Main Content Wrapper -->
     <div class="container-fluid">
-        <div class="row">
+        <div class="row g-0">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
                 <ul class="nav flex-column mt-3 gap-2">
@@ -58,16 +58,27 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <p><strong>Order ID:</strong> #12345</p>
-                                        <p><strong>Order Date:</strong> 2023-10-01</p>
-                                        <p><strong>Customer:</strong> John Doe</p>
+                                        <p><strong>Order ID:</strong> #<%= order.orderId %></p>
+                                        <p><strong>Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
+                                        <p><strong>Customer:</strong> <%= order.userId ? order.userId.name : 'Unknown' %></p>
                                     </div>
                                     <div class="col-md-6">
-                                        <p><strong>Status:</strong> <span class="badge bg-success">Completed</span></p>
-                                        <p><strong>Total Amount:</strong> ₹1,200</p>
-                                        <p><strong>Payment Method:</strong> Credit Card</p>
+                                        <p><strong>Status:</strong> 
+                                            <% if (order.status === 'Pending') { %>
+                                                <span class="badge bg-warning"><%= order.status %></span>
+                                            <% } else if (order.status === 'Delivered') { %>
+                                                <span class="badge bg-success"><%= order.status %></span>
+                                            <% } else if (order.status === 'Cancelled') { %>
+                                                <span class="badge bg-danger"><%= order.status %></span>
+                                            <% } %>
+                                        </p>
+                                        <p><strong>Total Amount:</strong> ₹<%= order.totalPrice.toLocaleString('en-IN') %></p>
+                                        <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
                                     </div>
                                 </div>
+
+                                <!-- Status Change Dropdown -->
+                                
                             </div>
                         </div>
 
@@ -77,7 +88,7 @@
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <thead>
-                                            <tr>
+                                            <tr class="text-center">
                                                 <th>Product</th>
                                                 <th>Quantity</th>
                                                 <th>Price</th>
@@ -85,18 +96,14 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Running Shoes</td>
-                                                <td>1</td>
-                                                <td>₹1,000</td>
-                                                <td>₹1,000</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Sports T-Shirt</td>
-                                                <td>2</td>
-                                                <td>₹100</td>
-                                                <td>₹200</td>
-                                            </tr>
+                                            <% order.orderItems.forEach(item => { %>
+                                                <tr class="text-center">
+                                                    <td><%= item.name %></td>
+                                                    <td><%= item.quantity %></td>
+                                                    <td>₹<%= item.price %></td>
+                                                    <td>₹<%= item.quantity * item.price %></td>
+                                                </tr>
+                                            <% }) %>
                                         </tbody>
                                     </table>
                                 </div>
@@ -113,21 +120,32 @@
                             <div class="card-body">
                                 <div class="timeline">
                                     <div class="timeline-item">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
                                         <p class="mb-1"><strong>Order Placed</strong></p>
-                                        <p class="text-muted mb-0">2023-10-01 10:00 AM</p>
+                                        <p class="text-muted mb-0"><%= new Date(order.createdAt).toLocaleString() %></p>
                                     </div>
-                                    <div class="timeline-item">
-                                        <p class="mb-1"><strong>Order Confirmed</strong></p>
-                                        <p class="text-muted mb-0">2023-10-01 10:30 AM</p>
-                                    </div>
-                                    <div class="timeline-item">
-                                        <p class="mb-1"><strong>Order Shipped</strong></p>
-                                        <p class="text-muted mb-0">2023-10-02 09:00 AM</p>
-                                    </div>
-                                    <div class="timeline-item">
-                                        <p class="mb-1"><strong>Order Delivered</strong></p>
-                                        <p class="text-muted mb-0">2023-10-03 03:00 PM</p>
-                                    </div>
+                                    <% if (order.status === 'Delivered' && order.createdAt.getTime() !== order.updatedAt.getTime()) { %>
+                                        <div class="timeline-item">
+                                            <i class="fas fa-truck text-primary me-2"></i>
+                                            <p class="mb-1"><strong>Order Delivered</strong></p>
+                                            <p class="text-muted mb-0"><%= new Date(order.updatedAt).toLocaleString() %></p>
+                                        </div>
+                                    <% } %>                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-5">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Update Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="orderStatus" class="form-label">Change Status</label>
+                                    <select id="orderStatus" class="form-select" onchange="updateOrderStatus('<%= order.orderId %>')">
+                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -136,4 +154,52 @@
             </main>
         </div>
     </div>
+
+    <script>
+        async function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('orderStatus').value;
+
+            try {
+                const response = await fetch(`/admin/orders?id=${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon : "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                        
+                    }).then(()=>{
+                        window.location.reload();
+                    })
+                    
+                } else {
+                    alert(data.message || 'Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('An error occurred while updating the status');
+            }
+        }
+
+        function confirmStatusChange(orderId) {
+            const newStatus = document.getElementById('orderStatus').value;
+            const confirmation = confirm(`Are you sure you want to change the status to "${newStatus}"?`);
+
+            if (confirmation) {
+                updateOrderStatus(orderId);
+            } else {
+                // Reset the dropdown to the original status
+                document.getElementById('orderStatus').value = '<%= order.status %>';
+            }
+        }
+    </script>
 </body>

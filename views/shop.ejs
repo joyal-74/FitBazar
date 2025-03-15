@@ -2,7 +2,6 @@
 <head>
     <link rel="stylesheet" href="/css/product.css">
     <style>
-        
         </style>
 </head>
 <body class="bg-light">
@@ -13,11 +12,8 @@
             <div class="d-flex w-100 justify-content-between align-items-center">
                 <a class="navbar-brand fw-bold" href="#">FitBazar</a>
                 <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
-                            href="/home">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
@@ -90,7 +86,7 @@
                     <h6>Brand</h6>
                     <ul class="list-unstyled">
                         <% 
-                            const uniqueBrands = [...new Set(brands)]; // Remove duplicates
+                            const uniqueBrands = [...new Set(brands)];
                             uniqueBrands.forEach(brand => { 
                         %>
                             <li>
@@ -164,13 +160,13 @@
                 <div class="row" id="product-container">
                     <% product.forEach(product => { %>
                         <div class="col-md-3 col-lg-3 my-3">
-                            <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
-                                <div class="card shadow-sm p-2">
-                                    <!-- Image Container with Offer Badge -->
+                            <div class="card shadow-sm p-2">
+                                <!-- Image Container with Offer Badge -->
+                                <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
                                     <div class="position-relative">
                                         <img src="<%= product.variants[0].images[0] %>" alt="<%= product.name %>"
-                                             class="product-img card-img-top mx-auto d-block" 
-                                             style="height: 250px; object-fit: cover;">
+                                            class="product-img card-img-top mx-auto d-block" 
+                                            style="height: 250px; object-fit: cover;">
                 
                                         <% if (product.productOffer > 0) { %>
                                             <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
@@ -178,25 +174,26 @@
                                             </span>
                                         <% } %>
                                     </div>
-                
-                                    <div class="card-body p-2">
-                                        <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
-                                        <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)</p>
-                                        <p class="d-flex align-items-center gap-2 mb-2">
-                                            <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></strong> 
-                                            <del class="text-dark small">₹<%= product.price %></del>
-                                        </p>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn w-50 btn-sm custom-outline-btn">
-                                                <i class="fa fa-cart-shopping me-2"></i> Add to Cart
-                                            </button>
-                                            <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #9c3ec8, #3858a9); border: none; font-size: 0.8em;">
-                                                <i class="fa fa-bolt me-2"></i> Buy Now
-                                            </button>
-                                        </div>
+                                </a>
+
+            
+                                <div class="card-body p-2">
+                                    <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
+                                    <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)</p>
+                                    <p class="d-flex align-items-center gap-2 mb-2">
+                                        <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></strong> 
+                                        <del class="text-dark small">₹<%= product.price %></del>
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn w-50 btn-sm custom-outline-btn" id="addToCart" onclick="addToCart()">
+                                            <i class="fa fa-cart-shopping me-2"></i> Add to Cart
+                                        </button>
+                                        <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #9c3ec8, #3858a9); border: none; font-size: 0.8em;">
+                                            <i class="fa fa-bolt me-2"></i> Buy Now
+                                        </button>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     <% }); %>
                 </div>
@@ -350,6 +347,12 @@
 
             window.location.href = currentUrl.toString(); // Redirect with filters + search applied
         });
+
+        function addToCart(){
+            document.getElementById('addTocart').addEventListener('click', ()=> {
+                
+            })
+        }
 
     </script>
 </body>

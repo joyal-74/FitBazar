@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import Admin from "../model/adminModel.js";
+import Order from "../model/orderModel.js";
 import { INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 
 
@@ -68,13 +69,47 @@ function loadDashboard(req, res) {
     res.render('admin/dashboard', { title: 'Admin dashboard', errorMessage: "", admin: req.session.admin });
 }
 
-function loadOrders(req, res) {
-    res.render('admin/orders', { title: 'Orders', errorMessage: "" });
+const loadOrders = async(req, res) => {
+    const orders = await Order.find()
+            .populate('userId', 'name') 
+            .sort({ createdAt: -1 });
+    res.render('admin/orders', { title: 'Orders', orders, errorMessage: "" });
 }
 
-function viewOrders(req, res) {
-    res.render('admin/vieworders', { title: 'Order Details', errorMessage: "" });
+const viewOrders = async(req, res) => {
+    const orderId = req.query.id;
+    const order = await Order.findOne({orderId}).populate('userId', 'name');
+    console.log(order);
+    
+    res.render('admin/vieworders', { title: 'Orders', order, errorMessage: "" });
 }
+
+const updateStatus = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const { status } = req.body; 
+
+        console.log('Order ID:', orderId); 
+        console.log('New Status:', status);
+
+        const order = await Order.findOne({ orderId }); 
+
+        if (!order) {
+            console.log('Order not found!');
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        order.status = status;
+        order.updatedAt = new Date(); // ✅ Update updatedAt field
+
+        await order.save();
+
+        res.status(200).json({ message: 'Order status updated successfully' });
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({ message: 'Failed to update order status' });
+    }
+};
 
 
 
@@ -83,4 +118,4 @@ function loadCustomers(req, res) {
 }
 
 
-export default { loadLogin, adminLogin, loadDashboard, loadOrders, viewOrders, loadCustomers, logout }
+export default { loadLogin, adminLogin, loadDashboard, updateStatus, loadOrders, viewOrders, loadCustomers, logout }

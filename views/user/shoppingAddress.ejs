@@ -156,72 +156,78 @@
                     
 
                 <div class="p-4 address-card">
-                    <form id="editAddressForm">
-                        <input type="hidden" name="addressId" id="addressId" value="<%= addressId %>">
-                        <input type="hidden" name="index" id="index" value="<%= index %>">
-
+                    <form id="addAddressForm">
                         <div class="form-group-pair">
                             <div class="mb-3">
                                 <label for="fullName" class="form-label required">Full Name</label>
-                                <input type="text" id="fullName" name="fullName" class="form-control form-control-sm" 
-                                       value="<%= address.name %>">
+                                <input type="text" id="fullName" name="fullName" class="form-control form-control-sm">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label required">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" class="form-control form-control-sm" 
-                                       value="<%= address.phone %>" pattern="[0-9]{10}" required>
+                                <input type="tel" id="phone" name="phone" class="form-control form-control-sm" pattern="[0-9]{10}">
                             </div>
                         </div>
                     
                         <div class="form-group-pair">
                             <div class="mb-3">
                                 <label for="addressLine1" class="form-label required">Address Line 1</label>
-                                <input type="text" id="addressLine1" name="addressLine1" class="form-control form-control-sm" 
-                                       value="<%= address.addressLine1 %>" required>
+                                <input type="text" id="addressLine1" name="addressLine1" class="form-control form-control-sm">
                             </div>
                             <div class="mb-3">
                                 <label for="addressLine2" class="form-label">Address Line 2 (Optional)</label>
-                                <input type="text" id="addressLine2" name="addressLine2" class="form-control form-control-sm" 
-                                       value="<%= address.addressLine2 %>">
+                                <input type="text" id="addressLine2" name="addressLine2" class="form-control form-control-sm">
                             </div>
                         </div>
                     
                         <div class="form-group-pair">
                             <div class="mb-3">
                                 <label for="landmark" class="form-label">Landmark (Optional)</label>
-                                <input type="text" id="landmark" name="landmark" class="form-control form-control-sm" 
-                                       value="<%= address.landmark %>">
+                                <input type="text" id="landmark" name="landmark" class="form-control form-control-sm">
                             </div>
                             <div class="mb-3">
                                 <label for="city" class="form-label required">City</label>
-                                <input type="text" id="city" name="city" class="form-control form-control-sm" 
-                                       value="<%= address.city %>" required>
+                                <input type="text" id="city" name="city" class="form-control form-control-sm">
                             </div>
                         </div>
                     
                         <div class="form-group-pair">
                             <div class="mb-3">
                                 <label for="state" class="form-label required">State</label>
-                                <select id="state" name="state" class="form-select form-control form-control-sm" required>
-                                    <option value="" disabled>Select your state</option>
-                                    <% 
-                                        const states = [
-                                            'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-                                            'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-                                            'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
-                                            'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim',
-                                            'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
-                                        ];
-                                    %>
-                                    <% states.forEach(state => { %>
-                                        <option value="<%= state %>" <%= address.state === state ? 'selected' : '' %>><%= state %></option>
-                                    <% }) %>
+                                <select id="state" name="state" class="form-select form-control form-control-sm">
+                                    <option value="" disabled selected>Select your state</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="zipCode" class="form-label required">Zip Code</label>
-                                <input type="text" id="zipCode" name="zipCode" class="form-control form-control-sm" 
-                                       value="<%= address.pincode %>" pattern="[0-9]{6}" required>
+                                <input type="text" id="zipCode" name="zipCode" class="form-control form-control-sm" placeholder="e.g., 123456" pattern="[0-9]{6}">
                             </div>
                         </div>
                     
@@ -230,13 +236,11 @@
                                 <label for="country" class="form-label required">Country</label>
                                 <select id="country" name="country" class="form-select form-control form-control-sm">
                                     <option value="India" selected>India</option>
-                                    <!-- Add more countries if needed -->
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="altNumber" class="form-label">Alternate Phone Number (Optional)</label>
-                                <input type="tel" id="altNumber" name="altNumber" class="form-control form-control-sm" 
-                                       value="<%= address.altPhone %>" pattern="[0-9]{10}">
+                                <input type="tel" id="altNumber" name="altNumber" class="form-control form-control-sm" pattern="[0-9]{10}">
                             </div>
                         </div>
                     
@@ -247,13 +251,11 @@
                             </div>
                             <div class="d-flex gap-3 align-items-center">
                                 <div class="form-check">
-                                    <input type="radio" id="home" name="addressType" value="home" class="form-check-input"
-                                        <%= address.addressType === 'home' ? 'checked' : '' %>>
+                                    <input type="radio" id="home" name="addressType" value="home" class="form-check-input">
                                     <label for="home" class="form-check-label">Home</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" id="work" name="addressType" value="work" class="form-check-input"
-                                        <%= address.addressType === 'work' ? 'checked' : '' %>>
+                                    <input type="radio" id="work" name="addressType" value="work" class="form-check-input">
                                     <label for="work" class="form-check-label">Work</label>
                                 </div>
                             </div>
@@ -298,7 +300,7 @@
         </div>
     </main>
     <script>
-        document.getElementById("editAddressForm").addEventListener('submit', async (event) => {
+        document.getElementById("addAddressForm").addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const fullName = document.getElementById('fullName').value;
@@ -312,17 +314,18 @@
             const altNumber = document.getElementById('altNumber').value;
             const zipCode = document.getElementById('zipCode').value;
             const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
-            const index = document.getElementById('index').value;
+        
 
 
             const formData = {
-                fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, zipCode, addressType, index
+                fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, zipCode, addressType,
             }
 
+            console.log("done");
 
             try {
                 const response = await fetch('/user/shoppingAddress', {
-                    method : 'PUT',
+                    method : 'POST',
                     headers : {
                         'Content-Type' : 'application/json'
                     },

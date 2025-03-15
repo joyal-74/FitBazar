@@ -1,0 +1,495 @@
+<head>
+    <title>Order Details - FitBazar</title>
+    <style>
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-profile {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+            position: fixed;
+        }
+
+        /* Sidebar section heading */
+        .sidebar-heading {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin: 18px 0;
+            display: block;
+        }
+
+        /* Sidebar link styles */
+        .sidebar-linkz {
+            color: #333;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-linkz i {
+            width: 20px;
+            color: #3b3389;
+        }
+
+        /* Hover and active states */
+        .sidebar-linkz:hover {
+            background-color: #e0dbfc;
+            color: #3b3389;
+        }
+
+        .sidebar-linkz.active {
+            background-color: #3b3389;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .sidebar-profile {
+                padding: 15px;
+            }
+            .sidebar-linkz {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+        }
+        .page-header {
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+        }
+        .order-details-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .order-section {
+            margin-bottom: 20px;
+        }
+        .order-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #3b3389;
+        }
+        .order-info {
+            font-size: 14px;
+            color: #666;
+        }
+        .order-info span {
+            font-weight: 500;
+            color: #333;
+        }
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+        .item-row:hover {
+            background-color: #f8f9fa;
+        }
+        .item-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 15px;
+            border: 1px solid #eee;
+        }
+        .item-info {
+            flex-grow: 1;
+        }
+        .item-info h6 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 5px;
+            color: #1a1a1a;
+        }
+        .item-info p {
+            font-size: 12px;
+            color: #777;
+            margin: 0;
+        }
+        .item-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        .btn {
+            padding: 8px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #6C5DD3;
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #5848C2;
+        }
+        .btn-outline-primary {
+            border: 1px solid #6C5DD3;
+            color: #6C5DD3;
+        }
+        .btn-outline-primary:hover {
+            background-color: #6C5DD3;
+            color: #fff;
+        }
+        .order-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .progress-bar {
+            background-color: #e0dbfc;
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar div {
+            background-color: #6C5DD3;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .tracking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 12px;
+            color: #666;
+        }
+        .tracking-steps span {
+            text-align: center;
+        }
+        .tracking-steps span.active {
+            color: #3b3389;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand fw-bold" href="#" style="color: #3B3389;">FitBazar</a>
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
+                </form>
+                <div class="d-flex align-items-center">
+                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="d-flex gap-2">
+            <!-- Sidebar -->
+            <div class="col-md-3 mt-4">
+                <div class="sidebar-profile p-3">
+                    <div class="d-flex align-items-center mb-5">
+                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
+                        <span>Hello, <strong><%= firstName %></strong></span>
+                    </div>
+                    <nav class="nav flex-column gap-3">
+                        <a href="/user/orders" class="nav-link sidebar-linkz active">
+                            <i class="fa-solid text-white fa-box me-2"></i>My Orders
+                        </a>
+                        <a href="/user/profile" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-user me-2"></i>Profile Information
+                        </a>
+                        <a href="/user/address" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
+                        </a>
+                        <a href="/user/privacy" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-key me-2"></i>Privacy Settings
+                        </a>
+                        <a href="/user/coupons" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-ticket me-2"></i>My Coupons
+                        </a>
+                        <a href="/user/reviews" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
+                        </a>
+                        <a href="/user/wallet" class="nav-link sidebar-linkz">
+                            <i class="fa-solid fa-wallet me-2"></i>My Wallet
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Order Details Content -->
+            <div class="col-9">
+                <div class="page-header">
+                    <h1>Order Details</h1>
+                </div>
+                <div class="row">
+                    <!-- Left Column: Order Details -->
+                    <div class="col-md-6">
+                        <div class="order-details-card">
+                            <div class="order-section">
+                                <h3>Order Summary</h3>
+                                <div class="order-info">
+                                    <p><span>Order ID:</span> <%= order.orderId %></p>
+                                    <p><span>Order Date:</span> <%= new Date(order.createdAt).toLocaleString('en-US', {
+                                        weekday: 'short',
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false
+                                    }) %></p>
+                                    <p><span>Total Amount:</span> ₹ <%= order.totalPrice %></p>
+                                    <p><span>Status:</span> <%= order.status || 'Pending' %></p>
+                                    <p><span>Estimated Delivery:</span> <%= new Date(order.estimatedDelivery).toLocaleDateString() %></p>
+                                </div>
+                            </div>
+                            <div class="order-section pt-2">
+                                <h3>Shipping Address</h3>
+                                <div class="order-info">
+                                    <p><span>Name:</span> <%= address?.name || 'N/A' %></p>
+                                    <p><%= address?.addressLine1 || '' %>, <%= address?.addressLine2 || '' %></p>
+                                    <p><%= address?.city || '' %>, <%= address?.pincode || '' %></p>
+                                    <p><span>Phone:</span> <%= address?.phone || 'N/A' %></p>
+                                </div>
+                            </div>
+                            <div class="order-section">
+                                <h3>Payment Details</h3>
+                                <div class="order-info">
+                                    <p><span>Payment Method:</span> <%= order.paymentMethod %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Product Details -->
+                    <div class="col-md-6">
+                        <div class="order-details-card">
+                            <div class="order-section">
+                                <h3>Product Details</h3>
+                                <% order.orderItems.forEach(item => { %>
+                                    <div class="item-row">
+                                        <img src="<%= item.productImage || '/images/default-product.png' %>" 
+                                            alt="Product Image" 
+                                            class="item-img">
+                                        <div class="item-info">
+                                            <h6><%= item.product.name %></h6>
+                                            <p>Qty: <%= item.quantity %> | ₹ <%= item.price %></p>
+                                        </div>
+                                        <span class="item-price">₹ <%= item.price * item.quantity %></span>
+                                    </div>
+                                <% }) %>
+                            </div>
+                            <div class="order-section">
+                                <h3>Order Tracking</h3>
+                                <div class="tracking-steps">
+                                    <span class="<%= order.status === 'Pending' ? 'active' : '' %>">Pending</span>
+                                    <span class="<%= order.status === 'Delivered' ? 'active' : '' %>">Delivered</span>
+                                    <% if (order.status === 'Cancelled') { %>
+                                        <span class="cancelled active">Cancelled</span>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="progress-bar">
+                                    <div style="width: 
+                                        <%= order.status === 'Pending' ? '10%' :
+                                            order.status === 'Delivered' ? '100%' :
+                                            order.status === 'Cancelled' ? '0%' : '0%'
+                                        %>;" 
+                                        class="<%= order.status === 'Cancelled' ? 'cancelled' : '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <a href="/user/orders" class="btn btn-outline-primary">Back to Orders</a>
+                        
+                            <% if (order.status == 'Delivered') { %>
+                                <button class="btn btn-primary" onclick="window.location.href='/user/orders/invoice?id=<%= order.orderId %>'">
+                                    Download Invoice
+                                </button>
+                                <button class="btn btn-warning" onclick="openReturnModal('<%= order._id %>')">
+                                    Return Order
+                                </button>
+                            <% } else if (order.status == 'Pending') { %>
+                                <button class="btn btn-danger" onclick="submitCancel('<%= order._id %>')">
+                                    Cancel Order
+                                </button>
+                            <% } %>
+                            
+                        </div>
+                        
+                        <!-- Return Modal -->
+                        <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="returnOrderId">
+                                        <div class="mb-3">
+                                            <label for="returnReason" class="form-label">Reason for Return</label>
+                                            <textarea class="form-control" id="returnReason" rows="3" required></textarea>
+                                            <div class="invalid-feedback">Please provide a reason for returning the order.</div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-danger" onclick="submitReturn()">Confirm Return</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openReturnModal(orderId) {
+            document.getElementById('returnOrderId').value = orderId;
+            document.getElementById('returnReason').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        }
+
+        async function submitReturn() {
+            const orderId = document.getElementById('returnOrderId').value;
+            const reason = document.getElementById('returnReason').value;
+
+            if (!reason.trim()) {
+                document.getElementById('returnReason').classList.add('is-invalid');
+                return;
+            } else {
+                document.getElementById('returnReason').classList.remove('is-invalid');
+            }
+
+            try {
+                const response = await fetch(`/user/orders/return?id=${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: data?.message || 'Failed to process return request.',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An error occurred while processing the return.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+        }
+        async function submitCancel(orderId) {
+
+            try {
+                const response = await fetch(`/user/orders/cancel?id=${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: data?.message || 'Failed to process return request.',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An error occurred while processing the return.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+        }
+    </script>
+</body>

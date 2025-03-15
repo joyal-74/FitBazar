@@ -10,11 +10,8 @@
             <div class="d-flex w-100 justify-content-between align-items-center">
                 <a class="navbar-brand fw-bold" href="#">FitBazar</a>
                 <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
-                            href="/home">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/shop">Shop</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
@@ -93,7 +90,7 @@
         
                     <!-- Quantity & colors -->
                     <div class="d-flex w-100">
-                        <div class="my-3 w-100">
+                        <div class="my-3 w-50">
                             <label for="quantity" class="form-label fw-bold">Quantity :</label>
                             <select id="quantity" name="quantity" class="form-select w-50">
                                 <% for (let i = 1; i <= 5; i++) { %>
@@ -274,13 +271,13 @@
             <div class="row" id="product-container">
                 <% relateproducts.forEach(product => { %>
                     <div class="col-md-3 col-lg-3 my-3">
-                        <a href="/product?productId=<%= product.productId %>" class="text-decoration-none text-dark">
+                        <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
                                 <div class="position-relative">
-                                    <img src="<%= product.variants[0].images[0] %>" 
+                                    <img src="<%= product.variants[0].images[0] %>" alt="<%= product.name %>"
                                          class="product-img card-img-top mx-auto d-block" 
-                                         style="height: 240px; width: auto; object-fit: cover;">
+                                         style="height: 250px; object-fit: cover;">
             
                                     <% if (product.productOffer > 0) { %>
                                         <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
@@ -289,7 +286,7 @@
                                     <% } %>
                                 </div>
             
-                                <div class="card-body p-2 bg-white">
+                                <div class="card-body p-2">
                                     <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
                                     <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)</p>
                                     <p class="d-flex align-items-center gap-2 mb-2">
@@ -297,7 +294,9 @@
                                         <del class="text-dark small">₹<%= product.price %></del>
                                     </p>
                                     <div class="d-flex gap-2">
-                                        <a href="/addToCart?productId=<%= product.productId %>&userId=<%= userId%>"><button class="btn w-50 btn-sm custom-outline-btn"> <i class="fa fa-cart-shopping me-2"></i> Add to Cart</button></a>
+                                        <button class="btn w-50 btn-sm custom-outline-btn">
+                                            <i class="fa fa-cart-shopping me-2"></i> Add to Cart
+                                        </button>
                                         <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #9c3ec8, #3858a9); border: none; font-size: 0.8em;">
                                             <i class="fa fa-bolt me-2"></i> Buy Now
                                         </button>
