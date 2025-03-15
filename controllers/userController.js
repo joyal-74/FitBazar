@@ -4,6 +4,8 @@ import Category from '../model/categoryModel.js'
 import Products from "../model/productModel.js";
 import nodemailer from "nodemailer"
 import { OK,  NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+import sendEmail from "../helpers/emailhelper.js";
+import emailTemplate from "../helpers/emailTemplate.js";
 
 
 // Home Page Handler
@@ -28,58 +30,40 @@ function loadRegister(req, res) {
 }
 
 
-let userLogin = async (req, res) => {
+const userLogin = async (req, res) => {
     const { email, password } = req.body;
-    let errorMessage = "";
-
-    // Basic validation
-    if (!email || !password) {
-        errorMessage = "Email and password are required";
-        return res.render('user/login', { title: "Login Page", errorMessage });
-    }
-
-    // Validate email format
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        errorMessage = "Invalid email format";
-        return res.render('user/login', { title: "Login Page", errorMessage });
-    }
 
     try {
-        // Check if user exists
         const user = await User.findOne({ email });
+
         if (!user) {
-            errorMessage = "Invalid email or password";
-            return res.render('user/login', { title: "Login Page", errorMessage });
+            return res.status(BAD_REQUEST).json({message : "User Not exist please signUp"});
         }
 
-        // Ensure password exists before comparing
-        if (!user.password || user.password.trim() === "") {
+        if (!user.password === "") {
             console.warn(`⚠️ User with email ${email} has no password. Redirecting to Google login.`);
-            return res.redirect('/auth/google'); 
+            return res.redirect('/auth/google');  
         }
 
         if (user.isBlocked) {
-            errorMessage = "Your account has been blocked. Please contact support.";
-            return res.render('user/login', { title: "Login Page", errorMessage });
+            res.status(BAD_REQUEST).json({error : "Your account has been blocked. Please contact support." });
         }
 
-        // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            errorMessage = "Invalid email or password";
-            return res.render('user/login', { title: "Login Page", errorMessage });
+            console.log("not matched")
+            return res.status(BAD_REQUEST).json({error : "Invalid email or password"});
         }
 
         req.session.user = user
+        req.session.userId = user._id;
 
-        console.log(req.session.user)
-        return res.redirect('/');
+
+        return res.status(OK).json({message : "Login successful", redirectUrl : '/'});
 
     } catch (err) {
         console.error("Login Error:", err);
-        errorMessage = "Internal server error";
-        return res.render('user/login', { title: "Login Page", errorMessage });
+        return res.status(INTERNAL_SERVER_ERROR).json({error : "Internal server error"});
     }
 };
 
@@ -89,6 +73,17 @@ const generateUserId = async () => {
     return `ID${1000 + count + 1}`;
 };
 
+const otpTimer = async (req, res)=> {
+    const otpExpire = req.session.otpExpire || 0;
+    const timeLeft = Math.max(0, Math.ceil((otpExpire - Date.now()) / 1000));
+
+    if (timeLeft > 0) {
+        return res.json({ timeLeft, canResend: false });
+    } else {
+        return res.json({ timeLeft: 0, canResend: true });
+    }
+}
+
 // Function to generate a 4-digit OTP
 const generateOtpCode = () => Math.floor(1000 + Math.random() * 9000);
 
@@ -96,13 +91,11 @@ const userRegister = async (req, res) => {
     try {
         const { email, password, fullName, phone } = req.body;
 
-        // Check if email is already registered
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(BAD_REQUEST).json({ error: "Email is already in use" });
         }
 
-        // Hash password and generate user ID
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = await generateUserId();
 
@@ -117,14 +110,12 @@ const userRegister = async (req, res) => {
 
         req.session.newuser = newuser
 
-        console.log(req.session.newuser)
-
-        // Generate OTP
         const otp = generateOtpCode();
         console.log("Generated OTP:", otp);
 
-        // Store OTP in session (for later verification)
+
         req.session.otp = otp;
+        req.session.otpExpire = Date.now() + 30 * 1000;
         req.session.otpEmail = email;
         req.session.requestFrom = "register";
 
@@ -134,41 +125,11 @@ const userRegister = async (req, res) => {
             return res.status(INTERNAL_SERVER_ERROR).json({ error: "Server email configuration error. Please try again later." });
         }
 
-        // Configure nodemailer
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD,
-            },
-        });
+        const emailContent = emailTemplate.getOtpEmailTemplate(email, otp);
 
-        // Email content
-        const mailOptions = {
-            from: process.env.EMAIL,
-            to: email,
-            subject: "Verify Your Email for FitBazar",
-            html: `
-                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #2118cc;">FitBazar Account Verification</h2>
-                    <p>Hello,</p>
-                    <p>Your registered FitBazar email is:</p>
-                    <p style="font-size: 12px; font-weight: bold; color:#2118cc;">${email}</p>
-                    <p>Your One-Time Password (OTP) for account verification:</p>
-                    <p style="font-size: 24px; font-weight: bold; color:#2118cc;">${otp}</p>
-                    <p>Please use this OTP to complete your registration process.</p>
-                    <h5>If you did not request this registration, please contact - <a href="mailto:fitbazarapplication@gmail.com">fitbazarapplication@gmail.com</a></h5>
-                    <p>Best regards,<br>The FitBazar Team</p>
-                    <hr style="border: 0; border-top: 1px solid #eee;">
-                    <p style="font-size: 12px; color: #777;">This is an automated message. Please do not reply.</p>
-                </div>
-            `,
-        };
-
-        // Send Email
         try {
-            await transporter.sendMail(mailOptions);
-            return res.status(OK).json({ message: "Registration successful. OTP sent to email." });
+            await sendEmail(email, "Verify Your Email for FitBazar", emailContent);
+            return res.status(OK).json({ message: "Registration successful. OTP sent to email.", expireTime: req.session.otpExpire });
         } catch (error) {
             console.error("Email sending error:", error);
             return res.status(INTERNAL_SERVER_ERROR).json({ error: "Failed to send verification email. Please try again." });
@@ -188,40 +149,7 @@ const loadForgetPass = (req, res) => {
 }
 
 
-// Function to send OTP via email
-const sendOtpEmail = async (email, otp) => {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-        },
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL,
-        to: email,
-        subject: "Your OTP for FitBazar App password reset",
-        html: `
-            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #2118cc;">FitBazar App password reset</h2>
-                <p>Hello,</p>
-                <p>Your One-Time Password (OTP) for verifying your account on FitBazar is:</p>
-                <p style="font-size: 24px; font-weight: bold; color:#2118cc;">${otp}</p>
-                <p>Please use this OTP to complete your verification process. This OTP is valid for a limited time.</p>
-                <p>If you did not request to reset your password, please ignore this email.</p>
-                <p>Best regards,<br>The FitBazar Team</p>
-                <hr style="border: 0; border-top: 1px solid #eee;">
-                <p style="font-size: 12px; color: #777;">This is an automated message. Please do not reply to this email.</p>
-            </div>
-        `,
-    };
-
-    await transporter.sendMail(mailOptions);
-};
-
-// Common function to generate and send OTP
-const handleOtpGeneration = async (req, res) => {
+const generateOtp = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
@@ -241,19 +169,25 @@ const handleOtpGeneration = async (req, res) => {
         });
     }
 
-    // Generate OTP and store in session
+
     const otp = generateOtpCode();
     console.log("Generated OTP:", otp);
 
     req.session.otp = otp;
     req.session.email = email;
+    req.session.otpExpire = Date.now() + 30 * 1000;
+    const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
     req.session.requestFrom = "forgot-password";
 
+    const emailContent = emailTemplate.getResetPasswordEmailTemplate;
+
     try {
-        await sendOtpEmail(email, otp);
+        await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent, otp);
+        console.log(req.session.otpExpire)
         return res.status(OK).json({
             success: true,
             message: "OTP sent successfully",
+            timeLeft,
             redirectUrl: "/user/otpverify",
         });
     } catch (error) {
@@ -265,43 +199,34 @@ const handleOtpGeneration = async (req, res) => {
     }
 };
 
-
-const newOtpGeneration = async (req, res, redirectPage) => {
-
-    // Generate OTP and store in session
-    const otp = generateOtpCode();
-
-    console.log("New OTP:", otp);
-
-    req.session.otp = otp;
-    const email = req.session.email;
-
+const resendOtp = async (req, res) => {
     try {
-        await sendOtpEmail(email, otp);
-        return res.json({ success: true, message: "OTP sent successfully" });
+        const otp = generateOtpCode();
+        console.log("New OTP:", otp);
+
+        req.session.otp = otp;
+        const email = req.session.email;
+        req.session.otpExpire = Date.now() + 30 * 1000;
+        const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
+
+        const emailContent = emailTemplate.getResetPasswordEmailTemplate;
+
+        if (!email) {
+            return res.status(BAD_REQUEST).json({ error: "Session expired. Please start the verification process again." });
+        }
+
+        await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent);
+        console.log('done')
+        return res.status(OK).json({ message: "OTP sent successfully" , timeLeft });
     } catch (error) {
         console.error("OTP Sending Error:", error);
-        res.status(INTERNAL_SERVER_ERROR).render("user/forgetPass", {
-            title: "Forgot Password",
-            errorMessage: "Failed to send OTP. Please try again.",
-        });
+        res.status(INTERNAL_SERVER_ERROR).json({error: "Failed to send OTP. Please try again.",});
     }
 };
 
-// Route Handlers
-const generateOtp = async (req, res) => {
-
-    await handleOtpGeneration(req, res, "/user/otpverify");
-};
-
-const resendOtp = async (req, res) => {
-    await newOtpGeneration(req, res, "/user/otpverify");
-};
-
-
 
 const loadOtpVerify = async (req, res) => {
-    res.render('user/otpverify', { title: "Verify OTP", errorMessage : "" });
+    res.render('user/otpverify', { title: "Verify OTP"});
 }
 
 const verifyOtp = async (req, res) => {
@@ -309,54 +234,40 @@ const verifyOtp = async (req, res) => {
 
     const requestFrom = req.session.requestFrom;
 
-
     const formOtp = `${otp1}${otp2}${otp3}${otp4}`;
 
-
     const sentOtp = req.session.otp;
-
-    const {userId, email, password, name, phone} = req.session.newuser
-    console.log(req.session.newuser)
+    const otpExpire = req.session.otpExpire || 0;
 
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
     console.log(requestFrom)
 
     if (!formOtp || !sentOtp) {
-        return res.status(BAD_REQUEST).render('user/otpverify', {
-            title: 'Change Password',
-            errorMessage: "Invalid OTP. Please try again.",
-        });
+        return res.status(BAD_REQUEST).json({ error : "Invalid OTP. Please try again."});
+    }
+
+    if (Date.now() > otpExpire) {
+        return res.status(BAD_REQUEST).json({ error: "OTP has expired. Please request a new one." });
     }
 
     // Check if the OTP matches
-    if (formOtp === sentOtp.toString()) {
+    if (formOtp.toString() === sentOtp.toString()) {
         console.log("OTP matched. Verification successful.");
 
-
         if (requestFrom === "register") {
+            const {userId, email, password, name, phone} = req.session.newuser
             const newuser = new User({ userId, email, password, name, phone });
             await newuser.save();
 
             console.log("Register successful Redirecting to login page...");
-            return res.status(OK).json({
-                success: true,
-                message: "OTP verified successfully! Now login to your account",
-                redirectUrl: '/user/login'
-            });
+            return res.status(OK).json({ message: "OTP verified successfully! Now login to your account", redirectUrl: '/user/login' });
         } else {
             console.log("Redirecting to password reset page...");
-            return res.status(OK).json({
-                success: true,
-                message: "OTP verified successfully!",
-                redirectUrl: '/user/resetpass'
-            });
+            return res.status(OK).json({message: "OTP verified successfully!", redirectUrl: '/user/resetpass' });
         }
     } else {
-        return res.status(BAD_REQUEST).json({
-            success: false,
-            message: "OTP does not match. Please try again.",
-        });
+        return res.status(BAD_REQUEST).json({ error : "OTP does not match. Please try again."});
     }
 };
 
@@ -419,5 +330,5 @@ const logoutUser = (req, res) => {
     });
 };
 
-export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, resendOtp, loadForgetPass, 
+export default { getUserHome, loadLogin, loadRegister, userLogin, userRegister, resendOtp, loadForgetPass, otpTimer,
                  loadConfirmOtp, changePassword, loadOtpVerify, logoutUser, generateOtp, verifyOtp };

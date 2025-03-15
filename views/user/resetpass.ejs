@@ -8,23 +8,13 @@
 
                 <!-- Change Password Form -->
                 <form class="text-center" id="confirmPasswordForm">
-                    <!-- Single Error Message Display -->
-                    <p id="errorMessageContainer" class="text-danger text-center <%= errorMessage ? '' : 'd-none' %>">
-                        <% if (errorMessage) { %>
-                            <span id="errorText">
-                                <%= errorMessage %>
-                            </span>
-                            <% } else { %>
-                                <span id="errorText"></span>
-                                <% } %>
-                    </p>
-
                     <div class="mb-4">
                         <input type="password" class="form-control" placeholder="New Password"  id="newPassword" name="newPassword">
+                        <div id="passwordError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
                     <div class="mb-4">
-                        <input type="password" class="form-control" placeholder="Confirm Password"
-                            name="confirmPassword"  id="confirmPassword">
+                        <input type="password" class="form-control" placeholder="Confirm Password" name="confirmPassword" id="confirmPassword">
+                        <div id="confirmPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
                     <button type="submit" class="btn send-btn">Change Password</button>
                 </form>
@@ -45,69 +35,70 @@
     </div>
 
     <script>
-        document.getElementById("confirmPasswordForm").addEventListener("submit", function (event) {
+        document.getElementById("confirmPasswordForm").addEventListener("submit", async (event) => {
             event.preventDefault();
+
             const newPassword = document.getElementById("newPassword").value.trim();
             const confirmPassword = document.getElementById("confirmPassword").value.trim();
-            const errorMessageContainer = document.getElementById("errorMessageContainer");
-            const errorText = document.getElementById("errorText");
 
-            if (!newPassword || !confirmPassword) {
+            const errors = {
+                password: document.getElementById("passwordError"),
+                confirmPassword: document.getElementById("confirmPasswordError"),
+            };
+
+            let hasError = true;
+
+            if (!newPassword) {
                 errorText.innerText = "All fields are required";
-                errorMessageContainer.classList.remove("d-none");
-                return;
+                hasError = false;
+            } else if (newPassword.length < 6) {
+                errors.password.innerText = "Password must be 6+ characters";
+                hasError = false;
             }
 
-            if (newPassword.length < 6) {
-                errorText.innerText = "Password must be 6+ characters";
-                errorMessageContainer.classList.remove("d-none");
-                return;
+            if (!confirmPassword) {
+                errorText.innerText = "All fields are required";
+                hasError = false;
+            } else if (newPassword !== confirmPassword) {
+                errors.confirmPassword.innerText = "Password do not match";
+                hasError = false;
             }
 
-            if (newPassword !== confirmPassword) {
-                errorText.innerText = "Password do not match";
-                errorMessageContainer.classList.remove("d-none");
-                return;
-            }
+            try {
+                const response = await fetch("/user/resetpass", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ newPassword, confirmPassword }),
+                });
 
-            fetch("/user/resetpass", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ newPassword, confirmPassword })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.message || "password change failed");
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
+                const data = await response.json();
+
+                if (response.ok) {
                     Swal.fire({
                         icon: "success",
-                        title: "Success!",
-                        text: "Password changed successfully!",
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(()=>{
+                        window.location.href = data.redirectUrl;
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        text: data.message,
                         timer: 2000,
                         showConfirmButton: false
                     });
-
-                    setTimeout(() => {
-                        window.location.href = data.redirectUrl;
-                    }, 2000);
-                } else {
-                    throw new Error(data.message || "Password change failed");
-                }
-            })
-            .catch(error => {
-                console.error("PAssword change Error:", error);
-                
-                errorText.innerText = error.message;
-                errorMessageContainer.classList.remove("d-none");
-            });
+                };
+            } catch (error) {
+                console.error("Password Change Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    text: error.message || "An error occurred while changing the password",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            };
         });
     </script>
 </body>

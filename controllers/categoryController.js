@@ -91,6 +91,7 @@ const editCategory = async (req, res) => {
         if (existingCategory && existingCategory._id.toString() !== category._id.toString()) {
             return res.status(BAD_REQUEST).json({ nameError: "Category name already exists." });
         }
+        
         if(!editCategoryDescription){
             console.log("Category should need a description")
             return res.status(BAD_REQUEST).json({ descriptionError: "Category should need a description" });

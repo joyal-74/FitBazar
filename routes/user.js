@@ -21,6 +21,7 @@ router.post('/sendmail', userController.generateOtp);
 router.post('/resendOtp', userController.resendOtp);
 
 router.get('/otpverify', userController.loadOtpVerify);
+router.get('/otpTimer', userController.otpTimer);
 router.post('/otpverify', userController.verifyOtp)
 
 router.get('/resetpass', userController.loadConfirmOtp);
