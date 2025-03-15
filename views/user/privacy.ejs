@@ -120,9 +120,13 @@
             <div class="col-md-3 mb-1">
                 <div class="sidebar-profile p-3">
                     <div class="d-flex align-items-center mb-5">
-                        <img src="/placeholder.jpg" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                        <span>Hello, <strong>Joyal</strong></span>
+                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50"
+                            height="50">
+                        <span>Hello, <strong>
+                                <%= firstName %>
+                            </strong></span>
                     </div>
+
                     <nav class="nav flex-column gap-3">
                         <a href="/user/orders" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-box me-2"></i>My Orders
@@ -133,16 +137,16 @@
                         <a href="/user/address" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
                         </a>
-                        <a href="/user/privacy" class="nav-link sidebar-linkz">
+                        <a href="/wallet" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-key me-2"></i>Privacy Settings
                         </a>
-                        <a href="/user/coupons" class="nav-link sidebar-linkz">
+                        <a href="/coupons" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-ticket me-2"></i>My Coupons
                         </a>
-                        <a href="/user/reviews" class="nav-link sidebar-linkz">
+                        <a href="/reviews" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
                         </a>
-                        <a href="/user/wallet" class="nav-link sidebar-linkz">
+                        <a href="/wallet" class="nav-link sidebar-linkz">
                             <i class="fa-solid fa-wallet me-2"></i>My Wallet
                         </a>
                     </nav>
@@ -153,7 +157,7 @@
             <div class="col-md-9">
                 <div class="card p-4 h-100" style="border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
                     <h4 class="mb-4" style="color: #3B3389;">Change Password</h4>
-                    <form id="changePasswordForm" method="POST" action="/privacy/update-password">
+                    <form id="changePasswordForm">
                         <!-- Old Password -->
                         <div class="mb-4">
                             <label for="oldPassword" class="form-label">Old Password</label>
@@ -182,5 +186,58 @@
             </div>
         </div>
     </main>
+    <script>
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmpassword = document.getElementById('confirmNewPassword').value;
+
+            if(newPassword !== confirmpassword){
+                console.log("passwords not match");
+            }
+
+            const privacyData = { oldPassword, newPassword }
+
+            try {
+                const response = await fetch('/user/privacy',{
+                method : 'POST',
+                headers : {
+                    'content-type' : 'application/json'
+                },
+                body : JSON.stringify(privacyData)
+            });
+
+            const data = await response.json();
+
+            if(!response.ok){
+                Swal.fire({
+                    icon: "error",
+                    text: data.error,
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+            }else {
+                Swal.fire({
+                    icon: "success",
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(()=>{
+                    window.location.reload();
+
+                })
+            
+            }
+            } catch (error) {
+                console.log(error);
+                Swal.fire({
+                    icon: "error",
+                    text: "An error occurred. Please try again.",
+                })       
+            }
+        })
+    </script>
 </body>
 

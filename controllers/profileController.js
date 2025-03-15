@@ -393,11 +393,43 @@ const loadCoupons = async (req,res)=>{
 }
 
 const loadPrivacy = async (req,res) => {
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+    const user = await User.findOne({_id : userId})
 
-    res.render('user/privacy', {title : "coupons", user})
+    const [firstName, lastName] = user.name.split(' ');
+
+    res.render('user/privacy', {title : "Privacy settings", user, firstName})
 }
 
+const updatePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        if (!userId) {
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Old password is incorrect" });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.status(200).json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        return res.status(500).json({ error: "An error occurred while updating the password" });
+    }
+};
+
 export default {loadOrders, loadOrderDetails, loadprofile, loadUpdateProfile, verifyOTP, sendOTP, updateProfile, loadAddress, loadAddAddress,
-     loadEditAddress, editAddress, deleteAddress, loadCoupons, loadPrivacy, addAddress};
+     loadEditAddress, editAddress, deleteAddress, loadCoupons, loadPrivacy, updatePassword, addAddress};

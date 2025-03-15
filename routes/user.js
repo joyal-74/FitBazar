@@ -42,6 +42,7 @@ router.put('/address', profileController.editAddress);
 router.delete('/address', profileController.deleteAddress);
 router.get('/coupons', profileController.loadCoupons);
 router.get('/privacy', profileController.loadPrivacy);
+router.post('/privacy', profileController.updatePassword);
 
 
 router.post('/addToCart', cartControlller.addItemToCart)
