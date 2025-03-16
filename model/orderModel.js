@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 const orderSchema = new Schema({
     orderId : {
         type : String,
-        default : () => uuidv4()
     },
     userId : {
         type : Schema.Types.ObjectId,

@@ -243,16 +243,19 @@
                         try {
                             const response = await fetch(`/user/address?userId=${userId}&index=${index}`, {
                                 method: 'DELETE',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
+                                headers: {'Content-Type': 'application/json'}
                             });
 
                             const data = await response.json();
 
                             if (!response.ok) {
                                 console.error('Failed to delete:', data.error || 'Unknown error');
-                                Swal.fire('Error', data.error || 'Failed to delete the address.', 'error');
+                                Swal.fire({
+                                    icon: "error",
+                                    text: data.error,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
                             } else {
                                 Swal.fire({
                                     icon: "success",
@@ -262,12 +265,12 @@
                                 }).then(() => {
                                     location.reload();
                                 });
-                            }
+                            };
                         } catch (error) {
                             console.error('Error deleting address:', error);
                             Swal.fire('Error', 'An error occurred while deleting the address.', 'error');
-                        }
-                    }
+                        };
+                    };
                 });
             });
         });

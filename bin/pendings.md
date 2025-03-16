@@ -3,9 +3,9 @@ __________________
 
 1. category - add / edit - admin [ ]
 2. product - add / edit - admin [ ]
-3. address - add / edit  - user [ ]
+3. address - add / edit  - user [x]
 4. shoppingAddress - add / edit  - user [x]
-5. privacy settings - edit password
+5. privacy settings - edit password [x]
 
 Fix bugs
 _________________

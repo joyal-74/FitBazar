@@ -161,19 +161,22 @@
                         <!-- Old Password -->
                         <div class="mb-4">
                             <label for="oldPassword" class="form-label">Old Password</label>
-                            <input type="password" id="oldPassword" name="oldPassword" class="form-control" placeholder="Enter your old password" required>
+                            <input type="password" id="oldPassword" name="oldPassword" class="form-control" placeholder="Enter your old password">
+                            <div id="oldPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
     
                         <!-- New Password -->
                         <div class="mb-4">
                             <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Enter your new password" required>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Enter your new password">
+                            <div id="newPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
     
                         <!-- Confirm New Password -->
                         <div class="mb-4">
-                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-control" placeholder="Confirm your new password" required>
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm your new password">
+                            <div id="confirmPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
     
                         <!-- Buttons -->
@@ -189,55 +192,84 @@
     <script>
         document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const oldPassword = document.getElementById('oldPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmpassword = document.getElementById('confirmNewPassword').value;
-
-            if(newPassword !== confirmpassword){
-                console.log("passwords not match");
+    
+            const oldPassword = document.getElementById('oldPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    
+            const errors = {
+                oldPassword: document.getElementById("oldPasswordError"),
+                newPassword: document.getElementById("newPasswordError"),
+                confirmPassword: document.getElementById("confirmPasswordError"),
+            };
+    
+            Object.values(errors).forEach((el) => el.innerText = "");
+    
+            let hasError = false;
+    
+            if (!oldPassword) {
+                errors.oldPassword.innerText = "Please enter old password";
+                hasError = true;
             }
-
-            const privacyData = { oldPassword, newPassword }
-
+    
+            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{6,}$/;
+            if (!newPassword) {
+                errors.newPassword.innerText = "Please enter a new password";
+                hasError = true;
+            } else if (!strongPasswordRegex.test(newPassword)) {
+                errors.newPassword.innerText = 
+                errors.newPassword.innerText = "Password must be 6+ chars, incl. uppercase, lowercase, number & special (@$!%*?&#^)";
+                hasError = true;
+            }
+    
+            if (!confirmPassword) {
+                errors.confirmPassword.innerText = "Please confirm your new password";
+                hasError = true;
+            } else if (newPassword !== confirmPassword) {
+                errors.confirmPassword.innerText = "Passwords do not match";
+                hasError = true;
+            }
+    
+            if (hasError) return;
+    
+            const privacyData = { oldPassword, newPassword };
+    
             try {
-                const response = await fetch('/user/privacy',{
-                method : 'POST',
-                headers : {
-                    'content-type' : 'application/json'
-                },
-                body : JSON.stringify(privacyData)
-            });
-
-            const data = await response.json();
-
-            if(!response.ok){
-                Swal.fire({
-                    icon: "error",
-                    text: data.error,
-                    timer: 2000,
-                    showConfirmButton: false
-                })
-            }else {
-                Swal.fire({
-                    icon: "success",
-                    text: data.message,
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(()=>{
-                    window.location.reload();
-
-                })
-            
-            }
+                const response = await fetch('/user/privacy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(privacyData)
+                });
+    
+                const data = await response.json();
+    
+                if (!response.ok) {
+                    Swal.fire({
+                        icon: "error",
+                        text: data.error,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "success",
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 Swal.fire({
                     icon: "error",
                     text: "An error occurred. Please try again.",
-                })       
+                });
             }
-        })
-    </script>
+        });
+    </script>    
 </body>
 

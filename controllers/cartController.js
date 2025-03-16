@@ -5,6 +5,7 @@ import Cart from "../model/cartModel.js";
 import Address from "../model/addressModel.js";
 import mongoose from "mongoose";
 import Order from "../model/orderModel.js";
+import generateOrderId from "../helpers/uniqueIdHelper.js";
 
 
 const addItemToCart = async (req, res) => {
@@ -399,10 +400,13 @@ const paymentSuccess = async (req,res) => {
             { 'details.$': 1 }
         );
 
+        const orderId = generateOrderId();
+
         if (address) {
             
             const order = new Order({
                 userId,
+                orderId,
                 orderItems: cart.items.map(item => ({
                     product: item.productId._id,
                     name : item.name,

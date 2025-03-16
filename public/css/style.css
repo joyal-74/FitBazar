@@ -6,7 +6,6 @@
 }
 
 /*error page*/
-
 .error-container {
     text-align: center;
     margin-top: 100px;
@@ -38,7 +37,6 @@
 }
 
 /* Login Section */
-
 .log-container {
     background: #ffffff;
     max-width: 900px;
@@ -134,7 +132,6 @@
     font-size: 0.8em;
 }
 
-
 .signup-text {
     font-size: 14px;
     text-align: center;
@@ -150,7 +147,6 @@
 }
 
 /* forget password */
-
 .go-back {
     text-align: center;
     font-size: 15px;
@@ -171,9 +167,7 @@
     max-width: 450px;
 }
 
-
 /*Change password*/
-
 .change-password-container {
     background: white;
     max-width: 900px;
@@ -205,7 +199,6 @@
 }
 
 /*confirm otp*/
-
 .otp-container {
     background: white;
     max-width: 900px;
@@ -232,7 +225,6 @@
     box-shadow: 0px 0px 5px rgba(92, 72, 238, 0.5);
 }
 
-
 .go-back {
     text-align: center;
     font-size: 14px;
@@ -252,7 +244,6 @@
     width: 100%;
     max-width: 500px;
 }
-
 
 @media (max-width: 768px) {
     .log-container {
@@ -286,23 +277,22 @@
     }
 }
 
-
 /* Adjust font size for smaller screens */
 @media (max-width: 768px) {
     body {
-        font-size: 0.9rem; /* Slightly smaller text */
+        font-size: 0.9rem;
     }
 
     h2 {
-        font-size: 1.5rem; /* Reduce heading size */
+        font-size: 1.5rem;
     }
 
     .form-control {
-        font-size: 0.85rem; /* Smaller input text */
+        font-size: 0.85rem;
     }
 
     .btn {
-        font-size: 0.9rem; /* Adjust button text */
+        font-size: 0.9rem;
     }
 
     .signup-text,
@@ -323,12 +313,12 @@
 
     .form-control {
         font-size: 0.8rem;
-        padding: 0.4rem; /* Adjust padding for better fit */
+        padding: 0.4rem;
     }
 
     .btn {
         font-size: 0.85rem;
-        padding: 0.5rem 1rem; /* Adjust button padding */
+        padding: 0.5rem 1rem;
     }
 
     .signup-text,
@@ -337,21 +327,12 @@
     }
 
     .google-btn img {
-        width: 16px; /* Reduce logo size */
+        width: 16px;
         height: 16px;
     }
 }
 
-
-/*Otp page*/
-
-
-
-
-
-
 /*Home page*/
-
 .hero-section {
     padding: 40px 0;
 }
@@ -363,17 +344,14 @@
     margin: 0;
 }
 
-
 /*Admin section*/
-
 .admin-btns {
     background-color: #3e29a8;
-    /* padding: 8px 16px; */
+    border-radius: 28px;
 }
 
 .admin-btns:hover {
     background-color: #1b1372;
-    /* padding: 8px 16px; */
 }
 
 .sidebar {
@@ -384,24 +362,6 @@
     height: 100.5vh;
 }
 
-.avathar {
-    color: #493cd0;
-}
-
-.card {
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.table th,
-.table td {
-    vertical-align: middle;
-}
-
-.badge {
-    font-size: 0.9rem;
-    padding: 0.5em 0.75em;
-}
 
 .icon-container {
     border-radius: 50%;
@@ -412,7 +372,6 @@
 }
 
 @media (max-width: 768px) {
-
     .search-container,
     .notification-icon {
         display: none;
@@ -429,46 +388,12 @@
     color: white;
 }
 
-
-.table thead th {
-    background-color: #3e29a8;
-    color: white;
-    font-weight: 500;
-    padding: 12px;
-
-}
-
-.table tbody tr {
-    background-color: #f0f8ff;
-}
-
-.table tbody tr:hover {
-    background-color: #e0f0ff;
-}
-
-.table td,
-.table th {
-    padding: 10px;
-}
-
-
-.table {
-    border-collapse: separate;
-    border-spacing: 0;
-    border-radius: 8px;
-    overflow: hidden;
-
-}
-
-.table-bordered {
-    border: none;
-}
-
 .timeline {
     position: relative;
     padding-left: 20px;
     margin-top: 20px;
 }
+
 .timeline::before {
     content: '';
     position: absolute;
@@ -478,10 +403,12 @@
     width: 2px;
     background-color: #e9ecef;
 }
+
 .timeline-item {
     position: relative;
     margin-bottom: 20px;
 }
+
 .timeline-item::before {
     content: '';
     position: absolute;
@@ -494,19 +421,18 @@
     border: 2px solid #fff;
 }
 
-.card-header{
+.card-header {
     background-color: #3e29a8;
     color: white;
 }
 
-
-/* Add product*/
-
+/* Add product */
 .add-product-form {
     max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
 }
+
 .form-label {
     font-weight: 500;
 }
@@ -518,18 +444,22 @@
     background-color: #dadada;
     border-radius: 5px;
 }
+
 .image-upload:hover {
     border-color: #3e29a8;
     background-color: #f1f1f1;
 }
+
 .image-bar {
     width: 1000px;
 }
+
 .color-picker {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
+
 .color-option {
     width: 40px;
     height: 40px;
@@ -537,27 +467,30 @@
     cursor: pointer;
     border: 2px solid #ddd;
 }
+
 .color-option.selected {
     border-color: #3e29a8;
 }
 
-.stock-btn1{
+.stock-btn1 {
     width: 75px;
-    border : 1px solid #0CAF60;
+    border: 1px solid #0CAF60;
     background-color: #8af5bf;
     color: #0CAF60;
     border-radius: 10px;
 }
-.stock-btn2{
+
+.stock-btn2 {
     width: 75px;
-    border : 1px solid #ffa601;
+    border: 1px solid #ffa601;
     background-color: #f7fb0496;
     color: #ffa601;
     border-radius: 10px;
 }
-.stock-btn3{
+
+.stock-btn3 {
     width: 75px;
-    border : 1px solid #FD6A6A;
+    border: 1px solid #FD6A6A;
     background-color: #f9d3d3;
     color: #FD6A6A;
     border-radius: 10px;
@@ -572,15 +505,9 @@
     margin-right: 10px;
     border: 2px solid #ddd;
 }
+
 .selected {
     border: 3px solid black;
-}
-
-/*table size adjust*/
-.table tr:last-child td {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-    border-bottom: none !important;
 }
 
 /* Custom File Input Container */
@@ -596,14 +523,14 @@
 
 /* Style the file names display */
 #fileNamesDisplay {
-    background-color: #f8f9fa; /* Light gray background */
-    border: 1px solid #ced4da; /* Match Bootstrap's input border */
-    border-left: none; /* Remove left border to blend with the button */
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-left: none;
     cursor: default;
-    font-size: 14px; /* Disable pointer events */
+    font-size: 14px;
 }
 
-.customer-table a{
+.customer-table a {
     text-decoration: none;
 }
 
@@ -613,6 +540,7 @@
     border-radius: 10px;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
+
 .status-badge {
     padding: 5px 10px;
     font-size: 14px;
@@ -620,34 +548,21 @@
     background-color: #d4f5d0;
     color: green;
 }
+
 .transaction-status {
     padding: 5px 10px;
     font-size: 12px;
     border-radius: 5px;
 }
+
 .processing { background: #ffe8c1; color: #d67c00; }
 .shipped { background: #d9f0ff; color: #007bff; }
 .delivered { background: #d4f5d0; color: green; }
-.pagination .page-link {
-    border: none;
-    color: #3e29a8;
-}
-
-.pagination .active .page-link {
-    background-color: #3e29a8;
-    color: white;
-}
-
-.product-img {
-    width: 100%;
-    height: 250px;
-    object-fit: contain;
-}
-
 
 .navbar {
     background: linear-gradient(90deg, #3B3389, #4D44AD);
 }
+
 .navbar-brand {
     font-size: 32px;
     color: white !important;
@@ -671,6 +586,7 @@
     background: #4132e6;
     color: white;
 }
+
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
@@ -680,11 +596,13 @@
     text-align: center;
     padding: 20px;
 }
+
 .feature-box i {
     font-size: 32px;
     color: #6a4bb4;
     margin-bottom: 10px;
 }
+
 .divider-home {
     width: 1px;
     background-color: #ddd;
@@ -696,7 +614,7 @@
 .sidebar {
     height: 90.5vh;
     overflow-y: auto;
-    padding : 0 25px;
+    padding: 0 25px;
 }
 
 /* Sidebar Links */
@@ -732,29 +650,30 @@
     color: #c9302c;
 }
 
-
-
 /* home page */
-
 .subscription-banner-div {
-    background-color: #472D8B; /* Adjust background color */
+    background-color: #472D8B;
     color: white;
     padding: 10px 20px;
     text-align: center;
     position: relative;
 }
+
 .subscription-banner h2 {
     font-size: 28px;
     font-weight: bold;
 }
+
 .subscription-banner p {
     font-size: 16px;
 }
+
 .email-input {
     max-width: 350px;
     width: 100%;
     display: inline-block;
 }
+
 .subscribe-btn {
     background-color: #F7941D;
     border: none;
@@ -763,10 +682,10 @@
     font-weight: bold;
     border-radius: 5px;
 }
+
 .illustration {
     height: 350px;
 }
-
 
 .resend-link {
     color: #0c088b !important;
@@ -779,4 +698,104 @@
     color: lightgray !important;
     pointer-events: none;
     cursor: not-allowed;
+}
+
+
+
+/*Admin side table style*/
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #3e29a8;
+    color: white;
+    font-weight: 500;
+    padding: 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.table thead th:last-child {
+    border-right: none;
+    border-top-right-radius: 8px;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.table tbody tr {
+    background-color: #f0f8ff;
+    border-bottom: 1px solid #eee;
+}
+
+.table tbody tr:hover {
+    background-color: #e0f0ff;
+}
+
+.table td,
+.table th {
+    padding: 10px;
+}
+
+.table td {
+    border-right: 1px solid #dddddd;
+}
+
+.table td:last-child {
+    border-right: none;
+}
+
+.table-bordered {
+    border: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+.category-description {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td {
+    vertical-align: middle;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+}
+
+.pagination .page-link {
+    border: none;
+    color: #3e29a8;
+}
+
+.pagination .active .page-link {
+    background-color: #3e29a8;
+    color: white;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }

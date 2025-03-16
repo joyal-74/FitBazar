@@ -28,45 +28,35 @@ const categoryInfo = async (req, res) => {
 
 const addCategory = async (req, res) => {
     try {
-        let { addCategoryName, addCategoryDescription, addDiscountPrice, addVisibilityStatus, addWeights, addSizes } = req.body;
+        const { addName, addDescription } = req.body;
+        let addStatus = req.body.addStatus === "Active";
 
-        addCategoryName = addCategoryName?.trim();
-        addCategoryDescription = addCategoryDescription?.trim();
-
-        const sizes = addSizes ? addSizes.split(',').map(size => size.trim()) : [];
-        const weights = addWeights ? addWeights.split(',').map(weight => weight.trim()) : [];
+        console.log("Request body:", req.body);
 
 
-        if (!addCategoryName || !addCategoryDescription) {
+        if (!addName || !addDescription) {
             return res.status(BAD_REQUEST).json({ error: "Category Name and Description are required." });
         }
 
-        const existingCategory = await Category.findOne({ name: addCategoryName });
+        const existingCategory = await Category.findOne({ name: addName });
         if (existingCategory) {
             return res.status(CONFLICT).json({ error: "Category already exists." });
         }
 
-        if (addCategoryName === existingCategory.name) {
-            return res.status(CONFLICT).json({ error: "Category already exists." });
-        }
-
-        addVisibilityStatus = addVisibilityStatus === "Active";
         const thumbnail = req.file ? req.file.path : null;
 
         const newCategory = new Category({
-            name: addCategoryName,
-            description: addCategoryDescription,
+            name: addName,
+            description: addDescription,
             thumbnail: thumbnail,
-            categoryOffer: addDiscountPrice || 0,
-            visibility: addVisibilityStatus,
-            attributes: { sizes, weights }
+            visibility: addStatus,
         });
 
         await newCategory.save();
         console.log("Uploaded file:", req.file);
         console.log("Request body:", req.body);
 
-        return res.status(CREATED).json({ message: "Category added successfully." });
+        return res.status(OK).json({ message: "Category added successfully." });
 
     } catch (error) {
         console.error("Add Category Error:", error);
@@ -77,34 +67,25 @@ const addCategory = async (req, res) => {
 
 const editCategory = async (req, res) => {
     try {
-        const { categoryName, editCategoryName, editCategoryDescription, discountPrice, editVisibilityStatus } = req.body;
+        const { orgName, editName, editDescription, editStatus } = req.body;
+        
         let thumbnail = req.file ? req.file.path : null;
 
-        editCategoryDescription = editCategoryDescription?.trim();
-        // Find existing category by current name
-        const category = await Category.findOne({ name: categoryName });
+        const category = await Category.findOne({ name: orgName });
         if (!category) {
             return res.status(NOT_FOUND).json({ error: "Category not found." });
         }
 
-        const existingCategory = await Category.findOne({ name: editCategoryName });
+        const existingCategory = await Category.findOne({ name: editName });
         if (existingCategory && existingCategory._id.toString() !== category._id.toString()) {
             return res.status(BAD_REQUEST).json({ nameError: "Category name already exists." });
         }
         
-        if(!editCategoryDescription){
-            console.log("Category should need a description")
-            return res.status(BAD_REQUEST).json({ descriptionError: "Category should need a description" });
-        }
-
-        // Retain existing thumbnail if no new file is uploaded
         thumbnail = req.file ? req.file.path : category.thumbnail;
 
-        // Update category fields
-        category.name = editCategoryName;
-        category.description = editCategoryDescription;
-        category.categoryOffer = discountPrice ? parseFloat(discountPrice) || 0 : 0;
-        category.visibility = editVisibilityStatus?.toLowerCase() === "active";
+        category.name = editName;
+        category.description = editDescription;
+        category.visibility = editStatus?.toLowerCase() === "active";
         category.thumbnail = thumbnail;
 
         await category.save();

@@ -46,6 +46,8 @@
                 confirmPassword: document.getElementById("confirmPasswordError"),
             };
 
+            Object.values(errors).forEach((el) => el.innerText = "");
+
             let hasError = true;
 
             if (!newPassword) {

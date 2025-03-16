@@ -19,17 +19,9 @@ const categorySchema = new Schema({
         type : Boolean,
         default : true,
     },
-    categoryOffer : {
-        type : Number,
-        default : 0,
-    },
     itemsCount : {
         type : Number,
         default : 0,
-    },
-    attributes : {
-        sizes : [String],
-        weights : [String]
     }
 },{ timestamps: true })
 
