@@ -2,33 +2,21 @@ import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
 import User from '../model/userModel.js';
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
-import helperFunctions from '../helpers/helperFunctions.js';
+import cloudinary from '../config/cloudinary.js';
 
 const loadaddProducts = async (req, res) => {
     try {
         const categories = await Category.find({ visibility: true });
 
-        // Define size and weight options for each category
-        const categoryAttributes = {};
-        categories.forEach(category => {
-            categoryAttributes[category.name] = {
-                sizes: category.attributes.sizes || [],
-                weights: category.attributes.weights || []
-            };
-        });
 
-        res.render("admin/addProducts", { 
-            title: "Add New Product", 
-            category : categories, 
-            categoryAttributes 
+        res.render("admin/newproducts", {
+            title: "Add New Product",
+            category: categories,
         });
 
     } catch (error) {
         console.error("Error loading add product page:", error.message);
-        res.status(INTERNAL_SERVER_ERROR).render("NOT_FOUND", { 
-            title: "Error", 
-            message: "Internal Server Error. Please try again later." 
-        });
+        res.status(INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error. Please try again later." });
     }
 };
 
@@ -38,55 +26,46 @@ const generateProductId = async () => {
     return `FBZ${1000 + count + 1}`;
 };
 
+
+
 const addProducts = async (req, res) => {
     try {
-        let uploadImages = helperFunctions.uploadImages;
-        const { productName, productCategory, productBrand, productStock, productPrice, productOffer, productDescription, productSpec, variantAttribute, variantValue } = req.body;
+        const { productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant } = req.body;
 
-        const allVariantImages = req.files ? await uploadImages(req.files) : [];
 
-        const variantCount = variantAttribute.length;
-        const imagesPerVariant = Math.min(4, Math.ceil(allVariantImages.length / variantCount));
-
-        const variants = variantAttribute.map((attr, index) => {
-            const startIdx = index * imagesPerVariant;
-            const endIdx = startIdx + imagesPerVariant;
-            const images = allVariantImages.slice(startIdx, endIdx);
+            const variants = [];
+            for (let i = 0; i < colorVariant.length; i++) {
+                variants.push({
+                    color: colorVariant[i],
+                    weight: weightVariant[i],
+                    stock: parseInt(stockVariant[i], 10),
+                });
+            }
         
-            return {
-                attributeName: attr,
-                attributeValue: variantValue[index],
-                images,
-            };
-        });
+        const imageUrls = req.files.map(file => file.path);
 
         let productId = await generateProductId();
 
-        if (!productName || !productDescription) {
-            return res.status(BAD_REQUEST).json({ error: "Product Name and Description are required." });
-        }
-
-        let productImages = [];
-        if (req.files) {
-            productImages = req.files.map(file => file.path);
-        }
+        const category = await Category.findOne({ name: productCategory })
+        const categoryId = category._id
 
         const newProduct = new Products({
-            productId : productId,
+            productId: productId,
             name: productName,
+            shortDescription,
             description: productDescription,
-            specifications : productSpec,
-            brand : productBrand,
-            category : productCategory,
-            stock : productStock,
-            price : productPrice,
-            productOffer : productOffer,
+            productSpec: productSpec,
+            brand: productBrand,
+            category: categoryId,
+            images: imageUrls,
+            price: productPrice,
+            productOffer: productOffer,
             variants
         });
 
         await newProduct.save();
 
-        await Category.findOneAndUpdate({name : productCategory},{$inc : {itemsCount : 1}})
+        await Category.findOneAndUpdate({ name: productCategory }, { $inc: { itemsCount: 1 } })
 
         return res.status(CREATED).json({ message: "Product added successfully." });
 
@@ -98,61 +77,66 @@ const addProducts = async (req, res) => {
 
 const editProducts = async (req, res) => {
     try {
-        let { productId, productName, productCategory, productBrand, productStock, productPrice, productOffer, productDescription, productSpec, visibility, variantAttribute, variantValue, removedImages } = req.body;
+        const { productId, productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant } = req.body;
 
-        const parsedRemovedImages = removedImages ? JSON.parse(removedImages) : [];
+        // console.log(productId)
+        // console.log(productCategory)
 
-        const product = await Products.findOne({ productId });
-        if (!product) return res.status(404).json({ error: "Product not found" });
+        const removedImages = req.body.removedImages ? JSON.parse(req.body.removedImages) : [];
+        // console.log(removedImages);
+        
 
-        product.variants = variantAttribute.map((attr, index) => {
-            const existingVariant = product.variants[index] || { images: [] };
+        const product = await Products.findOne({productId});
 
-            let updatedImages = existingVariant.images.filter(img => !parsedRemovedImages.includes(img));
+        if (!product) {
+            return res.status(404).json({ error: "Product not found." });
+        }
 
-            const newVariantImages = req.files
-                .filter(file => file.fieldname.startsWith(`variantImages[${index}]`))
-                .map(file => file.path);
+        for (const imageUrl of removedImages) {
+            const publicId = imageUrl.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
 
-            newVariantImages.forEach((newImage, imgIndex) => {
-                if (updatedImages[imgIndex]) {
-                    updatedImages[imgIndex] = newImage;
-                } else {
-                    updatedImages.push(newImage);
-                }
-            });
+            // Remove the image from the product document
+            product.images = product.images.filter(img => img !== imageUrl);
+        }
 
+        const category = await Category.findOne({ _id : productCategory })
+        const categoryId = category._id
 
-            return {
-                attributeName: attr,
-                attributeValue: variantValue[index],
-                images: updatedImages,
-            };
-        });
-
-        product.markModified('variants');
-
+        // Handle product update
         product.name = productName;
-        product.category = productCategory;
-        product.brand = productBrand;
-        product.stock = Number(productStock);
-        product.price = Number(productPrice);
-        product.productOffer = Number(productOffer || 0);
+        product.shortDescription = shortDescription;
         product.description = productDescription;
-        product.specifications = productSpec;
-        product.visibility = visibility === "true";
+        product.productSpec = productSpec;
+        product.brand = productBrand;
+        product.category = categoryId;
+
+        // Update variants
+        const variants = [];
+        for (let i = 0; i < colorVariant.length; i++) {
+            variants.push({
+                color: colorVariant[i],
+                weight: weightVariant[i],
+                stock: parseInt(stockVariant[i], 10),
+            });
+        }
+        product.variants = variants;
+
+        // Handle new image uploads
+        if (req.files) {
+            const newImages = req.files.map(file => file.path);
+            product.images.push(...newImages);
+        }
 
         await product.save();
 
-        return res.status(200).json({
-            message: "Product updated successfully!",
-            updatedProduct: product
-        });
+        return res.status(200).json({ message: "Product updated successfully." });
     } catch (error) {
-        console.error("Edit product error:", error);
+        console.error("Edit Product Error:", error);
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
 
 
 
@@ -188,6 +172,7 @@ const productInfo = async (req, res) => {
         }
 
         const products = await Products.find(filter)
+            .populate('category')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -197,7 +182,7 @@ const productInfo = async (req, res) => {
 
         res.render("admin/products", {
             title: "Products",
-            errorMessage: "",
+            errorMessage: "",   
             product: products,
             cat: categories,
             currentPage: page,
@@ -228,24 +213,24 @@ const loadEditProducts = async (req, res) => {
             return res.status(NOT_FOUND).send("Product not found.");
         }
 
-        res.render('admin/editProducts', { title: "Edit Products", product, cat: category });
+        res.render('admin/updateProducts', { title: "Edit Products", product, category });
     } catch (error) {
         console.error("Error fetching product:", error);
         res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 };
 
-const loadproductDetails = async (req,res) => {
+const loadproductDetails = async (req, res) => {
     const { productId, category } = req.query;
 
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    const user = await User.findOne({ _id : userId});
+    const user = await User.findOne({ _id: userId });
 
-    const product = await Products.findOne({productId})
-    const relateproducts = await Products.find({category}).limit(4);
+    const product = await Products.findOne({ productId })
+    const relateproducts = await Products.find({ category }).limit(4);
 
-    res.render('productdetails', {title : "productDetails", product, relateproducts, userId, user})
+    res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user })
 }
 
 // shop pages and product details
@@ -254,8 +239,8 @@ const loadShop = async (req, res) => {
     try {
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        
-        const user = await User.findOne({ _id : userId});
+
+        const user = await User.findOne({ _id: userId });
 
         const page = parseInt(req.query.page) || 1;
         const limit = 12;
@@ -281,7 +266,7 @@ const loadShop = async (req, res) => {
             filter.brand = req.query.brand;
         }
         if (req.query.availability) {
-            filter.stock = { $gt: 0 }; 
+            filter.stock = { $gt: 0 };
         }
 
         // Sorting
@@ -327,4 +312,4 @@ const loadShop = async (req, res) => {
 };
 
 
-export default {productInfo, loadaddProducts, addProducts, loadEditProducts , editProducts, loadShop, loadproductDetails}
+export default { productInfo, loadaddProducts, addProducts, loadEditProducts, editProducts, loadShop, loadproductDetails }

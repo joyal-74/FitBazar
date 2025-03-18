@@ -206,3 +206,80 @@ footer {
 .custom-range:active::-webkit-slider-thumb {
     background: #7a1ba9;
 }
+
+
+.variant-btn {
+    padding: 5px 15px;
+    margin: 5px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.variant-btn.active {
+    border-color: #4D44AD;
+    background: #E0DBFC;
+    color: #4D44AD;
+}
+.variant-btn:hover:not(.active) {
+    border-color: #9c3ec8;
+}
+.color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.image-upload-slot {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.image-upload-dropzone {
+    text-align: center;
+    color: #666;
+}
+
+.image-preview {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.image-preview.filled {
+    display: block;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

@@ -25,6 +25,12 @@ const addItemToCart = async (req, res) => {
             return res.status(404).json({ error: "Product not found. Unable to add to cart." });
         }
 
+        if (quantity > product.stock) {
+            return res.status(400).json({
+                error: `Only ${product.stock} units of "${product.name}" available in stock.`
+            });
+        }
+
         const name = product.name;
         const brand = product.brand;
         const productImage = product.variants[0].images[0];
@@ -384,58 +390,99 @@ const loadPayments = async (req, res) => {
     }
 }
 
-const paymentSuccess = async (req,res) => {
-    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+const paymentSuccess = async (req, res) => {
+    try {
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized. Please log in." });
+        }
 
-    const { couponApplied, paymentMethod } = req.body;
+        const { couponApplied, paymentMethod } = req.body;
 
-    const addressId = req.session.deliveryAddress;
-    const objectId = new mongoose.Types.ObjectId(addressId);
+        if (!paymentMethod) {
+            return res.status(400).json({ error: "Payment method is required." });
+        }
 
-    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
+        const addressId = req.session.deliveryAddress;
+        if (!addressId) {
+            return res.status(400).json({ error: "Delivery address not found." });
+        }
 
-    if(paymentMethod == 'cod'){
-        const address = await Address.findOne(
-            { 'details._id': objectId },
-            { 'details.$': 1 }
-        );
+        const objectId = new mongoose.Types.ObjectId(addressId);
+        const cart = await Cart.findOne({ userId }).populate('items.productId');
 
-        const orderId = generateOrderId();
+        if (!cart || cart.items.length === 0) {
+            return res.status(400).json({ error: "Cart is empty." });
+        }
 
-        if (address) {
-            
+        if (paymentMethod === 'cod') {
+            const address = await Address.findOne(
+                { 'details._id': objectId },
+                { 'details.$': 1 }
+            );
+
+            if (!address) {
+                return res.status(404).json({ error: 'Address not found.' });
+            }
+
+            const orderId = generateOrderId();
+
+            for (const item of cart.items) {
+                const product = await Products.findById(item.productId._id);
+                if (product) {
+                    if (product.stock < item.quantity) { 
+                        return res.status(400).json({error: `Insufficient stock for "${product.name}". Only ${product.stock} left.`});
+                    }
+                }
+            }
+
+            for (const item of cart.items) {
+                const product = await Products.findById(item.productId._id);
+                if (product) {
+                    if (product.stock < item.quantity) {
+                        return res.status(400).json({ error: `Insufficient stock for ${item.productId.name}.` });
+                    }
+                    product.stock -= item.quantity;
+                    await product.save();
+                }
+            }
+
             const order = new Order({
                 userId,
                 orderId,
                 orderItems: cart.items.map(item => ({
                     product: item.productId._id,
-                    name : item.name,
+                    name: item.productId.name,
                     quantity: item.quantity,
                     price: item.productId.price,
-                    variants : item.variants,
-                    brand : item.brand,
-                    productImage : item.productImage
+                    variants: item.variants,
+                    brand: item.productId.brand,
+                    productImage: item.productId.productImage
                 })),
-                totalPrice: cart.items.reduce((sum, item) => sum + item.quantity * item.productId.price, 0),
+                totalPrice: cart.items.reduce(
+                    (sum, item) => sum + item.quantity * item.productId.price,
+                    0
+                ),
                 paymentMethod,
-                address : addressId,
+                address: addressId,
                 status: 'Pending',
                 couponApplied
-                });
+            });
 
             await order.save();
 
-
             await Cart.findByIdAndDelete(cart._id);
 
-            return res.status(200).json({ message: 'Order placed successfully' });
+            return res.status(200).json({ message: 'Order placed successfully.' });
         } else {
-            return res.status(404).json({ error: 'Address not found' });
+            return res.status(400).json({ error: "Payment method not implemented." });
         }
-    }else{
-        return res.status(400).json({error : "Payment method not implemented"});
+    } catch (error) {
+        console.error("Order Creation Error:", error);
+        return res.status(500).json({ error: "Internal server error." });
     }
-}
+};
+
 
 const confirmOrder = async (req, res) => {
     try {

@@ -7,6 +7,7 @@ import productController from "../controllers/productController.js";
 import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
+import { uploads, handleUploads } from '../middleware/uploadMiddleware.js';
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -23,10 +24,14 @@ router.put('/categories', upload.single('editThumbnail'),categoryController.edit
 router.get('/categories/filter', adminAuth.checkSession, categoryController.filterCategories);
 
 // product management
+
+
 router.get('/products', adminAuth.checkSession, productController.productInfo);
-router.get('/addProducts', adminAuth.checkSession, productController.loadaddProducts);
-router.post('/addProducts',upload.array("variantImages[]", 12),productController.addProducts);
-router.get('/editProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
+router.get('/newProducts', adminAuth.checkSession, productController.loadaddProducts);
+
+router.post('/addProducts',upload.any(),productController.addProducts);
+
+router.get('/updateProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
 router.put('/products/:productId',upload.any(),productController.editProducts);
 
 // user management

@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 const {Schema} = mongoose;
 
-const variantSchema = new Schema({
-    attributeName: String,
-    attributeValue: String,
-    images: [String],
-});
+const variantSchema = new mongoose.Schema({
+    color: { type: String, required: true },
+    weight: { type: String},
+    stock: { type: Number, required: true },
+  });
 
 const productSchema = new Schema({
     productId : {
@@ -16,38 +16,37 @@ const productSchema = new Schema({
         type : String,
         required : true
     },
+    shortDescription : {
+        type : String,
+        required : false
+    },
     description : {
         type : String,
         required : true
     },
-    specifications : {
-        type : String,
-        required : false
+    productSpec : {
+        type : String
     },
     brand : {
         type : String,
         required : true
     },
     category : {
-        type : String,
+        type : Types.ObjectId,
+        ref : 'Category',
         required : true
     },
     price : {
         type : Number,
         required : true
     },
+    images: {
+        type : [String],
+        required : true
+    },
     productOffer : {
         type : Number,
         default : 0,
-    },
-    stock :{
-        type : Number,
-        required : false,
-        default : 1,
-    },
-    quantity : {
-        type : Number,
-        default: 1,
     },
     visibility : {
         type : Boolean,

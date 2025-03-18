@@ -1,0 +1,743 @@
+<head>
+    <link rel="stylesheet" href="/css/addproducts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+</head>
+
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg shadow-sm fixed-top"
+        style="background: linear-gradient(90deg, #3e29a8, #5c48ee);">
+        <div class="container px-4">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/admin/dashboard">
+                <span style="font-size: 24px; color: #ffffff; letter-spacing: 1px;">FitBazar</span>
+            </a>
+            <!-- Right Side -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- User Info -->
+                <div class="dropdown">
+                    <a href="#" class="avatar d-flex align-items-center gap-2 text-decoration-none"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-circle-user fa-lg" style="color: #ffffff;"></i>
+                        <span class="d-none d-md-inline text-white fw-medium">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" style="border: none; border-radius: 8px;">
+                        <li>
+                            <span class="dropdown-item-text py-2">
+                                <i class="fa-solid fa-user me-2 text-muted"></i>
+                                Admin User
+                            </span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 text-danger" href="/admin/logout">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar + Main Content -->
+    <div class="container-fluid w-100">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm">
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i
+                                class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i
+                                class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/products"><i
+                                class="fa-solid fa-tags me-2"></i>Products</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i
+                                class="fa-solid fa-user me-2"></i>Customers</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i
+                                class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
+                                class="fas fa-percent me-2"></i>Coupons</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
+                                class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
+                                class="fas fa-chart-line me-2"></i>Sales Report</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i
+                                class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto" style="margin-top: 70px;">
+                <h1 class="mb-4" style="font-size: 2rem; font-weight: 700; color: #333; letter-spacing: -0.5px;">
+                    Add New Product
+                </h1>
+
+                <!-- Product Form -->
+                <div class="card add-product-form">
+                    <div class="card-body p-4">
+                        <form id="addProductForm" enctype="multipart/form-data">
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="productName" class="form-label">Product Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="productName"
+                                        name="productName" placeholder="Enter product name">
+                                </div>
+                                <div class="w-100">
+                                    <label for="productCategory" class="form-label mb-2">Category</label>
+                                    <select class="form-select form-select-sm" id="productCategory"
+                                        name="productCategory">
+                                        <option hidden>Select category</option>
+                                        <% category.forEach(category=> { %>
+                                            <option value="<%= category.name %>">
+                                                <%= category.name %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="brand" class="form-label">Brand</label>
+                                    <input type="text" class="form-control form-control-sm" id="brand"
+                                        name="productBrand" placeholder="Enter brand">
+                                </div>
+                                <div class="w-100">
+                                    <label for="basePrice" class="form-label">Base Price</label>
+                                    <input type="number" id="productPrice" name="productPrice"
+                                        class="form-control form-control-sm" placeholder="Enter price">
+                                </div>
+                                <div class="w-100">
+                                    <label for="discountPrice" class="form-label">Discount Percentage (%)</label>
+                                    <input type="number" id="productOffer" name="productOffer"
+                                        class="form-control form-control-sm" placeholder="Enter discount">
+                                </div>
+                            </div>
+
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="shortDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="shortDescription" name="shortDescription"
+                                        placeholder="Enter short description"></textarea>
+                                </div>
+                                <div class="w-100">
+                                    <label for="productDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="productDescription" name="productDescription"
+                                        placeholder="Enter description"></textarea>
+                                </div>
+                            </div>
+                            <div class="mb-4 d-flex gap-3">
+                                <div class="w-100">
+                                    <label for="productSpec" class="form-label">Specifications</label>
+                                    <textarea class="form-control" id="productSpec" name="productSpec"
+                                        placeholder="Enter specifications"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Variant Section -->
+                            <div class="mb-4">
+                                <label class="form-label">Product Variants</label>
+                                <div id="variantContainer">
+                                    <div class="variant-item mb-3">
+                                        <div class="d-flex gap-3 align-items-end mb-3">
+                                            <div class="w-100">
+                                                <label class="form-label">Color</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name="colorVariant[]" placeholder="e.g., Size, Color, Weight">
+                                            </div>
+                                            <div class="w-100">
+                                                <label class="form-label">Weight</label>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    name="weightVariant[]" placeholder="e.g., Small, Red, 500g">
+                                            </div>
+                                            <div class="w-100">
+                                                <label class="form-label">Stock</label>
+                                                <input type="number" class="form-control form-control-sm"
+                                                    name="stockVariant[]" placeholder="e.g., Small, Red, 500g">
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-danger remove-variant" disabled>
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="w-100 mb-3">
+                                            <label class="form-label">Variant Images</label>
+                                            <div class="image-upload-row">
+                                                <div class="image-upload-slot" data-slot="1">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="2">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="3">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                                <div class="image-upload-slot" data-slot="4">
+                                                    <div class="image-upload-dropzone">
+                                                        <i class="fa-solid fa-upload"></i>
+                                                        <p class="mb-0">Add Image</p>
+                                                        <input type="file" class="d-none" name="variantImages[]"
+                                                            accept="image/*">
+                                                    </div>
+                                                    <div class="image-preview"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="addVariantButton" class="btn btn-sm btn-outline-primary mt-2">
+                                    <i class="fas fa-plus me-1"></i> Add Variant
+                                </button>
+                            </div>
+
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">Add Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Cropping Modal -->
+    <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="cropModalLabel">Crop Your Image</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="img-container rounded overflow-hidden bg-light">
+                        <img id="imageToCrop" src="" alt="Image to crop" class="img-fluid"
+                            style="max-height: 500px; object-fit: contain;">
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 py-2"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary px-4 py-2 fw-semibold" id="cropButton">Crop &
+                        Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utility to create elements with attributes and children
+        const createElement = (tag, attributes = {}, children = []) => {
+            const element = document.createElement(tag);
+            Object.assign(element, attributes);
+            children.forEach(child => element.appendChild(child));
+            return element;
+        };
+    
+        // Initialize the page
+        document.addEventListener("DOMContentLoaded", () => {
+            setupFormSubmission();
+            setupVariantManagement();
+            setupInitialVariants();
+        });
+    
+        // Form Submission
+        function setupFormSubmission() {
+            const form = document.getElementById("addProductForm");
+            if (!form) return;
+    
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+    
+                try {
+                    const response = await fetch("/admin/addProducts", {
+                        method: "POST",
+                        body: formData,
+                    });
+                    const result = await response.json();
+    
+                    if (response.ok) {
+                        Swal.fire({
+                            position: "top-center",
+                            icon: "success",
+                            title: "Product added successfully!",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then(() => {
+                            window.location.href = "/admin/products";
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: result.error || "An unexpected error occurred.",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: "Something went wrong. Please try again.",
+                    });
+                }
+            });
+        }
+    
+        // Variant Management
+        function setupVariantManagement() {
+            const container = document.getElementById("variantContainer");
+            const addButton = document.getElementById("addVariantButton");
+            if (!container || !addButton) return;
+    
+            addButton.addEventListener("click", () => {
+                const variantIndex = container.children.length;
+                const variant = createVariant(variantIndex);
+                container.appendChild(variant);
+                setupImageUploads(variant.querySelector(".image-upload-row"));
+                updateRemoveButtons(container);
+            });
+    
+            container.addEventListener("click", (e) => {
+                const removeBtn = e.target.closest(".remove-variant");
+                if (removeBtn) {
+                    removeBtn.closest(".variant-item").remove();
+                    updateRemoveButtons(container);
+                }
+            });
+        }
+    
+        function createVariant(index) {
+            const variant = createElement("div", { className: "variant-item mb-3" });
+            variant.innerHTML = `
+                <div class="d-flex gap-3 align-items-end mb-3">
+                    <div class="w-100">
+                        <label class="form-label">Color</label>
+                        <input type="text" class="form-control form-control-sm" name="colorVariant[]" placeholder="e.g., Blue">
+                    </div>
+                    <div class="w-100">
+                        <label class="form-label">Weight</label>
+                        <input type="text" class="form-control form-control-sm" name="weightVariant[]" placeholder="e.g., 500g">
+                    </div>
+                    <div class="w-100">
+                        <label class="form-label">Stock</label>
+                        <input type="number" class="form-control form-control-sm" name="stockVariant[]" placeholder="e.g., 10">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger remove-variant" disabled>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="w-100 mb-3">
+                    <label class="form-label">Variant Images</label>
+                    <div class="image-upload-row">
+                        ${[1, 2, 3, 4].map(slot => `
+                            <div class="image-upload-slot" data-slot="${slot}">
+                                <div class="image-upload-dropzone">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <p class="mb-0">Add Image</p>
+                                    <input type="file" class="d-none" name="variantImages[${index}][]" accept="image/*">
+                                </div>
+                                <div class="image-preview"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            return variant;
+        }
+    
+        function updateRemoveButtons(container) {
+            const buttons = container.querySelectorAll(".remove-variant");
+            buttons.forEach(btn => btn.disabled = buttons.length <= 1);
+        }
+    
+        function setupInitialVariants() {
+            const container = document.getElementById("variantContainer");
+            if (!container) return;
+    
+            const existingVariant = container.querySelector(".variant-item");
+            if (existingVariant) {
+                const inputs = existingVariant.querySelectorAll('input[name="variantImages[]"]');
+                inputs.forEach(input => input.name = "variantImages[0][]");
+                setupImageUploads(existingVariant.querySelector(".image-upload-row"));
+                updateRemoveButtons(container);
+            }
+        }
+    
+        // Image Upload and Cropping
+        function setupImageUploads(container) {
+            const slots = container.querySelectorAll(".image-upload-slot");
+            slots.forEach(slot => {
+                const dropzone = slot.querySelector(".image-upload-dropzone");
+                const input = slot.querySelector("input[type='file']");
+                const preview = slot.querySelector(".image-preview");
+    
+                dropzone.addEventListener("click", () => input.click());
+    
+                dropzone.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add("dragover");
+                });
+    
+                dropzone.addEventListener("dragleave", () => {
+                    dropzone.classList.remove("dragover");
+                });
+    
+                dropzone.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove("dragover");
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith("image/")) {
+                        handleImageUpload(file, input, preview);
+                    }
+                });
+    
+                input.addEventListener("change", () => {
+                    const file = input.files[0];
+                    if (file && file.type.startsWith("image/")) {
+                        handleImageUpload(file, input, preview);
+                    }
+                });
+            });
+        }
+    
+        function handleImageUpload(file, input, preview) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const image = document.getElementById("imageToCrop");
+                image.src = e.target.result;
+    
+                const modal = new bootstrap.Modal(document.getElementById("cropModal"));
+                modal.show();
+    
+                document.getElementById("cropModal").addEventListener("shown.bs.modal", () => {
+                    const cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 0.9,
+                        responsive: true,
+                        restore: true,
+                        dragMode: "move",
+                    });
+    
+                    document.getElementById("cropButton").onclick = () => {
+                        const canvas = cropper.getCroppedCanvas({ width: 800, height: 800 });
+                        canvas.toBlob((blob) => {
+                            const croppedFile = new File([blob], file.name, { type: "image/jpeg" });
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(croppedFile);
+                            input.files = dataTransfer.files;
+    
+                            const previewReader = new FileReader();
+                            previewReader.onload = (e) => {
+                                preview.innerHTML = `
+                                    <img src="${e.target.result}" alt="Preview">
+                                    <button type="button" class="remove-image-btn">×</button>
+                                `;
+                                preview.parentElement.classList.add("filled");
+    
+                                const removeBtn = preview.querySelector(".remove-image-btn");
+                                removeBtn.addEventListener("click", () => {
+                                    preview.innerHTML = "";
+                                    preview.parentElement.classList.remove("filled");
+                                    input.value = "";
+                                });
+                            };
+                            previewReader.readAsDataURL(croppedFile);
+    
+                            modal.hide();
+                            cropper.destroy();
+                        }, "image/jpeg", 0.9);
+                    };
+                }, { once: true });
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // Form Submission
+    const addProductForm = document.getElementById("addProductForm");
+    if (addProductForm) {
+        addProductForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
+            try {
+                const response = await fetch("/admin/addProducts", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        position: "top-center",
+                        icon: "success",
+                        title: "Product added successfully!",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        window.location.href = "/admin/products";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: result.error || "An unexpected error occurred.",
+                    });
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops!",
+                    text: "Something went wrong. Please try again.",
+                });
+            }
+        });
+    }
+
+    // Variant Management
+    const variantContainer = document.getElementById("variantContainer");
+    const addVariantButton = document.getElementById("addVariantButton");
+
+    if (variantContainer && addVariantButton) {
+        addVariantButton.addEventListener("click", function () {
+            const variantIndex = variantContainer.children.length;
+            const variantItem = document.createElement("div");
+            variantItem.className = "variant-item mb-3";
+            variantItem.innerHTML = `
+                <div class="d-flex gap-3 align-items-end mb-3">
+                    <div class="w-100">
+                        <label class="form-label">Color</label>
+                        <input type="text" class="form-control form-control-sm" name="colorVariant[]" placeholder="e.g., Blue">
+                    </div>
+                    <div class="w-100">
+                        <label class="form-label">Weight</label>
+                        <input type="text" class="form-control form-control-sm" name="weightVariant[]" placeholder="e.g., 500g">
+                    </div>
+                    <div class="w-100">
+                        <label class="form-label">Stock</label>
+                        <input type="number" class="form-control form-control-sm" name="stockVariant[]" placeholder="e.g., 10">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger remove-variant" disabled>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="w-100 mb-3">
+                    <label class="form-label">Variant Images</label>
+                    <div class="image-upload-row">
+                        <div class="image-upload-slot" data-slot="1">
+                            <div class="image-upload-dropzone">
+                                <i class="fa-solid fa-upload"></i>
+                                <p class="mb-0">Add Image</p>
+                                <input type="file" class="d-none" name="variantImages[${variantIndex}][]" accept="image/*">
+                            </div>
+                            <div class="image-preview"></div>
+                        </div>
+                        <div class="image-upload-slot" data-slot="2">
+                            <div class="image-upload-dropzone">
+                                <i class="fa-solid fa-upload"></i>
+                                <p class="mb-0">Add Image</p>
+                                <input type="file" class="d-none" name="variantImages[${variantIndex}][]" accept="image/*">
+                            </div>
+                            <div class="image-preview"></div>
+                        </div>
+                        <div class="image-upload-slot" data-slot="3">
+                            <div class="image-upload-dropzone">
+                                <i class="fa-solid fa-upload"></i>
+                                <p class="mb-0">Add Image</p>
+                                <input type="file" class="d-none" name="variantImages[${variantIndex}][]" accept="image/*">
+                            </div>
+                            <div class="image-preview"></div>
+                        </div>
+                        <div class="image-upload-slot" data-slot="4">
+                            <div class="image-upload-dropzone">
+                                <i class="fa-solid fa-upload"></i>
+                                <p class="mb-0">Add Image</p>
+                                <input type="file" class="d-none" name="variantImages[${variantIndex}][]" accept="image/*">
+                            </div>
+                            <div class="image-preview"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            variantContainer.appendChild(variantItem);
+            setupImageSlots(variantItem.querySelector(".image-upload-row"));
+            updateRemoveButtons();
+        });
+
+        variantContainer.addEventListener("click", function (event) {
+            if (
+                event.target.classList.contains("remove-variant") ||
+                event.target.parentElement.classList.contains("remove-variant")
+            ) {
+                const variantItem = event.target.closest(".variant-item");
+                variantItem.remove();
+                updateRemoveButtons();
+            }
+        });
+
+        function updateRemoveButtons() {
+            const removeButtons = variantContainer.querySelectorAll(".remove-variant");
+            removeButtons.forEach((button) => (button.disabled = removeButtons.length <= 1));
+        }
+
+        // Initialize existing variant
+        const existingVariant = variantContainer.querySelector(".variant-item");
+        if (existingVariant) {
+            const inputs = existingVariant.querySelectorAll('input[name="variantImages[]"]');
+            inputs.forEach((input) => (input.name = "variantImages[0][]")); // Set initial variant to index 0
+            setupImageSlots(existingVariant.querySelector(".image-upload-row"));
+        }
+    }
+
+    // Image Upload Functions with Cropper.js
+    function setupImageSlots(container) {
+        const slots = container.querySelectorAll(".image-upload-slot");
+
+        slots.forEach((slot) => {
+            const dropzone = slot.querySelector(".image-upload-dropzone");
+            const input = slot.querySelector('input[type="file"]');
+            const preview = slot.querySelector(".image-preview");
+
+            // Click to upload
+            dropzone.addEventListener("click", () => input.click());
+
+            // Drag and drop events
+            dropzone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropzone.classList.add("dragover");
+            });
+
+            dropzone.addEventListener("dragleave", () => {
+                dropzone.classList.remove("dragover");
+            });
+
+            dropzone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropzone.classList.remove("dragover");
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith("image/")) {
+                    openCropModal(file, input, preview);
+                }
+            });
+
+            // File input change
+            input.addEventListener("change", () => {
+                const file = input.files[0];
+                if (file && file.type.startsWith("image/")) {
+                    openCropModal(file, input, preview);
+                }
+            });
+        });
+    }
+
+    function openCropModal(file, input, preview) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const image = document.getElementById("imageToCrop");
+            image.src = e.target.result;
+
+            const modal = new bootstrap.Modal(document.getElementById("cropModal"));
+
+            document.getElementById("cropModal").addEventListener(
+                "shown.bs.modal",
+                () => {
+                    let cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 0.9,
+                        responsive: true,
+                        restore: true,
+                        dragMode: "move",
+                    });
+
+                    // Handle crop and save for this specific slot
+                    document.getElementById("cropButton").onclick = () => {
+                        const canvas = cropper.getCroppedCanvas({
+                            width: 800,
+                            height: 800,
+                        });
+
+                        canvas.toBlob((blob) => {
+                            const fileName = input.files[0].name;
+                            const croppedFile = new File([blob], fileName, { type: "image/jpeg" });
+
+                            // Update FormData with cropped image
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(croppedFile);
+                            input.files = dataTransfer.files;
+
+                            // Preview cropped image
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                preview.innerHTML = `
+                                    <img src="${e.target.result}" alt="Preview">
+                                    <button type="button" class="remove-image-btn">×</button>
+                                `;
+                                preview.parentElement.classList.add("filled");
+
+                                // Add remove functionality specific to this slot
+                                const removeBtn = preview.querySelector(".remove-image-btn");
+                                removeBtn.addEventListener("click", () => {
+                                    preview.innerHTML = "";
+                                    preview.parentElement.classList.remove("filled");
+                                    input.value = ""; // Clear the file input
+                                });
+                            };
+                            reader.readAsDataURL(croppedFile);
+
+                            // Close modal and clean up
+                            bootstrap.Modal.getInstance(document.getElementById("cropModal")).hide();
+                            cropper.destroy();
+                        }, "image/jpeg", 0.9);
+                    };
+                },
+                { once: true }
+            );
+
+            modal.show();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Clean up Cropper on modal close
+    document.getElementById("cropModal").addEventListener("hidden.bs.modal", () => {
+        // No global cropper to destroy since it's handled locally in openCropModal
+    });
+});
+
+    </script> -->
+</body>
