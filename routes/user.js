@@ -4,6 +4,7 @@ import userController from '../controllers/userController.js';
 import profileController from "../controllers/profileController.js";
 import cartControlller from '../controllers/cartController.js'
 import refundController from '../controllers/refundController.js'
+import reviewController from '../controllers/reviewController.js'
 import upload from "../middleware/imageUpload.js";
 
 
@@ -74,6 +75,7 @@ router.post('/orders/return', refundController.requestRefund);
 router.patch('/orders/cancel', refundController.cancelOrder);
 router.get('/orders/invoice', refundController.generateInvoice);
 
+router.post('/review', reviewController.addReview);
 
 router.get("/logout", userController.logoutUser );
 

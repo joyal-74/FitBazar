@@ -46,8 +46,8 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item m-0"><a href="/" class="text-dark text-decoration-none">Home</a></li>
                 <li class="breadcrumb-item m-0"><a href="/shop" class="text-dark text-decoration-none">Shop</a></li>
-                <li class="breadcrumb-item m-0"><a href="/shop?category=<%= product.category %>" class="text-dark text-decoration-none">
-                    <%= product.category %>
+                <li class="breadcrumb-item m-0"><a href="/shop?category=<%= product.category.name %>" class="text-dark text-decoration-none">
+                    <%= product.category.name %>
                 </a></li>
                 <li class="breadcrumb-item active" aria-current="page"><a class="text-dark text-decoration-none">
                     <%= product.name %>
@@ -138,6 +138,7 @@
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="userId" id="userId" value="<%= userId %>">
                     <input type="hidden" name="productId" id="productId" value="<%= product.productId %>">
+                    <input type="hidden" name="productdbId" id="productdbId" value="<%= product._id %>">
                     <input type="hidden" id="selectedColor" name="selectedColor" value="">
                     <input type="hidden" id="selectedWeight" name="selectedWeight" value="">
                     <input type="hidden" id="salePrice" name="salePrice" value="<%= Math.round(product.price - (product.price * product.productOffer / 100)) %>">
@@ -165,112 +166,134 @@
             <!-- Tab Navigation -->
             <ul class="nav nav-tabs" id="productTab">
                 <li class="nav-item">
-                    <a class="nav-link active" id="desc-tab" data-bs-toggle="tab" href="#description">
+                    <a class="nav-link active" id="product-details-tab" data-bs-toggle="tab" href="#description">
                         Product Details
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="specs-tab" data-bs-toggle="tab" href="#specifications">
+                        Specifications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">
                         Reviews
                     </a>
                 </li>
             </ul>
-
+        
             <!-- Tab Content -->
             <div class="tab-content mt-3">
                 <!-- Description Tab -->
-                <div class="tab-pane show des-btn active" id="description">
+                <div class="tab-pane fade show active" id="description">
                     <div class="card p-3">
                         <h5 class="fw-bold">Description</h5>
                         <p class="text-muted">
                             <%= product.description %>
                         </p>
-
-                        <h5 class="fw-bold">Specifications</h5>
-                        <table class="table table-bordered">
-                            <tbody>
-                                <% const specLines=product.productSpec.split('\n').filter(line=> line.trim());
-                                    specLines.forEach(line => {
-                                    const [key, value] = line.split(/[-:]/).map(part => part.trim());
-                                    if (key && value) {
-                                    %>
-                                    <tr>
-                                        <td>
-                                            <%= key %>
-                                        </td>
-                                        <td>
-                                            <%= value %>
-                                        </td>
-                                    </tr>
-                                    <% } }); %>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
-
-                <!-- Review Tab -->
-                <div class="tab-pane bg-light p-3" id="specifications">
-
+        
+                <!-- Specifications Tab -->
+                <div class="tab-pane fade" id="specifications">
+                    <div class="card shadow-sm border-0 p-4 bg-white" style="border-radius: 12px;">
+                        <h5 class="fw-bold mb-4 text-dark" style="font-size: 1.25rem; letter-spacing: 0.5px;">
+                            Product Specifications
+                        </h5>
+                        <div class="specifications-container">
+                            <% const specLines = product.productSpec.split('\n').filter(line => line.trim());
+                                if (specLines.length === 0) { %>
+                                <p class="text-muted text-center py-3 m-0">No specifications available.</p>
+                            <% } else {
+                                specLines.forEach((line, index) => {
+                                    const [key, value] = line.split(/[-:]/).map(part => part.trim());
+                                    if (key && value) { %>
+                                    <div class="spec-item d-flex align-items-center py-3 <%= index < specLines.length - 1 ? 'border-bottom' : '' %>"
+                                         style="transition: background 0.2s ease;">
+                                        <span class="spec-key fw-semibold text-secondary me-3" style="min-width: 150px; width: 30%; font-size: 0.95rem;">
+                                            <%= key %>
+                                        </span>
+                                        <span class="spec-value text-dark" style="flex: 1; font-size: 0.95rem;">
+                                            <%= value %>
+                                        </span>
+                                    </div>
+                            <% } }); } %>
+                        </div>
+                    </div>
+                </div>
+                
+        
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviews">
                     <!-- Previous Reviews Section -->
                     <div class="border rounded p-3 mb-4 bg-white">
                         <h5 class="fw-bold">Customer Reviews</h5>
-
-                        <!-- Example Review 1 -->
-                        <div class="border-bottom pb-2 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="fw-semibold mb-0">John Doe</h6>
-                                <span class="text-warning">⭐⭐⭐⭐⭐</span>
-                            </div>
-                            <p class="small text-muted mb-1">Posted on Feb 28, 2025</p>
-                            <p class="mb-0">Great product! Really satisfied with the quality.</p>
-                        </div>
-
-                        <!-- Example Review 2 -->
-                        <div class="border-bottom pb-2 mb-2">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="fw-semibold mb-0">Sarah Lee</h6>
-                                <span class="text-warning">⭐⭐⭐⭐</span>
-                            </div>
-                            <p class="small text-muted mb-1">Posted on Feb 25, 2025</p>
-                            <p class="mb-0">Good value for money, but the packaging could be better.</p>
-                        </div>
-
-                        <!-- Load More Reviews Button -->
-                        <button class="btn btn-outline-primary mx-auto d-block text-center btn-sm w-25 mt-2">Load More
-                            Reviews</button>
+                    
+                        <% if (reviews.length > 0) { %>
+                            <% reviews.forEach(review => { %>
+                                <div class="border-bottom pb-2 mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="fw-semibold mb-0"><%= review.name %></h6>
+                                        <span class="text-warning">
+                                            <% for (let i = 1; i <= review.rating; i++) { %>
+                                                &#9733; <!-- Solid star -->
+                                            <% } %>
+                                        </span>
+                                        <span class="text-muted">
+                                            <% for (let i = review.rating + 1; i <= 5; i++) { %>
+                                                &#9734; <!-- Empty star -->
+                                            <% } %>
+                                        </span>
+                                    </div>
+                                    <p class="small text-muted mb-1">
+                                        Posted on <%= new Date(review.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric', month: 'short', day: 'numeric'
+                                        }) %>
+                                    </p>
+                                    <p class="mb-0"><%= review.comment %></p>
+                                </div>
+                            <% }) %>
+                    
+                            <!-- Load More Reviews Button -->
+                            <button class="btn btn-outline-primary mx-auto d-block text-center btn-sm w-25 mt-2">
+                                Load More Reviews
+                            </button>
+                        <% } else { %>
+                            <p class="text-muted text-center mt-3">No reviews yet. Be the first to leave a review!</p>
+                        <% } %>
                     </div>
-
+                    
+        
                     <!-- Write a Review Form -->
-                    <form class="p-3 border rounded bg-white">
+                    <form class="p-3 border rounded bg-white" id="reviewForm">
                         <h5 class="fw-bold">Write a Review</h5>
-
+        
                         <div class="d-flex w-100 gap-3">
                             <div class="mb-2 w-100">
                                 <label class="form-label fw-semibold">Your Name</label>
-                                <input type="text" class="form-control" placeholder="Enter your name" required>
+                                <input type="text" class="form-control" placeholder="Enter your name" id="reviewName" name="reviewName">
                             </div>
-
+        
                             <!-- Rating Selection -->
                             <div class="mb-2 w-100">
                                 <label class="form-label fw-semibold">Rating</label>
-                                <select class="form-select" required>
+                                <select class="form-select text-warning" name="reviewStar" id="reviewStar">
                                     <option value="">Select Rating</option>
-                                    <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
-                                    <option value="4">⭐⭐⭐⭐ (Good)</option>
-                                    <option value="3">⭐⭐⭐ (Average)</option>
-                                    <option value="2">⭐⭐ (Below Average)</option>
-                                    <option value="1">⭐ (Poor)</option>
+                                    <option value="5" class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                                    <option value="4" class="text-warning">&#9733;&#9733;&#9733;&#9733;</option>
+                                    <option value="3" class="text-warning">&#9733;&#9733;&#9733;</option>
+                                    <option value="2" class="text-warning">&#9733;&#9733;</option>
+                                    <option value="1" class="text-warning">&#9733;</option>
                                 </select>
                             </div>
                         </div>
-
+        
                         <!-- Review Text -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Your Review</label>
-                            <textarea class="form-control" rows="3" placeholder="Write your review..."
-                                required></textarea>
+                            <textarea class="form-control" rows="3" placeholder="Write your review..." name="reviewComment" id="reviewComment"></textarea>
                         </div>
-
+        
                         <!-- Submit & Cancel Buttons -->
                         <button type="submit" class="btn text-white" style="background-color: #4D44AD;">
                             <i class="fas fa-paper-plane"></i> Submit
@@ -279,11 +302,10 @@
                             <i class="fas fa-times"></i> Cancel
                         </button>
                     </form>
-
                 </div>
-
             </div>
         </div>
+        
 
         <div class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -425,145 +447,193 @@
 
  <script>
     const variants = <%- JSON.stringify(product.variants) %>;
-        const product = <%- JSON.stringify(product) %>;
+    const product = <%- JSON.stringify(product) %>;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const colorButtons = document.querySelectorAll('#colorOptions .variant-btn');
-            const weightButtons = document.querySelectorAll('#weightOptions .variant-btn');
-            const stockStatus = document.getElementById('stockStatus');
-            const mainImage = document.getElementById('mainImage');
-            const thumbnails = document.querySelectorAll('.thumbnail');
+    document.addEventListener('DOMContentLoaded', () => {
+        const colorButtons = document.querySelectorAll('#colorOptions .variant-btn');
+        const weightButtons = document.querySelectorAll('#weightOptions .variant-btn');
+        const stockStatus = document.getElementById('stockStatus');
+        const mainImage = document.getElementById('mainImage');
+        const thumbnails = document.querySelectorAll('.thumbnail');
 
-            function updateVariantDisplay() {
-                const selectedColor = document.getElementById('selectedColor').value;
-                const selectedWeight = document.getElementById('selectedWeight').value;
-                const variant = variants.find(v => v.color === selectedColor && v.weight === selectedWeight);
+        function updateVariantDisplay() {
+            const selectedColor = document.getElementById('selectedColor').value;
+            const selectedWeight = document.getElementById('selectedWeight').value;
+            const variant = variants.find(v => v.color === selectedColor && v.weight === selectedWeight);
 
-                if (variant) {
-                    // Update images
-                    if (variant.images && variant.images.length > 0) {
-                        mainImage.src = variant.images[0];
-                        thumbnails.forEach((thumb, i) => {
-                            thumb.src = variant.images[i] || '';
-                            thumb.style.display = variant.images[i] ? 'block' : 'none';
-                        });
-                    }
-
-                    // Update stock status
-                    stockStatus.textContent = variant.stock > 0 ? 
-                        `In Stock: ${variant.stock}` : 'Out of Stock';
-                    stockStatus.className = `badge bg-${variant.stock > 0 ? 'success' : 'warning'}`;
-                }
-            }
-
-            // Color selection
-            colorButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    colorButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    document.getElementById('selectedColor').value = button.dataset.color;
-                    updateVariantDisplay();
-                });
-            });
-
-            // Weight selection
-            weightButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    weightButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    document.getElementById('selectedWeight').value = button.dataset.weight;
-                    updateVariantDisplay();
-                });
-            });
-
-            // Thumbnail hover
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener('mouseover', () => {
-                    mainImage.src = thumbnail.src;
-                });
-            });
-
-            // Zoom functionality
-            const zoomContainer = document.querySelector('.zoom-container');
-            const zoomLens = document.querySelector('.zoom-lens');
-
-            zoomContainer?.addEventListener('mousemove', (e) => {
-                const containerRect = zoomContainer.getBoundingClientRect();
-                const imageRect = mainImage.getBoundingClientRect();
-                const x = e.clientX - containerRect.left;
-                const y = e.clientY - containerRect.top;
-
-                const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
-                const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
-
-                zoomLens.style.left = `${lensX}px`;
-                zoomLens.style.top = `${lensY}px`;
-                zoomLens.style.display = 'block';
-
-                mainImage.style.transform = 'scale(2)';
-                mainImage.style.transformOrigin = `${x}px ${y}px`;
-            });
-
-            zoomContainer?.addEventListener('mouseleave', () => {
-                zoomLens.style.display = 'none';
-                mainImage.style.transform = 'scale(1)';
-            });
-
-            // Add to cart
-            document.getElementById('addtocartBtn').addEventListener('click', async (e) => {
-                e.preventDefault();
-                const userId = document.getElementById('userId').value;
-                const productId = document.getElementById('productId').value;
-                const quantity = document.getElementById('quantity').value;
-                const price = document.getElementById('salePrice').value;
-                const selectedColor = document.getElementById('selectedColor').value;
-                const selectedWeight = document.getElementById('selectedWeight').value;
-
-                const productDetails = {
-                    userId,
-                    productId,
-                    quantity,
-                    price,
-                    variants: { color: selectedColor, weight: selectedWeight }
-                };
-
-                try {
-                    const response = await fetch('/user/addTocart', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(productDetails)
+            if (variant) {
+                // Update images
+                if (variant.images && variant.images.length > 0) {
+                    mainImage.src = variant.images[0];
+                    thumbnails.forEach((thumb, i) => {
+                        thumb.src = variant.images[i] || '';
+                        thumb.style.display = variant.images[i] ? 'block' : 'none';
                     });
+                }
 
-                    const data = await response.json();
-                    if (!response.ok) {
-                        Swal.fire({
-                            icon: 'warning',
-                            text: data.error,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Added to cart successfully',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                } catch (error) {
+                // Update stock status
+                stockStatus.textContent = variant.stock > 0 ? 
+                    `In Stock: ${variant.stock}` : 'Out of Stock';
+                stockStatus.className = `badge bg-${variant.stock > 0 ? 'success' : 'warning'}`;
+            }
+        }
+
+        // Color selection
+        colorButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                colorButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById('selectedColor').value = button.dataset.color;
+                updateVariantDisplay();
+            });
+        });
+
+        // Weight selection
+        weightButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                weightButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById('selectedWeight').value = button.dataset.weight;
+                updateVariantDisplay();
+            });
+        });
+
+        // Thumbnail hover
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('mouseover', () => {
+                mainImage.src = thumbnail.src;
+            });
+        });
+
+        // Zoom functionality
+        const zoomContainer = document.querySelector('.zoom-container');
+        const zoomLens = document.querySelector('.zoom-lens');
+
+        zoomContainer?.addEventListener('mousemove', (e) => {
+            const containerRect = zoomContainer.getBoundingClientRect();
+            const imageRect = mainImage.getBoundingClientRect();
+            const x = e.clientX - containerRect.left;
+            const y = e.clientY - containerRect.top;
+
+            const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
+            const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
+
+            zoomLens.style.left = `${lensX}px`;
+            zoomLens.style.top = `${lensY}px`;
+            zoomLens.style.display = 'block';
+
+            mainImage.style.transform = 'scale(2)';
+            mainImage.style.transformOrigin = `${x}px ${y}px`;
+        });
+
+        zoomContainer?.addEventListener('mouseleave', () => {
+            zoomLens.style.display = 'none';
+            mainImage.style.transform = 'scale(1)';
+        });
+
+        // Add to cart
+        document.getElementById('addtocartBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value;
+            const productId = document.getElementById('productId').value;
+            const quantity = document.getElementById('quantity').value;
+            const price = document.getElementById('salePrice').value;
+            const selectedColor = document.getElementById('selectedColor').value;
+            const selectedWeight = document.getElementById('selectedWeight').value;
+
+            const productDetails = {
+                userId,
+                productId,
+                quantity,
+                price,
+                variants: { color: selectedColor, weight: selectedWeight }
+            };
+
+            try {
+                const response = await fetch('/user/addTocart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productDetails)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
                     Swal.fire({
-                        icon: 'error',
-                        text: 'An error occurred',
+                        icon: 'warning',
+                        text: data.error,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to cart successfully',
                         showConfirmButton: false,
                         timer: 2000
                     });
                 }
-            });
-
-            // Initialize display
-            if (variants && variants.length > 0) {
-                updateVariantDisplay();
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'An error occurred',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             }
         });
+
+
+        // review form
+        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const productId = document.getElementById('productdbId').value;
+            const name = document.getElementById('reviewName').value;
+            const star = document.getElementById('reviewStar').value;
+            const comment = document.getElementById('reviewComment').value;
+
+            const reviewDetails = { userId, productId, name, star, comment };
+
+            try {
+                const response = await fetch('/user/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reviewDetails)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    Swal.fire({
+                        icon: 'warning',
+                        text: data.error,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(()=>{
+                        window.location.reload();
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'An error occurred',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        });
+
+        // Initialize display
+        if (variants && variants.length > 0) {
+            updateVariantDisplay();
+        }
+    });
  </script>
 </body>

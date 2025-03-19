@@ -2,7 +2,7 @@ import mongoose, { Types } from "mongoose";
 const {Schema} = mongoose;
 
 const variantSchema = new mongoose.Schema({
-    color: { type: String, required: true },
+    color: { type: String },
     weight: { type: String},
     stock: { type: Number, required: true },
   });

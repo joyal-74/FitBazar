@@ -2,25 +2,22 @@ import mongoose from "mongoose";
 const {Schema} = mongoose;
 
 const reviewSchema = new Schema({
-    createdAt : {
-        type : Date,
-        default : Date.now,
+    userId : {
+        type : Schema.Types.ObjectId,
+        ref : 'User',
         required : true
     },
-    expiredAt : {
-        type : Date,
-        required : true,
-    },
-    userId : [{
-        type : Schema.Types.ObjectId,
-        ref : 'User'
-    }],
     productId: {
         type: Schema.Types.ObjectId,
         ref: 'Product',
         required: true,
     },
-    rating: {
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    star: {
         type: Number,
         required: true,
         min: 1,
@@ -31,13 +28,9 @@ const reviewSchema = new Schema({
         trim: true,
         maxlength: 1000,
     },
-    media: [{
-        type: [String],
-    }],
-
-})
+},{timestamps : true});
 
 
-const Reviews = mongoose.Model("Reviews", reviewSchema)
+const Reviews = mongoose.model("Reviews", reviewSchema)
 
 export default Reviews;

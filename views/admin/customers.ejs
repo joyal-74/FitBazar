@@ -88,7 +88,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% customer.reverse().forEach((customer, index) => { %>
+                                    <% customer.forEach((customer, index) => { %>
                                     <tr>
                                         <td><%= customer.userId %></td>
                                         <td><%= customer.name || "Name not updated" %></td>

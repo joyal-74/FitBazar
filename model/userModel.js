@@ -2,17 +2,16 @@ import mongoose from "mongoose";
 import Cart from "./cartModel.js";
 const { Schema } = mongoose
 
-// Define User Schema
 const userSchema = new Schema(
   {
-    name : {
-      type : String,
-      required : false,
-      unique : false
+    name: {
+      type: String,
+      required: false,
+      unique: false
     },
-    userId : {
-      type : String,
-      required : false
+    userId: {
+      type: String,
+      required: false
     },
     email: {
       type: String,
@@ -25,61 +24,60 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
-    phone : {
-      type : String,
-      required : false
+    phone: {
+      type: String,
+      required: false
     },
-    gender : {
-      type : String,
-      required : false
+    gender: {
+      type: String,
+      required: false
     },
-    profilePic : {
-      type : String,
-      required : false,
+    profilePic: {
+      type: String,
+      required: false,
     },
-    bio : {
-      type : String,
-      required : false,
+    bio: {
+      type: String,
+      required: false,
     },
-    googleId :{
-      type : String
+    googleId: {
+      type: String
     },
-    isBlocked : {
-      type : Boolean,
-      default : false,
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
-    cart : {
-      type : Schema.Types.ObjectId,
-      ref : "Cart",
+    cart: {
+      type: Schema.Types.ObjectId,
+      ref: "Cart",
     },
-    wallet : {
-      type : Schema.Types.ObjectId,
-      ref : "wallet"
+    wallet: {
+      type: Schema.Types.ObjectId,
+      ref: "wallet"
     },
-    orderHistory : [{
-      type : Schema.Types.ObjectId,
-      ref : "Order"
+    orderHistory: [{
+      type: Schema.Types.ObjectId,
+      ref: "Order"
     }],
-    searchHistory : [{
-      category : {
-        type : Schema.Types.ObjectId,
-        ref : "Category",
+    searchHistory: [{
+      category: {
+        type: Schema.Types.ObjectId,
+        ref: "Category",
       },
-      brand : {
-        type : String
+      brand: {
+        type: String
       },
-      price : {
-        type : Number,
+      price: {
+        type: Number,
       },
-      searchOn : {
-        type : Date,
-        default : Date.now
+      searchOn: {
+        type: Date,
+        default: Date.now
       }
     }]
-  },{timestamps : true}
+  }, { timestamps: true }
 );
 
-// Create User Model
 const User = mongoose.model("User", userSchema);
 
 export default User;

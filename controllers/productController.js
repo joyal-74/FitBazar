@@ -1,6 +1,7 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
 import User from '../model/userModel.js';
+import Reviews from '../model/reviewsModel.js';
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 import cloudinary from '../config/cloudinary.js';
 
@@ -227,10 +228,12 @@ const loadproductDetails = async (req, res) => {
 
     const user = await User.findOne({ _id: userId });
 
-    const product = await Products.findOne({ productId })
+    const reviews = await Reviews.find()
+
+    const product = await Products.findOne({ productId }).populate('category')
     const relateproducts = await Products.find({ category }).limit(4);
 
-    res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user })
+    res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
 }
 
 // shop pages and product details

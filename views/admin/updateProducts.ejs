@@ -213,6 +213,12 @@
                 editProductForm.addEventListener("submit", async function (event) {
                     event.preventDefault();
 
+                    clearErrors();
+
+                    if (!validateForm()) {
+                        return;
+                    }
+
                     const formData = new FormData(this);
 
                     document.querySelectorAll(".remove-image-btn[data-removed='true']").forEach(btn => {
@@ -222,7 +228,6 @@
                     if (removedImages.length > 0) {
                         formData.append("removedImages", JSON.stringify(removedImages));
                     }
-                    console.log(removedImages);
 
                     try {
                         const response = await fetch(`/admin/products/${document.getElementById('productId').value}`, {
@@ -256,6 +261,132 @@
                         });
                     }
                 });
+            }
+
+            // Validation function
+            function validateForm() {
+                let isValid = true;
+
+                // Product Name (required, min 2 chars)
+                const productName = document.getElementById("productName").value.trim();
+                if (!productName || productName.length < 2) {
+                    showError("nameError", "Product name is required and must be at least 2 characters.");
+                    isValid = false;
+                }
+
+                // Category (required)
+                const productCategory = document.getElementById("productCategory").value;
+                if (!productCategory || productCategory === "Select category") {
+                    showError("nameError", "Please select a category.");
+                    isValid = false;
+                }
+
+                // Brand (required, min 2 chars)
+                const brand = document.getElementById("brand").value.trim();
+                if (!brand || brand.length < 2) {
+                    showError("brandError", "Brand is required and must be at least 2 characters.");
+                    isValid = false;
+                }
+
+                // Base Price (required, positive number)
+                const price = document.getElementById("productPrice").value;
+                if (!price || price <= 0) {
+                    showError("priceError", "Base price is required and must be greater than 0.");
+                    isValid = false;
+                }
+
+                // Discount Percentage (optional, 0-100)
+                const discount = document.getElementById("productOffer").value;
+                if (discount && (discount < 0 || discount > 100)) {
+                    showError("priceError", "Discount must be between 0 and 100.");
+                    isValid = false;
+                }
+
+                // Short Description (required, min 10 chars)
+                const shortDesc = document.getElementById("shortDescription").value.trim();
+                if (!shortDesc || shortDesc.length < 10) {
+                    showError("descriptionError", "Short description is required and must be at least 10 characters.");
+                    isValid = false;
+                }
+
+                // Long Description (required, min 20 chars)
+                const longDesc = document.getElementById("productDescription").value.trim();
+                if (!longDesc || longDesc.length < 20) {
+                    showError("descriptionError", "Long description is required and must be at least 20 characters.");
+                    isValid = false;
+                }
+
+                // Specifications (optional, but min 10 chars if provided)
+                const spec = document.getElementById("productSpec").value.trim();
+                if (spec && spec.length < 10) {
+                    showError("specError", "Specifications must be at least 10 characters if provided.");
+                    isValid = false;
+                }
+
+                const filledSlots = document.querySelectorAll(".image-preview.filled").length;
+                const newImageInputs = document.querySelectorAll(".image-upload-slot input[type='file']");
+                let newImageCount = 0;
+
+                newImageInputs.forEach(input => {
+                    const slot = input.closest(".image-upload-slot");
+                    const isFilled = slot.querySelector(".image-preview.filled");
+                    if (input.files && input.files.length > 0 && !isFilled) {
+                        newImageCount++;
+                    }
+                });
+
+                const totalImages = filledSlots + newImageCount - removedImages.length ;
+
+                console.log("Filled slots (current):", filledSlots);
+                console.log("New images:", newImageCount);
+                console.log("Removed images tracked:", removedImages.length);
+                console.log("Total images:", totalImages);
+
+                if (totalImages < 3) {
+                    showError("imageError", "At least 3 images are required.");
+                    isValid = false;
+                }
+
+                const variantItems = document.querySelectorAll(".variant-item");
+                if (variantItems.length === 0) {
+                    showError("stock-error", "At least one variant is required.", variantContainer);
+                    isValid = false;
+                } else {
+                    variantItems.forEach((item, index) => {
+                        const color = item.querySelector(`input[name="colorVariant[${index}]"]`).value.trim();
+                        const weight = item.querySelector(`input[name="weightVariant[${index}]"]`).value.trim();
+                        const stock = item.querySelector(`input[name="stockVariant[${index}]"]`).value;
+
+                        // Either color or weight must be provided
+                        if (!color && !weight) {
+                            showError("color-error", "Either color or weight is required.", item);
+                            isValid = false;
+                        }
+
+                        // Stock (required, positive number)
+                        if (!stock || stock < 0) {
+                            showError("stock-error", "Stock is required and must be 0 or greater.", item);
+                            isValid = false;
+                        }
+                    });
+                }
+
+                return isValid;
+            }
+
+            // Helper functions for error handling
+            function showError(elementId, message, container = null) {
+                const errorElement = container 
+                    ? container.querySelector(`.${elementId}`) 
+                    : document.getElementById(elementId);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                }
+            }
+
+            function clearErrors() {
+                const errorElements = document.querySelectorAll(".error-message, #nameError, #brandError, #priceError, #descriptionError, #specError, #imageError");
+                errorElements.forEach(el => el.textContent = "");
             }
 
             // Variant Management
