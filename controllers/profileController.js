@@ -4,7 +4,7 @@ import Addresses from '../model/addressModel.js'
 import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
-
+import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 
 const loadOrders = async (req,res) => {
     try {
@@ -13,7 +13,7 @@ const loadOrders = async (req,res) => {
         const user = await User.findOne({_id : userId})
 
         if (!userId) {
-            return res.status(401).redirect('/user/login');
+            return res.status(UNAUTHORIZED).redirect('/user/login');
         }
         const [firstName, lastName] = user.name.split(' ');
         const orders = await Order.find({ userId })
@@ -42,7 +42,7 @@ const loadOrderDetails = async (req,res)=> {
 
 
         if (!userId) {
-            return res.status(401).redirect('/user/login');
+            return res.status(UNAUTHORIZED).redirect('/user/login');
         }
 
         const user = await User.findOne({_id : userId})
@@ -118,7 +118,7 @@ const sendOTP = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-        return res.status(400).json({ success: false, error: 'Email is required' });
+        return res.status(BAD_REQUEST).json({ success: false, error: 'Email is required' });
     }
 
     const otp = generateOTP();
@@ -130,7 +130,7 @@ const sendOTP = async (req, res) => {
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (error) {
         console.error('Error sending OTP:', error);
-        res.status(500).json({ success: false, error: 'Failed to send OTP' });
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to send OTP' });
     }
 }
 
@@ -138,7 +138,7 @@ const verifyOTP = (req, res) => {
     const { email, otp } = req.body;
 
     if (!email || !otp) {
-        return res.status(400).json({ success: false, error: 'Email and OTP are required' });
+        return res.status(BAD_REQUEST).json({ success: false, error: 'Email and OTP are required' });
     }
 
     const storedData = req.session.emailOtp;
@@ -147,7 +147,7 @@ const verifyOTP = (req, res) => {
     console.log(otp)
 
     if (!storedData) {
-        return res.status(400).json({ success: false, error: 'No OTP found for this email' });
+        return res.status(BAD_REQUEST).json({ success: false, error: 'No OTP found for this email' });
     }
 
     if (storedData === otp) {
@@ -155,7 +155,7 @@ const verifyOTP = (req, res) => {
         return res.json({ success: true, message: 'OTP verified successfully' });
     }
 
-    res.status(400).json({ success: false, error: 'Invalid OTP' });
+    res.status(BAD_REQUEST).json({ success: false, error: 'Invalid OTP' });
 }
 
 
@@ -186,10 +186,10 @@ const updateProfile = async (req,res) => {
         
         req.session.user = user
 
-        return res.status(200).json({ message: "Profile updated successfully", user });
+        return res.status(OK).json({ message: "Profile updated successfully", user });
     } catch (error) {
         console.error("Error updating profile:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
 
 }
@@ -227,7 +227,7 @@ const addAddress = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
-            return res.status(400).json({ error: "All required fields must be filled." });
+            return res.status(BAD_REQUEST).json({ error: "All required fields must be filled." });
         }
 
         let userAddress = await Address.findOne({ userId });
@@ -257,11 +257,11 @@ const addAddress = async (req, res) => {
 
         await userAddress.save();
 
-        return res.status(201).json({ message: "Address added successfully" });
+        return res.status(CREATED).json({ message: "Address added successfully" });
 
     } catch (error) {
         console.error("Error adding address:", error);
-        return res.status(500).json({ error: error.message || "Address creation error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: error.message || "Address creation error" });
     }
 };
 
@@ -287,7 +287,7 @@ const loadEditAddress = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {
-            return res.status(401).json({ error: "Unauthorized" });
+            return res.status(UNAUTHORIZED).json({ error: "Unauthorized" });
         }
 
         const [firstName, lastName] = user.name.split(' ');
@@ -297,14 +297,14 @@ const loadEditAddress = async (req, res) => {
         });
 
         if (!address) {
-            return res.status(404).json({ error: "Address not found" });
+            return res.status(NOT_FOUND).json({ error: "Address not found" });
         }
 
         const selectedAddress = address.details[index];
         // console.log(selectedAddress);
 
         if (!selectedAddress) {
-            return res.status(404).json({ error: "Address details not found" });
+            return res.status(NOT_FOUND).json({ error: "Address details not found" });
         }
 
         res.render('user/editaddress', { 
@@ -317,7 +317,7 @@ const loadEditAddress = async (req, res) => {
         });
     } catch (error) {
         console.error("Error loading address:", error);
-        res.status(500).json({ 
+        res.status(INTERNAL_SERVER_ERROR).json({ 
             error: "Internal Server Error",
             message: error.message 
         });
@@ -333,7 +333,7 @@ const editAddress = async (req,res) => {
         const userId = req.session.user.id;
 
         if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
-            return res.status(400).json({ error: "All required fields must be filled." });
+            return res.status(BAD_REQUEST).json({ error: "All required fields must be filled." });
         }
 
         let userAddress = await Address.findOne({ userId });
@@ -354,15 +354,15 @@ const editAddress = async (req,res) => {
         await userAddress.save();
 
         if(from === 'checkout'){
-            return res.status(200).json({ message: "Address updated successfully", redirectUrl: `/user/checkout?userId=${userId}` });
+            return res.status(OK).json({ message: "Address updated successfully", redirectUrl: `/user/checkout?userId=${userId}` });
         }else{
-            return res.status(200).json({ message: "Address updated successfully", redirectUrl: '/user/address' });
+            return res.status(OK).json({ message: "Address updated successfully", redirectUrl: '/user/address' });
 
         }
 
     } catch (error) {
         console.error("Error updating address:", error);
-        return res.status(500).json({ error: error.message || "Address editing error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: error.message || "Address editing error" });
     }
 }
 
@@ -377,11 +377,11 @@ const deleteAddress = async (req,res) => {
 
         await userAddress.save();
 
-        return res.status(200).json({ message: "Address deleted successfully" });
+        return res.status(OK).json({ message: "Address deleted successfully" });
 
     } catch (error) {
         console.error("Error deleting address:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
 }
 
@@ -407,27 +407,27 @@ const updatePassword = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!userId) {
-            return res.status(401).json({ error: "User not authenticated" });
+            return res.status(UNAUTHORIZED).json({ error: "User not authenticated" });
         }
 
         const user = await User.findOne({ _id: userId });
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(NOT_FOUND).json({ error: "User not found" });
         }
 
         const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) {
-            return res.status(401).json({ error: "Old password is incorrect" });
+            return res.status(UNAUTHORIZED).json({ error: "Old password is incorrect" });
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
         await user.save();
 
-        return res.status(200).json({ message: "Password changed successfully" });
+        return res.status(OK).json({ message: "Password changed successfully" });
     } catch (error) {
         console.error("Error updating password:", error);
-        return res.status(500).json({ error: "An error occurred while updating the password" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "An error occurred while updating the password" });
     }
 };
 

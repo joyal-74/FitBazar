@@ -6,6 +6,7 @@ import Address from "../model/addressModel.js";
 import mongoose from "mongoose";
 import Order from "../model/orderModel.js";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from "../config/statusCodes.js";
 
 
 const addItemToCart = async (req, res) => {
@@ -15,18 +16,18 @@ const addItemToCart = async (req, res) => {
         console.log(req.body);
 
         if(!userId){
-            return res.status(401).json({ error: "Please log in to add items to your cart." });
+            return res.status(UNAUTHORIZED).json({ error: "Please log in to add items to your cart." });
         }
 
         const product = await Products.findOne({ productId: productId, visibility: true });
         console.log(product);
 
         if (!product) {
-            return res.status(404).json({ error: "Product not found. Unable to add to cart." });
+            return res.status(NOT_FOUND).json({ error: "Product not found. Unable to add to cart." });
         }
 
         if (quantity > product.stock) {
-            return res.status(400).json({
+            return res.status(BAD_REQUEST).json({
                 error: `Only ${product.stock} units of "${product.name}" available in stock.`
             });
         }
@@ -87,10 +88,10 @@ const addItemToCart = async (req, res) => {
             });
         }
 
-        return res.status(200).json({ message: "Item added to cart successfully!" });
+        return res.status(OK).json({ message: "Item added to cart successfully!" });
     } catch (error) {
         console.error("Add to cart error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -114,7 +115,7 @@ const loadCart = async (req, res) => {
         res.render('user/cart', { title: 'cart', cart, user });
     } catch (error) {
         console.error('Error fetching cart:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -125,13 +126,13 @@ const updateQuantity = async (req, res) => {
     const cart = await Cart.findOne({ userId: userId, 'items.productId': productId });
 
     if (!cart) {
-        return res.status(404).json({ message: "Cart or product not found" });
+        return res.status(NOT_FOUND).json({ message: "Cart or product not found" });
     }
 
     const item = cart.items.find(item => item.productId.toString() === productId);
 
     if (!item) {
-        return res.status(404).json({ message: "Product not found in cart" });
+        return res.status(NOT_FOUND).json({ message: "Product not found in cart" });
     }
 
     // Update quantity
@@ -140,12 +141,12 @@ const updateQuantity = async (req, res) => {
     } else if (change < 0 && item.quantity > 1) {
         item.quantity -= 1;
     } else if (change < 0 && item.quantity === 1) {
-        return res.status(200).json({ message: "Quantity unchanged as it’s already at minimum", cart });
+        return res.status(OK).json({ message: "Quantity unchanged as it’s already at minimum", cart });
     }
 
     await cart.save();
 
-    return res.status(200).json({ message: "Quantity updated successfully", cart });
+    return res.status(OK).json({ message: "Quantity updated successfully", cart });
 };
 
 const deleteFromcart = async (req,res)=> {
@@ -160,13 +161,13 @@ const deleteFromcart = async (req,res)=> {
         );
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.status(NOT_FOUND).json({ message: "Cart not found" });
         }
         
-        res.status(200).json({mesage : "Item deleted from cart successfully"});
+        res.status(OK).json({mesage : "Item deleted from cart successfully"});
     } catch (error) {
         console.log(error);
-        res.status(500).json({message : 'Internal server error'});
+        res.status(INTERNAL_SERVER_ERROR).json({message : 'Internal server error'});
     }
 }
 
@@ -220,7 +221,7 @@ const addShoppingAddress = async (req,res) =>{
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
-            return res.status(400).json({ error: "All required fields must be filled." });
+            return res.status(BAD_REQUEST).json({ error: "All required fields must be filled." });
         }
 
         let userAddress = await Address.findOne({ userId });
@@ -251,11 +252,11 @@ const addShoppingAddress = async (req,res) =>{
 
         await userAddress.save();
 
-        return res.status(201).json({ message: "Address added successfully" , redirectUrl: `/user/checkout?userId=${userId}` });
+        return res.status(CREATED).json({ message: "Address added successfully" , redirectUrl: `/user/checkout?userId=${userId}` });
 
     } catch (error) {
         console.error("Error adding address:", error);
-        return res.status(500).json({ error: error.message || "Address creation error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: error.message || "Address creation error" });
     }
 }
 
@@ -267,20 +268,20 @@ const loadshoppingAddress = async (req,res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {
-            return res.status(401).json({ error: "Please Login to continue" });
+            return res.status(UNAUTHORIZED).json({ error: "Please Login to continue" });
         }
 
         const address = await Address.findOne({ userId });
 
         if (!address) {
-            return res.status(404).json({ error: "Address not found" });
+            return res.status(NOT_FOUND).json({ error: "Address not found" });
         }
 
         const selectedAddress = address.details[index];
         console.log(selectedAddress);
 
         if (!selectedAddress) {
-            return res.status(404).json({ error: "Address details not found" });
+            return res.status(NOT_FOUND).json({ error: "Address details not found" });
         }
 
         const cart = await Cart.findOne({ userId }).populate({
@@ -294,7 +295,7 @@ const loadshoppingAddress = async (req,res) => {
 
     } catch (error) {
         console.error("Error loading address:", error);
-        res.status(500).json({ error: "Internal Server Error", message: error.message });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error", message: error.message });
     }
 }
 
@@ -324,12 +325,12 @@ const editshoppingAddress = async (req,res) =>{
         };
 
         await userAddress.save();
-        return res.status(200).json({ message: "Address updated" , redirectUrl: `/user/checkout?userId=${userId}`});
+        return res.status(OK).json({ message: "Address updated" , redirectUrl: `/user/checkout?userId=${userId}`});
 
 
     } catch (error) {
         console.error("Error updating address:", error);
-        return res.status(500).json({ error: error.message || "Address editing error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: error.message || "Address editing error" });
     }
 }
 
@@ -343,20 +344,20 @@ const loadCheckoutUp = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {
-            return res.status(401).json({ error: "Please Login to continue" });
+            return res.status(UNAUTHORIZED).json({ error: "Please Login to continue" });
         }
 
         const address = await Address.findOne({ userId: id });
 
         if (!address) {
-            return res.status(404).json({ error: "Address not found" });
+            return res.status(NOT_FOUND).json({ error: "Address not found" });
         }
 
         const selectedAddress = address.details[index];
         // console.log(selectedAddress);
 
         if (!selectedAddress) {
-            return res.status(404).json({ error: "Address details not found" });
+            return res.status(NOT_FOUND).json({ error: "Address details not found" });
         }
 
         res.render('user/checkout-Up', { 
@@ -368,7 +369,7 @@ const loadCheckoutUp = async (req, res) => {
         });
     } catch (error) {
         console.error("Error loading address:", error);
-        res.status(500).json({ 
+        res.status(INTERNAL_SERVER_ERROR).json({ 
             error: "Internal Server Error",
             message: error.message 
         });
@@ -386,7 +387,7 @@ const loadPayments = async (req, res) => {
         res.render('user/payment', {title : "Checkout", user, cart});
     } catch (error) {
         console.error('Error loading payment:', error);
-        res.redirect('/404');
+        res.redirect('/NOT_FOUND');
     }
 }
 
@@ -394,25 +395,25 @@ const paymentSuccess = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         if (!userId) {
-            return res.status(401).json({ error: "Unauthorized. Please log in." });
+            return res.status(UNAUTHORIZED).json({ error: "Unauthorized. Please log in." });
         }
 
         const { couponApplied, paymentMethod } = req.body;
 
         if (!paymentMethod) {
-            return res.status(400).json({ error: "Payment method is required." });
+            return res.status(BAD_REQUEST).json({ error: "Payment method is required." });
         }
 
         const addressId = req.session.deliveryAddress;
         if (!addressId) {
-            return res.status(400).json({ error: "Delivery address not found." });
+            return res.status(BAD_REQUEST).json({ error: "Delivery address not found." });
         }
 
         const objectId = new mongoose.Types.ObjectId(addressId);
         const cart = await Cart.findOne({ userId }).populate('items.productId');
 
         if (!cart || cart.items.length === 0) {
-            return res.status(400).json({ error: "Cart is empty." });
+            return res.status(BAD_REQUEST).json({ error: "Cart is empty." });
         }
 
         if (paymentMethod === 'cod') {
@@ -422,7 +423,7 @@ const paymentSuccess = async (req, res) => {
             );
 
             if (!address) {
-                return res.status(404).json({ error: 'Address not found.' });
+                return res.status(NOT_FOUND).json({ error: 'Address not found.' });
             }
 
             const orderId = generateOrderId();
@@ -431,7 +432,7 @@ const paymentSuccess = async (req, res) => {
                 const product = await Products.findById(item.productId._id);
                 if (product) {
                     if (product.stock < item.quantity) { 
-                        return res.status(400).json({error: `Insufficient stock for "${product.name}". Only ${product.stock} left.`});
+                        return res.status(BAD_REQUEST).json({error: `Insufficient stock for "${product.name}". Only ${product.stock} left.`});
                     }
                 }
             }
@@ -440,7 +441,7 @@ const paymentSuccess = async (req, res) => {
                 const product = await Products.findById(item.productId._id);
                 if (product) {
                     if (product.stock < item.quantity) {
-                        return res.status(400).json({ error: `Insufficient stock for ${item.productId.name}.` });
+                        return res.status(BAD_REQUEST).json({ error: `Insufficient stock for ${item.productId.name}.` });
                     }
                     product.stock -= item.quantity;
                     await product.save();
@@ -473,13 +474,13 @@ const paymentSuccess = async (req, res) => {
 
             await Cart.findByIdAndDelete(cart._id);
 
-            return res.status(200).json({ message: 'Order placed successfully.' });
+            return res.status(OK).json({ message: 'Order placed successfully.' });
         } else {
-            return res.status(400).json({ error: "Payment method not implemented." });
+            return res.status(BAD_REQUEST).json({ error: "Payment method not implemented." });
         }
     } catch (error) {
         console.error("Order Creation Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 
@@ -490,7 +491,7 @@ const confirmOrder = async (req, res) => {
     
         if (!userId) {
             console.error('User ID is missing in session.');
-            return res.status(400).render('error', { message: 'Invalid session. Please log in again.' });
+            return res.status(BAD_REQUEST).render('error', { message: 'Invalid session. Please log in again.' });
         }
         
         const user = await User.findOne({_id : userId});
@@ -513,7 +514,7 @@ const confirmOrder = async (req, res) => {
         return res.render('user/confirmOrder', {title : "Checkout", user, shippingAddress, order, orderItems});
     } catch (error) {
         console.error(`Error confirming order: ${error.message}`);
-        return res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
+        return res.status(INTERNAL_SERVER_ERROR).render('error', { message: 'Something went wrong. Please try again later.' });
     }
 }
 

@@ -2,7 +2,7 @@ import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
 import User from '../model/userModel.js';
 import Reviews from '../model/reviewsModel.js';
-import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 import cloudinary from '../config/cloudinary.js';
 
 const loadaddProducts = async (req, res) => {
@@ -90,7 +90,7 @@ const editProducts = async (req, res) => {
         const product = await Products.findOne({productId});
 
         if (!product) {
-            return res.status(404).json({ error: "Product not found." });
+            return res.status(NOT_FOUND).json({ error: "Product not found." });
         }
 
         for (const imageUrl of removedImages) {
@@ -108,9 +108,11 @@ const editProducts = async (req, res) => {
         product.name = productName;
         product.shortDescription = shortDescription;
         product.description = productDescription;
+        product.price = productPrice;
         product.productSpec = productSpec;
         product.brand = productBrand;
         product.category = categoryId;
+        product.productOffer = productOffer;
 
         // Update variants
         const variants = [];
@@ -131,10 +133,10 @@ const editProducts = async (req, res) => {
 
         await product.save();
 
-        return res.status(200).json({ message: "Product updated successfully." });
+        return res.status(OK).json({ message: "Product updated successfully." });
     } catch (error) {
         console.error("Edit Product Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
 

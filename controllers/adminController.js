@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import Admin from "../model/adminModel.js";
 import Order from "../model/orderModel.js";
-import { INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 
 
 // Login Page Handler
@@ -96,7 +96,7 @@ const updateStatus = async (req, res) => {
 
         if (!order) {
             console.log('Order not found!');
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
         order.status = status;
@@ -104,10 +104,10 @@ const updateStatus = async (req, res) => {
 
         await order.save();
 
-        res.status(200).json({ message: 'Order status updated successfully' });
+        res.status(OK).json({ message: 'Order status updated successfully' });
     } catch (error) {
         console.error('Error updating order status:', error);
-        res.status(500).json({ message: 'Failed to update order status' });
+        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Failed to update order status' });
     }
 };
 

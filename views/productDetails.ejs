@@ -73,7 +73,24 @@
 
                 <div class="col-md-6">
                     <h2 class="fw-bold"><%= product.brand %> <%= product.name %></h2>
-                    <p class="text-warning fs-5 fw-semibold">★★★★☆ (88 Reviews)</p>
+                    <% 
+                        let totalRating = reviews.reduce((sum, review) => sum + review.star, 0);
+                        let avgRating = reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 0;
+                    %>
+
+                    <p class="text-warning fs-5 fw-semibold">
+                        <% for (let i = 1; i <= Math.floor(avgRating); i++) { %>
+                            &#9733; 
+                        <% } %>
+                        <% if (avgRating % 1 !== 0) { %>
+                            &#9733;&#xFE0E;
+                        <% } %>
+                        <% for (let i = Math.ceil(avgRating); i < 5; i++) { %>
+                            &#9734;
+                        <% } %>
+                        (<%= reviews.length %> <%= reviews.length === 1 ? 'Review' : 'Reviews' %>)
+                    </p>
+
                     <p>
                         <span class="text-danger fs-2 fw-bold me-2">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></span>
                         <del class="text-muted fs-5 me-3">₹<%= product.price %></del>
