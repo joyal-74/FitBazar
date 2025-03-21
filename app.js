@@ -57,9 +57,9 @@ app.use('/', homeRoute);
 
 
 // cannot get page 404 error
-// app.use((req, res, next) => {
-//     res.status(404).render("error",{title : "Page not found"});
-// });
+app.use((req, res, next) => {
+    res.status(404).render("error",{title : "Page not found"});
+});
 
 app.listen(PORT,()=> console.log(`server running on ${PORT} 
 admin : http://localhost:4000/admin/login

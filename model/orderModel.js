@@ -28,6 +28,9 @@ const orderSchema = new Schema({
         type: String,
         required: true
     },
+    customer : {
+        type : String
+    },
     brand: {
         type: String,
     },

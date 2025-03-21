@@ -295,8 +295,17 @@
     
             <!-- Orders Content -->
             <div class="col-9">
-                <div class="page-header">
+                <div class="page-header d-flex justify-content-between">
                     <h1>My Orders</h1>
+                    <form id="searchForm" method="GET" action="/user/orders">
+                        <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<%= search %>">
+                            <button class="btn" type="submit" style="background-color: #3e29a8; border-radius: 10px;">
+                                <i class="fas fa-search text-white"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
                 </div>
             
                 <% if (orders && orders.length > 0) { %>
@@ -348,9 +357,9 @@
                                 <button class="btn btn-primary details-btn" data-order-id="<%= order.orderId %>">View Order</button>
                                 <% if (order.status !== 'Cancelled') { %>
                                     <% if (order.status === 'Delivered') { %>
-                                        <button class="btn btn-outline-secondary return-btn" data-order-id="<%= order.orderId %>">Return</button>
+                                        <button class="btn btn-outline-secondary return-btn" onclick="openReturnModal('<%= order._id%>')" data-order-id="<%= order.orderId %>">Return</button>
                                     <% } else { %>
-                                        <button class="btn btn-outline-secondary cancel-btn" data-order-id="<%= order.orderId %>">Cancel</button>
+                                        <button class="btn btn-outline-secondary cancel-btn" onclick="openCancelModal('<%= order._id%>')" data-order-id="<%= order.orderId %>">Cancel</button>
                                     <% } %>
                                 <% } %>
                             </div>
@@ -366,7 +375,178 @@
         </div>
     </div>
 
+    <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnModalLabel">Return Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="returnOrderId">
+                    <div class="mb-3">
+                        <label for="returnReason" class="form-label">Reason for Return</label>
+                        <textarea class="form-control" id="returnReason" rows="3" required></textarea>
+                        <div class="invalid-feedback">Please provide a reason for returning the order.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="submitReturn()">Confirm Return</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Modal -->
+
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="cancelOrderId">
+                    <div class="mb-3">
+                        <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                        <select class="form-select" id="cancelReason" required>
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="Changed my mind">Changed my mind</option>
+                            <option value="Found a better deal">Found a better deal</option>
+                            <option value="Ordered by mistake">Ordered by mistake</option>
+                            <option value="Shipping is delayed">Shipping is delayed</option>
+                            <option value="Product no longer needed">Product no longer needed</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a reason for cancelling the order.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="submitCancel()">Confirm Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function openReturnModal(orderId) {
+            document.getElementById('returnOrderId').value = orderId;
+            document.getElementById('returnReason').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        }
+
+        function openCancelModal(orderId) {
+            document.getElementById('cancelOrderId').value = orderId;
+            document.getElementById('cancelReason').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            modal.show();
+        }
+
+        async function submitReturn() {
+            const orderId = document.getElementById('returnOrderId').value;
+            const reason = document.getElementById('returnReason').value;
+
+            if (!reason.trim()) {
+                document.getElementById('returnReason').classList.add('is-invalid');
+                return;
+            } else {
+                document.getElementById('returnReason').classList.remove('is-invalid');
+            }
+
+            try {
+                const response = await fetch(`/user/orders/return?id=${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: data?.message || 'Failed to process return request.',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An error occurred while processing the return.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+        }
+
+        async function submitCancel() {
+
+            const orderId = document.getElementById('cancelOrderId').value;
+            const reason = document.getElementById('cancelReason').value;
+
+            if (!reason.trim()) {
+                document.getElementById('cancelReason').classList.add('is-invalid');
+                return;
+            } else {
+                document.getElementById('cancelReason').classList.remove('is-invalid');
+            }
+
+            try {
+                const response = await fetch(`/user/orders/cancel?id=${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },body : JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: data?.message || 'Failed to cancel order.',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An error occurred while cancelling the order.',
+                    icon: 'error',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+            }
+        }
+
+
+
         document.querySelectorAll('.details-btn').forEach(button => {
             button.addEventListener('click', (e) => {
                 const orderId = e.target.dataset.orderId;

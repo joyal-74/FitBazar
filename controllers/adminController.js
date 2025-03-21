@@ -57,11 +57,40 @@ const loadDashboard = (req, res) => {
 
 
 const loadOrders = async (req, res) => {
-    const orders = await Order.find()
-        .populate('userId', 'name')
-        .sort({ createdAt: -1 });
-    res.render('admin/orders', { title: 'Orders', orders });
-}
+
+    try {
+        const { status, search } = req.query;
+        let query = {};
+
+        // Search Logic
+        if (search) {
+            query.$or = [
+                { orderId: { $regex: search, $options: 'i' } },
+                { customer : { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        // Filter Logic
+        if (status) {
+            query.status = status;
+        }
+
+        // Fetch Orders based on Query
+        const orders = await Order.find(query).sort({ createdAt: -1 });
+
+        res.render('admin/orders', {
+            orders,
+            status: req.query.clear ? '' : status,
+            search: req.query.clear ? '' : search
+        });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).send('Server Error');
+    }
+
+};
+
+
 
 const viewOrders = async (req, res) => {
     const orderId = req.query.id;
@@ -107,6 +136,7 @@ async function updateStatus(req, res) {
         res.status(500).json({ message: 'Error updating status', error });
     }
 }
+
 
 
 

@@ -477,6 +477,9 @@ const paymentSuccess = async (req, res) => {
                 { 'details.$': 1 }
             );
 
+            const customer = address.details[0].name;
+            console.log(customer)
+
             if (!address) {
                 return res.status(NOT_FOUND).json({ error: 'Address not found.' });
             }
@@ -517,6 +520,7 @@ const paymentSuccess = async (req, res) => {
                     orderId,
                     product: item.productId._id,
                     name: item.productId.name, 
+                    customer,
                     quantity: item.quantity, 
                     price: item.productId.price, 
                     variant: item.variants,

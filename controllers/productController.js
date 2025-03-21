@@ -247,7 +247,6 @@ const loadproductDetails = async (req, res) => {
 const loadShop = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-
         const user = await User.findOne({ _id: userId });
 
         const page = parseInt(req.query.page) || 1;
@@ -256,22 +255,35 @@ const loadShop = async (req, res) => {
 
         // Extract filters from req.query
         let filter = { visibility: true };
+
+        // Search filter
         if (req.query.result) {
             filter.name = { $regex: req.query.result, $options: "i" };
         }
-        
+
+        // Multiple Category filter
         if (req.query.category) {
             let categories = Array.isArray(req.query.category)
                 ? req.query.category
                 : [req.query.category];
-
-            const matchedCategories = await Category.find({ name: { $in: categories } }).select('_id');
-            
+            const matchedCategories = await Category.find({ 
+                name: { $in: categories },
+                visibility: true 
+            }).select('_id');
             if (matchedCategories.length) {
                 filter.category = { $in: matchedCategories.map(cat => cat._id) };
             }
         }
 
+        // Multiple Brand filter
+        if (req.query.brand) {
+            let brands = Array.isArray(req.query.brand)
+                ? req.query.brand
+                : [req.query.brand];
+            filter.brand = { $in: brands };
+        }
+
+        // Price filter with discount consideration
         if (req.query.price) {
             filter.$expr = {
                 $lte: [
@@ -280,39 +292,52 @@ const loadShop = async (req, res) => {
                 ]
             };
         }
-        if (req.query.brand) {
-            filter.brand = req.query.brand;
-        }
+
+        // Availability filter
         if (req.query.availability) {
             filter.stock = { $gt: 0 };
         }
 
-        // Sorting
+        // Sorting options
         const sortOption = req.query.sort || "newest";
         let sortQuery = {};
-        if (sortOption === "priceLowToHigh") sortQuery = { price: 1 };
-        else if (sortOption === "priceHighToLow") sortQuery = { price: -1 };
-        else if (sortOption === "aToZ") sortQuery = { name: 1 };
-        else if (sortOption === "zToA") sortQuery = { name: -1 };
-        else if (sortOption === "ratingHighToLow") sortQuery = { rating: -1 };
-        else sortQuery = { createdAt: -1 };
+        switch (sortOption) {
+            case "priceLowToHigh":
+                sortQuery = { price: 1 };
+                break;
+            case "priceHighToLow":
+                sortQuery = { price: -1 };
+                break;
+            case "aToZ":
+                sortQuery = { name: 1 };
+                break;
+            case "zToA":
+                sortQuery = { name: -1 };
+                break;
+            case "ratingHighToLow":
+                sortQuery = { rating: -1 };
+                break;
+            default:
+                sortQuery = { createdAt: -1 }; // newest
+        }
 
-        // Fetch products
-        const product = await Products.aggregate([
+        // Fetch products with aggregation
+        const products = await Products.aggregate([
             { $match: filter },
             { $sort: sortQuery },
             { $skip: skip },
             { $limit: limit }
         ]);
 
+        // Fetch available categories and brands for filter options
         const categories = await Category.find({ visibility: true });
-        const brands = await Products.find().distinct("brand");
+        const brands = await Products.distinct("brand", { visibility: true });
         const totalProducts = await Products.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / limit);
 
         res.render("shop", {
             title: "Shop",
-            product,
+            product: products, // Renamed to products for clarity
             brands,
             category: categories,
             appliedFilters: req.query,
@@ -324,7 +349,7 @@ const loadShop = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading shop:", error);
-        res.status(INTERNAL_SERVER_ERROR).send("Error fetching products");
+        res.status(500).send("Error fetching products"); // Assuming INTERNAL_SERVER_ERROR = 500
     }
 };
 

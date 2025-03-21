@@ -6,24 +6,49 @@ import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
 import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 
-const loadOrders = async (req,res) => {
+const loadOrders = async (req, res) => {
+    const search = req.query.search || '';
+
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-        const user = await User.findOne({_id : userId})
-
         if (!userId) {
-            return res.status(UNAUTHORIZED).redirect('/user/login');
+            return res.status(401).redirect('/user/login');
         }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
         const [firstName] = user.name.split(' ');
-        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 
-        res.render('user/orders',{title : "My Orders",orders, user, firstName});
+        // Build filter with search and userId
+        const filter = { userId };
 
+        if (search) {
+            filter.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { brand: { $regex: search, $options: 'i' } },
+            ];
+        }
+
+        // Apply search filter and sort by latest orders
+        const orders = await Order.find(filter).sort({ createdAt: -1 });
+
+        res.render('user/orders', {
+            title: 'My Orders',
+            orders,
+            user,
+            firstName,
+            search
+        });
     } catch (error) {
         console.error('Error loading orders:', error.message);
+        res.status(500).send('An error occurred while loading your orders');
     }
-}
+};
+
 
 
 const loadOrderDetails = async (req,res)=> {
@@ -45,7 +70,7 @@ const loadOrderDetails = async (req,res)=> {
 
         const addressId = order.address
 
-        console.log(addressId)
+        // console.log(addressId)
 
         const addresses = await Address.findOne(
             { 'details._id': addressId },
@@ -66,7 +91,7 @@ const loadprofile = async (req,res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     // console.log(userId)
-    console.log(req.session.user);
+    // console.log(req.session.user);
 
     if (!userId) return res.redirect('/user/login');
 

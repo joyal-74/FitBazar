@@ -1,3 +1,4 @@
+
 <body class="bg-light">
 
     <!-- Navbar -->
@@ -37,7 +38,7 @@
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
                     <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/refunds"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
                 </ul>
@@ -49,22 +50,32 @@
                 <h1 class="h3 mb-4">Orders</h1>
 
                 <!-- Filters and Export Button -->
-                <div class="d-flex justify-content-between mb-4">
-                    <div class="col-2">
-                        <select class="form-select">
-                            <option selected>Filter by Status</option>
-                            <option value="1">Completed</option>
-                            <option value="2">Pending</option>
-                            <option value="3">Cancelled</option>
-                        </select>
-                    </div>
+                    <form id="filterForm" method="GET" action="/admin/orders">
+                        <div class="d-flex justify-content-between mb-4">
+                            <!-- Filter by Status -->
+                            <div class="col-2">
+                                <select class="form-select" name="status" onchange="document.getElementById('filterForm').submit();">
+                                    <option value="">All Status</option>
+                                    <option value="Delivered" <%= status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                    <option value="Pending" <%= status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                    <option value="Cancelled" <%= status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    <option value="Out for Delivery" <%= status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
+                                    <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                    <option value="Returned" <%= status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Search Bar -->
+                            <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">
+                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<%= search %>">
+                                <button class="btn" type="submit" style="background-color: #3e29a8;">
+                                    <i class="fas fa-search text-white"></i>
+                                </button>
+                                <button type="button" class="btn text-info" onclick="clearFilters()"><i class="fa-regular fa-circle-xmark fa-xl"></i></button>
+                            </div>
+                        </div>
+                    </form>
                     
-                    <div class=" text-end">
-                        <button class="btn btn-primary" onclick="">
-                            <i class="fas fa-download me-2"></i>Export to PDF
-                        </button>
-                    </div>
-                </div>
 
                 <!-- Orders Table -->
                 <div class="card">
@@ -86,7 +97,7 @@
                                         <% orders.forEach(order => { %>
                                             <tr class="text-center">
                                                 <td>#<%= order.orderId %></td>
-                                                <td><%= order.userId?.name || 'N/A' %></td>
+                                                <td><%= order.customer || 'N/A' %></td>
                                                 <td><%= order.createdAt.toISOString().split('T')[0] %></td>
                                                 <td>₹<%= order.totalPrice.toLocaleString('en-IN') %></td>
                                                 <td>
@@ -118,9 +129,13 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div>                
             </main>
         </div>
     </div>
-
+    <script>
+        function clearFilters() {
+            window.location.href = '/admin/orders?clear=true';
+        }
+    </script>
 </body>

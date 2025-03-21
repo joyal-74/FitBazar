@@ -70,6 +70,7 @@ export const cancelOrder = async (req, res) => {
         order.status = 'Cancelled';
         order.updatedAt = new Date();
         order.cancelReason = reason;
+        order.statusHistory.push({ status : 'Cancelled', timestamp: new Date() });
 
         const productId = order.product
         const variant = order.variant
@@ -161,7 +162,7 @@ const loadReturnPage = async (req, res) => {
         .sort({ createdAt: -1 })
         .lean();
 
-    res.render('admin/returnOrder', { refundRequests });
+    res.render('admin/returnOrder', { title : "Return page",refundRequests });
 }
 
 const updateRefundStatus = async (req, res) => {

@@ -31,7 +31,7 @@
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
                     <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/refunds"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
                     <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
                 </ul>
@@ -84,10 +84,15 @@
                                 <div class="row">
                                     <div class="mt-2">
                                         <p class="mb-1 text-muted fw-bold"><%= address.name %> <%= address.phone %></p>
-                                        <p class="mb-1 text-muted"><%= address.addressLine1 %></p>
-                                        <% if (address.addressLine2) { %>
-                                            <p class="mb-1 text-muted"><%= address.addressLine2 %></p>
-                                        <% } %>
+                                        <p class="mb-1 text-muted">
+                                            <%= address.addressLine1 %>
+                                            <% if (address.addressLine2) { %>
+                                                , <%= address.addressLine2 %>
+                                            <% } %>
+                                            <% if (address.landmark) { %>
+                                                , <%= address.landmark %>
+                                            <% } %>
+                                        </p>                                        
                                         <p class="mb-1 text-muted"><%= address.city %>, <%= address.state %>, <%= address.pincode %></p>
                                     </div>
                                 </div>
