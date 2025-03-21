@@ -16,8 +16,6 @@
             margin-top: 32px;
             position: fixed;
         }
-
-        /* Sidebar section heading */
         .sidebar-heading {
             font-size: 14px;
             font-weight: 600;
@@ -25,8 +23,6 @@
             margin: 18px 0;
             display: block;
         }
-
-        /* Sidebar link styles */
         .sidebar-linkz {
             color: #333;
             padding: 12px 14px;
@@ -37,18 +33,14 @@
             display: flex;
             align-items: center;
         }
-
         .sidebar-linkz i {
             width: 20px;
             color: #3b3389;
         }
-
-        /* Hover and active states */
         .sidebar-linkz:hover {
             background-color: #e0dbfc;
             color: #3b3389;
         }
-
         .sidebar-linkz.active {
             background-color: #3b3389;
             color: #fff;
@@ -163,31 +155,39 @@
             gap: 10px;
             margin-top: 20px;
         }
-        .progress-bar {
-            background-color: #e0dbfc;
-            border-radius: 20px;
-            height: 10px;
-            overflow: hidden;
-            margin: 10px 0;
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
         }
-        .progress-bar div {
-            background-color: #6C5DD3;
-            height: 100%;
-            transition: width 0.3s ease;
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
         }
-        .tracking-steps {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            font-size: 12px;
-            color: #666;
+        .timeline-item i {
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            font-size: 16px;
         }
-        .tracking-steps span {
-            text-align: center;
+        .timeline-item p {
+            margin: 0;
+            font-size: 14px;
         }
-        .tracking-steps span.active {
-            color: #3b3389;
+        .timeline-item .status {
             font-weight: 600;
+            color: #1a1a1a;
+        }
+        .timeline-item .timestamp {
+            color: #777;
+        }
+        .timeline-line {
+            position: absolute;
+            top: 0;
+            left: 8px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #6C5DD3, #E0DBFC);
         }
     </style>
 </head>
@@ -310,63 +310,66 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Product Details -->
+                    <!-- Right Column: Product Details and Timeline -->
                     <div class="col-md-6">
                         <div class="order-details-card">
                             <div class="order-section">
                                 <h3>Product Details</h3>
-                                <% order.orderItems.forEach(item => { %>
-                                    <div class="item-row">
-                                        <img src="<%= item.productImage || '/images/default-product.png' %>" 
-                                            alt="Product Image" 
-                                            class="item-img">
-                                        <div class="item-info">
-                                            <h6><%= item.product.name %></h6>
-                                            <p>Qty: <%= item.quantity %> | ₹ <%= item.price %></p>
-                                        </div>
-                                        <span class="item-price">₹ <%= item.price * item.quantity %></span>
+                                <div class="item-row">
+                                    <img src="<%= order.productImage || '/images/default-product.png' %>" 
+                                        alt="Product Image" 
+                                        class="item-img">
+                                    <div class="item-info">
+                                        <h6><%= order.name %></h6>
+                                        <p>Qty: <%= order.quantity %> | ₹ <%= order.price %></p>
+                                        <p>Color: <%= order.variant.color %> <% if (order.variant.weight) { %>
+                                            | weight: <%= order.variant.weight %>
+                                        <% } %></p>
+
                                     </div>
-                                <% }) %>
+                                    <span class="item-price">₹ <%= order.price * order.quantity %></span>
+                                </div>
                             </div>
                             <div class="order-section">
                                 <h3>Order Tracking</h3>
-                                <div class="tracking-steps">
-                                    <span class="<%= order.status === 'Pending' ? 'active' : '' %>">Pending</span>
-                                    <span class="<%= order.status === 'Delivered' ? 'active' : '' %>">Delivered</span>
-                                    <% if (order.status === 'Cancelled') { %>
-                                        <span class="cancelled active">Cancelled</span>
-                                    <% } %>
-                                </div>
-                                
-                                <div class="progress-bar">
-                                    <div style="width: 
-                                        <%= order.status === 'Pending' ? '10%' :
-                                            order.status === 'Delivered' ? '100%' :
-                                            order.status === 'Cancelled' ? '0%' : '0%'
-                                        %>;" 
-                                        class="<%= order.status === 'Cancelled' ? 'cancelled' : '' %>">
-                                    </div>
+                                <div class="timeline">
+                                    <% order.statusHistory.forEach((entry) => { %>
+                                        <div class="timeline-item">
+                                            <i class="<%= entry.status === 'Pending' ? 'fas fa-clock text-warning' : entry.status === 'Shipped' ? 'fas fa-truck text-primary' : entry.status === 'Out for Delivery' ? 'fas fa-shipping-fast text-info' : entry.status === 'Delivered' ? 'fas fa-check-circle text-success' : 'fas fa-times-circle text-danger' %>"></i>
+                                            <p class="status">
+                                                <%= entry.status === 'Shipped' ? 'Order Shipped' : entry.status === 'Out for Delivery' ? 'Out for Delivery' : entry.status === 'Delivered' ? 'Order Delivered' : entry.status === 'Cancelled' ? 'Order Cancelled' : 'Order Placed' %>
+                                            </p>
+                                            <p class="timestamp"><%= new Date(entry.timestamp).toLocaleString('en-US', {
+                                                weekday: 'short',
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: '2-digit',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                hour12: false
+                                            }) %></p>
+                                        </div>
+                                    <% }) %>
+                                    <div class="timeline-line"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="order-actions">
                             <a href="/user/orders" class="btn btn-outline-primary">Back to Orders</a>
-                        
-                            <% if (order.status == 'Delivered') { %>
+                            <% if (order.status === 'Delivered') { %>
                                 <button class="btn btn-primary" onclick="window.location.href='/user/orders/invoice?id=<%= order.orderId %>'">
                                     Download Invoice
                                 </button>
                                 <button class="btn btn-warning" onclick="openReturnModal('<%= order._id %>')">
                                     Return Order
                                 </button>
-                            <% } else if (order.status == 'Pending') { %>
-                                <button class="btn btn-danger" onclick="submitCancel('<%= order._id %>')">
+                            <% } else if (order.status === 'Pending') { %>
+                                <button class="btn btn-danger" onclick="openCancelModal('<%= order._id %>')">
                                     Cancel Order
                                 </button>
                             <% } %>
-                            
                         </div>
-                        
+
                         <!-- Return Modal -->
                         <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
@@ -389,17 +392,57 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
+
+                        <!-- Cancel Modal -->
+
+                        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="cancelOrderId">
+                                        <div class="mb-3">
+                                            <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                                            <select class="form-select" id="cancelReason" required>
+                                                <option value="" selected disabled>Select a reason</option>
+                                                <option value="Changed my mind">Changed my mind</option>
+                                                <option value="Found a better deal">Found a better deal</option>
+                                                <option value="Ordered by mistake">Ordered by mistake</option>
+                                                <option value="Shipping is delayed">Shipping is delayed</option>
+                                                <option value="Product no longer needed">Product no longer needed</option>
+                                            </select>
+                                            <div class="invalid-feedback">Please select a reason for cancelling the order.</div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-danger" onclick="submitCancel()">Confirm Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         function openReturnModal(orderId) {
             document.getElementById('returnOrderId').value = orderId;
             document.getElementById('returnReason').value = '';
             const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        }
+
+        function openCancelModal(orderId) {
+            document.getElementById('cancelOrderId').value = orderId; // Correct ID
+            document.getElementById('cancelReason').value = ''; // Reset the select dropdown
+            const modal = new bootstrap.Modal(document.getElementById('cancelModal')); // Correct modal ID
             modal.show();
         }
 
@@ -452,14 +495,25 @@
                 });
             }
         }
-        async function submitCancel(orderId) {
+
+        async function submitCancel() {
+
+            const orderId = document.getElementById('cancelOrderId').value;
+            const reason = document.getElementById('cancelReason').value;
+
+            if (!reason.trim()) {
+                document.getElementById('cancelReason').classList.add('is-invalid');
+                return;
+            } else {
+                document.getElementById('cancelReason').classList.remove('is-invalid');
+            }
 
             try {
                 const response = await fetch(`/user/orders/cancel?id=${orderId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },body : JSON.stringify({ reason })
                 });
 
                 const data = await response.json();
@@ -475,7 +529,7 @@
                     });
                 } else {
                     Swal.fire({
-                        text: data?.message || 'Failed to process return request.',
+                        text: data?.message || 'Failed to cancel order.',
                         icon: 'error',
                         timer: 2000,
                         showConfirmButton: false,
@@ -484,7 +538,7 @@
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
-                    text: 'An error occurred while processing the return.',
+                    text: 'An error occurred while cancelling the order.',
                     icon: 'error',
                     timer: 2000,
                     showConfirmButton: false,

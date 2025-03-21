@@ -329,20 +329,18 @@
                                 </div>
                             </div>
                 
-                            <!-- Order Items -->
+
                             <div class="order-items">
-                                <% order.orderItems.forEach(item => { %>
-                                    <div class="item-row">
-                                        <img src="<%= item.productImage || '/images/default-product.png' %>" 
-                                            alt="Product Image" 
-                                            class="item-img">
-                                        <div class="item-info">
-                                            <h6><%= item.product.name %></h6>
-                                            <p>Qty: <%= item.quantity %> | ₹ <%= item.price %></p>
-                                        </div>
-                                        <span class="item-price">₹ <%= item.price * item.quantity %></span>
+                                <div class="item-row">
+                                    <img src="<%= order.productImage || '/images/default-product.png' %>" 
+                                        alt="Product Image" 
+                                        class="item-img">
+                                    <div class="item-info">
+                                        <h6><%= order.name %></h6>
+                                        <p>Qty: <%= order.quantity %> | ₹ <%= order.price %></p>
                                     </div>
-                                <% }) %>
+                                    <span class="item-price">₹ <%= order.price * order.quantity %></span>
+                                </div>
                             </div>
                 
                             <!-- Action Buttons -->

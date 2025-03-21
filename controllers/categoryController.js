@@ -29,10 +29,7 @@ const categoryInfo = async (req, res) => {
 const addCategory = async (req, res) => {
     try {
         const { addName, addDescription } = req.body;
-        let addStatus = req.body.addStatus === "Active";
-
-        console.log("Request body:", req.body);
-
+        let addStatus = req.body.addStatus === "Active" ? true : false;
 
         if (!addName || !addDescription) {
             return res.status(BAD_REQUEST).json({ error: "Category Name and Description are required." });

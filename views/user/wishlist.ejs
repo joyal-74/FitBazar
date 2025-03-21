@@ -1,0 +1,280 @@
+<head>
+    <title>Wishlist - FitBazar</title>
+    <link rel="stylesheet" href="/css/product.css">
+
+</head>
+<body class="bg-white">
+    <!-- Navbar (same as your original) -->
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container d-flex flex-column">
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
+                <ul class="nav align-items-center">
+                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/shop">Shop</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
+                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                    </button>
+                </form>
+                <div class="d-flex align-items-center">
+                    <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <% if (user) { %>
+                        <a href="/user/profile" style="color: #3B3389;">
+                            <% if (user.profilePic) { %>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <% } else { %>
+                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                            <% } %>
+                        </a>
+                    <% } else { %>
+                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %> 
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Wishlist Main Content -->
+    <main>
+        <div class="container mt-5">
+            <h2 class="fw-bold mb-4" style="color: #3B3389;">My Wishlist</h2>
+            
+            <% if (wishlist && wishlist.length > 0) { %>
+                <div class="row">
+                    <% wishlist.forEach(item => { %>
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <div class="card shadow p-2">
+                                <!-- Product Image -->
+                                <div class="position-relative">
+                                    <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>"
+                                        class="card-img-top mx-auto d-block"
+                                        style="height: 280px; object-fit: cover;">
+                                    <% if (item.product.productOffer > 0) { %>
+                                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
+                                            <%= item.product.productOffer %>% OFF
+                                        </span>
+                                    <% } %>
+                                </div>
+
+                                <!-- Product Details -->
+                                <div class="card-body p-2">
+                                    <h6 class="card-title text-truncate mb-1">
+                                        <%= item.product.brand %> <%= item.product.name %>
+                                    </h6>
+                                    <p class="text-muted small mb-1">
+                                        <% if (item.color) { %>Color: <%= item.color %><% } %>
+                                        <% if (item.weight) { %><%= item.color ? ' | ' : '' %>Weight: <%= item.weight %><% } %>
+                                    </p>
+                                    <p class="d-flex align-items-center gap-2 mb-2">
+                                        <strong class="fs-6 text-success">
+                                            ₹<%= Math.round(item.product.price - (item.product.price * item.product.productOffer / 100)) %>
+                                        </strong>
+                                        <del class="text-dark small">₹<%= item.product.price %></del>
+                                    </p>
+                                    
+                                    <!-- Actions -->
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm w-50 add-to-cart-btn text-white" 
+                                            data-product-id="<%= item.product.productId %>"
+                                            data-color="<%= item.color %>"
+                                            data-weight="<%= item.weight %>">
+                                            <i class="fa fa-cart-plus me-1"></i> Add to Cart
+                                        </button>
+                                        <button class="btn btn-sm w-50 btn-danger remove-from-wishlist"
+                                            data-wishlist-id="<%= item._id %>">
+                                            <i class="fa fa-trash me-1"></i> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fa fa-heart fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Your Wishlist is Empty</h4>
+                    <p class="text-muted">Start adding items you love!</p>
+                    <a href="/shop" class="btn text-white" style="background-color: #4D44AD;">Shop Now</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Footer (same as your original) -->
+    <footer class="container-fluid py-4 border-top m-0 px-0" style="background-color: #3B3389;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold text-white">FitBazar</h5>
+                    <p class="text-white">
+                        Welcome to FitBazar, your ultimate destination for sports and fitness gear.
+                        We take pride in offering premium-quality products, exceptional customer service,
+                        and a seamless shopping experience.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <img src="/get-on-gpay.png" alt="Google Play" class="img-fluid" style="max-width: 120px;">
+                        <img src="/pngwing.com.png" alt="App Store" class="img-fluid" style="max-width: 120px;">
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold text-white">Get to know us</h5>
+                    <ul class="list-unstyled text-white">
+                        <li><a href="#" class="text-decoration-none text-white">New Arrivals</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Best Sellers</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Gym & Strength Training</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Yoga & Wellness</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Outdoor & Adventure Gear</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Protein & Nutrition</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Sportswear & Footwear</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Accessories & Gadgets</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold text-white">For Consumers</h5>
+                    <ul class="list-unstyled text-white">
+                        <li><a href="#" class="text-decoration-none text-white">Shipping & Delivery</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Terms & Conditions</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Secure Payment Options</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">About Us</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Customer Support</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Store Locations</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="fw-bold text-white">Contact Us</h5>
+                    <ul class="list-unstyled text-white">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> FitBazar HQ</li>
+                        <li>507-Fitness Plaza, Trade Center</li>
+                        <li>Kochi, Kerala, India</li>
+                        <li><i class="fas fa-envelope me-2"></i> Email: support@FitBazar.com</li>
+                        <li><i class="fas fa-phone me-2"></i> Phone: +1-800-BUZY-FIT</li>
+                        <li><i class="fas fa-fax me-2"></i> Fax: +1-123-456-7890</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-white">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="text-white">© 2025 FitBazar – Your Sports & Fitness Partner. All Rights Reserved.</div>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white"><i class="fab fa-facebook fs-4"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-x-twitter fs-4"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-youtube fs-4"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fs-4"></i></a>
+                </div>
+                <div class="d-flex gap-2">
+                    <img src="/image 13.png" alt="Visa" class="img-fluid" style="max-width: 50px;">
+                    <img src="/mastercard.png" alt="MasterCard" class="img-fluid" style="max-width: 50px;">
+                    <img src="/paypal.png" alt="PayPal" class="img-fluid" style="max-width: 50px;">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add to Cart from Wishlist
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const productId = button.dataset.productId;
+                    const color = button.dataset.color;
+                    const weight = button.dataset.weight;
+
+                    const productDetails = {
+                        userId: '<%= userId %>',
+                        productId,
+                        quantity: 1,
+                        price: button.closest('.card-body').querySelector('.text-success').textContent.replace('₹', ''),
+                        variants: { color, weight }
+                    };
+
+                    try {
+                        const response = await fetch('/user/addTocart', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(productDetails)
+                        });
+
+                        const data = await response.json();
+                        if (!response.ok) {
+                            Swal.fire({
+                                icon: 'warning',
+                                text: data.error,
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Added to cart successfully',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'An error occurred',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                });
+            });
+
+            // Remove from Wishlist
+            document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const wishlistId = button.dataset.wishlistId;
+
+                    try {
+                        const response = await fetch('/user/wishlist/remove', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ wishlistId })
+                        });
+
+                        const data = await response.json();
+                        if (!response.ok) {
+                            Swal.fire({
+                                icon: 'warning',
+                                text: data.error,
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'Removed from wishlist',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                button.closest('.col-md-4').remove();
+                                if (!document.querySelector('.col-md-4')) {
+                                    location.reload();
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'An error occurred',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>

@@ -183,23 +183,34 @@
                             <% let total = 0; %>
                             <% cart.items.forEach(item => { %>
                                 <% total += item.quantity * item.price; %>
-                                <div class="d-flex justify-content-between mb-3">
-                                    <span class="text-muted" style="font-size: 0.95rem;"><%= item.quantity %>x <%= item.productId.name %></span>
-                                    <span class="text-dark fw-medium">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></span>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted text-truncate" 
+                                          style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <%= item.quantity %>x <%= item.productId.name %>
+                                    </span>
+                                    <span class="text-dark fw-medium flex-shrink-0">
+                                        ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                    </span>
                                 </div>
                             <% }) %>
-                            <div class="d-flex justify-content-between mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                                <span class="text-success fw-semibold">Free</span>
+                                <span class="text-success fw-semibold flex-shrink-0">Free</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted" style="font-size: 0.95rem;">Platform Fee</span>
-                                <span class="text-success fw-semibold">₹ 0</span>
+                                <span class="text-success fw-semibold flex-shrink-0">₹ 0</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" style="font-size: 0.95rem;">Coupon Discount</span>
+                                <span class="text-success fw-semibold flex-shrink-0">₹ 0</span>
                             </div>
                             <hr class="my-2" style="border-color: #E0E0E0;">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-dark" style="font-size: 1.2rem;">Grand Total</span>
-                                <span class="fw-bold text-dark" style="font-size: 1.2rem;">₹ <%= total.toLocaleString('en-IN') %></span>
+                                <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
+                                    ₹ <%= total.toLocaleString('en-IN') %>
+                                </span>
                             </div>
                             
                             <!-- Combined submit button -->
@@ -209,6 +220,7 @@
                         <% } %>
                     </div>
                 </div>
+                
             </div>
         </form>
     </main>
@@ -225,7 +237,6 @@
                 couponApplied,
                 paymentMethod
             };
-
 
             try{
                 const response = await fetch('/user/payments',{
@@ -253,10 +264,7 @@
                     }).then(()=>{
                         window.location.href = '/user/confirmOrder'
                     })
-
-
                 }
-
 
             } catch(error) {
                 console.log(error)

@@ -22,7 +22,7 @@
                     </button>
                 </form>
                 <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
                     <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                     <% if (user) { %>
                         <a href="/user/profile" style="color: #3B3389;">
@@ -107,7 +107,7 @@
         <div class="row" id="product-container">
             <% product.forEach(product => { %>
                 <div class="col-md-3 col-lg-3 my-3">
-                    <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>" class="text-decoration-none text-dark">
+                    <a href="/product?productId=<%= product._id %>&category=<%= product.category%>" class="text-decoration-none text-dark">
                         <div class="card shadow-sm p-2">
                             <!-- Image Container with Offer Badge -->
                             <div class="position-relative">

@@ -1,4 +1,6 @@
 import { CREATED, INTERNAL_SERVER_ERROR, UNAUTHORIZED } from "../config/statusCodes.js"
+import Order from "../model/orderModel.js"
+import Products from "../model/productModel.js"
 import Reviews from "../model/reviewsModel.js"
 
 const addReview = async (req,res) => {
@@ -9,6 +11,13 @@ const addReview = async (req,res) => {
         if(!userId){
             return res.status(UNAUTHORIZED).json({error : "Please Login to add a review"})
         }
+        
+        const order = await Order.findOne({ userId, productId });
+        if (!order) {
+            return res.status(UNAUTHORIZED).json({ error: "Please purchase this product to add a review" });
+        }
+
+        await Products.findByIdAndUpdate(productId,{$inc : {reviewCount : 1}}, {new : true});
 
         const newReview = new Reviews({ userId, productId, name, star, comment });
 

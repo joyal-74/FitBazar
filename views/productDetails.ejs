@@ -22,7 +22,7 @@
                     </button>
                 </form>
                 <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
                     <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                     <% if (user) { %>
                         <a href="/user/profile" style="color: #3B3389;">
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <h2 class="fw-bold"><%= product.brand %> <%= product.name %></h2>
+                    <h3 class="fw-bold"><%= product.brand %> <%= product.name %></h3>
                     <% 
                         let totalRating = reviews.reduce((sum, review) => sum + review.star, 0);
                         let avgRating = reviews.length > 0 ? (totalRating / reviews.length).toFixed(1) : 0;
@@ -104,7 +104,7 @@
 
                     <div class="d-flex gap-3">
                         <button class="btn add-to-cart-btn text-white w-50" id="addtocartBtn"><i class="fa fa-cart-plus me-2"></i>Add to Cart</button>
-                        <button class="btn btn-outline-secondary w-50"><i class="fa fa-heart me-2"></i>Add to Wishlist</button>
+                        <button class="btn btn-outline-secondary w-50" id="addToWishlistBtn"><i class="fa fa-heart me-2"></i><span class="wishlist-text">Add to Wishlist</span></button>
                     </div>
 
                     <div class="row g-3 my-3">
@@ -134,18 +134,17 @@
 
                             <div class="col-12">
                                 <% if (product.variants && product.variants.some(variant => variant.weight)) { %>
-                                    <label class="form-label fw-bold">Weight:</label>
-                                    <div class="d-flex flex-wrap">
-                                        <% const uniqueWeights = [...new Set(product.variants.map(variant => variant.weight).filter(Boolean))]; %>
-                                        <% uniqueWeights.forEach((weight, index) => { %>
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="radio" name="weight" id="weight<%= index %>" value="<%= weight %>"
-                                                    <%= index === 0 ? 'checked' : '' %>>
-                                                <label class="form-check-label" for="weight<%= index %>">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">Weight:</label>
+                                        <div id="weightOptions">
+                                            <% const uniqueWeights = [...new Set(product.variants.map(variant => variant.weight).filter(Boolean))]; %>
+                                            <% uniqueWeights.forEach((weight, index) => { %>
+                                                <button class="variant-btn <%= index === 0 ? 'active' : '' %>" 
+                                                        data-weight="<%= weight %>">
                                                     <%= weight %>
-                                                </label>
-                                            </div>
-                                        <% }) %>
+                                                </button>
+                                            <% }) %>
+                                        </div>
                                     </div>
                                 <% } %>
                             </div>
@@ -161,7 +160,7 @@
                     <input type="hidden" id="salePrice" name="salePrice" value="<%= Math.round(product.price - (product.price * product.productOffer / 100)) %>">
 
                     <!-- Coupons (unchanged) -->
-                    <div class="card p-3 bg-light border">
+                    <!-- <div class="card p-3 bg-light border">
                         <h5 class="fw-bold" style="color: #9c3ec8;"><i class="fas fa-tag"></i> Available Coupons</h5>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span><i class="fas fa-percent"></i> Get 10% Off on orders above ₹1000</span>
@@ -174,7 +173,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-shipping-fast"></i> Free Shipping on orders above ₹1500</span>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -333,7 +332,7 @@
             <div class="row" id="product-container">
                 <% relateproducts.forEach(product=> { %>
                     <div class="col-md-3 col-lg-3 my-3">
-                        <a href="/product?productId=<%= product.productId %>&category=<%= product.category%>"
+                        <a href="/product?productId=<%= product._id %>&category=<%= product.category%>"
                             class="text-decoration-none text-dark">
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
@@ -342,7 +341,7 @@
                                         class="product-img card-img-top mx-auto d-block"
                                         style="height: 250px; object-fit: cover;">
 
-                                    <% if (product.productOffer> 0) { %>
+                                    <% if (product.productOffer > 0) { %>
                                         <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
                                             <%= product.productOffer %>% OFF
                                         </span>
@@ -356,8 +355,7 @@
                                     <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)
                                     </p>
                                     <p class="d-flex align-items-center gap-2 mb-2">
-                                        <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price
-                                                * product.productOffer / 100)) %></strong>
+                                        <strong class="fs-6 text-success">₹<%= product.price %></strong>
                                         <del class="text-dark small">₹<%= product.price %></del>
                                     </p>
                                     <div class="d-flex gap-2">
@@ -464,193 +462,295 @@
 
  <script>
     const variants = <%- JSON.stringify(product.variants) %>;
-    const product = <%- JSON.stringify(product) %>;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const colorButtons = document.querySelectorAll('#colorOptions .variant-btn');
-        const weightButtons = document.querySelectorAll('#weightOptions .variant-btn');
-        const stockStatus = document.getElementById('stockStatus');
-        const mainImage = document.getElementById('mainImage');
-        const thumbnails = document.querySelectorAll('.thumbnail');
+document.addEventListener('DOMContentLoaded', () => {
+    const colorButtons = document.querySelectorAll('#colorOptions .variant-btn');
+    const weightButtons = document.querySelectorAll('#weightOptions .variant-btn');
+    const stockStatus = document.getElementById('stockStatus');
+    const mainImage = document.getElementById('mainImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    const addToCartBtn = document.getElementById('addtocartBtn');
+    const selectedColorInput = document.getElementById('selectedColor');
+    const selectedWeightInput = document.getElementById('selectedWeight');
+    const addToWishlistBtn = document.getElementById('addToWishlistBtn')
 
-        function updateVariantDisplay() {
-            const selectedColor = document.getElementById('selectedColor').value;
-            const selectedWeight = document.getElementById('selectedWeight').value;
-            const variant = variants.find(v => v.color === selectedColor && v.weight === selectedWeight);
 
-            if (variant) {
-                // Update images
-                if (variant.images && variant.images.length > 0) {
-                    mainImage.src = variant.images[0];
-                    thumbnails.forEach((thumb, i) => {
-                        thumb.src = variant.images[i] || '';
-                        thumb.style.display = variant.images[i] ? 'block' : 'none';
-                    });
-                }
+    function updateVariantDisplay() {
+        const selectedColor = selectedColorInput.value;
+        const selectedWeight = selectedWeightInput.value;
 
-                // Update stock status
-                stockStatus.textContent = variant.stock > 0 ? 
-                    `In Stock: ${variant.stock}` : 'Out of Stock';
-                stockStatus.className = `badge bg-${variant.stock > 0 ? 'success' : 'warning'}`;
-            }
+        // Find matching variant
+        const variant = variants.find(v => v.color === selectedColor && v.weight === selectedWeight);
+
+        if (variant) {
+            stockStatus.textContent = variant.stock > 0 
+                ? `In Stock: ${variant.stock}` 
+                : 'Out of Stock';
+            stockStatus.className = `badge bg-${variant.stock > 0 ? 'success' : 'warning'}`;
+            addToCartBtn.disabled = variant.stock <= 0;
+            addToWishlistBtn.disabled = false;
+        } else {
+            stockStatus.textContent = 'Combination unavailable';
+            stockStatus.className = 'badge bg-danger';
+            addToCartBtn.disabled = true;
+            addToWishlistBtn.disabled = true;
         }
+    }
 
-        // Color selection
-        colorButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                colorButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                document.getElementById('selectedColor').value = button.dataset.color;
-                updateVariantDisplay();
-            });
-        });
-
-        // Weight selection
-        weightButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                weightButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                document.getElementById('selectedWeight').value = button.dataset.weight;
-                updateVariantDisplay();
-            });
-        });
-
-        // Thumbnail hover
-        thumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener('mouseover', () => {
-                mainImage.src = thumbnail.src;
-            });
-        });
-
-        // Zoom functionality
-        const zoomContainer = document.querySelector('.zoom-container');
-        const zoomLens = document.querySelector('.zoom-lens');
-
-        zoomContainer?.addEventListener('mousemove', (e) => {
-            const containerRect = zoomContainer.getBoundingClientRect();
-            const imageRect = mainImage.getBoundingClientRect();
-            const x = e.clientX - containerRect.left;
-            const y = e.clientY - containerRect.top;
-
-            const lensX = Math.max(0, Math.min(x - 75, imageRect.width - 150));
-            const lensY = Math.max(0, Math.min(y - 75, imageRect.height - 150));
-
-            zoomLens.style.left = `${lensX}px`;
-            zoomLens.style.top = `${lensY}px`;
-            zoomLens.style.display = 'block';
-
-            mainImage.style.transform = 'scale(2)';
-            mainImage.style.transformOrigin = `${x}px ${y}px`;
-        });
-
-        zoomContainer?.addEventListener('mouseleave', () => {
-            zoomLens.style.display = 'none';
-            mainImage.style.transform = 'scale(1)';
-        });
-
-        // Add to cart
-        document.getElementById('addtocartBtn').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const userId = document.getElementById('userId').value;
-            const productId = document.getElementById('productId').value;
-            const quantity = document.getElementById('quantity').value;
-            const price = document.getElementById('salePrice').value;
-            const selectedColor = document.getElementById('selectedColor').value;
-            const selectedWeight = document.getElementById('selectedWeight').value;
-
-            const productDetails = {
-                userId,
-                productId,
-                quantity,
-                price,
-                variants: { color: selectedColor, weight: selectedWeight }
-            };
-
-            try {
-                const response = await fetch('/user/addTocart', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(productDetails)
-                });
-
-                const data = await response.json();
-                if (!response.ok) {
-                    Swal.fire({
-                        icon: 'warning',
-                        text: data.error,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Added to cart successfully',
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'An error occurred',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            }
-        });
-
-
-        // review form
-        document.getElementById('reviewForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const userId = document.getElementById('userId').value;
-            const productId = document.getElementById('productdbId').value;
-            const name = document.getElementById('reviewName').value;
-            const star = document.getElementById('reviewStar').value;
-            const comment = document.getElementById('reviewComment').value;
-
-            const reviewDetails = { userId, productId, name, star, comment };
-
-            try {
-                const response = await fetch('/user/review', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(reviewDetails)
-                });
-
-                const data = await response.json();
-                if (!response.ok) {
-                    Swal.fire({
-                        icon: 'warning',
-                        text: data.error,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        text: data.message,
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(()=>{
-                        window.location.reload();
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'An error occurred',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            }
-        });
-
-        // Initialize display
-        if (variants && variants.length > 0) {
+    // Handle color selection
+    colorButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            colorButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedColorInput.value = button.dataset.color;
             updateVariantDisplay();
+        });
+    });
+
+    // Handle weight selection
+    weightButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            weightButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedWeightInput.value = button.dataset.weight;
+            updateVariantDisplay();
+        });
+    });
+
+    // Handle thumbnail hover for changing main image
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('mouseover', () => {
+            mainImage.src = thumbnail.src;
+        });
+    });
+
+    // Zoom functionality
+    const zoomContainer = document.querySelector('.zoom-container');
+    const zoomLens = document.querySelector('.zoom-lens');
+
+    zoomContainer?.addEventListener('mousemove', (e) => {
+        const containerRect = zoomContainer.getBoundingClientRect();
+        const x = e.clientX - containerRect.left;
+        const y = e.clientY - containerRect.top;
+
+        const lensX = Math.max(0, Math.min(x - 75, mainImage.width - 150));
+        const lensY = Math.max(0, Math.min(y - 75, mainImage.height - 150));
+
+        zoomLens.style.left = `${lensX}px`;
+        zoomLens.style.top = `${lensY}px`;
+        zoomLens.style.display = 'block';
+
+        mainImage.style.transform = 'scale(2)';
+        mainImage.style.transformOrigin = `${x}px ${y}px`;
+    });
+
+    zoomContainer?.addEventListener('mouseleave', () => {
+        zoomLens.style.display = 'none';
+        mainImage.style.transform = 'scale(1)';
+    });
+
+    // Add to cart logic
+    addToCartBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const userId = document.getElementById('userId').value;
+        const productId = document.getElementById('productdbId').value;
+        const quantity = document.getElementById('quantity').value;
+        const price = document.getElementById('salePrice').value;
+        const selectedColor = selectedColorInput.value;
+        const selectedWeight = selectedWeightInput.value;
+
+        const productDetails = {
+            userId,
+            productId,
+            quantity,
+            price,
+            variants: { color: selectedColor, weight: selectedWeight }
+        };
+
+        try {
+            const response = await fetch('/user/addTocart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productDetails)
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: data.error,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'Added to cart successfully',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred',
+                showConfirmButton: false,
+                timer: 2000
+            });
         }
     });
+
+    addToWishlistBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const userId = document.getElementById('userId').value;
+        const productId = document.getElementById('productdbId').value;
+        const selectedColor = selectedColorInput.value;
+        const selectedWeight = selectedWeightInput.value;
+
+        const wishlistItem = {
+            userId,
+            productId,
+            color: selectedColor || null,
+            weight: selectedWeight || null
+        };
+
+        try {
+            const response = await fetch('/user/wishlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(wishlistItem)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: data.error || 'Failed to add to wishlist',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to Wishlist',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                // Update button appearance
+                addToWishlistBtn.querySelector('.wishlist-text').textContent = 'In Wishlist';
+                addToWishlistBtn.classList.remove('btn-outline-secondary');
+                addToWishlistBtn.classList.add('btn-success');
+                addToWishlistBtn.disabled = true; // Prevent multiple adds
+            }
+        } catch (error) {
+            console.log(error)
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred while adding to wishlist',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+    });
+
+    // (async () => {
+    //     try {
+    //         const userId = document.getElementById('userId').value;
+    //         if (userId) {
+    //             const response = await fetch(`/user/wishlist/check?userId=${userId}&productId=${addToWishlistBtn.dataset.productId}`);
+    //             const data = await response.json();
+    //             if (data.isInWishlist) {
+    //                 addToWishlistBtn.querySelector('.wishlist-text').textContent = 'In Wishlist';
+    //                 addToWishlistBtn.classList.remove('btn-outline-secondary');
+    //                 addToWishlistBtn.classList.add('btn-success');
+    //                 addToWishlistBtn.disabled = true;
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error checking wishlist status:', error);
+    //     }
+    // })();
+
+
+    // Handle review submission
+    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userId = document.getElementById('userId').value;
+        const productId = document.getElementById('productdbId').value;
+        const name = document.getElementById('reviewName').value;
+        const star = document.getElementById('reviewStar').value;
+        const comment = document.getElementById('reviewComment').value;
+
+        const reviewDetails = { userId, productId, name, star, comment };
+
+        try {
+            const response = await fetch('/user/review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewDetails)
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: data.error,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'success',
+                    text: data.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.reload();
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+    });
+
+    // Initialize display
+    if (variants && variants.length > 0) {
+        // Set initial values from the buttons marked as active in HTML
+        const initialColorButton = Array.from(colorButtons).find(btn => btn.classList.contains('active'));
+        const initialWeightButton = Array.from(weightButtons).find(btn => btn.classList.contains('active'));
+
+        if (initialColorButton) {
+            selectedColorInput.value = initialColorButton.dataset.color;
+        }
+        if (initialWeightButton) {
+            selectedWeightInput.value = initialWeightButton.dataset.weight;
+        }
+
+        // If no active buttons found, set first available variant
+        if (!selectedColorInput.value || !selectedWeightInput.value) {
+            const firstVariant = variants[0];
+            if (!selectedColorInput.value && firstVariant.color) {
+                selectedColorInput.value = firstVariant.color;
+                colorButtons[0]?.classList.add('active');
+            }
+            if (!selectedWeightInput.value && firstVariant.weight) {
+                selectedWeightInput.value = firstVariant.weight;
+                weightButtons[0]?.classList.add('active');
+            }
+        }
+
+        updateVariantDisplay();
+    }
+});
+
  </script>
 </body>

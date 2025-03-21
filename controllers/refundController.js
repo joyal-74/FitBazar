@@ -4,6 +4,9 @@ import Address from '../model/addressModel.js';
 import { generateInvoicePDF } from '../config/invoice.js'
 import fs from 'fs';
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
+import User from '../model/userModel.js';
+import Products from '../model/productModel.js';
+
 
 export const requestRefund = async (req, res) => {
     const { reason } = req.body;
@@ -18,13 +21,13 @@ export const requestRefund = async (req, res) => {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
-        const existingRefund = await Refund.findOne({ orderId });
+        const existingRefund = await Refund.findOne({ order : orderId });
         if (existingRefund) {
             return res.status(BAD_REQUEST).json({ message: 'Refund already requested' });
         }
 
         const refund = new Refund({
-            orderId,
+            order: orderId,
             userId,
             reason
         });
@@ -39,9 +42,13 @@ export const requestRefund = async (req, res) => {
 };
 
 
+// user side cancellation
+
 export const cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
+
+        const { reason } = req.body;
 
         if (!orderId) {
             return res.status(BAD_REQUEST).json({ message: 'Order ID is required' });
@@ -62,6 +69,34 @@ export const cancelOrder = async (req, res) => {
 
         order.status = 'Cancelled';
         order.updatedAt = new Date();
+        order.cancelReason = reason;
+
+        const productId = order.product
+        const variant = order.variant
+
+        const product = await Products.findOne({
+            _id: productId,
+            variants: {
+                $elemMatch: {
+                    color: order.variant.color,
+                    weight: order.variant.weight
+                }
+            }
+        });
+        
+
+        console.log(product, variant)
+
+        if (product) {
+            const variant = product.variants.find(v =>
+                v.color === order.variant.color && v.weight === order.variant.weight
+            );
+        
+            if (variant) {
+                variant.stock += order.quantity;
+                await product.save();
+            }
+        }
 
         await order.save();
 
@@ -73,12 +108,12 @@ export const cancelOrder = async (req, res) => {
 };
 
 
-const generateInvoice = async(req,res) => {
+const generateInvoice = async (req, res) => {
     try {
 
         const orderId = req.query.id;
 
-        const order = await Order.findOne({orderId}).populate('orderItems.product');
+        const order = await Order.findOne({ orderId }).populate('product');
         if (!order) {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
@@ -91,9 +126,9 @@ const generateInvoice = async(req,res) => {
             { 'details._id': addressId },
             { 'details.$': 1 }
         );
-        
+
         const address = addresses?.details?.[0] || null;
-        
+
 
         const filePath = await generateInvoicePDF(order, address);
 
@@ -112,4 +147,65 @@ const generateInvoice = async(req,res) => {
 }
 
 
-export default { requestRefund, cancelOrder, generateInvoice }
+
+const loadReturnPage = async (req, res) => {
+    const refundRequests = await Refund.find({})
+        .populate({
+            path: 'order',
+            select: 'orderId totalPrice createdAt status',
+            populate: {
+                path: 'userId',
+                select: 'name'
+            }
+        })
+        .sort({ createdAt: -1 })
+        .lean();
+
+    res.render('admin/returnOrder', { refundRequests });
+}
+
+const updateRefundStatus = async (req, res) => {
+    const orderId = req.query.id;
+    const { status } = req.body;
+
+    try {
+        // Find the refund request for the order
+        const refund = await Refund.findOne({ order: orderId });
+        if (!refund) {
+            return res.status(404).json({ error: "Refund not found" });
+        }
+
+        // Find the related order
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        // Find the user associated with the order
+        const user = await User.findById(order.userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        if (status === 'Approved') {
+            user.wallet += order.totalPrice;
+            await user.save(); // Save user wallet changes
+
+            refund.status = status;
+            await refund.save();
+
+            return res.status(200).json({ message: `Refund of ₹${order.totalPrice.toFixed(2)} processed successfully` });
+        } else {
+            refund.status = status;
+            await refund.save();
+
+            return res.status(400).json({ message: `Refund for order #${order._id} rejected` });
+        }
+    } catch (error) {
+        console.error("Error updating refund status:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
+export default { requestRefund, cancelOrder, generateInvoice, loadReturnPage, updateRefundStatus }

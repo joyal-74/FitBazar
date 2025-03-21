@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const refundSchema = new mongoose.Schema({
-    orderId: {
+    order: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Order',
         required: true
@@ -19,15 +19,8 @@ const refundSchema = new mongoose.Schema({
         type: String,
         enum: ['Pending', 'Approved', 'Rejected', 'Processed'],
         default: 'Pending'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    processedAt: {
-        type: Date
     }
-});
+},{timestamps : true});
 
 const Refund = mongoose.model('Refund', refundSchema);
 export default Refund;

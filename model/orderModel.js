@@ -1,72 +1,94 @@
 import mongoose from "mongoose";
 const {Schema} = mongoose;
-import { v4 as uuidv4 } from 'uuid';
+
 
 
 const orderSchema = new Schema({
-    orderId : {
-        type : String,
+    orderId: {
+        type: String,
     },
-    userId : {
-        type : Schema.Types.ObjectId,
-        ref : "User",
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
     },
-    orderItems : [{
-        product : {
-            type : Schema.Types.ObjectId,
-            ref : "Products",
-        },
-        quantity : {
-            type : Number,
-            required : true,
-        },
-        price : {
-            type : Number,
-            default : 0
-        },
-        name : {
-            type : String,
-            required : true
-        },
-        brand : {
-            type : String,
-        },
-        variants : {
-            type : String
-        },
-        productImage : {
-            type : String
-        }
-    }],
-    totalPrice : {
-        type : Number,
-        required : true,
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+        required: true
     },
-    discount : {
-        type : Number,
-        default : 0,
+    quantity: {
+        type: Number,
+        required: true,
     },
-    address : {
-        type : Schema.Types.ObjectId,
-        ref : 'Address',
+    price: {
+        type: Number,
+        required: true,
+    },
+    name: {
+        type: String,
+        required: true
+    },
+    brand: {
+        type: String,
+    },
+    variant: {
+        color: { type: String },
+        weight: { type: String }
+    },
+    productImage: {
+        type: String,
         required : true
     },
-    invoiceDate : {
-        type : Date,
+    totalPrice: {
+        type: Number,
+        required: true,
     },
-    status : {
-        type : String,
-        required : true,
-        enum : ['Pending',"Shipped", 'Delivered','Cancelled','Return Request','Returned']
+    discount: {
+        type: Number,
+        default: 0,
     },
-    couponApplied : {
-        type : Boolean,
-        default : false
+    address: {
+        type: Schema.Types.ObjectId,
+        ref: 'Address',
+        required: true
     },
-    paymentMethod : {
+    invoiceDate: {
+        type: Date,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled', 'Out for Delivery', 'Returned']
+    },
+    cancelReason : {
         type : String
-    }
-},{timestamps: true})
+    },
+    couponApplied: {
+        type: Boolean,
+        default: false
+    },
+    paymentMethod: {
+        type: String
+    },
+    orderItemCount: { 
+        type: Number,
+        required: true 
+    },
+    statusHistory: [{
+        status: { 
+            type: String,
+            required: true,
+            enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled','Returned'] 
+        },
+        timestamp: { 
+            type: Date, 
+            default: Date.now 
+        }
+    }],
+}, { timestamps: true });
+
+
 
 const Order = mongoose.model("Order", orderSchema)
 

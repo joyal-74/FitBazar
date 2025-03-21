@@ -132,6 +132,13 @@
             background-color: #6C5DD3;
             color: #fff;
         }
+        .grand-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 20px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
@@ -182,39 +189,6 @@
                 <p class="subtitle">Thank you for your purchase. Your order has been successfully placed.</p>
             </div>
 
-            <!-- Order Summary -->
-            <div class="detail-section">
-                <h5 class="section-title">Order Summary</h5>
-                <div class="detail-row">
-                    <span>Order ID</span>
-                    <span><%= order.orderId %></span>
-                </div>
-                <div class="detail-row">
-                    <span>Order Date</span>
-                    <span>
-                        <%= new Date(order.createdAt).toLocaleString('en-US', {
-                            weekday: 'short', 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: '2-digit', 
-                            hour: '2-digit', 
-                            minute: '2-digit', 
-                            hour12: false
-                        }).replace(',', '').replace('at', '') %>
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <span>Total Amount</span>
-                    <span>₹ <%= order.totalPrice %></span>
-                </div>
-                <div class="detail-row">
-                    <span>Payment Method</span>
-                    <span><%= order.paymentMethod %></span>
-                </div>
-            </div>
-
-            <hr>
-
             <!-- Shipping Address -->
             <div class="detail-section">
                 <h5 class="section-title">Shipping Address</h5>
@@ -230,23 +204,67 @@
             </div>
 
             <!-- Product Details -->
-            <div>
-                <h5 class="section-title">Product Details</h5>
-                <% orderItems.forEach(item => { %>
-                    <div class="product-card">
-                        <img src="<%= item.productImage %>" alt="Product Image" class="product-img">
-                        <div class="product-info">
-                            <h6><%= item.name %></h6>
-                            <p>Product ID: <%= item.product._id %></p>
-                            <p>Brand: <%= item.brand %></p>
-                            <p>Variant: <%= item.variants %></p>
-                            <p>Qty: <%= item.quantity %></p>
-                        </div>
-                        <span class="product-price">₹ <%= item.price * item.quantity %></span>
+            <% let grandTotal = 0; %>
+            <% orders.forEach(order => { %>
+                <!-- Order Summary -->
+                <div class="detail-section">
+                    <h5 class="section-title">Order Summary</h5>
+                    <div class="detail-row">
+                        <span>Order ID</span>
+                        <span><%= order.orderId %></span>
                     </div>
-                <% }) %>
-            </div>
+                    <div class="detail-row">
+                        <span>Order Date</span>
+                        <span>
+                            <%= new Date(order.createdAt).toLocaleString('en-US', {
+                                weekday: 'short',
+                                year: 'numeric',
+                                month: 'short',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false
+                            }).replace(',', '').replace('at', '') %>
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Total Amount</span>
+                        <span>₹ <%= order.totalPrice %></span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Payment Method</span>
+                        <span><%= order.paymentMethod %></span>
+                    </div>
+                </div>
+                <% grandTotal += order.totalPrice; %>
 
+                <!-- Product Details -->
+                <div>
+                    <h5 class="section-title">Product Details</h5>
+                    <div class="product-card">
+                        <img src="<%= order.productImage %>" alt="<%= order.name %>" class="product-img">
+                        <div class="product-info">
+                            <h6><%= order.name %></h6>
+                            <p>Brand: <%= order.brand %></p>
+                            <p>
+                                Variant:
+                                <%= order.variants?.color || 'N/A' %>
+                                <% if (order.variants?.weight) { %> | <%= order.variants.weight %> <% } %>
+                            </p>
+                            <p>Qty: <%= order.quantity %></p>
+                            <span class="product-price">₹ <%= order.price * order.quantity %></span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                 <!-- Grand Total -->
+                
+            <% }) %>
+
+            <div class="grand-total">
+                Grand Total: ₹ <%= grandTotal %>
+            </div>
+            <hr>
             <!-- Buttons -->
             <div class="btn-container">
                 <a href="/shop" class="btn btn-outline-primary">Continue Shopping</a>

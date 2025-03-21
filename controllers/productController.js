@@ -141,9 +141,6 @@ const editProducts = async (req, res) => {
 };
 
 
-
-
-
 const productInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -153,8 +150,13 @@ const productInfo = async (req, res) => {
 
         const categories = await Category.find();
 
-        if (req.query.category && req.query.category !== "all") {
-            filter.category = req.query.category;
+        if (req.query.category) {
+            const category = await Category.findOne({ name: req.query.category });
+            if (category) {
+                filter.category = category._id;
+            } else {
+                filter.category = null;
+            }
         }
 
         if (req.query.stock === "1") {
@@ -226,13 +228,15 @@ const loadEditProducts = async (req, res) => {
 const loadproductDetails = async (req, res) => {
     const { productId, category } = req.query;
 
+    console.log(productId,category);
+    
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     const user = await User.findOne({ _id: userId });
 
-    const reviews = await Reviews.find()
+    const reviews = await Reviews.find({productId})
 
-    const product = await Products.findOne({ productId }).populate('category')
+    const product = await Products.findOne({ _id : productId }).populate('category')
     const relateproducts = await Products.find({ category }).limit(4);
 
     res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
@@ -242,7 +246,6 @@ const loadproductDetails = async (req, res) => {
 
 const loadShop = async (req, res) => {
     try {
-
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         const user = await User.findOne({ _id: userId });
@@ -256,9 +259,19 @@ const loadShop = async (req, res) => {
         if (req.query.result) {
             filter.name = { $regex: req.query.result, $options: "i" };
         }
+        
         if (req.query.category) {
-            filter.category = req.query.category;
+            let categories = Array.isArray(req.query.category)
+                ? req.query.category
+                : [req.query.category];
+
+            const matchedCategories = await Category.find({ name: { $in: categories } }).select('_id');
+            
+            if (matchedCategories.length) {
+                filter.category = { $in: matchedCategories.map(cat => cat._id) };
+            }
         }
+
         if (req.query.price) {
             filter.$expr = {
                 $lte: [
@@ -277,8 +290,8 @@ const loadShop = async (req, res) => {
         // Sorting
         const sortOption = req.query.sort || "newest";
         let sortQuery = {};
-        if (sortOption === "priceLowToHigh") sortQuery = { salePrice: 1 };
-        else if (sortOption === "priceHighToLow") sortQuery = { salePrice: -1 };
+        if (sortOption === "priceLowToHigh") sortQuery = { price: 1 };
+        else if (sortOption === "priceHighToLow") sortQuery = { price: -1 };
         else if (sortOption === "aToZ") sortQuery = { name: 1 };
         else if (sortOption === "zToA") sortQuery = { name: -1 };
         else if (sortOption === "ratingHighToLow") sortQuery = { rating: -1 };
@@ -287,7 +300,6 @@ const loadShop = async (req, res) => {
         // Fetch products
         const product = await Products.aggregate([
             { $match: filter },
-            { $addFields: { salePrice: { $subtract: ["$price", { $multiply: ["$price", { $divide: ["$productOffer", 100] }] }] } } },
             { $sort: sortQuery },
             { $skip: skip },
             { $limit: limit }

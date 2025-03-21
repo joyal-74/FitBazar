@@ -82,7 +82,7 @@ export const generateInvoicePDF = async (order, address) => {
 
                 <!-- Order Details -->
                 <div class="order-details">
-                    <p><strong>Order ID:</strong> ${order._id}</p>
+                    <p><strong>Order ID:</strong> ${order.orderId}</p>
                     <p><strong>Date:</strong> ${date}</p>
                     <p><strong>Total Price:</strong> ₹${order.totalPrice.toFixed(2)}</p>
                 </div>
@@ -113,15 +113,13 @@ export const generateInvoicePDF = async (order, address) => {
                         </tr>
                     </thead>
                     <tbody>
-                        ${order.orderItems.map((item, index) => `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${item.product.name}</td>
-                                <td>${item.quantity}</td>
-                                <td>₹${item.price.toFixed(2)}</td>
-                                <td>₹${(item.price * item.quantity).toFixed(2)}</td>
-                            </tr>
-                        `).join('')}
+                        <tr>
+                            <td>${1}</td>
+                            <td>${order.product.name}</td>
+                            <td>${order.quantity}</td>
+                            <td>₹${order.price.toFixed(2)}</td>
+                            <td>₹${(order.price * order.quantity).toFixed(2)}</td>
+                        </tr>
                     </tbody>
                 </table>
 

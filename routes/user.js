@@ -6,6 +6,7 @@ import cartControlller from '../controllers/cartController.js'
 import refundController from '../controllers/refundController.js'
 import reviewController from '../controllers/reviewController.js'
 import upload from "../middleware/imageUpload.js";
+import wishlistController from "../controllers/wishlistController.js";
 
 
 // login route
@@ -46,6 +47,11 @@ router.get('/coupons', profileController.loadCoupons);
 router.get('/privacy', profileController.loadPrivacy);
 router.post('/privacy', profileController.updatePassword);
 
+
+router.get('/wishlist', wishlistController.getWishlist);
+router.post('/wishlist', wishlistController.addToWishlist);
+
+router.post('/wishlist/remove', wishlistController.removeFromWishlist);
 
 router.post('/addToCart', cartControlller.addItemToCart)
 router.get('/cart', cartControlller.loadCart);

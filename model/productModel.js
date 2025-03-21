@@ -58,6 +58,10 @@ const productSchema = new Schema({
         required : false,
         default : "Available",
     },
+    reviewCount: {
+        type : Number,
+        default : 0
+    },
     variants: [variantSchema],
 
 },{timestamps : true})

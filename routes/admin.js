@@ -8,6 +8,7 @@ import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
 import { uploads, handleUploads } from '../middleware/uploadMiddleware.js';
+import refundController from "../controllers/refundController.js";
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -42,12 +43,17 @@ router.post('/viewcustomers', customerController.changeBlockStatus);
 router.get('/customers/filter',adminAuth.checkSession, customerController.filterCustomers);
 
 
-
 // order management
 router.get('/orders', adminController.loadOrders);
 router.patch('/orders', adminController.updateStatus);
-
 router.get('/vieworders', adminController.viewOrders);
+
+
+// Return management
+
+router.get('/refunds', refundController.loadReturnPage);
+router.patch('/refunds', refundController.updateRefundStatus);
+
 
 
 export default router;

@@ -150,33 +150,41 @@
             <div class="col-md-8">
                 <% if (cart && cart.items && cart.items.length > 0) { %>
                     <% cart.items.forEach(item => { %>
-                        <div class="card mb-4 shadow-sm border-0 cart-item" style="background: linear-gradient(to right, #FFFFFF, #F8F8FC);">
+                        <div class="card mb-4 shadow-sm border-0 cart-item" style="background: linear-gradient(to right, #f9ecfb, #F8F8FC);">
                             <div class="row g-0 align-items-center px-4 py-2">
                                 <div class="col-3 col-md-2">
                                     <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" 
                                          class="img-fluid rounded" style="max-width: 100px; object-fit: cover; border: 1px solid #EDEDED;">
                                 </div>
                                 <div class="col-9 col-md-10">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                                        <div>
-                                            <h6 class="fw-bold mb-2 text-dark" style="font-size: 1.25rem;"><%= item.productId.name %></h6>
-                                            <p class="text-muted mb-2 small"><%= item.variants %></p>
-                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 1.1rem;">₹ <%= item.price.toLocaleString('en-IN') %></p>
+                                    <div class="d-flex align-items-center flex-nowrap gap-3">
+                                        <div class="flex-grow-1" style="min-width: 0;">
+                                            <h6 class="fw-bold mb-2 text-dark text-truncate" style="font-size: 1.05rem; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                <%= item.productId.name %>
+                                            </h6>
+                                            <p class="text-muted mb-2 small">
+                                                <%= item.variants.color %> | <%= item.variants?.weight || "" %>
+                                            </p>
+                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 1.1rem;">
+                                                ₹ <%= item.price.toLocaleString('en-IN') %>
+                                            </p>
                                             <input type="hidden" id="userId" value="<%= user._id %>">
                                         </div>
-                                        <div class="d-flex align-items-center gap-4">
+                                        <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                             <div class="quantity-control d-flex align-items-center gap-2">
                                                 <button class="quantity-btn" 
-                                                        onclick="updateQuantity('<%= item.productId._id %>', -1)">
+                                                        onclick="updateQuantity('<%= item.productId._id %>', -1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
                                                     <i class="fa-solid fa-minus" style="font-size: 12px;"></i>
                                                 </button>
                                                 <span class="quantity-display"><%= item.quantity %></span>
                                                 <button class="quantity-btn" 
-                                                        onclick="updateQuantity('<%= item.productId._id %>', 1)">
+                                                        onclick="updateQuantity('<%= item.productId._id %>', 1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
                                                     <i class="fa-solid fa-plus" style="font-size: 12px;"></i>
                                                 </button>
                                             </div>
-                                            <p class="mb-0 fw-bold text-dark" style="font-size: 1.1rem; width: 70px;">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></p>
+                                            <p class="mb-0 fw-bold text-dark" style="font-size: 1.1rem; width: 70px; flex-shrink: 0;">
+                                                ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                            </p>
                                             <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn" 
                                                     onclick="removeFromCart('<%= item.productId._id %>')" 
                                                     style="width: 38px; height: 38px;">
@@ -192,10 +200,14 @@
                     <div class="text-center py-5 bg-light rounded-3">
                         <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4"></i>
                         <p class="text-muted fs-4 fw-medium">Your cart is empty!</p>
-                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2" style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">Start Shopping</a>
+                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2" 
+                           style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">
+                           Start Shopping
+                        </a>
                     </div>
                 <% } %>
             </div>
+            
 
             <!-- Order Summary -->
             <div class="col-md-4">
@@ -205,19 +217,26 @@
                         <% let total = 0; %>
                         <% cart.items.forEach(item => { %>
                             <% total += item.quantity * item.price; %>
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted" style="font-size: 0.95rem;"><%= item.quantity %>x <%= item.productId.name %></span>
-                                <span class="text-dark fw-medium">₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %></span>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted text-truncate" 
+                                      style="font-size: 0.95rem; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <%= item.quantity %>x <%= item.productId.name %>
+                                </span>
+                                <span class="text-dark fw-medium flex-shrink-0">
+                                    ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                </span>
                             </div>
                         <% }) %>
-                        <div class="d-flex justify-content-between mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                            <span class="text-success fw-semibold">Free</span>
+                            <span class="text-success fw-semibold flex-shrink-0">Free</span>
                         </div>
                         <hr class="my-4" style="border-color: #E0E0E0;">
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
-                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">₹ <%= total.toLocaleString('en-IN') %></span>
+                            <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
+                                ₹ <%= total.toLocaleString('en-IN') %>
+                            </span>
                         </div>
                         <button class="btn checkout-btn w-100 mt-4" 
                                 onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')" 
@@ -228,20 +247,39 @@
                         <p class="text-muted text-center fs-5">No items in your cart.</p>
                     <% } %>
                 </div>
-            </div>
+            </div>            
         </div>
     </main>
 
     <script>
         // Update Quantity
-        async function updateQuantity(productId, change) {
-            const response = await fetch('/user/cart', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId, change })
-            });
-            if (response.ok) window.location.reload();
+        async function updateQuantity(productId, change, color, weight) {
+            try {
+                const response = await fetch('/user/cart', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, change, color, weight })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        text: data.error || 'Failed to update quantity!'
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating quantity:', error);
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Something went wrong. Please try again later.'
+                });
+            }
         }
+
 
         // Remove Item
         async function removeFromCart(productId) {

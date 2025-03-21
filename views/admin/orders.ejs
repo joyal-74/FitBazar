@@ -49,8 +49,8 @@
                 <h1 class="h3 mb-4">Orders</h1>
 
                 <!-- Filters and Export Button -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
+                <div class="d-flex justify-content-between mb-4">
+                    <div class="col-2">
                         <select class="form-select">
                             <option selected>Filter by Status</option>
                             <option value="1">Completed</option>
@@ -58,10 +58,8 @@
                             <option value="3">Cancelled</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <input type="date" class="form-control" placeholder="Filter by Date">
-                    </div>
-                    <div class="col-md-6 text-end">
+                    
+                    <div class=" text-end">
                         <button class="btn btn-primary" onclick="">
                             <i class="fas fa-download me-2"></i>Export to PDF
                         </button>
@@ -74,7 +72,7 @@
                         <div class="table-responsive">
                             <table class="table" id="ordersTable">
                                 <thead>
-                                    <tr>
+                                    <tr class="text-center">
                                         <th>Order ID</th>
                                         <th>Customer</th>
                                         <th>Date</th>
@@ -86,18 +84,24 @@
                                 <tbody>
                                     <% if (orders.length > 0) { %>
                                         <% orders.forEach(order => { %>
-                                            <tr>
+                                            <tr class="text-center">
                                                 <td>#<%= order.orderId %></td>
                                                 <td><%= order.userId?.name || 'N/A' %></td>
                                                 <td><%= order.createdAt.toISOString().split('T')[0] %></td>
                                                 <td>₹<%= order.totalPrice.toLocaleString('en-IN') %></td>
                                                 <td>
                                                     <% if (order.status === 'Delivered') { %>
-                                                        <span class="badge bg-success">Delivered</span>
+                                                        <span class="badge bg-success" style="border-radius: 28px; width: 130px;">Delivered</span>
                                                     <% } else if (order.status === 'Pending') { %>
-                                                        <span class="badge bg-warning">Pending</span>
+                                                        <span class="badge bg-warning" style="border-radius: 28px; width: 130px;">Pending</span>
                                                     <% } else if (order.status === 'Cancelled') { %>
-                                                        <span class="badge bg-danger">Cancelled</span>
+                                                        <span class="badge bg-danger" style="border-radius: 28px; width: 130px;">Cancelled</span>
+                                                    <% } else if (order.status === 'Out for Delivery') { %>
+                                                        <span class="badge bg-info" style="border-radius: 28px; width: 130px;">Out for Delivery</span>
+                                                    <% } else if (order.status === 'Shipped') { %>
+                                                        <span class="badge" style="background-color: #a110a1; border-radius: 28px; width: 130px;">Shipped</span>
+                                                    <% } else if (order.status === 'Returned') { %>
+                                                        <span class="badge" style="background-color: #b9043a; border-radius: 28px; width: 130px;">Returned</span>
                                                     <% } %>
                                                 </td>
                                                 <td>

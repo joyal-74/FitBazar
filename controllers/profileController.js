@@ -15,15 +15,8 @@ const loadOrders = async (req,res) => {
         if (!userId) {
             return res.status(UNAUTHORIZED).redirect('/user/login');
         }
-        const [firstName, lastName] = user.name.split(' ');
-        const orders = await Order.find({ userId })
-                .populate({
-                    path: 'orderItems.product',
-                    select: 'name price brand variants'
-                })
-                .sort({ createdAt: -1 });
-
-        console.log(orders)
+        const [firstName] = user.name.split(' ');
+        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 
         res.render('user/orders',{title : "My Orders",orders, user, firstName});
 
@@ -40,14 +33,13 @@ const loadOrderDetails = async (req,res)=> {
         const orderId = req.query.id;
 
 
-
         if (!userId) {
             return res.status(UNAUTHORIZED).redirect('/user/login');
         }
 
         const user = await User.findOne({_id : userId})
 
-        const [firstName, lastName] = user.name.split(' ');
+        const [firstName] = user.name.split(' ');
 
         const order = await Order.findOne({ orderId });
 

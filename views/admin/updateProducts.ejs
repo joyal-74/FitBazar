@@ -206,6 +206,7 @@
             let currentInput;
             let currentPreview;
             let removedImages = [];
+            let newImages = [];
 
             // Form submission
             const editProductForm = document.getElementById("editProductForm");
@@ -267,56 +268,48 @@
             function validateForm() {
                 let isValid = true;
 
-                // Product Name (required, min 2 chars)
                 const productName = document.getElementById("productName").value.trim();
                 if (!productName || productName.length < 2) {
                     showError("nameError", "Product name is required and must be at least 2 characters.");
                     isValid = false;
                 }
 
-                // Category (required)
                 const productCategory = document.getElementById("productCategory").value;
                 if (!productCategory || productCategory === "Select category") {
                     showError("nameError", "Please select a category.");
                     isValid = false;
                 }
 
-                // Brand (required, min 2 chars)
                 const brand = document.getElementById("brand").value.trim();
                 if (!brand || brand.length < 2) {
                     showError("brandError", "Brand is required and must be at least 2 characters.");
                     isValid = false;
                 }
 
-                // Base Price (required, positive number)
                 const price = document.getElementById("productPrice").value;
                 if (!price || price <= 0) {
                     showError("priceError", "Base price is required and must be greater than 0.");
                     isValid = false;
                 }
 
-                // Discount Percentage (optional, 0-100)
                 const discount = document.getElementById("productOffer").value;
                 if (discount && (discount < 0 || discount > 100)) {
                     showError("priceError", "Discount must be between 0 and 100.");
                     isValid = false;
                 }
 
-                // Short Description (required, min 10 chars)
                 const shortDesc = document.getElementById("shortDescription").value.trim();
                 if (!shortDesc || shortDesc.length < 10) {
                     showError("descriptionError", "Short description is required and must be at least 10 characters.");
                     isValid = false;
                 }
 
-                // Long Description (required, min 20 chars)
                 const longDesc = document.getElementById("productDescription").value.trim();
                 if (!longDesc || longDesc.length < 20) {
                     showError("descriptionError", "Long description is required and must be at least 20 characters.");
                     isValid = false;
                 }
 
-                // Specifications (optional, but min 10 chars if provided)
                 const spec = document.getElementById("productSpec").value.trim();
                 if (spec && spec.length < 10) {
                     showError("specError", "Specifications must be at least 10 characters if provided.");
@@ -324,18 +317,9 @@
                 }
 
                 const filledSlots = document.querySelectorAll(".image-preview.filled").length;
-                const newImageInputs = document.querySelectorAll(".image-upload-slot input[type='file']");
-                let newImageCount = 0;
+                const newImageCount = newImages.length;
 
-                newImageInputs.forEach(input => {
-                    const slot = input.closest(".image-upload-slot");
-                    const isFilled = slot.querySelector(".image-preview.filled");
-                    if (input.files && input.files.length > 0 && !isFilled) {
-                        newImageCount++;
-                    }
-                });
-
-                const totalImages = filledSlots + newImageCount - removedImages.length ;
+                const totalImages = filledSlots + newImageCount - removedImages.length;
 
                 console.log("Filled slots (current):", filledSlots);
                 console.log("New images:", newImageCount);
@@ -357,13 +341,11 @@
                         const weight = item.querySelector(`input[name="weightVariant[${index}]"]`).value.trim();
                         const stock = item.querySelector(`input[name="stockVariant[${index}]"]`).value;
 
-                        // Either color or weight must be provided
                         if (!color && !weight) {
                             showError("color-error", "Either color or weight is required.", item);
                             isValid = false;
                         }
 
-                        // Stock (required, positive number)
                         if (!stock || stock < 0) {
                             showError("stock-error", "Stock is required and must be 0 or greater.", item);
                             isValid = false;
@@ -442,139 +424,156 @@
 
             // Image Upload Functions
             function setupImageSlots() {
-                const slots = document.querySelectorAll(".image-upload-slot");
+            const slots = document.querySelectorAll(".image-upload-slot");
 
-                slots.forEach((slot) => {
-                    const dropzone = slot.querySelector(".image-upload-dropzone");
-                    const input = slot.querySelector('input[type="file"]');
-                    const preview = slot.querySelector(".image-preview");
-                    const existingImage = preview.querySelector("img");
+            slots.forEach((slot, index) => {
+                const dropzone = slot.querySelector(".image-upload-dropzone");
+                const input = slot.querySelector('input[type="file"]');
+                const preview = slot.querySelector(".image-preview");
+                const existingImage = preview.querySelector("img");
 
-                    // Handle existing images
-                    if (existingImage) {
-                        slot.classList.add("filled");
-                        dropzone.classList.add("d-none");
+                // Handle existing images
+                if (existingImage) {
+                    slot.classList.add("filled");
+                    dropzone.classList.add("d-none");
 
-                        existingImage.addEventListener("click", () => {
-                            openCropModal(existingImage.src, (croppedData) => {
-                                existingImage.src = croppedData;
-                            });
+                    existingImage.addEventListener("click", () => {
+                        openCropModal(existingImage.src, (croppedFile) => {
+                            existingImage.src = URL.createObjectURL(croppedFile);
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(croppedFile);
+                            input.files = dataTransfer.files;
+                            // If an existing image is re-cropped, treat it as a new image
+                            newImages.push(croppedFile);
                         });
-
-                        const removeBtn = preview.querySelector(".remove-image-btn");
-                        if (removeBtn) {
-                            removeBtn.addEventListener("click", () => {
-                                handleRemoveImage(removeBtn, slot, input, preview);
-                            });
-                        }
-                    }
-
-                    // Upload handling
-                    dropzone.addEventListener("click", () => input.click());
-
-                    input.addEventListener("change", () => {
-                        const file = input.files[0];
-                        if (file && file.type.startsWith("image/")) {
-                            openCropModal(URL.createObjectURL(file), (croppedData) => {
-                                preview.innerHTML = `
-                                    <img src="${croppedData}" alt="Preview" class="img-fluid">
-                                    <button type="button" class="remove-image-btn">×</button>
-                                `;
-                                slot.classList.add("filled");
-                                dropzone.classList.add("d-none");
-
-                                // Add event handlers for the new image
-                                const img = preview.querySelector("img");
-                                img.addEventListener("click", () => {
-                                    openCropModal(croppedData, (newCroppedData) => {
-                                        img.src = newCroppedData;
-                                    });
-                                });
-
-                                const removeBtn = preview.querySelector(".remove-image-btn");
-                                removeBtn.addEventListener("click", () => {
-                                    handleRemoveImage(removeBtn, slot, input, preview);
-                                });
-                            });
-                        }
                     });
-                });
-            }
 
-
-            function handleRemoveImage(removeBtn, slot, input, preview) {
-                const imageUrl = removeBtn.getAttribute("data-image-url");
-
-                // Track removed image URLs
-                if (imageUrl && !removedImages.includes(imageUrl)) {
-                    removedImages.push(imageUrl);
+                    const removeBtn = preview.querySelector(".remove-image-btn");
+                    if (removeBtn) {
+                        removeBtn.addEventListener("click", () => {
+                            handleRemoveImage(removeBtn, slot, input, preview);
+                        });
+                    }
                 }
 
-                preview.innerHTML = "";
-                slot.classList.remove("filled");
-                slot.querySelector(".image-upload-dropzone").classList.remove("d-none");
-                input.value = "";
+                // Upload handling
+                dropzone.addEventListener("click", () => input.click());
 
-                console.log("Removed Images:", removedImages);
-            }
+                input.addEventListener("change", () => {
+                    const file = input.files[0];
+                    if (file && file.type.startsWith("image/")) {
+                        openCropModal(URL.createObjectURL(file), (croppedFile) => {
+                            preview.innerHTML = `
+                                <img src="${URL.createObjectURL(croppedFile)}" alt="Preview" class="img-fluid">
+                                <button type="button" class="remove-image-btn">×</button>
+                            `;
+                            slot.classList.add("filled");
+                            dropzone.classList.add("d-none");
 
-            // Open Crop Modal
-            function openCropModal(imageSrc, onCropComplete) {
-                const image = document.getElementById("imageToCrop");
-                image.src = imageSrc;
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(croppedFile);
+                            input.files = dataTransfer.files;
 
-                const modal = new bootstrap.Modal(document.getElementById("cropModal"));
-                modal.show();
+                            newImages.push(croppedFile);
 
-                document.getElementById("cropModal").addEventListener(
-                    "shown.bs.modal",
-                    () => {
-                        if (cropper) cropper.destroy();
+                            const img = preview.querySelector("img");
+                            img.addEventListener("click", () => {
+                                openCropModal(URL.createObjectURL(croppedFile), (newCroppedFile) => {
+                                    img.src = URL.createObjectURL(newCroppedFile);
+                                    const newDataTransfer = new DataTransfer();
+                                    newDataTransfer.items.add(newCroppedFile);
+                                    input.files = newDataTransfer.files;
 
-                        cropper = new Cropper(image, {
-                            aspectRatio: 1,
-                            viewMode: 1,
-                            autoCropArea: 0.8,
-                            responsive: true,
-                            dragMode: 'move',
-                            background: false,
+                                    const index = newImages.indexOf(croppedFile);
+                                    if (index !== -1) newImages[index] = newCroppedFile;
+                                    else newImages.push(newCroppedFile);
+                                });
+                            });
+
+                            const removeBtn = preview.querySelector(".remove-image-btn");
+                            removeBtn.addEventListener("click", () => {
+                                handleRemoveImage(removeBtn, slot, input, preview);
+
+                                const index = newImages.indexOf(croppedFile);
+                                if (index !== -1) newImages.splice(index, 1);
+                            });
                         });
-                    },
-                    { once: true }
-                );
-
-                document.getElementById("cropButton").addEventListener("click", () => {
-                    if (cropper) {
-                        const canvas = cropper.getCroppedCanvas({
-                            width: 200,
-                            height: 200,
-                        });
-
-                        canvas.toBlob((blob) => {
-                            const croppedData = URL.createObjectURL(blob);
-                            onCropComplete(croppedData);
-
-                            bootstrap.Modal.getInstance(document.getElementById("cropModal")).hide();
-                            cropper.destroy();
-                            cropper = null;
-                        }, "image/jpeg", 0.9);
                     }
                 });
+            });
+        }
 
-                document.getElementById("cropModal").addEventListener("hidden.bs.modal", () => {
-                    if (cropper) {
+        function handleRemoveImage(removeBtn, slot, input, preview) {
+            const imageUrl = removeBtn.getAttribute("data-image-url");
+
+            if (imageUrl && !removedImages.includes(imageUrl)) {
+                removedImages.push(imageUrl);
+            }
+
+            preview.innerHTML = "";
+            slot.classList.remove("filled");
+            slot.querySelector(".image-upload-dropzone").classList.remove("d-none");
+            input.value = "";
+        }
+
+        // Open Crop Modal
+        function openCropModal(imageSrc, onCropComplete) {
+            const image = document.getElementById("imageToCrop");
+            image.src = imageSrc;
+
+            const modal = new bootstrap.Modal(document.getElementById("cropModal"));
+            modal.show();
+
+            document.getElementById("cropModal").addEventListener(
+                "shown.bs.modal",
+                () => {
+                    if (cropper) cropper.destroy();
+
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        autoCropArea: 0.8,
+                        responsive: true,
+                        dragMode: 'move',
+                        background: false,
+                    });
+                },
+                { once: true }
+            );
+
+            document.getElementById("cropButton").addEventListener("click", () => {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 200,
+                        height: 200,
+                    });
+
+                    canvas.toBlob((blob) => {
+                        const croppedFile = new File([blob], `cropped-image-${Date.now()}.jpg`, {
+                            type: "image/jpeg",
+                        });
+                        onCropComplete(croppedFile);
+
+                        bootstrap.Modal.getInstance(document.getElementById("cropModal")).hide();
                         cropper.destroy();
                         cropper = null;
-                    }
-                });
-            }
+                    }, "image/jpeg", 0.9);
+                }
+            }, { once: true });
 
+            document.getElementById("cropModal").addEventListener("hidden.bs.modal", () => {
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            }, { once: true });
+        }
 
-            // Initialize image slots
-            const imageContainers = document.querySelectorAll(".image-upload-row");
-            imageContainers.forEach(container => {
-                setupImageSlots(container);
-            });
+        // Initialize image slots
+        const imageContainers = document.querySelectorAll(".image-upload-row");
+        imageContainers.forEach(container => {
+            setupImageSlots(container);
         });
+    });
     </script>
 </body>

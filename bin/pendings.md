@@ -21,6 +21,7 @@ Updations
 _________________
 
 1. out of stock products cannot add to cart [x]
-2. shopping address in admin side order
-3. order as individual order if there are many products in single order in cart
+2. shopping address in admin side order [x]
+3. Pagination in order management admin side
+4. order as individual order if there are many products in single order in cart [x]
 
