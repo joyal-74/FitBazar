@@ -279,11 +279,13 @@ const loadShop = async (req, res) => {
         if (req.query.brand) {
             let brands = Array.isArray(req.query.brand)
                 ? req.query.brand
-                : [req.query.brand];
+                : req.query.brand.includes(',')
+                    ? req.query.brand.split(',')
+                    : [req.query.brand];
             filter.brand = { $in: brands };
         }
+        
 
-        // Price filter with discount consideration
         if (req.query.price) {
             filter.$expr = {
                 $lte: [
@@ -293,12 +295,11 @@ const loadShop = async (req, res) => {
             };
         }
 
-        // Availability filter
+
         if (req.query.availability) {
             filter.stock = { $gt: 0 };
         }
 
-        // Sorting options
         const sortOption = req.query.sort || "newest";
         let sortQuery = {};
         switch (sortOption) {
@@ -318,7 +319,7 @@ const loadShop = async (req, res) => {
                 sortQuery = { rating: -1 };
                 break;
             default:
-                sortQuery = { createdAt: -1 }; // newest
+                sortQuery = { createdAt: -1 };
         }
 
         // Fetch products with aggregation
@@ -329,7 +330,7 @@ const loadShop = async (req, res) => {
             { $limit: limit }
         ]);
 
-        // Fetch available categories and brands for filter options
+
         const categories = await Category.find({ visibility: true });
         const brands = await Products.distinct("brand", { visibility: true });
         const totalProducts = await Products.countDocuments(filter);
@@ -337,7 +338,7 @@ const loadShop = async (req, res) => {
 
         res.render("shop", {
             title: "Shop",
-            product: products, // Renamed to products for clarity
+            product: products,
             brands,
             category: categories,
             appliedFilters: req.query,
@@ -349,7 +350,7 @@ const loadShop = async (req, res) => {
 
     } catch (error) {
         console.error("Error loading shop:", error);
-        res.status(500).send("Error fetching products"); // Assuming INTERNAL_SERVER_ERROR = 500
+        res.status(INTERNAL_SERVER_ERROR).send("Error fetching products");
     }
 };
 

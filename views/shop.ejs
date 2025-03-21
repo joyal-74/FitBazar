@@ -179,7 +179,7 @@
             
                                 <div class="card-body p-2">
                                     <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
-                                    <p class="text-warning mb-1">&#9733; <%= %> (<%= product.reviewCount %>)</p>
+                                    <p class="text-warning mb-1">&#9733; <%= product.rating %> (<%= product.reviewCount %>)</p>
                                     <p class="d-flex align-items-center gap-2 mb-2">
                                         <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></strong> 
                                         <del class="text-dark small">₹<%= product.price %></del>
@@ -345,15 +345,8 @@
                 currentUrl.searchParams.delete("result");
             }
 
-            window.location.href = currentUrl.toString(); // Redirect with filters + search applied
+            window.location.href = currentUrl.toString();
         });
-
-        function addToCart(){
-            document.getElementById('addTocart').addEventListener('click', ()=> {
-                
-            })
-        }
 
     </script>
 </body>
-</html>
