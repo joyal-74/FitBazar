@@ -18,15 +18,15 @@ const getOtpEmailTemplate = (email, otp) => {
     `;
 };
 
-const getResetPasswordEmailTemplate = (email, resetLink) => {
+const getOtpResetEmailTemplate = (email, otp) => {
     return `
         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #cc2118;">FitBazar Password Reset</h2>
             <p>Hello,</p>
             <p>We received a request to reset your password for the FitBazar account:</p>
             <p style="font-size: 12px; font-weight: bold; color:#cc2118;">${email}</p>
-            <p>Click the button below to reset your password:</p>
-            <a href="${resetLink}" style="background: #cc2118; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+            <p>Use the below OTP reset your password:</p>
+            <p style="font-size: 24px; font-weight: bold; color:#2118cc;">${otp}</p>
             <p>If you did not request a password reset, please ignore this email.</p>
             <p>Best regards,<br>The FitBazar Team</p>
             <hr style="border: 0; border-top: 1px solid #eee;">
@@ -36,4 +36,4 @@ const getResetPasswordEmailTemplate = (email, resetLink) => {
 };
 
 
-export default { getOtpEmailTemplate, getResetPasswordEmailTemplate };
+export default { getOtpEmailTemplate, getOtpResetEmailTemplate };

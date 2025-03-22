@@ -62,5 +62,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(PORT,()=> console.log(`server running on ${PORT} 
-admin : http://localhost:4000/admin/login
-user  : http://localhost:4000/user/login`))
+admin : http://localhost:${PORT}/admin/login
+user  : http://localhost:${PORT}/user/login`))

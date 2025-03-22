@@ -114,8 +114,8 @@ const userRegister = async (req, res) => {
 
 
         req.session.otp = otp;
-        req.session.otpExpire = Date.now() + 30 * 1000;
-        req.session.otpEmail = email;
+        req.session.otpExpire = Date.now() + 60 * 1000;
+        req.session.email = email;
         req.session.requestFrom = "register";
 
 
@@ -174,14 +174,15 @@ const generateOtp = async (req, res) => {
 
     req.session.otp = otp;
     req.session.email = email;
-    req.session.otpExpire = Date.now() + 30 * 1000;
+    req.session.otpExpire = Date.now() + 60 * 1000;
     const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
     req.session.requestFrom = "forgot-password";
 
-    const emailContent = emailTemplate.getResetPasswordEmailTemplate;
+    const emailContent = emailTemplate.getOtpResetEmailTemplate(email,otp);
+
 
     try {
-        await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent, otp);
+        await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent);
         console.log(req.session.otpExpire)
         return res.status(OK).json({
             success: true,
@@ -205,10 +206,14 @@ const resendOtp = async (req, res) => {
 
         req.session.otp = otp;
         const email = req.session.email;
-        req.session.otpExpire = Date.now() + 30 * 1000;
+        console.log(email)
+        req.session.otpExpire = Date.now() + 60 * 1000;
         const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
 
-        const emailContent = emailTemplate.getResetPasswordEmailTemplate;
+        const emailContent = emailTemplate.getOtpResetEmailTemplate(email,otp);
+
+        console.log(emailContent);
+        
 
         if (!email) {
             return res.status(BAD_REQUEST).json({ error: "Session expired. Please start the verification process again." });

@@ -347,7 +347,8 @@ const editAddress = async (req,res) => {
         const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index, from } = req.body;
 
 
-        const userId = req.session.user.id;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
 
         if (!fullName || !phone || !addressLine1 || !city || !state || !country) {
             return res.status(BAD_REQUEST).json({ error: "All required fields must be filled." });
