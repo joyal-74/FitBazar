@@ -44,14 +44,14 @@ router.get('/customers/filter',adminAuth.checkSession, customerController.filter
 
 
 // order management
-router.get('/orders', adminController.loadOrders);
+router.get('/orders',adminAuth.checkSession, adminController.loadOrders);
 router.patch('/orders', adminController.updateStatus);
-router.get('/vieworders', adminController.viewOrders);
+router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 
 
 // Return management
 
-router.get('/refunds', refundController.loadReturnPage);
+router.get('/refunds', adminAuth.checkSession, refundController.loadReturnPage);
 router.patch('/refunds', refundController.updateRefundStatus);
 
 

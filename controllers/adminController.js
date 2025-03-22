@@ -79,6 +79,7 @@ const loadOrders = async (req, res) => {
         const orders = await Order.find(query).sort({ createdAt: -1 });
 
         res.render('admin/orders', {
+            title : "Order managemnet",
             orders,
             status: req.query.clear ? '' : status,
             search: req.query.clear ? '' : search

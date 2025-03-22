@@ -14,9 +14,8 @@ const addItemToCart = async (req, res) => {
     try {
         const { userId, productId, quantity, price, variants } = req.body;
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
 
-        // Check if user is authenticated
         if (!userId) {
             return res.status(UNAUTHORIZED).json({ error: 'Please log in to add items to your cart.' });
         }
@@ -136,14 +135,12 @@ const updateQuantity = async (req, res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     try {
-        // Find the cart for the user
         const cart = await Cart.findOne({ userId: userId });
 
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
 
-        // Find the correct item based on productId + variant
         const item = cart.items.find(item =>
             item.productId.toString() === productId &&
             item.variants.color === color &&
@@ -154,7 +151,6 @@ const updateQuantity = async (req, res) => {
             return res.status(404).json({ message: "Product not found in cart" });
         }
 
-        // Find the actual product with the correct variant
         const product = await Products.findOne({
             _id: productId,
             variants: {
@@ -169,12 +165,10 @@ const updateQuantity = async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        // Get the specific variant from product
         const variant = product.variants.find(v =>
             v.color === color && v.weight === weight
         );
 
-        // Update quantity only if stock allows it
         if (change > 0) {
             if (item.quantity < variant.stock) {
                 item.quantity += 1;
@@ -354,7 +348,7 @@ const loadshoppingAddress = async (req,res) => {
 }
 
 const editshoppingAddress = async (req,res) =>{
-    console.log('---------')
+
     try {
         const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index } = req.body;
 
@@ -389,12 +383,11 @@ const editshoppingAddress = async (req,res) =>{
 }
 
 
-// will implement later
+
 const loadCheckoutUp = async (req, res) => {
     try {
         const { id, index } = req.query;
 
-        
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {
@@ -556,7 +549,7 @@ const paymentSuccess = async (req, res) => {
 
 const confirmOrder = async (req, res) => {
     try {
-        console.log('--------');
+        
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
     
         if (!userId) {
@@ -603,7 +596,7 @@ const confirmOrder = async (req, res) => {
 
         const shippingAddress = address.details[0];
 
-        return res.render('user/confirmOrder', { user, shippingAddress, orders });
+        return res.render('user/confirmOrder', { title : "Order Confirmation", user, shippingAddress, orders });
     } catch (error) {
         console.error(`Error confirming order: ${error}`);
         return res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });

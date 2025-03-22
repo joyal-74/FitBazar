@@ -150,20 +150,51 @@ const generateInvoice = async (req, res) => {
 
 
 const loadReturnPage = async (req, res) => {
-    const refundRequests = await Refund.find({})
-        .populate({
-            path: 'order',
-            select: 'orderId totalPrice createdAt status',
-            populate: {
-                path: 'userId',
-                select: 'name'
-            }
-        })
-        .sort({ createdAt: -1 })
-        .lean();
+    try {
+        const { status, search } = req.query;
 
-    res.render('admin/returnOrder', { title : "Return page",refundRequests });
-}
+        // Build query object
+        let query = {};
+
+        // Filter by status if provided
+        if (status) {
+            query.status = status;
+        }
+
+        // Search by orderId or user name
+        if (search) {
+            query.$or = [
+                { 'order.orderId': { $regex: search, $options: 'i' } }, // Search in orderId
+                { 'order.userId.name': { $regex: search, $options: 'i' } } // Search in user name
+            ];
+        }
+
+        // Fetch refund requests with populated order and user data
+        const refundRequests = await Refund.find(query)
+            .populate({
+                path: 'order',
+                select: 'orderId totalPrice createdAt status',
+                populate: {
+                    path: 'userId',
+                    select: 'name'
+                }
+            })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        // Render the page with data and filters
+        res.render('admin/returnOrder', {
+            title: 'Return page',
+            refundRequests,
+            status,
+            search
+        });
+    } catch (error) {
+        console.error('Error loading return page:', error);
+        res.status(500).send('Server Error');
+    }
+};
+
 
 const updateRefundStatus = async (req, res) => {
     const orderId = req.query.id;

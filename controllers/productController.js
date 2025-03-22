@@ -97,14 +97,12 @@ const editProducts = async (req, res) => {
             const publicId = imageUrl.split('/').pop().split('.')[0];
             await cloudinary.uploader.destroy(publicId);
 
-            // Remove the image from the product document
             product.images = product.images.filter(img => img !== imageUrl);
         }
 
         const category = await Category.findOne({ _id : productCategory })
         const categoryId = category._id
 
-        // Handle product update
         product.name = productName;
         product.shortDescription = shortDescription;
         product.description = productDescription;
@@ -114,7 +112,6 @@ const editProducts = async (req, res) => {
         product.category = categoryId;
         product.productOffer = productOffer;
 
-        // Update variants
         const variants = [];
         for (let i = 0; i < colorVariant.length; i++) {
             variants.push({
@@ -125,7 +122,6 @@ const editProducts = async (req, res) => {
         }
         product.variants = variants;
 
-        // Handle new image uploads
         if (req.files) {
             const newImages = req.files.map(file => file.path);
             product.images.push(...newImages);
@@ -242,6 +238,8 @@ const loadproductDetails = async (req, res) => {
     res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
 }
 
+
+
 // shop pages and product details
 
 const loadShop = async (req, res) => {
@@ -253,15 +251,12 @@ const loadShop = async (req, res) => {
         const limit = 12;
         const skip = (page - 1) * limit;
 
-        // Extract filters from req.query
         let filter = { visibility: true };
 
-        // Search filter
         if (req.query.result) {
             filter.name = { $regex: req.query.result, $options: "i" };
         }
 
-        // Multiple Category filter
         if (req.query.category) {
             let categories = Array.isArray(req.query.category)
                 ? req.query.category
@@ -275,7 +270,6 @@ const loadShop = async (req, res) => {
             }
         }
 
-        // Multiple Brand filter
         if (req.query.brand) {
             let brands = Array.isArray(req.query.brand)
                 ? req.query.brand
@@ -287,13 +281,9 @@ const loadShop = async (req, res) => {
         
 
         if (req.query.price) {
-            filter.$expr = {
-                $lte: [
-                    { $subtract: ["$price", { $multiply: ["$price", { $divide: ["$productOffer", 100] }] }] },
-                    parseInt(req.query.price)
-                ]
-            };
+            filter.price = { $lte: parseInt(req.query.price) };
         }
+        
 
 
         if (req.query.availability) {
@@ -322,7 +312,6 @@ const loadShop = async (req, res) => {
                 sortQuery = { createdAt: -1 };
         }
 
-        // Fetch products with aggregation
         const products = await Products.aggregate([
             { $match: filter },
             { $sort: sortQuery },

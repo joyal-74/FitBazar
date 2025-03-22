@@ -1,22 +1,23 @@
 <head>
     <style>
-        /* Progress Bar */
         .progress-step {
             display: flex;
             align-items: center;
             transition: all 0.3s ease;
         }
+
         .progress-step.active i,
         .progress-step.active span {
             color: #6C5DD3 !important;
             font-weight: 600;
         }
+
         .progress-arrow {
             color: #D3D3D3;
             font-size: 1.2rem;
             margin: 0 20px;
         }
-        /* Quantity Buttons */
+
         .quantity-btn {
             width: 32px;
             height: 32px;
@@ -29,14 +30,17 @@
             align-items: center;
             justify-content: center;
         }
+
         .quantity-btn:hover {
             background-color: #6C5DD3;
             color: #FFFFFF;
             border-color: #6C5DD3;
         }
+
         .quantity-btn:active {
             transform: scale(0.95);
         }
+
         .quantity-display {
             font-size: 18px;
             font-weight: 600;
@@ -45,37 +49,38 @@
             text-align: center;
         }
 
-        /* Cart Item Card */
         .cart-item {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             border-radius: 12px !important;
         }
+
         .cart-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
         }
 
-        /* Remove Button */
         .remove-btn {
             transition: all 0.3s ease;
         }
+
         .remove-btn:hover {
             background-color: #dc3545 !important;
             color: #FFFFFF !important;
             border-color: #dc3545 !important;
         }
 
-        /* Order Summary */
         .order-summary {
             background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
             border-radius: 12px !important;
             position: sticky;
             top: 20px;
         }
+
         .checkout-btn {
             background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
             transition: transform 0.2s ease;
         }
+
         .checkout-btn:hover {
             transform: scale(1.02);
         }
@@ -83,7 +88,7 @@
 </head>
 
 <body>
-    <!-- Navbar (unchanged) -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm">
         <div class="container d-flex flex-column">
             <div class="d-flex w-100 justify-content-between align-items-center">
@@ -107,24 +112,26 @@
                     <% if (user) { %>
                         <a href="/user/profile" style="color: #3B3389;">
                             <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                                <img src="<%= user.profilePic %>" alt="Profile Picture"
+                                    style="width: 40px; height: 40px; border-radius: 50%;">
+                                <% } else { %>
+                                    <i class="fa-solid fa-user" style="font-size: 24px;"></i>
                             <% } %>
                         </a>
                     <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %> 
+                            <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                    <% } %>
                 </div>
             </div>
         </div>
     </nav>
 
-    
+
 
     <!-- Main Section -->
     <main class="container my-5">
-        <div class="d-flex justify-content-between w-100 align-items-center mb-3" style="padding: 16px; border-radius: 10px;">
+        <div class="d-flex justify-content-between w-100 align-items-center mb-3"
+            style="padding: 16px; border-radius: 10px;">
             <h4 class="fw-bold mb-0 text-dark">Discover Items in your Cart</h4>
             <div class="d-flex justify-content-center align-items-center gap-3">
                 <div class="progress-step active">
@@ -143,23 +150,25 @@
                 </div>
             </div>
         </div>
-        
 
+        <!-- Cart Section -->
         <div class="row g-5">
-            <!-- Cart Section -->
             <div class="col-md-8">
-                <% if (cart && cart.items && cart.items.length > 0) { %>
-                    <% cart.items.forEach(item => { %>
-                        <div class="card mb-4 shadow-sm border-0 cart-item" style="background: linear-gradient(to right, #f9ecfb, #F8F8FC);">
+                <% if (cart && cart.items && cart.items.length> 0) { %>
+                    <% cart.items.forEach(item=> { %>
+                        <div class="card mb-4 shadow-sm border-0 cart-item"
+                            style="background: linear-gradient(to right, #f9ecfb, #F8F8FC);">
                             <div class="row g-0 align-items-center px-4 py-2">
                                 <div class="col-3 col-md-2">
-                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>" 
-                                         class="img-fluid rounded" style="max-width: 100px; object-fit: cover; border: 1px solid #EDEDED;">
+                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>"
+                                        class="img-fluid rounded"
+                                        style="max-width: 100px; object-fit: cover; border: 1px solid #EDEDED;">
                                 </div>
                                 <div class="col-9 col-md-10">
                                     <div class="d-flex align-items-center flex-nowrap gap-3">
                                         <div class="flex-grow-1" style="min-width: 0;">
-                                            <h6 class="fw-bold mb-2 text-dark text-truncate" style="font-size: 1.05rem; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <h6 class="fw-bold mb-2 text-dark text-truncate"
+                                                style="font-size: 1.05rem; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                 <%= item.productId.name %>
                                             </h6>
                                             <p class="text-muted mb-2 small">
@@ -172,22 +181,25 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                             <div class="quantity-control d-flex align-items-center gap-2">
-                                                <button class="quantity-btn" 
-                                                        onclick="updateQuantity('<%= item.productId._id %>', -1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                                <button class="quantity-btn"
+                                                    onclick="updateQuantity('<%= item.productId._id %>', -1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
                                                     <i class="fa-solid fa-minus" style="font-size: 12px;"></i>
                                                 </button>
-                                                <span class="quantity-display"><%= item.quantity %></span>
-                                                <button class="quantity-btn" 
-                                                        onclick="updateQuantity('<%= item.productId._id %>', 1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                                <span class="quantity-display">
+                                                    <%= item.quantity %>
+                                                </span>
+                                                <button class="quantity-btn"
+                                                    onclick="updateQuantity('<%= item.productId._id %>', 1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
                                                     <i class="fa-solid fa-plus" style="font-size: 12px;"></i>
                                                 </button>
                                             </div>
-                                            <p class="mb-0 fw-bold text-dark" style="font-size: 1.1rem; width: 70px; flex-shrink: 0;">
+                                            <p class="mb-0 fw-bold text-dark"
+                                                style="font-size: 1.1rem; width: 70px; flex-shrink: 0;">
                                                 ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
                                             </p>
-                                            <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn" 
-                                                    onclick="removeFromCart('<%= item.productId._id %>')" 
-                                                    style="width: 38px; height: 38px;">
+                                            <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn"
+                                                onclick="removeFromCart('<%= item.productId._id %>')"
+                                                style="width: 38px; height: 38px;">
                                                 <i class="fa-solid fa-trash" style="font-size: 14px;"></i>
                                             </button>
                                         </div>
@@ -200,54 +212,53 @@
                     <div class="text-center py-5 bg-light rounded-3">
                         <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4"></i>
                         <p class="text-muted fs-4 fw-medium">Your cart is empty!</p>
-                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2" 
-                           style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">
-                           Start Shopping
+                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2"
+                            style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">
+                            Start Shopping
                         </a>
                     </div>
                 <% } %>
             </div>
-            
 
             <!-- Order Summary -->
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm border-0 order-summary">
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 1.5rem;">Order Summary</h5>
-                    <% if (cart && cart.items && cart.items.length > 0) { %>
-                        <% let total = 0; %>
-                        <% cart.items.forEach(item => { %>
-                            <% total += item.quantity * item.price; %>
+                    <% if (cart && cart.items && cart.items.length> 0) { %>
+                        <% let total=0; %>
+                        <% cart.items.forEach(item=> { %>
+                            <% total +=item.quantity * item.price; %>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted text-truncate"
+                                        style="font-size: 0.95rem; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <%= item.quantity %>x <%= item.productId.name %>
+                                    </span>
+                                    <span class="text-dark fw-medium flex-shrink-0">
+                                        ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                    </span>
+                                </div>
+                            <% }) %>
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-muted text-truncate" 
-                                      style="font-size: 0.95rem; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                    <%= item.quantity %>x <%= item.productId.name %>
-                                </span>
-                                <span class="text-dark fw-medium flex-shrink-0">
-                                    ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
+                                <span class="text-success fw-semibold flex-shrink-0">Free</span>
+                            </div>
+                            <hr class="my-4" style="border-color: #E0E0E0;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
+                                <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
+                                    ₹ <%= total.toLocaleString('en-IN') %>
                                 </span>
                             </div>
-                        <% }) %>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                            <span class="text-success fw-semibold flex-shrink-0">Free</span>
-                        </div>
-                        <hr class="my-4" style="border-color: #E0E0E0;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
-                            <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
-                                ₹ <%= total.toLocaleString('en-IN') %>
-                            </span>
-                        </div>
-                        <button class="btn checkout-btn w-100 mt-4" 
-                                onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')" 
+                            <button class="btn checkout-btn w-100 mt-4"
+                                onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')"
                                 style="border-radius: 12px; padding: 12px; font-size: 1.1rem; color: #FFFFFF;">
-                            Continue to Checkout
-                        </button>
-                    <% } else { %>
-                        <p class="text-muted text-center fs-5">No items in your cart.</p>
+                                Continue to Checkout
+                            </button>
+                        <% } else { %>
+                            <p class="text-muted text-center fs-5">No items in your cart.</p>
                     <% } %>
                 </div>
-            </div>            
+            </div>
         </div>
     </main>
 
@@ -280,16 +291,47 @@
             }
         }
 
+        // remove from Cart
 
-        // Remove Item
         async function removeFromCart(productId) {
             const userId = document.getElementById('userId').value;
-            const response = await fetch(`/user/cart?userId=${userId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ productId })
+
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to remove this item from your cart?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel'
             });
-            if (response.ok) window.location.reload();
+
+            if (result.isConfirmed) {
+                const response = await fetch(`/user/cart?userId=${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: 'The item has been removed from your cart.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: 'Failed to remove the item from the cart.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                }
+            }
         }
 
         // Go to Checkout
