@@ -59,6 +59,14 @@ const orderSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    paymentStatus : {
+        type: String,
+        required : true,
+        enum: ['Pending', 'Paid']
+    },
+    paymentId : {
+        type: String,
+    },
     status: {
         type: String,
         required: true,

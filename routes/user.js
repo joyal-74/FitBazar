@@ -69,8 +69,6 @@ router.post('/shoppingAddress', cartControlller.addShoppingAddress);
 router.get('/shoppingAddress', cartControlller.loadshoppingAddress);
 router.put('/shoppingAddress', cartControlller.editshoppingAddress);
 
-router.get('/payments', cartControlller.loadPayments);
-router.post('/payments', cartControlller.paymentSuccess);
 
 router.get('/confirmOrder', cartControlller.confirmOrder);
 

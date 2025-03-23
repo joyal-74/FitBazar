@@ -18,6 +18,7 @@ import userRoutes from './routes/user.js';
 import adminRoutes from './routes/admin.js'
 import googleRoutes from './routes/googleRoute.js';
 import homeRoute from './routes/homeRoute.js'
+import paymentRoutes from './routes/paymenRoute.js';
 
 const PORT = process.env.PORT
 
@@ -54,7 +55,7 @@ app.use('/user', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/auth', googleRoutes);
 app.use('/', homeRoute);
-
+app.use('/user/payments', paymentRoutes);
 
 // cannot get page 404 error
 app.use((req, res, next) => {

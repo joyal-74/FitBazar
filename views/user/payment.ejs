@@ -96,15 +96,15 @@
                     <h4 class="fw-bold mb-4">Select Payment Method</h4>
                     
                     <!-- Razorpay -->
-                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                    <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" value="razorpay" id="razorpay" checked>
                             <label class="form-check-label w-100" for="razorpay">
                                 <div class="d-flex align-items-center">
                                     <img src="/razorpay.png" alt="Razorpay" class="me-3" width="24">
                                     <div>
-                                        <strong>Razorpay</strong>
-                                        <p class="mb-0 text-muted" style="font-size: 14px;">joyalk74@oksbi</p>
+                                        <strong>Online payment</strong>
+                                        <p class="mb-0 text-muted" style="font-size: 14px;">Select online payment</p>
                                     </div>
                                 </div>
                             </label>
@@ -112,7 +112,7 @@
                     </div>
             
                     <!-- Google Pay / UPI -->
-                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                    <!-- <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" value="gpay" id="gpay">
                             <label class="form-check-label w-100" for="gpay">
@@ -125,10 +125,10 @@
                                 </div>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
             
                     <!-- Credit/Debit Card -->
-                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                    <!-- <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" value="card" id="card">
                             <label class="form-check-label w-100" for="card">
@@ -141,10 +141,10 @@
                                 </div>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
             
                     <!-- Wallets -->
-                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                    <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" value="wallet" id="wallet">
                             <label class="form-check-label w-100" for="wallet">
@@ -160,7 +160,7 @@
                     </div>
             
                     <!-- Cash on Delivery -->
-                    <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
+                    <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="paymentMethod" value="cod" id="cod">
                             <label class="form-check-label w-100" for="cod">
@@ -208,7 +208,8 @@
                             <hr class="my-2" style="border-color: #E0E0E0;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-dark" style="font-size: 1.2rem;">Grand Total</span>
-                                <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
+                                <span id="grandTotal" class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;" 
+                                    value="<%= total %>">
                                     ₹ <%= total.toLocaleString('en-IN') %>
                                 </span>
                             </div>
@@ -225,57 +226,170 @@
         </form>
     </main>
 
-    <script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('paymentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            const totalValue = document.getElementById('grandTotal').getAttribute('value');
+            const totalPrice = Number(totalValue);
 
-            const couponApplied = false;
+            if (paymentMethod === 'razorpay') {
+                try {
+                    // Step 1: Create Razorpay order on backend
+                    const response = await fetch('/user/payments/razorpay', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ totalPrice })
+                    });
 
-            const orderData = {
-                couponApplied,
-                paymentMethod
-            };
+                    const data = await response.json();
 
-            try{
-                const response = await fetch('/user/payments',{
-                    method : 'POST',
-                    headers : {
-                        'content-type' : 'application/json',
-                    },
-                    body : JSON.stringify(orderData)
-                })
-                const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to create Razorpay order');
+                    }
 
-                if(!response.ok){
+                    // Step 2: Open Razorpay checkout popup
+                    const options = {
+                        key: '<%= process.env.RAZORPAY_KEY_ID %>', // Your Razorpay Key ID
+                        amount: data.amount,
+                        currency: data.currency,
+                        name: "FitBazar",
+                        description: "Fitness Equipment Purchase",
+                        order_id: data.orderId,
+                        handler: async function (response) {
+                            console.log('Payment successful', response);
+
+                            // Step 3: Verify payment
+                            const verifyResponse = await fetch('/user/payments/verify', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    razorpayPaymentId: response.razorpay_payment_id,
+                                    razorpayOrderId: response.razorpay_order_id,
+                                    razorpaySignature: response.razorpay_signature
+                                })
+                            });
+
+                            const verifyData = await verifyResponse.json();
+
+                            if (verifyData.success) {
+                                // Step 4: Process the order after verification
+                                const orderData = {
+                                    couponApplied: false,
+                                    paymentMethod: 'razorpay',
+                                    totalPrice,
+                                    razorpayPaymentId: response.razorpay_payment_id,
+                                    razorpayOrderId: response.razorpay_order_id
+                                };
+
+                                const orderResponse = await fetch('/user/payments', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(orderData)
+                                });
+
+                                const orderDataResult = await orderResponse.json();
+
+                                if (orderResponse.ok) {
+                                    Swal.fire({
+                                        text: orderDataResult.message || 'Payment successful and order placed!',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        window.location.href = '/user/confirmOrder';
+                                    });
+                                } else {
+                                    throw new Error(orderDataResult.error || 'Failed to process order');
+                                }
+                            } else {
+                                Swal.fire({
+                                    text: verifyData.error || 'Payment verification failed',
+                                    icon: 'error',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                        },
+                        prefill: {
+                            name: '<%= user ? user.name : "" %>',
+                            email: '<%= user ? user.email : "" %>',
+                            contact: '<%= user ? user.phone : "" %>'
+                        },
+                        theme: {
+                            color: '#3B3389'
+                        }
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+
+                } catch (error) {
+                    console.error('Error:', error);
                     Swal.fire({
-                    text : data.error,
-                    icon : "warning",
-                    timer: 2000,
-                    showConfirmButton: false
-                })
-                }else{
-                    Swal.fire({
-                        text : data.message,
-                        icon : "success",
+                        text: error.message || 'An error occurred with Razorpay',
+                        icon: 'error',
                         timer: 2000,
                         showConfirmButton: false
-                    }).then(()=>{
-                        window.location.href = '/user/confirmOrder'
-                    })
+                    });
                 }
+            } else {
+                // Handle other payment methods (e.g., COD)
+                const couponApplied = false;
+                const orderData = {
+                    couponApplied,
+                    paymentMethod,
+                    totalPrice
+                };
 
-            } catch(error) {
-                console.log(error)
-                Swal.fire({
-                    text : data.message,
-                    icon : "error",
-                    timer: 2000,
-                    showConfirmButton: false
-                })
+                try {
+                    const response = await fetch('/user/payments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            text: data.error || 'Payment processing failed',
+                            icon: 'warning',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            text: data.message || 'Order placed successfully',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '/user/confirmOrder';
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        text: 'An error occurred while processing your order',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
             }
-        })
-    </script>
+        });
+    });
+</script>
     
 </body>

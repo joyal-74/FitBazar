@@ -25,3 +25,13 @@ _________________
 3. Pagination in order management admin side
 4. order as individual order if there are many products in single order in cart [x]
 
+
+
+
+New Bugs
+----------
+
+1. Fix admin product filter on stock issue []
+2. User side hide returned as return button hide []
+3. Include tax/GST on order
+4.  

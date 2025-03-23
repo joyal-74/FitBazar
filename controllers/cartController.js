@@ -423,128 +423,6 @@ const loadCheckoutUp = async (req, res) => {
     }
 };
 
-const loadPayments = async (req, res) => {
-    try {
-        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-
-        const user = await User.findOne({_id : userId});
-
-        const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
-
-        res.render('user/payment', {title : "Checkout", user, cart});
-    } catch (error) {
-        console.error('Error loading payment:', error);
-        res.redirect('/NOT_FOUND');
-    }
-}
-
-const paymentSuccess = async (req, res) => {
-    try {
-        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        if (!userId) {
-            return res.status(UNAUTHORIZED).json({ error: "Unauthorized. Please log in." });
-        }
-
-        const { couponApplied, paymentMethod } = req.body;
-
-        if (!paymentMethod) {
-            return res.status(BAD_REQUEST).json({ error: "Payment method is required." });
-        }
-
-        const addressId = req.session.deliveryAddress;
-        if (!addressId) {
-            return res.status(BAD_REQUEST).json({ error: "Delivery address not found." });
-        }
-
-        const objectId = new mongoose.Types.ObjectId(addressId);
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
-        const orderItemCount = cart.items.length
-
-        if (!cart || cart.items.length === 0) {
-            return res.status(BAD_REQUEST).json({ error: "Cart is empty." });
-        }
-
-        if (paymentMethod === 'cod') {
-            const address = await Address.findOne(
-                { 'details._id': objectId },
-                { 'details.$': 1 }
-            );
-
-            const customer = address.details[0].name;
-            console.log(customer)
-
-            if (!address) {
-                return res.status(NOT_FOUND).json({ error: 'Address not found.' });
-            }
-
-            for (const item of cart.items) {
-                const product = await Products.findById(item.productId._id);
-                
-                if (product) {
-                    console.log('Product Variants:', product.variants);
-                    console.log('Item Variant ID:', item.variants);
-                
-                
-                    const selectedVariant = await Products.findOneAndUpdate(
-                        {
-                            _id: product._id,
-                            'variants.color': item.variants.color,
-                            'variants.weight': item.variants.weight,
-                            'variants.stock': { $gte: item.quantity }
-                        },
-                        { $inc: { 'variants.$.stock': -item.quantity } },
-                        { new: true }
-                    );
-                    
-                    if (!selectedVariant) {
-                        return res.status(400).json({
-                            error: `Insufficient stock for "${product.name}".`
-                        });
-                    }                   
-                }
-            }
-
-            // Create the order
-            for (const item of cart.items) {
-                const orderId = generateOrderId();
-            
-                const order = new Order({
-                    userId,
-                    orderId,
-                    product: item.productId._id,
-                    name: item.productId.name, 
-                    customer,
-                    quantity: item.quantity, 
-                    price: item.productId.price, 
-                    variant: item.variants,
-                    brand: item.productId.brand, 
-                    productImage: item.productImage, 
-                    totalPrice: item.quantity * item.productId.price,
-                    paymentMethod,
-                    address: addressId,
-                    status: 'Pending',
-                    statusHistory: [{ status: 'Pending', timestamp: new Date() }],
-                    couponApplied,
-                    orderItemCount
-                });
-            
-                await order.save();
-            }
-            
-
-            // Clear the cart after order creation
-            await Cart.findByIdAndDelete(cart._id);
-
-            return res.status(OK).json({ message: 'Order placed successfully.' });
-        } else {
-            return res.status(BAD_REQUEST).json({ error: "Payment method not implemented." });
-        }
-    } catch (error) {
-        console.error("Order Creation Error:", error);
-        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
-    }
-};
-
 
 
 const confirmOrder = async (req, res) => {
@@ -554,7 +432,7 @@ const confirmOrder = async (req, res) => {
     
         if (!userId) {
             console.error('User ID is missing in session.');
-            return res.status(400).render('error', { message: 'Invalid session. Please log in again.' });
+            return res.status(400).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
         }
 
         const user = await User.findById(userId);
@@ -566,7 +444,7 @@ const confirmOrder = async (req, res) => {
         
         if (!latestOrder) {
             console.error('No order found for user.');
-            return res.status(400).render('error', { message: 'No recent order found.' });
+            return res.status(400).render('error', { title : "error", message: 'No recent order found.' });
         }
 
         const orderItemCount = latestOrder.orderItemCount;
@@ -577,7 +455,7 @@ const confirmOrder = async (req, res) => {
 
         if (!orders.length) {
             console.error('No matching orders found.');
-            return res.status(400).render('error', { message: 'No matching orders found.' });
+            return res.status(400).render('error', { title : "error", message: 'No matching orders found.' });
         }
 
         const addressId = orders[0].address;
@@ -591,7 +469,7 @@ const confirmOrder = async (req, res) => {
 
         if (!address) {
             console.error('Address not found.');
-            return res.status(400).render('error', { message: 'Shipping address not found.' });
+            return res.status(400).render('error', {title : "error", message: 'Shipping address not found.' });
         }
 
         const shippingAddress = address.details[0];
@@ -599,10 +477,10 @@ const confirmOrder = async (req, res) => {
         return res.render('user/confirmOrder', { title : "Order Confirmation", user, shippingAddress, orders });
     } catch (error) {
         console.error(`Error confirming order: ${error}`);
-        return res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
+        return res.status(500).render('error', { title : "error", message: 'Something went wrong. Please try again later.' });
     }
 };
 
 
 export default {loadCart, updateQuantity, addItemToCart, deleteFromcart, loadCheckout, addShoppingAddress,
-    checkoutDetails, loadAddShoppingAddress, loadshoppingAddress, editshoppingAddress, loadCheckoutUp, loadPayments, paymentSuccess , confirmOrder};
+    checkoutDetails, loadAddShoppingAddress, loadshoppingAddress, editshoppingAddress, loadCheckoutUp, confirmOrder};
