@@ -7,8 +7,8 @@ import productController from "../controllers/productController.js";
 import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
-import { uploads, handleUploads } from '../middleware/uploadMiddleware.js';
 import refundController from "../controllers/refundController.js";
+
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -24,16 +24,14 @@ router.post('/categories', upload.single("addThumbnail"), categoryController.add
 router.put('/categories', upload.single('editThumbnail'),categoryController.editCategory);
 router.get('/categories/filter', adminAuth.checkSession, categoryController.filterCategories);
 
+
 // product management
-
-
 router.get('/products', adminAuth.checkSession, productController.productInfo);
 router.get('/newProducts', adminAuth.checkSession, productController.loadaddProducts);
-
 router.post('/addProducts',upload.any(),productController.addProducts);
-
 router.get('/updateProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
 router.put('/products/:productId',upload.any(),productController.editProducts);
+
 
 // user management
 router.get('/customers',adminAuth.checkSession, customerController.userInfo);
@@ -50,7 +48,6 @@ router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 
 
 // Return management
-
 router.get('/refunds', adminAuth.checkSession, refundController.loadReturnPage);
 router.patch('/refunds', refundController.updateRefundStatus);
 

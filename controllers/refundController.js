@@ -153,23 +153,19 @@ const loadReturnPage = async (req, res) => {
     try {
         const { status, search } = req.query;
 
-        // Build query object
         let query = {};
 
-        // Filter by status if provided
         if (status) {
             query.status = status;
         }
 
-        // Search by orderId or user name
         if (search) {
             query.$or = [
-                { 'order.orderId': { $regex: search, $options: 'i' } }, // Search in orderId
-                { 'order.userId.name': { $regex: search, $options: 'i' } } // Search in user name
+                { 'order.orderId': { $regex: search, $options: 'i' } },
+                { 'order.userId.name': { $regex: search, $options: 'i' } } 
             ];
         }
 
-        // Fetch refund requests with populated order and user data
         const refundRequests = await Refund.find(query)
             .populate({
                 path: 'order',
@@ -182,7 +178,6 @@ const loadReturnPage = async (req, res) => {
             .sort({ createdAt: -1 })
             .lean();
 
-        // Render the page with data and filters
         res.render('admin/returnOrder', {
             title: 'Return page',
             refundRequests,
@@ -201,7 +196,7 @@ const updateRefundStatus = async (req, res) => {
     const { status } = req.body;
 
     try {
-        // Find the refund request for the order
+
         const refund = await Refund.findOne({ order: orderId });
         if (!refund) {
             return res.status(404).json({ error: "Refund not found" });
@@ -221,7 +216,34 @@ const updateRefundStatus = async (req, res) => {
 
         if (status === 'Approved') {
             user.wallet += order.totalPrice;
-            await user.save(); // Save user wallet changes
+            await user.save();
+
+            const productId = order.product
+            const variant = order.variant
+
+            const product = await Products.findOne({
+                _id: productId,
+                variants: {
+                    $elemMatch: {
+                        color: order.variant.color,
+                        weight: order.variant.weight
+                    }
+                }
+            });
+            
+
+            console.log(product, variant)
+
+            if (product) {
+                const variant = product.variants.find(v =>
+                    v.color === order.variant.color && v.weight === order.variant.weight
+                );
+            
+                if (variant) {
+                    variant.stock += order.quantity;
+                    await product.save();
+                }
+            }
 
             refund.status = status;
             await refund.save();

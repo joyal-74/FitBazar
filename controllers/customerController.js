@@ -10,26 +10,22 @@ const userInfo = async (req, res) => {
         const skip = (page - 1) * limit;
         const filter = {};
 
-        // Apply filtering based on isBlocked value from the query params
         if (req.query.isBlocked === "true") {
             filter.isBlocked = true;
         } else if (req.query.isBlocked === "false") {
             filter.isBlocked = false;
         }
 
-        // Apply search query (case-insensitive search only on name)
         if (req.query.query) {
             const searchRegex = new RegExp(req.query.query, "i");
-            filter.name = searchRegex;  // Search only by name
+            filter.name = searchRegex;
         }
 
-        // Fetch filtered and searched users
         const customers = await User.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
-        // Get the count of users that match the filter
         const totalCustomers = await User.countDocuments(filter);
         const totalPages = Math.ceil(totalCustomers / limit);
 
@@ -40,8 +36,8 @@ const userInfo = async (req, res) => {
             currentPage: page,
             totalPages: totalPages,
             totalcustomers: totalCustomers,
-            selectedFilter: req.query.isBlocked || "all", // Preserve selected filter
-            searchQuery: req.query.query || "", // Preserve search query
+            selectedFilter: req.query.isBlocked || "all",
+            searchQuery: req.query.query || "",
         });
 
     } catch (error) {
@@ -49,8 +45,6 @@ const userInfo = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     }
 };
-
-
 
 
 const userDeatails = async (req,res)=>{

@@ -6,69 +6,13 @@
 
 <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm fixed-top"
-        style="background: linear-gradient(90deg, #3e29a8, #5c48ee);">
-        <div class="container px-4">
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/admin/dashboard">
-                <span style="font-size: 24px; color: #ffffff; letter-spacing: 1px;">FitBazar</span>
-            </a>
-            <!-- Right Side -->
-            <div class="d-flex align-items-center gap-3">
-                <!-- User Info -->
-                <div class="dropdown">
-                    <a href="#" class="avatar d-flex align-items-center gap-2 text-decoration-none"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-circle-user fa-lg" style="color: #ffffff;"></i>
-                        <span class="d-none d-md-inline text-white fw-medium">Admin</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end mt-2 shadow" style="border: none; border-radius: 8px;">
-                        <li>
-                            <span class="dropdown-item-text py-2">
-                                <i class="fa-solid fa-user me-2 text-muted"></i>
-                                Admin User
-                            </span>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-2 text-danger" href="/admin/logout">
-                                <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include('../partials/header') %>
 
     <!-- Sidebar + Main Content -->
-    <div class="container-fluid w-100">
+    <div class="container-fluid w-100 sidebar-header">
         <div class="row g-0">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm">
-                <ul class="nav flex-column mt-3">
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i
-                                class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i
-                                class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/products"><i
-                                class="fa-solid fa-tags me-2"></i>Products</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i
-                                class="fa-solid fa-user me-2"></i>Customers</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i
-                                class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
-                                class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
-                                class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i
-                                class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i
-                                class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
-                </ul>
-            </nav>
+            <%- include('../partials/sidebar', { activePage: 'products' }) %>
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto" style="margin-top: 70px;">

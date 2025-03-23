@@ -56,9 +56,14 @@ const loadDashboard = (req, res) => {
 };
 
 
+
 const loadOrders = async (req, res) => {
 
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8;
+        const skip = (page - 1) * limit;
+
         const { status, search } = req.query;
         let query = {};
 
@@ -75,14 +80,22 @@ const loadOrders = async (req, res) => {
             query.status = status;
         }
 
+        const totalProducts = await Order.countDocuments(query);
+        const totalPages = Math.ceil(totalProducts / limit);
+
         // Fetch Orders based on Query
-        const orders = await Order.find(query).sort({ createdAt: -1 });
+        const orders = await Order.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
 
         res.render('admin/orders', {
             title : "Order managemnet",
             orders,
             status: req.query.clear ? '' : status,
-            search: req.query.clear ? '' : search
+            search: req.query.clear ? '' : search,
+            currentPage: page,
+            totalPages: totalPages,
         });
     } catch (error) {
         console.error('Error fetching orders:', error);

@@ -1,47 +1,13 @@
 <body class="bg-light">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container d-flex align-items-center justify-content-between">
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="#" style="font-size: 28px; color: #3e29a8;">FitBazar</a>
-
-            <!-- Navbar Toggler for Mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar Items -->
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 notification-icon">
-                        <i class="fa-regular fa-lg fa-bell" style="color: #ffffff;"></i>
-                    </a>
-                    <a href="#" class="avathar">
-                        <i class="fa-solid fa-circle-user fa-xl" style="color: #ffffff;"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <%- include('../partials/header') %>
 
     <!-- Sidebar + Main Content Wrapper -->
-    <div class="container-fluid">
+    <div class="container-fluid w-100 sidebar-header">
         <div class="row g-0">
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm pt-2">
-                <ul class="nav flex-column mt-3">
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/dashboard"><i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/categories"><i class="fa-solid fa-grid-2 me-2"></i>Categories</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/products"><i class="fa-solid fa-tags me-2"></i>Products</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/customers"><i class="fa-solid fa-user me-2"></i>Customers</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="/admin/orders"><i class="fa-solid fa-bag-shopping me-2"></i>Orders</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-percent me-2"></i>Coupons</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark active sidebar-link" href="/admin/refunds"><i class="fas fa-undo me-2"></i>Refund/Return</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark sidebar-link logout-link" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
-                </ul>
-            </nav>
+            <%- include('../partials/sidebar', { activePage: 'refunds' }) %>
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
