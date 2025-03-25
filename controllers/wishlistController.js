@@ -29,14 +29,9 @@ const addToWishlist = async (req, res) => {
         const { userId, productId, color, weight } = req.body;
         
         // Check if item already exists
-        const existingItem = await Wishlist.findOne({ 
-            userId, 
-            product : productId,
-            color, 
-            weight 
-        });
+        const existingItem = await Wishlist.findOne({ userId, product : productId, color,  weight });
 
-        console.log(existingItem)
+        // console.log(existingItem)
         
         if (existingItem) {
             return res.status(400).json({ error: 'Item already in wishlist' });
@@ -67,4 +62,4 @@ const removeFromWishlist = async (req, res) => {
     }
 };
 
-export default {getWishlist, removeFromWishlist, addToWishlist}
+export default { getWishlist, removeFromWishlist, addToWishlist }

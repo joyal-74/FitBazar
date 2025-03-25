@@ -241,18 +241,14 @@
                 <!-- Product Details -->
                 <div>
                     <h5 class="section-title">Product Details</h5>
-                    <div class="product-card">
+                    <div class="order-product-card align-items-center">
                         <img src="<%= order.productImage %>" alt="<%= order.name %>" class="product-img">
                         <div class="product-info">
                             <h6><%= order.name %></h6>
                             <p>Brand: <%= order.brand %></p>
-                            <p>
-                                Variant:
-                                <%= order.variants?.color || 'N/A' %>
-                                <% if (order.variants?.weight) { %> | <%= order.variants.weight %> <% } %>
-                            </p>
+                            <p>Variant: <%= order.variants?.color || 'N/A' %> <% if (order.variants?.weight) { %> | <%= order.variants.weight %> <% } %></p>
                             <p>Qty: <%= order.quantity %></p>
-                            <span class="product-price">₹ <%= order.price * order.quantity %></span>
+                            <span class="product-price text-end" >₹ <%= order.price * order.quantity %></span>
                         </div>
                     </div>
                 </div>
@@ -267,8 +263,8 @@
             <hr>
             <!-- Buttons -->
             <div class="btn-container">
-                <a href="/shop" class="btn btn-outline-primary">Continue Shopping</a>
-                <a href="/user/orders" class="btn btn-primary">View Orders</a>
+                <a href="/shop" class="btn custom-btn-outline">Continue Shopping</a>
+                <a href="/user/orders" class="btn custom-btn">View Orders</a>
             </div>
         </div>
     </div>

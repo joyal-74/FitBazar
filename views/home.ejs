@@ -1,48 +1,11 @@
 <body>
     
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text"
-                            href="/">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %> 
-                </div>
-            </div>
-        </div>
-    </nav>
-    
+    <%- include('./partials/userNavbar', { activePage: 'home' }) %>
+
     <!-- Hero Section -->
     <section class="container-fluid hero-section mt-3">
-        <div class="container d-flex p-0 align-items-center" style="background: #3B3389; color: white; border-radius: 15px;">
+        <div class="container d-flex p-0 align-items-center" style="background: #5B3F64; color: white; border-radius: 15px;">
             <div class="w-50 d-flex flex-column align-items-start justify-content-center p-5">
                 <h1 class="fw-bold" style="font-size: 66px;">Push Your Limits. Elevate Your Game!</h1>
                 <h4 class="mt-3" >
@@ -50,12 +13,12 @@
                     to stay fit and conquer new challenges.
                 </h4>
                 <div class="mt-4 d-flex gap-3">
-                    <a href="/shop" class="btn px-4 py-2" style="background-color: #4D44AD; color: white;">Shop Now</a>
+                    <a href="/shop" class="btn px-4 py-2" style="background-color: #3C1549; color: white;">Shop Now</a>
                     <a href="/shop" class="btn btn-outline-light px-4 py-2">Explore →</a>
                 </div>
             </div>
             <div class="w-50 d-flex justify-content-end">
-                <img src="/hero-image.png" alt="Hero Image" class="hero-img">
+                <img src="/hero-main.png" alt="Hero Image" class="hero-img " style="border-radius: 28px;">
             </div>
         </div>
     </section>
@@ -101,14 +64,14 @@
 
     <div class="container">
         <div class="d-flex justify-content-between">
-            <h4 class="fw-bold my-4" style="color: #3B3389;">Trending Products</h4>
+            <h4 class="fw-bold my-4" style="color: #3C1549;">Trending Products</h4>
             <a href="/shop" class="my-4 btn btn-outline-primary">View all <i class="fa-solid fa-arrow-right"></i></a>
         </div>
         <div class="row" id="product-container">
             <% product.forEach(product => { %>
-                <div class="col-md-3 col-lg-3 my-3">
+                <div class="col-md-3 col-lg-3 my-3"> 
                     <a href="/product?productId=<%= product._id %>&category=<%= product.category%>" class="text-decoration-none text-dark">
-                        <div class="card shadow-sm p-2">
+                        <div class="card p-2 product-card" style="border: 1px solid #e0e0e0;">
                             <!-- Image Container with Offer Badge -->
                             <div class="position-relative">
                                 <img src="<%= product.images[0] %>" alt="<%= product.name %>"
@@ -133,7 +96,7 @@
                                     <button class="btn w-50 btn-sm custom-outline-btn">
                                         <i class="fa fa-cart-shopping me-2"></i> Add to Cart
                                     </button>
-                                    <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #9c3ec8, #3858a9); border: none; font-size: 0.8em;">
+                                    <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #5B3F64, #3C1549); border: none; font-size: 0.8em;">
                                         <i class="fa fa-bolt me-2"></i> Buy Now
                                     </button>
                                 </div>
@@ -201,86 +164,7 @@
     </div>
     
 
-    
-    
     <!-- Footer -->
-    <footer class="container-fluid py-4 border-top m-0 px-0" style="background-color: #3B3389;">
-        <div class="container">
-            <div class="row">
-                <!-- FitBazar About Section -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="fw-bold text-white">FitBazar</h5>
-                    <p class="text-white">
-                        Welcome to FitBazar, your ultimate destination for sports and fitness gear. 
-                        We take pride in offering premium-quality products, exceptional customer service, 
-                        and a seamless shopping experience. We have everything you need to stay fit, active, and strong.
-                    </p>
-                    <div class="d-flex gap-2">
-                        <img src="/get-on-gpay.png" alt="Google Play" class="img-fluid" style="max-width: 120px;">
-                        <img src="/pngwing.com.png" alt="App Store" class="img-fluid" style="max-width: 120px;">
-                    </div>
-                </div>
-    
-                <!-- Get to Know Us -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="fw-bold text-white">Get to know us</h5>
-                    <ul class="list-unstyled text-white">
-                        <li><a href="#" class="text-decoration-none text-white">New Arrivals</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Best Sellers</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Gym & Strength Training</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Yoga & Wellness</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Outdoor & Adventure Gear</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Protein & Nutrition</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Sportswear & Footwear</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Accessories & Gadgets</a></li>
-                    </ul>
-                </div>
-    
-                <!-- For Consumers -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="fw-bold text-white">For Consumers</h5>
-                    <ul class="list-unstyled text-white">
-                        <li><a href="#" class="text-decoration-none text-white">Shipping & Delivery</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Terms & Conditions</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Secure Payment Options</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">About Us</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Customer Support</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Store Locations</a></li>
-                    </ul>
-                </div>
-    
-                <!-- Contact Us -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="fw-bold text-white">Contact Us</h5>
-                    <ul class="list-unstyled text-white">
-                        <li><i class="fas fa-map-marker-alt me-2"></i> FitBazar HQ</li>
-                        <li>507-Fitness Plaza, Trade Center</li>
-                        <li>Kochi, Kerala, India</li>
-                        <li><i class="fas fa-envelope me-2"></i> Email: support@FitBazar.com</li>
-                        <li><i class="fas fa-phone me-2"></i> Phone: +1-800-BUZY-FIT</li>
-                        <li><i class="fas fa-fax me-2"></i> Fax: +1-123-456-7890</li>
-                    </ul>
-                </div>
-            </div>
-    
-            <hr class="border-white">
-    
-            <!-- Bottom Footer -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="text-white">© 2025 FitBazar – Your Sports & Fitness Partner. All Rights Reserved.</div>
-                <div class="d-flex gap-3">
-                    <a href="#" class="text-white"><i class="fab fa-facebook fs-4"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-x-twitter fs-4"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-youtube fs-4"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-instagram fs-4"></i></a>
-                </div>
-                <div class="d-flex gap-2">
-                    <img src="/image 13.png" alt="Visa" class="img-fluid" style="max-width: 50px;">
-                    <img src="/mastercard.png" alt="MasterCard" class="img-fluid" style="max-width: 50px;">
-                    <img src="/paypal.png" alt="PayPal" class="img-fluid" style="max-width: 50px;">
-                </div>
-            </div>
-        </div>
-    </footer>
+    <%- include('./partials/userFooter') %>
     
 </body>

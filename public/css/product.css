@@ -2,33 +2,6 @@ body {
     background-color: #f8f9fa;
 }
 
-.navbar {
-    background: linear-gradient(90deg, #3B3389, #4D44AD);
-}
-
-.navbar-brand {
-    font-size: 32px;
-    color: white !important;
-}
-
-.nav-link.active {
-    background-color: #E0DBFC !important;
-    color: #3B3389 !important;
-    border-radius: 20px;
-}
-
-.custom-outline-btn {
-    color: #4132e6;
-    border: 1.5px solid #4132e6;
-    background: transparent;
-    transition: all 0.3s ease-in-out;
-    font-size: 0.8em;
-}
-
-.custom-outline-btn:hover {
-    background: #4132e6;
-    color: white;
-}
 
 .container-fluid {
     padding-left: 0;
@@ -36,14 +9,14 @@ body {
 }
 
 .buy-now-btn, .add-to-cart-btn {
-    background: linear-gradient(to right, #9c3ec8, #3858a9);
+    background: linear-gradient(to right, #5B3F64, #3C1549);
     border: none;
     font-size: 0.8em;
     transition: all 0.3s ease-in-out;
 }
 
 .buy-now-btn:hover, .add-to-cart-btn:hover {
-    background: linear-gradient(to right, #6c28b6, #283a8a);
+    background: linear-gradient(to right, #5B3F64, #3C1549)
 }
 
 .nav-tabs {
@@ -78,7 +51,7 @@ body {
 }
 
 .product-details .card, #product-container .card {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     border: 1px solid #e0e0e0;
 }
 
@@ -141,16 +114,16 @@ body {
 
 
 .pagination .page-link {
-    color: #4132e6;
+    color: #3C1549;
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #4132e6;
-    border-color: #4132e6;
+    background-color: #7a1ba9;
+    border-color: #7a1ba9;
 }
 
 .pagination .page-link:hover {
-    background-color: #2d4e97;
+    background-color: #7a1ba9;
     color: white;
 }
 

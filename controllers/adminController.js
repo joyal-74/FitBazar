@@ -61,7 +61,7 @@ const loadOrders = async (req, res) => {
 
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 8;
+        const limit = 7;
         const skip = (page - 1) * limit;
 
         const { status, search } = req.query;
@@ -108,12 +108,14 @@ const loadOrders = async (req, res) => {
 
 const viewOrders = async (req, res) => {
     const orderId = req.query.id;
+    console.log(orderId);
+    
     const order = await Order.findOne({ orderId }).populate('userId', 'name');
-    console.log(order);
+    // console.log(order);
 
     const addressId = order.address
 
-    // console.log(addressId)
+    console.log(addressId)
 
     const addresses = await Address.findOne(
         { 'details._id': addressId },
@@ -121,6 +123,8 @@ const viewOrders = async (req, res) => {
     );
 
     const address = addresses?.details?.[0] || null;
+    console.log(address);
+    
 
     res.render('admin/vieworders', { title: 'Orders', order, address });
 }

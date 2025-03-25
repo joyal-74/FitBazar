@@ -404,10 +404,17 @@ const deleteAddress = async (req,res) => {
 }
 
 const loadCoupons = async (req,res)=>{
-    const userId = req.session.userId || "ID1001";
-    const user = await User.findOne({userId})
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+    if(!userId){
+        res.redirect('/user/login')
+    }
 
-    res.render('user/coupons', {title : "coupons", user});
+    const user = await User.findOne({_id : userId})
+
+    const [firstName] = user.name.split(' ');
+
+
+    res.render('user/coupons', {title : "coupons", user, firstName});
 }
 
 const loadPrivacy = async (req,res) => {

@@ -4,7 +4,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </head>
 
-<body class="bg-light">
+<body class="bg-violet">
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
@@ -15,7 +15,7 @@
             <%- include('../partials/sidebar', { activePage: 'products' }) %>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto" style="margin-top: 70px;">
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
                 <h3 class="fw-bold">Add New Product</h3>
 
                 <!-- Product Form -->
@@ -140,7 +140,7 @@
                                         <i class="fas fa-plus me-1"></i> Add Variant
                                     </button>
                                     <div class="d-flex gap-3">
-                                        <a class="btn btn-outline-primary" href="/admin/products">Cancel</a>
+                                        <a class="btn cancel-btn" href="/admin/products">Cancel</a>
                                         <button type="submit" class="btn btn-primary">Add Product</button>
                                     </div>
                                 </div>

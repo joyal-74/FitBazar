@@ -1,162 +1,19 @@
 <head>
-
-    <style>
-        /* Sidebar container */
-        .sidebar-profile {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        /* Sidebar link styles */
-        .sidebar-linkz {
-            color: #333;
-            padding: 12px 14px;
-            font-size: 15px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-linkz i {
-            width: 20px;
-            color: #3b3389;
-        }
-
-        /* Hover and active states */
-        .sidebar-linkz:hover {
-            background-color: #e0dbfc;
-            color: #3b3389;
-        }
-
-        .sidebar-linkz.active {
-            background-color: #3b3389;
-            color: #fff;
-        }
-
-        /* Form input styling */
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #e0dbfc;
-            padding: 10px 12px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: #3b3389;
-            box-shadow: 0 0 0 3px rgba(59, 51, 137, 0.1);
-        }
-
-        /* Button styling */
-        .btn-primary {
-            background-color: #3b3389;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #2a2467;
-        }
-
-        .btn-secondary {
-            background-color: #f8f9fa;
-            border: 1px solid #e0dbfc;
-            color: #3b3389;
-            padding: 10px 20px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e0dbfc;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/profile-section.css">        
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <!-- Display Font Awesome user icon if user is logged in -->
-                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                            <i class="fa-solid fa-user"></i>
-                        </a>
-                    <% } else { %>
-                        <!-- Display "Sign Up" button if user is not logged in -->
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </nav>
     
-    <main class="container mt-4">
-        <div class="row g-4">
-            <!-- Sidebar -->
-            <div class="col-md-3 mb-1">
-                <div class="sidebar-profile p-3">
-                    <div class="d-flex align-items-center mb-5">
-                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50"
-                            height="50">
-                        <span>Hello, <strong>
-                                <%= firstName %>
-                            </strong></span>
-                    </div>
+    <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
-                    <nav class="nav flex-column gap-3">
-                        <a href="/user/orders" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-box me-2"></i>My Orders
-                        </a>
-                        <a href="/user/profile" class="nav-link sidebar-linkz active">
-                            <i class="fa-solid fa-user me-2" style="color: #fff;"></i>Profile Information
-                        </a>
-                        <a href="/user/address" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
-                        </a>
-                        <a href="/wallet" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-key me-2"></i>Privacy Settings
-                        </a>
-                        <a href="/coupons" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-ticket me-2"></i>My Coupons
-                        </a>
-                        <a href="/reviews" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
-                        </a>
-                        <a href="/wallet" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-wallet me-2"></i>My Wallet
-                        </a>
-                    </nav>
-                </div>
-            </div>
-    
+    <main class="container mt-4">
+        <div class="row g-5">
+
+            <%- include('../partials/profileSidebar', { activePage: 'privacy' }) %> 
             <!-- Privacy Settings Section -->
             <div class="col-md-9">
                 <div class="card p-4 h-100" style="border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                    <h4 class="mb-4" style="color: #3B3389;">Change Password</h4>
+                    <h4 class="mb-4" style="color: #5b3f64;">Change Password</h4>
                     <form id="changePasswordForm">
                         <!-- Old Password -->
                         <div class="mb-4">
@@ -181,7 +38,7 @@
     
                         <!-- Buttons -->
                         <div class="d-flex gap-3 align-items-between" style="margin-top: 100px;">
-                            <button type="submit" class="btn btn-primary" style="background-color: #6C5DD3; border: none;">Change Password</button>
+                            <button type="submit" class="btn btn-primary" style="background-color: #5b3f64; border: none;">Change Password</button>
                             <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
                         </div>
                     </form>

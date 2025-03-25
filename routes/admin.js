@@ -8,6 +8,7 @@ import upload from "../middleware/imageUpload.js";
 import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
 import refundController from "../controllers/refundController.js";
+import couponController from '../controllers/couponController.js'
 
 
 // admin login route
@@ -51,6 +52,9 @@ router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 router.get('/refunds', adminAuth.checkSession, refundController.loadReturnPage);
 router.patch('/refunds', refundController.updateRefundStatus);
 
-
+router.get('/coupons', couponController.loadCouponPage);
+router.post('/coupons', couponController.addCoupon);
+router.put('/coupons', couponController.editCoupon);
+router.delete('/coupons', couponController.deleteCoupon);
 
 export default router;

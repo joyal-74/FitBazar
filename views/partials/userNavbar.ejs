@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg shadow-sm <%= activePage === 'orders' ? 'fixed-top' : '' %>">
+    <div class="container d-flex flex-column">
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <a class="navbar-brand fw-bold" href="#">FitBazar</a>
+            <ul class="nav align-items-center">
+                <li class="nav-item"><a class="nav-link text-white <%= activePage === 'home' ? 'user-nav-text' : '' %>" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-white <%= activePage === 'shop' ? 'user-nav-text' : '' %>" href="/shop">Shop</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2 navbar-search" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn" type="submit" style="background-color: #f4dbfc;">
+                    <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                </button>
+            </form>
+            <div class="d-flex align-items-center">
+                <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                <% if (user) { %>
+                    <a href="/user/profile" style="color: #3B3389;">
+                        <% if (user.profilePic) { %>
+                            <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
+                        <% } else { %>
+                            <i class="fa-solid fa-user" style="font-size: 24px;"></i>
+                        <% } %>
+                    </a>
+                <% } else { %>
+                    <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
+                <% } %> 
+            </div>
+        </div>
+    </div>
+</nav>

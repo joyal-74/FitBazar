@@ -1,297 +1,26 @@
 <head>
-    <title>My Orders - FitBazar</title>
+    <link rel="stylesheet" href="/css/profile-section.css">
     <style>
-        body {
-            background-color: #ffffff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #333;
-            margin: 0;
-            padding-top: 70px;
-        }
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            background-color: #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Sidebar container */
         .sidebar-profile {
             background-color: #ffffff;
             border-radius: 12px;
             padding: 20px;
             position: fixed;
+            margin-top: 75px;
+            margin-left: 7px;
         }
 
-        /* Sidebar section heading */
-        .sidebar-heading {
-            font-size: 14px;
-            font-weight: 600;
-            color: #555;
-            margin: 18px 0;
-            display: block;
-        }
-
-        /* Sidebar link styles */
-        .sidebar-linkz {
-            color: #333;
-            padding: 12px 14px;
-            font-size: 15px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar-linkz i {
-            width: 20px;
-            color: #3b3389;
-        }
-
-        /* Hover and active states */
-        .sidebar-linkz:hover {
-            background-color: #e0dbfc;
-            color: #3b3389;
-        }
-
-        .sidebar-linkz.active {
-            background-color: #3b3389;
-            color: #fff;
-        }
-
-
-        /* Avatar and greeting text */
-        .sidebar-profile .d-flex {
-            align-items: center;
-        }
-
-        .sidebar-profile img {
-            object-fit: cover;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .sidebar-profile {
-                padding: 15px;
-            }
-
-            .sidebar-linkz {
-                font-size: 14px;
-                padding: 10px 12px;
-            }
-        }
-        .content-area {
-            flex-grow: 1;
-        }
-        .page-header {
-            margin: 40px 0;
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-        .order-card {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .order-id {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-        .order-status {
-            font-size: 14px;
-            font-weight: 500;
-            padding: 5px 12px;
-            border-radius: 20px;
-        }
-        .order-status.pending {
-            background-color: #FFE082;
-            color: #FFB300;
-        }
-        .order-status.shipped {
-            background-color: #81C784;
-            color: #2E7D32;
-        }
-        .order-status.delivered {
-            background-color: #4CAF50;
-            color: #fff;
-        }
-        .order-status.cancelled {
-            background-color: #d11414;
-            color: #fff;
-        }
-        .order-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-        }
-        .order-details span {
-            font-weight: 500;
-            color: #333;
-        }
-        .order-items {
-            margin-bottom: 15px;
-        }
-        .item-row {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .item-img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 6px;
-            margin-right: 15px;
-            border: 1px solid #eee;
-        }
-        .item-info {
-            flex-grow: 1;
-        }
-        .item-info h6 {
-            font-size: 14px;
-            font-weight: 600;
-            margin: 0 0 5px;
-            color: #1a1a1a;
-        }
-        .item-info p {
-            font-size: 12px;
-            color: #777;
-            margin: 0;
-        }
-        .item-price {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-        .order-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        .btn {
-            padding: 8px 20px;
-            font-size: 13px;
-            font-weight: 500;
-            border-radius: 20px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background-color: #6C5DD3;
-            color: #fff;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #5848C2;
-        }
-        .btn-outline-primary {
-            border: 1px solid #6C5DD3;
-            color: #6C5DD3;
-            background-color: transparent;
-        }
-        .btn-outline-primary:hover {
-            background-color: #6C5DD3;
-            color: #fff;
-        }
-        .no-orders, .loading, .error {
-            text-align: center;
-            color: #666;
-            font-size: 16px;
-            padding: 40px;
-        }
     </style>
 </head>
 <body>
-    <!-- Fixed Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#" style="color: #3B3389;">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navbar -->
+    <%- include('../partials/userNavbar', { activePage: 'orders' }) %> 
 
     <!-- Main Content -->
-    <div class="container mt-1">
-        <!-- Sidebar -->
-        <div class="d-flex gap-2">
-            <div class="col-md-3 mt-4">
-                <div class="sidebar-profile p-3">
-                    <div class="d-flex align-items-center mb-5">
-                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                        <span>Hello, <strong><%= firstName %></strong></span>
-                    </div>
-                    <nav class="nav flex-column gap-3">
-                        <a href="/user/orders" class="nav-link sidebar-linkz active">
-                            <i class="fa-solid text-white fa-box me-2"></i>My Orders
-                        </a>
-                        <a href="/user/profile" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-user me-2"></i>Profile Information
-                        </a>
-                        <a href="/user/address" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
-                        </a>
-                        <a href="/user/privacy" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-key me-2"></i>Privacy Settings
-                        </a>
-                        <a href="/user/coupons" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-ticket me-2"></i>My Coupons
-                        </a>
-                        <a href="/user/reviews" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
-                        </a>
-                        <a href="/user/wallet" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-wallet me-2"></i>My Wallet
-                        </a>
-                    </nav>
-                </div>
-            </div>
+    <main class="container mt-4">
+        <div class="row g-5">
+            
+            <%- include('../partials/profileSidebar', { activePage: 'orders' }) %> 
     
             <!-- Orders Content -->
             <div class="col-9">
@@ -300,7 +29,7 @@
                     <form id="searchForm" method="GET" action="/user/orders">
                         <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<%= search %>">
-                            <button class="btn" type="submit" style="background-color: #3e29a8; border-radius: 10px;">
+                            <button class="btn" type="submit" style="background-color: #5b3f64; border-radius: 10px;">
                                 <i class="fas fa-search text-white"></i>
                             </button>
                         </div>
@@ -310,13 +39,13 @@
             
                 <% if (orders && orders.length > 0) { %>
                     <% orders.forEach(order => { %>
-                        <div class="order-card bg-light">
+                        <div class="order-card" style="background-color: #f8edfc;">
                             <!-- Order Header -->
                             <div class="order-header">
                                 <span class="order-id">Order #<%= order.orderId %></span>
-                                <span class="order-status <%= (order.status || '').toLowerCase() %>">
+                                <span class="order-status <%= (order.status || '').toLowerCase().replace(/\s+/g, '-') %>">
                                     <%= order.status || 'Pending' %>
-                                </span>
+                                </span>                                
                             </div>
                 
                             <!-- Order Details -->

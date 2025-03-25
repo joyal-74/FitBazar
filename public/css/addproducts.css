@@ -1,15 +1,10 @@
-
-
-
-
 .add-product-form {
     background: #ffffff;
     border-radius: 15px;
     transition: transform 0.3s;
 }
 
-.form-control,
-.form-select {
+.form-control, .form-select {
     border-radius: 8px;
     border: 1px solid #ddd;
     transition: all 0.3s;
@@ -17,7 +12,7 @@
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #4a00e0;
+    border-color: #3C1549;
     box-shadow: 0 0 8px rgba(74, 0, 224, 0.2);
 }
 
@@ -39,10 +34,24 @@
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, #4a00e0, #8e2de2);
+    background: linear-gradient(45deg, #5b3f64, #3C1549);
     border: none;
     border-radius: 8px;
-    padding: 8px 20px;
+    padding: 8px 15px;
+}
+.cancel-btn {
+    color: #3C1549;
+    border: 1px solid #3C1549;
+    border-radius: 8px;
+    padding: 8px 15px;
+}
+
+.cancel-btn:hover {
+    color: #3C1549;
+    background-color: #f6edf9;
+    border: 1px solid #3C1549;
+    border-radius: 8px;
+    padding: 8px 15px;
 }
 
 .btn-outline-primary {
@@ -50,9 +59,9 @@
 }
 
 .btn-outline-primary:hover {
-    background: #4a00e0;
+    background: #3C1549;
     color: #fff;
-    border-color: #4a00e0;
+    border-color: #3C1549;
 }
 
 .image-upload-row {
@@ -91,12 +100,12 @@
 
 .image-upload-dropzone.dragover {
     background: #e9ecef;
-    border-color: #4a00e0;
+    border-color: #5b3f64;
 }
 
 .image-upload-dropzone i {
     font-size: 20px;
-    color: #4a00e0;
+    color: #3C1549;
 }
 
 .image-upload-dropzone p {

@@ -78,7 +78,7 @@ const addProducts = async (req, res) => {
 
 const editProducts = async (req, res) => {
     try {
-        const { productId, productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant } = req.body;
+        const { productId, productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant, visibility } = req.body;
 
         // console.log(productId)
         // console.log(productCategory)
@@ -111,6 +111,7 @@ const editProducts = async (req, res) => {
         product.brand = productBrand;
         product.category = categoryId;
         product.productOffer = productOffer;
+        product.visibility = visibility;
 
         const variants = [];
         for (let i = 0; i < colorVariant.length; i++) {
@@ -140,7 +141,7 @@ const editProducts = async (req, res) => {
 const productInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 8;
+        const limit = 7;
         const skip = (page - 1) * limit;
         const filter = {};
 
@@ -185,7 +186,7 @@ const productInfo = async (req, res) => {
             title: "Products",
             errorMessage: "",   
             product: products,
-            cat: categories,
+            cat: categories, 
             currentPage: page,
             totalPages: totalPages,
             totalProducts: totalProducts,

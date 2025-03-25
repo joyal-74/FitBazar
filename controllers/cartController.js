@@ -3,108 +3,94 @@ import User from "../model/userModel.js";
 import Products from "../model/productModel.js";
 import Cart from "../model/cartModel.js";
 import Address from "../model/addressModel.js";
-import mongoose from "mongoose";
 import Order from "../model/orderModel.js";
-import generateOrderId from "../helpers/uniqueIdHelper.js";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
-import { ObjectId } from "mongodb";
+import Wishlist from "../model/wishlistModel.js";
 
 
 const addItemToCart = async (req, res) => {
     try {
         const { userId, productId, quantity, price, variants } = req.body;
 
-        // console.log('Request body:', req.body);
+        console.log('Request body:', req.body);
 
         if (!userId) {
-            return res.status(UNAUTHORIZED).json({ error: 'Please log in to add items to your cart.' });
+            return res.status(401).json({ error: 'Please log in to add items to your cart.' });
         }
 
+        // Validate inputs
+        if (!productId || !quantity || !price || quantity <= 0 || price <= 0) {
+            return res.status(400).json({ error: 'Invalid input values.' });
+        }
 
+        // Find product and validate visibility
         const product = await Products.findOne({ _id: productId, visibility: true });
         if (!product) {
-            return res.status(NOT_FOUND).json({ error: 'Product not found. Unable to add to cart.' });
+            return res.status(404).json({ error: 'Product not found.' });
         }
 
         let availableStock = product.stock;
-        if (variants && (variants.color || variants.weight)) {
+
+        // Check variant stock if applicable
+        if (variants?.color || variants?.weight) {
             const variant = product.variants.find(
                 v => v.color === variants.color && v.weight === variants.weight
             );
             if (!variant) {
-                return res.status(BAD_REQUEST).json({ error: 'Selected variant not available.' });
+                return res.status(400).json({ error: 'Selected variant not available.' });
             }
             availableStock = variant.stock;
         }
 
-        // Validate quantity against available stock
+        // Validate quantity against stock
         if (quantity > availableStock) {
-            return res.status(BAD_REQUEST).json({
+            return res.status(400).json({
                 error: `Only ${availableStock} units of "${product.name}" available in stock for this variant.`
             });
         }
 
-        const name = product.name;
-        const brand = product.brand;
-        const productImage = product.images[0];
+        const item = {
+            name: product.name,
+            brand: product.brand,
+            productId: product._id,
+            quantity: parseInt(quantity),
+            price,
+            stock: availableStock,
+            variants,
+            productImage: product.images[0]
+        };
 
+        // Update or create cart using atomic updates
+        const cart = await Cart.findOneAndUpdate(
+            { userId, 'items.productId': product._id, 'items.variants.color': variants?.color, 'items.variants.weight': variants?.weight },
+            {
+                $inc: { 'items.$.quantity': quantity },
+                $set: { 'items.$.price': price }
+            },
+            { new: true }
+        );
 
-        let cart = await Cart.findOne({ userId });
-
-        if (cart) {
-            const existingItemIndex = cart.items.findIndex(
-                item => item.productId.toString() === product._id.toString() &&
-                        item.variants?.color === variants?.color &&
-                        item.variants?.weight === variants?.weight
+        if (!cart) {
+            await Cart.findOneAndUpdate(
+                { userId },
+                { $push: { items: item } },
+                { upsert: true, new: true }
             );
-
-            if (existingItemIndex > -1) {
-                const newQuantity = cart.items[existingItemIndex].quantity + parseInt(quantity);
-                if (newQuantity > availableStock) {
-                    return res.status(BAD_REQUEST).json({
-                        error: `Cannot exceed ${availableStock} units of "${product.name}" in stock.`
-                    });
-                }
-                cart.items[existingItemIndex].quantity = newQuantity;
-                cart.items[existingItemIndex].price = price;
-            } else {
-                cart.items.push({
-                    name,
-                    brand,
-                    productId: product._id,
-                    quantity: parseInt(quantity),
-                    price,
-                    stock: availableStock,
-                    variants,
-                    productImage
-                });
-            }
-            await cart.save();
-        } else {
-            cart = new Cart({
-                userId,
-                items: [{
-                    name,
-                    brand,
-                    productId: product._id,
-                    quantity: parseInt(quantity),
-                    price,
-                    stock: availableStock,
-                    variants,
-                    productImage
-                }]
-            });
-            await cart.save();
-
-            await User.findByIdAndUpdate(userId, { $set: { cart: cart._id } });
         }
 
-        return res.status(OK).json({ message: 'Item added to cart successfully!' });
+        // Remove from wishlist and update user cart reference in parallel
+        await Promise.all([
+            Wishlist.findOneAndDelete({ product: productId }),
+            User.findByIdAndUpdate(userId, { $set: { cart: cart?._id } })
+        ]);
+
+        return res.status(200).json({ message: 'Item added to cart successfully!' });
     } catch (error) {
         console.error('Add to cart error:', error);
-        return res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal server error.' });
+        return res.status(500).json({ error: 'Internal server error.' });
     }
 };
+
 
 
 const loadCart = async (req, res) => {

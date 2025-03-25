@@ -1,160 +1,21 @@
+<head>
+    <link rel="stylesheet" href="/css/profile-section.css">        
+</head>
+
 <body>
-    <head>
-        <style>
-            /* Sidebar container */
-            .sidebar-profile {
-                background-color: #ffffff;
-                border-radius: 12px;
-                padding: 20px;
-            }
     
-            /* Sidebar link styles */
-            .sidebar-linkz {
-                color: #333;
-                padding: 12px 14px;
-                font-size: 15px;
-                font-weight: 500;
-                border-radius: 8px;
-                transition: background-color 0.3s ease;
-                display: flex;
-                align-items: center;
-            }
-    
-            .sidebar-linkz i {
-                width: 20px;
-                color: #3b3389;
-            }
-    
-            /* Hover and active states */
-            .sidebar-linkz:hover {
-                background-color: #e0dbfc;
-                color: #3b3389;
-            }
-    
-            .sidebar-linkz.active {
-                background-color: #3b3389;
-                color: #fff;
-            }
-    
-            /* Form input styling */
-            .form-control {
-                border-radius: 8px;
-                border: 1px solid #e0dbfc;
-                padding: 10px 12px;
-                transition: border-color 0.3s ease;
-            }
-    
-            .form-control:focus {
-                border-color: #3b3389;
-                box-shadow: 0 0 0 3px rgba(59, 51, 137, 0.1);
-            }
-    
-            /* Button styling */
-            .btn-primary {
-                background-color: #3b3389;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 8px;
-                transition: background-color 0.3s ease;
-            }
-    
-            .btn-primary:hover {
-                background-color: #2a2467;
-            }
-    
-            .btn-secondary {
-                background-color: #f8f9fa;
-                border: 1px solid #e0dbfc;
-                color: #3b3389;
-                padding: 10px 20px;
-                border-radius: 8px;
-                transition: background-color 0.3s ease;
-            }
-    
-            .btn-secondary:hover {
-                background-color: #e0dbfc;
-            }
-        </style>
-    </head>
-    
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="/shop">Shop</a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </nav>
-    
+    <%- include('../partials/userNavbar', { activePage: '' }) %> 
+
     <main class="container mt-4">
-        <div class="row g-4">
-            <!-- Sidebar -->
-            <div class="col-md-3">
-                <div class="sidebar-profile p-3">
-                    <div class="d-flex align-items-center mb-5">
-                        <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50" height="50">
-                        <span>Hello, <strong><%= firstName %></strong></span>
-                    </div>
-                    <nav class="nav flex-column gap-3">
-                        <a href="/user/orders" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-box me-2"></i>My Orders
-                        </a>
-                        <a href="/user/profile" class="nav-link sidebar-linkz ">
-                            <i class="fa-solid fa-user me-2"></i>Profile Information
-                        </a>
-                        <a href="/user/address" class="nav-link sidebar-linkz active">
-                            <i class="fa-solid text-white fa-location-dot me-2"></i>Manage Addresses
-                        </a>
-                        <a href="/user/privacy" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-key me-2"></i>Privacy Settings
-                        </a>
-                        <a href="/user/coupons" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-ticket me-2"></i>My Coupons
-                        </a>
-                        <a href="/user/reviews" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
-                        </a>
-                        <a href="/user/wallet" class="nav-link sidebar-linkz">
-                            <i class="fa-solid fa-wallet me-2"></i>My Wallet
-                        </a>
-                    </nav>
-                </div>
-            </div>
+        <div class="row g-5">
+
+            <%- include('../partials/profileSidebar', { activePage: 'address' }) %> 
     
             <!-- Manage Addresses Section -->
-            <div class="col-md-9 mt-5">
+            <div class="col-md-9" style="margin-top: 70px;">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold">Manage Addresses</h4>
-                    <a href="/user/addAddress" class="btn btn-primary" style="background-color: #6C5DD3; border-color: #6C5DD3; border-radius: 8px;">
+                    <a href="/user/addAddress" class="btn btn-primary" style="background-color: #5b3f64; border-color: #483250; border-radius: 8px;">
                         Add new Address
                     </a>
                 </div>
@@ -163,7 +24,7 @@
                 <% if (addresses.length > 0) { %>
                     <% addresses.forEach((address) => { %>
                         <% address.details.forEach((detail, index) => { %>
-                            <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8; border-radius: 12px;">
+                            <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #f9f4fa; border-radius: 12px;">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <strong>
@@ -173,7 +34,7 @@
                                             <%= detail.addressLine1 %>, <%= detail.addressLine2 %>, <%= detail.city %>,<br>
                                             <%= detail.state %> - <%= detail.pincode %>
                                         </p>
-                                        <span class="badge text-end" style="background-color: #E0E0E0; color: #6C5DD3; border-radius: 8px; padding: 4px 8px; font-size: 12px;">
+                                        <span class="badge text-end" style="background-color: #E0E0E0; color: #5b3f64; border-radius: 8px; padding: 4px 8px; font-size: 12px;">
                                             <%= detail.addressType %>
                                         </span>
                                     </div>

@@ -6,7 +6,7 @@ import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 const userInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 8;
+        const limit = 7;
         const skip = (page - 1) * limit;
         const filter = {};
 
@@ -81,7 +81,7 @@ const filterCustomers = async (req, res) => {
         let filter = {};
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 8;
+        const limit = 7;
         const skip = (page - 1) * limit;
 
         if (isBlocked === 'true') {

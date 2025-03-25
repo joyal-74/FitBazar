@@ -83,7 +83,7 @@
                                     <!-- Actions -->
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm w-50 add-to-cart-btn text-white" 
-                                            data-product-id="<%= item.product.productId %>"
+                                            data-product-id="<%= item.product._id %>"
                                             data-color="<%= item.color %>"
                                             data-weight="<%= item.weight %>">
                                             <i class="fa fa-cart-plus me-1"></i> Add to Cart
@@ -215,9 +215,16 @@
                         } else {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Added to cart successfully',
-                                showConfirmButton: false,
-                                timer: 2000
+                                text: 'Added to cart successfully!',
+                                showCancelButton: true,
+                                confirmButtonText: 'Go to Cart',
+                                cancelButtonText: 'Cancel',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/user/cart';
+                                }else {
+                                    window.location.reload();
+                                }
                             });
                         }
                     } catch (error) {

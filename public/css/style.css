@@ -83,7 +83,7 @@
 }
 
 .send-btn {
-    background-color: #706677;
+    background-color: #5b3f64;
     color: white;
     font-size: 18px;
     padding: 8px;
@@ -346,12 +346,12 @@
 
 /*Admin section*/
 .admin-btns {
-    background-color: #706677;
-    border-radius: 28px;
+    background-color: #5b3f64;
+    border-radius: 10px;
 }
 
 .admin-btns:hover {
-    background-color: #706677;
+    background-color: rgb(100, 91, 106);
 }
 
 .sidebar {
@@ -379,7 +379,7 @@
 }
 
 .add-product-btn {
-    background-color: #706677;
+    background-color: #5b3f64;
     color: white;
 }
 
@@ -569,13 +569,14 @@
 }
 
 .user-nav-text {
-    background-color: #E0DBFC !important;
+    background-color: #f4dbfc !important;
     color: #5b3f64 !important;
     border-radius: 20px;
+    padding : 5px 20px;
 }
 
 .custom-outline-btn {
-    color: #4132e6;
+    color: #5b3f64;
     border: 1.5px solid #706677;
     background: transparent;
     transition: all 0.3s ease-in-out;
@@ -599,7 +600,7 @@
 
 .feature-box i {
     font-size: 32px;
-    color: #6a4bb4;
+    color: #3C1549;
     margin-bottom: 10px;
 }
 
@@ -612,7 +613,7 @@
 
 /* home page */
 .subscription-banner-div {
-    background-color: #472D8B;
+    background-color: #5b3f64;
     color: white;
     padding: 10px 20px;
     text-align: center;
@@ -811,4 +812,100 @@ td {
 .sidebar-header {
     margin-top: 55px;
     padding-top: 10px;
+}
+
+
+.custom-outline-btn {
+    border: 1px solid #3C1549;
+    color: #3C1549;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-outline-btn:hover {
+    background-color: #3C1549;
+    color: #fff;
+}
+
+.custom-btn-outline {
+    border: 1px solid #3C1549;
+    color: #3C1549;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-btn-outline:hover {
+    background-color: #3C1549;
+    color: #fff;
+}
+
+.custom-btn {
+    color: #fff;
+    background-color: #3C1549;
+}
+
+.custom-btn:hover {
+    border: 1px solid #3C1549;
+    background-color: #fff;
+    color: #3C1549;
+}
+
+.product-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.05);
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+.product-img {
+    height: 260px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+}
+
+.product-card .card-body {
+    padding: 1rem;
+}
+
+.product-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.order-product-card {
+    display: flex;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.form-control.navbar-search{
+    padding: 0px 12px;
+}
+
+.bg-violet {
+    background-color: #f6eef8;
+}
+
+.stock-color{
+    background-color: #14b662;
+    border-radius: 28px;
+    padding: 9px 8px;
+    width: 100px;
+}
+
+.no-stock-color{
+    background-color: #e02c2c;
+    border-radius: 28px;
+    padding: 9px 8px;
+    width: 100px;
 }

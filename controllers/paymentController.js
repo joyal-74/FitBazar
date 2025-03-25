@@ -6,7 +6,6 @@ import Order from "../model/orderModel.js";
 import Address from "../model/addressModel.js";
 import crypto from 'crypto';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
-import mongoose from "mongoose";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 
 
@@ -91,7 +90,6 @@ const paymentSuccess = async (req, res) => {
             return res.status(400).json({ error: "Delivery address not found." });
         }
 
-        const objectId = new mongoose.Types.ObjectId(addressId);
         const cart = await Cart.findOne({ userId }).populate('items.productId');
         const orderItemCount = cart.items.length;
 
@@ -100,8 +98,8 @@ const paymentSuccess = async (req, res) => {
         }
 
         const address = await Address.findOne(
-            { 'details._id': objectId },
-            { 'details.$': 1 }
+            { 'details._id': addressId },
+            { details: { $elemMatch: { _id: addressId } } }
         );
 
         if (!address) {

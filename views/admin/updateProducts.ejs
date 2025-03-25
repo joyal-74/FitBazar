@@ -5,7 +5,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </head>
 
-<body class="bg-light">
+<body class="bg-violet">
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
@@ -16,7 +16,7 @@
             <%- include('../partials/sidebar', { activePage: 'products' }) %>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto" style="margin-top: 70px;">
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
                 <h3 class="fw-bold">Edit Product</h3>
 
                 <!-- Product Form -->
@@ -135,9 +135,25 @@
                                     <button type="button" id="addVariantButton" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;">
                                         <i class="fas fa-plus me-1"></i> Add Variant
                                     </button>
+                                </div>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="visibility" id="inlineRadio1"
+                                                value="true" <% if (product.visibility===true || product.visibility==='true'
+                                                ) { %> checked <% } %>>
+                                                <label class="form-check-label" for="inlineRadio1">Active</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="visibility" id="inlineRadio2"
+                                                value="false" <% if (product.visibility===false ||
+                                                product.visibility==='false' ) { %> checked <% } %>>
+                                                <label class="form-check-label" for="inlineRadio2">Hide</label>
+                                        </div>
+                                    </div>
                                     <div class="d-flex gap-3">
-                                        <a class="btn btn-outline-primary" href="/admin/products">Cancel</a>
-                                        <button type="submit" class="btn btn-primary">Update Product</button>
+                                        <a class="btn cancel-btn" href="/admin/products">Cancel</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-check-circle me-2"></i> Update</button>
                                     </div>
                                 </div>
                             </div>
@@ -501,7 +517,7 @@
                     cropper = new Cropper(image, {
                         aspectRatio: 1,
                         viewMode: 1,
-                        autoCropArea: 0.8,
+                        autoCropArea: 1,
                         responsive: true,
                         dragMode: 'move',
                         background: false,
@@ -513,8 +529,8 @@
             document.getElementById("cropButton").addEventListener("click", () => {
                 if (cropper) {
                     const canvas = cropper.getCroppedCanvas({
-                        width: 200,
-                        height: 200,
+                        width: Math.min(cropper.getImageData().naturalWidth, 1200),
+                        height: Math.min(cropper.getImageData().naturalHeight, 1200),
                     });
 
                     canvas.toBlob((blob) => {
@@ -526,7 +542,7 @@
                         bootstrap.Modal.getInstance(document.getElementById("cropModal")).hide();
                         cropper.destroy();
                         cropper = null;
-                    }, "image/jpeg", 0.9);
+                    }, "image/jpeg", 0.95);
                 }
             }, { once: true });
 

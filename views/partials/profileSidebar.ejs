@@ -1,0 +1,35 @@
+<div class="col-md-3">
+    <div class="sidebar-profile p-3">
+        <div class="d-flex align-items-center mb-5">
+            <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50"
+                height="50">
+            <span>Hello, <strong>
+                    <%= firstName %>
+                </strong></span>
+        </div>
+
+        <nav class="nav flex-column gap-3">
+            <a href="/user/orders" class="nav-link sidebar-linkz <%= activePage === 'orders' ? 'active' : '' %>">
+                <i class="fa-solid fa-box me-2"></i>My Orders
+            </a>
+            <a href="/user/profile" class="nav-link sidebar-linkz <%= activePage === 'profile' ? 'active' : '' %>">
+                <i class="fa-solid fa-user me-2"></i>Profile Information
+            </a>
+            <a href="/user/address" class="nav-link sidebar-linkz <%= activePage === 'address' ? 'active' : '' %>">
+                <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
+            </a>
+            <a href="/user/privacy" class="nav-link sidebar-linkz <%= activePage === 'privacy' ? 'active' : '' %>">
+                <i class="fa-solid fa-key me-2"></i>Privacy Settings
+            </a>
+            <a href="/user/coupons" class="nav-link sidebar-linkz <%= activePage === 'coupons' ? 'active' : '' %>">
+                <i class="fa-solid fa-ticket me-2"></i>My Coupons
+            </a>
+            <a href="/user/reviews" class="nav-link sidebar-linkz <%= activePage === 'reviews' ? 'active' : '' %>">
+                <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
+            </a>
+            <a href="/user/wallet" class="nav-link sidebar-linkz <%= activePage === 'wallet' ? 'active' : '' %>">
+                <i class="fa-solid fa-wallet me-2"></i>My Wallet
+            </a>
+        </nav>
+    </div>
+</div>
