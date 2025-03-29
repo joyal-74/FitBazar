@@ -79,6 +79,7 @@
                                         <th>Total Stock</th>
                                         <th>Added On</th>
                                         <th>Status</th>
+                                        <th>Offer</th> <!-- New Column for Offers -->
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -86,7 +87,7 @@
                                     <% product.forEach(product => { %>
                                         <tr>
                                             <td><%= product.productId %></td>
-                                            <td><%= product.name.length > 35 ? product.name.slice(0, 35) + '...' : product.name %></td>
+                                            <td class="text-start"><%= product.name.length > 25 ? product.name.slice(0, 25) + '...' : product.name %></td>
                                             <td><%= product.category?.name || "No Category" %></td>
                                             <td>₹ <%= product.price.toFixed(2) %></td>
                                             <td>
@@ -99,25 +100,34 @@
                                                     <span class="badge no-stock-color">Out of Stock</span>
                                                 <% } %>
                                             </td>
-                                            
                                             <td><%= new Date(product.createdAt).toLocaleDateString("en-US") %></td>
                                             <td>
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <!-- Visible (Eye) Icon: Shown when visibility is TRUE -->
                                                     <p style="color: #5b3f64; margin: 0;" class="<%= product.visibility ? '' : 'd-none' %>">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </p>
-                                                
-                                                    <!-- Hidden (Eye-slash) Icon: Shown when visibility is FALSE -->
                                                     <p style="color: #9c9999; margin: 0;" class="<%= product.visibility ? 'd-none' : '' %>">
                                                         <i class="fa-solid fa-eye-slash"></i>
                                                     </p>
                                                 </div>
-                                                
                                             </td>
-                                            
+                                            <!-- Offer Column -->
                                             <td>
-                                                <a href="/admin/updateProducts/<%= product.productId %>" style="color: #5b3f64;" class="btn btn-sm edit-btn me-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                <% if (product.productOffer > 0) { %>
+                                                    <span class="badge" style="background-color: #ff8000; border-radius: 28px; color: rgb(255, 255, 255);"><%= product.productOffer %>% Off</span>
+                                                    <button class="btn btn-sm remove-offer-btn p-0 m-0 text-danger" style="border-radius: 50%; font-size: 1rem;" data-product-id="<%= product.productId %>">
+                                                        x
+                                                    </button>
+                                                <% } else { %>
+                                                    <button class="btn badge btn-sm add-offer-btn" style="background-color: #0e7a86; color: #fff; border-radius: 28px;" data-product-id="<%= product.productId %>">
+                                                        Add Offer
+                                                    </button>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/updateProducts/<%= product.productId %>" style="color: #5b3f64;" class="btn btn-sm edit-btn me-2">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     <% }) %>
@@ -125,6 +135,34 @@
                             </table>
                         </div>                    
                     </div>               
+                </div>
+
+                <!-- Add Offer Modal -->
+                <div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addOfferModalLabel">Add Offer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addOfferForm">
+                                    <div class="mb-3">
+                                        <label for="discountInput" class="form-label">Discount Percentage (%)</label>
+                                        <input type="number" class="form-control" id="discountInput" placeholder="Enter discount (e.g., 10)" min="1" max="100" step="1" required>
+                                        <div class="invalid-feedback">
+                                            Please enter a valid discount percentage (1-100).
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="productIdInput" name="productId">
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn admin-btns" id="submitOfferBtn" style="background-color: #5b3f64; color: white;">Add Offer</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Pagination -->
@@ -167,23 +205,142 @@
             const stock = document.getElementById('stockFilter').value;
             const status = document.getElementById('statusFilter').value;
             const searchQuery = document.getElementById('searchInput').value.trim();
-
+    
             let queryParams = new URLSearchParams();
-            
             if (category !== "all") queryParams.set("category", category);
             if (stock !== "all") queryParams.set("stock", stock);
             if (status !== "all") queryParams.set("status", status);
             if (searchQuery) queryParams.set("query", searchQuery);
-
+    
             window.location.href = `/admin/products?${queryParams.toString()}`;
         }
-
+    
+        // Event listeners for filters
         document.getElementById('categoryFilter').addEventListener('change', applyFilters);
         document.getElementById('stockFilter').addEventListener('change', applyFilters);
         document.getElementById('statusFilter').addEventListener('change', applyFilters);
         document.getElementById('searchForm').addEventListener('submit', function (event) {
             event.preventDefault();
             applyFilters();
+        });
+    
+        // Add Offer Button Click Handler with Bootstrap Modal
+        document.querySelectorAll('.add-offer-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                const modal = new bootstrap.Modal(document.getElementById('addOfferModal'));
+                const productIdInput = document.getElementById('productIdInput');
+                const discountInput = document.getElementById('discountInput');
+    
+                // Reset form and set productId
+                discountInput.value = '';
+                discountInput.classList.remove('is-invalid');
+                productIdInput.value = productId;
+    
+                // Show the modal
+                modal.show();
+            });
+        });
+    
+        // Submit Offer Form Handler with Async/Await
+        document.getElementById('submitOfferBtn').addEventListener('click', async function () {
+            const discountInput = document.getElementById('discountInput');
+            const productId = document.getElementById('productIdInput').value;
+            const discount = discountInput.value.trim();
+    
+            // Validate input
+            if (!discount || isNaN(discount) || discount <= 0 || discount > 100) {
+                discountInput.classList.add('is-invalid');
+                return;
+            } else {
+                discountInput.classList.remove('is-invalid');
+            }
+    
+            try {
+                const response = await fetch('/admin/products/offer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId, discount }),
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addOfferModal'));
+                    modal.hide();
+                    await Swal.fire({
+                        text: 'Offer added successfully',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer : 2000
+                    });
+                    location.reload();
+                } else {
+                    await Swal.fire({
+                        text: data.message,
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer : 2000
+                    });
+                }
+            } catch (error) {
+                await Swal.fire('Error', 'An error occurred: ' + error.message, 'error');
+            }
+        });
+    
+        // Remove Offer Button Click Handler 
+        document.querySelectorAll('.remove-offer-btn').forEach(button => {
+            button.addEventListener('click', async function () {
+                const productId = this.getAttribute('data-product-id');
+    
+                const result = await Swal.fire({
+                    text: 'Are you sure you want to remove the offer for this product?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Remove',
+                    cancelButtonText: 'No, Cancel'
+                });
+    
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('/admin/products/offer', {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId }),
+                        });
+    
+                        const data = await response.json();
+    
+                        if (response.ok) {
+                            await Swal.fire({
+                                text: 'Offer deleted successfully',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer : 2000
+                            });
+                            location.reload();
+                        } else {
+                            await Swal.fire({
+                                text: data.error || 'Offer deletion failed',
+                                icon: 'warning',
+                                showConfirmButton: false,
+                                timer : 2000
+                            });
+                        }
+                    } catch (error) {
+                        await Swal.fire({
+                                text: data.error || 'Internal Server error',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                timer : 2000
+                            });
+                    }
+                }
+            });
         });
     </script>
 </body>

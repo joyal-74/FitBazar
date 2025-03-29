@@ -63,9 +63,9 @@
 
                             <!-- Bio and Gender -->
                             <div class="col-md-8">
-                                <label for="bio" class="form-label mb-1">Bio</label>
-                                <input type="text" id="bio" name="bio" class="form-control"
-                                    value="<%= user.bio || '' %>" placeholder="Enter your bio details">
+                                <label for="username" class="form-label mb-1">Username</label>
+                                <input type="text" id="username" name="username" class="form-control"
+                                    value="<%= user.username || '' %>" placeholder="Enter new username">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Gender</label>
@@ -233,6 +233,5 @@
             }
         }
     });
-
     </script>
 </body>

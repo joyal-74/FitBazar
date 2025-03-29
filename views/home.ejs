@@ -70,7 +70,7 @@
         <div class="row" id="product-container">
             <% product.forEach(product => { %>
                 <div class="col-md-3 col-lg-3 my-3"> 
-                    <a href="/product?productId=<%= product._id %>&category=<%= product.category%>" class="text-decoration-none text-dark">
+                    <a href="/product?productId=<%= product._id %>&category=<%= product.category._id %>" class="text-decoration-none text-dark">
                         <div class="card p-2 product-card" style="border: 1px solid #e0e0e0;">
                             <!-- Image Container with Offer Badge -->
                             <div class="position-relative">
@@ -78,10 +78,12 @@
                                      class="product-img card-img-top mx-auto d-block" 
                                      style="width: 260px; object-fit: cover;">
         
-                                <% if (product.productOffer > 0) { %>
-                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
-                                        <%= product.productOffer %>% OFF
-                                    </span>
+                                <% const displayOffer = Math.max(product.productOffer || 0, product.category.offer || 0);
+                                     if (displayOffer > 0) { 
+                                %>
+                                     <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
+                                         <%= displayOffer %>% OFF
+                                     </span>
                                 <% } %>
                             </div>
         
@@ -89,7 +91,7 @@
                                 <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
                                 <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)</p>
                                 <p class="d-flex align-items-center gap-2 mb-2">
-                                    <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></strong> 
+                                    <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * displayOffer / 100)) %></strong> 
                                     <del class="text-dark small">₹<%= product.price %></del>
                                 </p>
                                 <div class="d-flex gap-2">

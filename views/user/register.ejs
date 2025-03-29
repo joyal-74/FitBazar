@@ -18,24 +18,27 @@
 
                 <!-- register Form -->
                 <form id="registerForm">
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <input type="text" class="form-control" placeholder="Full Name" id="name" name="fullName">
                         <div id="nameError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <input type="email" class="form-control" placeholder="Email Address" id="email" name="email">
                         <div id="emailError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <input type="text" class="form-control" placeholder="Phone Number" id="phone" name="phone">
                         <div id="phoneError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-2">
+                        <input type="text" class="form-control" placeholder="Enter referal code (Optional)" id="userReferal" name="userReferal">
+                    </div>
+                    <div class="mb-2">
                         <input type="password" class="form-control" placeholder="Password" id="password" name="password">
                         <div id="passwordError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <input type="password" class="form-control" placeholder="Confirm Password" id="confirmPassword" name="confirmPassword">
                         <div id="confirmPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
                     </div>
@@ -64,6 +67,7 @@
             const fullName = document.getElementById("name").value.trim();
             const password = document.getElementById("password").value.trim();
             const phone = document.getElementById("phone").value.trim();
+            const userReferal = document.getElementById("userReferal").value.trim();
             const confirmPassword = document.getElementById("confirmPassword").value.trim();
     
             const errors = {
@@ -113,7 +117,7 @@
     
             if (hasError) return;
     
-            const registerData = { fullName, phone, email, password };
+            const registerData = { fullName, phone, email, password, userReferal };
     
             try {
                 const response = await fetch("/user/register", {

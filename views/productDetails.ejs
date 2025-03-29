@@ -58,9 +58,11 @@
                     </p>
 
                     <p>
-                        <span class="text-danger fs-2 fw-bold me-2">₹<%= Math.round(product.price - (product.price * product.productOffer / 100)) %></span>
+                        <% const displayOffer = Math.max(product.productOffer || 0, product.category.offer || 0); if (displayOffer > 0) {  %>
+                        <span class="text-danger fs-2 fw-bold me-2">₹<%= Math.round(product.price - (product.price * displayOffer / 100)) %></span>
                         <del class="text-muted fs-5 me-3">₹<%= product.price %></del>
-                        <strong><%= product.productOffer || 0 %>% OFF</strong>
+                            <strong><%= displayOffer || 0 %>% OFF</strong> 
+                        <% } %>
                     </p>
                     <div class="mt-3">
                         <label class="form-label fw-bold">Availability :</label>
@@ -123,7 +125,8 @@
                     <input type="hidden" name="productdbId" id="productdbId" value="<%= product._id %>">
                     <input type="hidden" id="selectedColor" name="selectedColor" value="">
                     <input type="hidden" id="selectedWeight" name="selectedWeight" value="">
-                    <input type="hidden" id="salePrice" name="salePrice" value="<%= Math.round(product.price - (product.price * product.productOffer / 100)) %>">
+                    <input type="hidden" id="salePrice" name="salePrice" value="<%= Math.round(product.price - (product.price * displayOffer / 100)) %>">
+                    <input type="hidden" id="basePrice" name="basePrice" value="<%= product.price %>">
 
                     <!-- Coupons (unchanged) -->
                     <!-- <div class="card p-3 bg-light border">
@@ -298,7 +301,7 @@
             <div class="row" id="product-container">
                 <% relateproducts.forEach(product=> { %>
                     <div class="col-md-3 col-lg-3 my-3">
-                        <a href="/product?productId=<%= product._id %>&category=<%= product.category%>"
+                        <a href="/product?productId=<%= product._id %>&category=<%= product.category._id %>"
                             class="text-decoration-none text-dark">
                             <div class="card shadow-sm p-2">
                                 <!-- Image Container with Offer Badge -->
@@ -307,11 +310,11 @@
                                         class="product-img card-img-top mx-auto d-block"
                                         style="height: 250px; object-fit: cover;">
 
-                                    <% if (product.productOffer > 0) { %>
+                                   <% const displayOffer = Math.max(product.productOffer || 0, product.category.offer || 0); if (displayOffer > 0) {  %>
                                         <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
-                                            <%= product.productOffer %>% OFF
+                                            <%= displayOffer %>% OFF
                                         </span>
-                                        <% } %>
+                                    <% } %>
                                 </div>
 
                                 <div class="card-body p-2">
@@ -321,7 +324,7 @@
                                     <p class="text-warning mb-1">⭐ <%= product.rating %> (<%= product.reviewsCount %>)
                                     </p>
                                     <p class="d-flex align-items-center gap-2 mb-2">
-                                        <strong class="fs-6 text-success">₹<%= product.price %></strong>
+                                        <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * displayOffer / 100)) %></strong>
                                         <del class="text-dark small">₹<%= product.price %></del>
                                     </p>
                                     <div class="d-flex gap-2">
@@ -446,6 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const productId = document.getElementById('productdbId').value;
         const quantity = document.getElementById('quantity').value;
         const price = document.getElementById('salePrice').value;
+        const basePrice = document.getElementById('basePrice').value;
         const selectedColor = selectedColorInput.value;
         const selectedWeight = selectedWeightInput.value;
 
@@ -454,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
             productId,
             quantity,
             price,
+            basePrice,
             variants: { color: selectedColor, weight: selectedWeight }
         };
 
@@ -476,8 +481,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 Swal.fire({
                     icon: 'success',
                     text: 'Added to cart successfully',
-                    showConfirmButton: false,
-                    timer: 2000
+                    showConfirmButton: true,
+                    confirmButtonText: 'Go to Cart',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/user/cart';
+                    }
                 });
             }
         } catch (error) {

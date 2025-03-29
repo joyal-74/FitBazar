@@ -1,33 +1,3 @@
-<head>
-    <style>
-        .dropdown-menu {
-            min-width: 180px;
-            background: #ffffff;
-        }
-
-        .dropdown-item,
-        .dropdown-item-text {
-            font-size: 0.9rem;
-            color: #333;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #3e29a8;
-        }
-
-        @media (max-width: 768px) {
-            .navbar-brand span {
-                font-size: 20px;
-            }
-            
-            .avatar {
-                padding: 6px 8px;
-            }
-        }
-    </style>
-</head>
-
 <body class="bg-violet">
     <%- include('../partials/header') %>
 
@@ -214,6 +184,7 @@
                                 <thead>
                                     <tr>
                                         <th class="text-start ps-5">Coupon Name</th>
+                                        <th>Coupon Code</th>
                                         <th>Start Date</th>
                                         <th>Expiry Date</th>
                                         <th>Min Price</th>
@@ -226,17 +197,18 @@
                                     <% coupons.reverse().forEach((coupon, index) => { %>
                                     <tr>
                                         <td class="text-start ps-4"><%= coupon.name %></td>
+                                        <td><%= coupon.code %></td>
                                         <td><%= new Date(coupon.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) %></td>
                                         <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) %></td>
                                         <td><%= coupon.minPrice %></td>
                                         <td><%= coupon.offerPrice %></td>
                                         <td>
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <p style="color: #5b3f64; margin: 0;" class="<%= coupon.status === 'Active' ? '' : 'd-none' %>">
-                                                    <i class="fa-solid fa-eye"></i>
+                                                <p style=" margin: 0;" class="badge stock-color <%= coupon.status === 'Active' ? '' : 'd-none' %>">
+                                                    Active
                                                 </p>   
-                                                <p style="color: #9c9999; margin: 0;" class="<%= coupon.status === 'Active' ? 'd-none' : '' %>">
-                                                    <i class="fa-solid fa-eye-slash"></i>
+                                                <p style="margin: 0;" class="badge no-stock-color <%= coupon.status === 'Active' ? 'd-none' : '' %>">
+                                                    Expired
                                                 </p>
                                             </div>
                                         </td>
@@ -328,6 +300,7 @@
                 const editExpiryDate = document.getElementById("editExpiryDate").value;
                 const editMinPrice = document.getElementById("editMinPrice").value;
                 const editOfferPrice = document.getElementById("editOfferPrice").value;
+                const editStatus = document.getElementById("editStatus").value
 
                 let errors = {
                     editName: document.getElementById("editNameError"),
@@ -388,7 +361,7 @@
 
                 if (hasError) return;
 
-                const formData = {orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice};
+                const formData = {orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus};
 
                 try {
                     const response = await fetch("/admin/coupons", {
@@ -502,6 +475,8 @@
 
                 const formData = {
                     addName,
+                    addCode,
+                    addDescription,
                     addStartDate,
                     addExpiryDate,
                     addMinPrice,
@@ -618,7 +593,7 @@
                 } else if (filterValue === 'false') {
                     query = '?status=false';
                 }
-                window.location.href = `/admin/coupons/filter${query}`;
+                window.location.href = `/admin/coupons${query}`;
             });
         });
     </script>

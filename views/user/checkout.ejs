@@ -8,7 +8,7 @@
         }
         .progress-step.active i,
         .progress-step.active span {
-            color: #6C5DD3 !important;
+            color: #5B3F64 !important;
             font-weight: 600;
         }
         .progress-arrow {
@@ -19,16 +19,16 @@
 
         /* Address Card */
         .address-card {
-            background: #F8F8FC;
+            background: linear-gradient(135deg, #F9F9F9, #fbf4fc);
             border-radius: 12px;
         }
 
         .address-card .form-check-input:checked + .form-check-label {
             font-weight: 600;
-            color: #6C5DD3;
+            color: #5B3F64;
         }
         .address-card .badge {
-            background-color: #6C5DD3;
+            background-color: #5B3F64;
             color: #FFFFFF;
             padding: 5px 10px;
             border-radius: 8px;
@@ -37,23 +37,23 @@
         /* Add New Address Link */
         .add-address {
             font-weight: 500;
-            color: #6C5DD3;
+            color: #5B3F64;
             transition: color 0.2s ease;
         }
         .add-address:hover {
-            color: #8A7DE8;
+            color: #df7de8;
             text-decoration: none;
         }
 
         /* Order Summary */
         .order-summary {
-            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            background: linear-gradient(135deg, #F9F9F9, #fbf4fc);
             border-radius: 12px;
             position: sticky;
             top: 20px;
         }
         .order-summary .btn-primary {
-            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
+            background: linear-gradient(90deg, #5B3F64, #3C1549);
             border: none;
             border-radius: 12px;
             padding: 12px;
@@ -68,49 +68,48 @@
             transition: background-color 0.2s ease;
         }
         .coupon-input .btn-outline-secondary:hover {
-            background-color: #6C5DD3;
+            background-color: #5B3F64;
             color: #FFFFFF;
-            border-color: #6C5DD3;
+            border-color: #5B3F64;
+        }
+        .coupon-status {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .applied-coupon-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e8f5e9;
+            padding: 4px 10px;
+            border-radius: 16px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+        .applied-coupon-tag .coupon-code {
+            color: #2e7d32;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        .remove-coupon-sm {
+            color: #c62828;
+            cursor: pointer;
+            font-size: 0.6rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .view-coupons-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #5B3F64;
+            font-weight: 500;
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <% } else { %>
-                                <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %> 
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navbar -->
+    <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Main Section -->
     <main class="container my-5">
@@ -190,12 +189,12 @@
                                     </div>
                                 <% }) %>
                             <% }) %>
-                            <a href="/user/shoppingAddressAdd" class="d-block add-address">
+                            <a href="/user/shoppingAddressAdd" class="d-block add-address text-decoration-none">
                                 <i class="fas fa-plus me-2"></i>Add a new address
                             </a>
                         <% } else { %>
                             <div class="text-center py-5">
-                                <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color: #6c5dd3;"></i>
+                                <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color: #5B3F64;"></i>
                                 <p class="fs-5 text-muted">No addresses found. Add a new address to get started!</p>
                                 <a href="/user/shoppingAddressAdd" class="d-block add-address">
                                     <i class="fas fa-plus me-2"></i>Add a new address
@@ -209,12 +208,15 @@
                         <div class="card p-3 shadow-sm border-0 order-summary">
                             <h5 class="fw-bold text-dark mb-4">Order Summary</h5>
                             <% if (cart && cart.items && cart.items.length > 0) { %>
-                                <% let total = 0; %>
+
+                                <% let total = calculatedValues.cartTotal; %>
+                                <% let deliveryCharge = calculatedValues.deliveryCharge; %>
+                                <% let grandTotal = calculatedValues.grandTotal; %>
+
                                 <% cart.items.forEach(item => { %>
-                                    <% total += item.quantity * item.price; %>
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <span class="text-muted text-truncate" 
-                                              style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                             <%= item.quantity %>x <%= item.productId.name %>
                                         </span>
                                         <span class="text-dark fw-medium flex-shrink-0">
@@ -222,42 +224,253 @@
                                         </span>
                                     </div>
                                 <% }) %>
+                    
+                                <!-- Delivery Charges -->
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                                    <span class="text-success fw-semibold flex-shrink-0">Free</span>
+                                    <span class="<%= deliveryCharge ? 'text-danger' : 'text-success' %> flex-shrink-0">
+                                        <%= deliveryCharge ? `₹ ${deliveryCharge}` : 'Free' %>
+                                    </span>
                                 </div>
+                                
                                 <hr class="my-2" style="border-color: #E0E0E0;">
+                    
+                                <!-- Coupon Code -->
                                 <div class="mb-2">
-                                    <label for="coupon" class="form-label fw-medium" style="font-size: 0.9rem;">Enter Coupon Code</label>
+                                    <label for="coupon" class="form-label fw-medium" style="font-size: 0.9rem;">Coupon Code</label>
                                     <div class="input-group coupon-input">
                                         <input type="text" id="coupon" name="coupon" class="form-control form-control-sm px-3" 
-                                            placeholder="Paste your code here" 
+                                            placeholder="Enter coupon code" 
                                             style="border-radius: 6px 0 0 6px; height: 52px; font-size: 0.9rem;">
-                                        <button class="btn btn-outline-secondary btn-sm" type="button" 
+                                        <button class="btn btn-outline-secondary btn-sm apply-coupon" type="button" 
                                             style="border-radius: 0 6px 6px 0; height: 52px; font-size: 0.9rem;">
                                             Apply
                                         </button>
                                     </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div id="couponStatus" class="coupon-status"></div>
+                                        <div id="appliedCoupon" class="applied-coupon-tag d-none">
+                                        <span class="remove-coupon-sm">
+                                            Remove <i class="fas fa-times"></i>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    <a href="#" data-bs-toggle="modal" id="availableCouponLink" data-bs-target="#availableCouponsModal" class="view-coupons-link text-decoration-none">
+                                        View Available Coupons
+                                    </a>                                    
                                 </div>
+                    
                                 <hr class="my-2" style="border-color: #E0E0E0;">
+                    
+                                <!-- Total Amount (Including GST and Delivery) -->
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
                                     <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
-                                        ₹ <%= total.toLocaleString('en-IN') %>
+                                        ₹ <%= grandTotal.toLocaleString('en-IN') %>
                                     </span>
                                 </div>
+                    
                                 <input type="hidden" name="userId" value="<%= user._id %>">
-                                <button type="submit" class="btn btn-primary w-100 mt-4" 
-                                    <%= (cart.items.length === 0) ? 'disabled' : '' %>>
+                                <button type="submit" class="btn checkout-btn w-100 mt-4" id="proceedToPayment"
+                                    <%= (cart.items.length === 0 || address.length === 0) ? 'disabled' : '' %>>
                                     Proceed to Payment
                                 </button>
                             <% } else { %>
                                 <p class="text-muted text-center fs-5">No items in your cart.</p>
                             <% } %>
                         </div>
-                    </div>                    
+                    </div>                                        
                 </div>
             </form>
         </div>
+
+        <!-- Available Coupons Modal -->
+        <div class="modal fade" id="availableCouponsModal" tabindex="-1" aria-labelledby="availableCouponsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 rounded-4">
+                    <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                        <h5 class="modal-title fw-bold text-dark" id="couponsModalLabel">Available Coupons</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <% if (coupons && coupons.length > 0) { %>
+                            <% coupons.forEach((coupon) => { %>
+                                <div class="coupon-card border p-3 mb-3 rounded-3 shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold mb-1"><%= coupon.name %></h6>
+                                            <p class="text-muted mb-1" style="font-size: 0.9rem;"><%= coupon.description %></p>
+                                            <p class="text-muted mb-0" style="font-size: 0.85rem;">
+                                                Min Price: ₹ <%= coupon.minPrice.toLocaleString('en-IN') %>
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <button class="btn btn-outline-secondary btn-sm copy-btn" 
+                                                data-code="<%= coupon.code %>" style="font-size: 0.85rem;">
+                                                Copy Code
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="text-muted text-center">No available coupons at the moment.</p>
+                        <% } %>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grandTotal = <%= calculatedValues.grandTotal %>;
+            let currentDiscount = 0;
+            let currentCoupon = null;
+            
+            const addressInputs = document.querySelectorAll('input[name="selectedAddress"]');
+            const proceedButton = document.querySelector('#proceedToPayment');
+            const checkoutForm = document.getElementById('checkoutForm');
+            const totalPriceElement = document.querySelector('.order-summary .fw-bold.text-dark:last-child');
+            
+            // Coupon elements
+            const applyButton = document.querySelector('.apply-coupon');
+            const couponInput = document.getElementById('coupon');
+            const couponStatus = document.getElementById('couponStatus');
+            const appliedCoupon = document.getElementById('appliedCoupon');
+            const removeCouponBtn = document.querySelector('.remove-coupon-sm');
+            const availableCouponLink = document.getElementById('availableCouponLink');
+
+            function toggleProceedButton() {
+                if (addressInputs.length === 0) {
+                    proceedButton.disabled = true;
+                } else {
+                    const isAnySelected = Array.from(addressInputs).some(input => input.checked);
+                    proceedButton.disabled = !isAnySelected;
+                }
+            }
+    
+            function updateTotalPrice() {
+                if (totalPriceElement) {
+                    const discountedTotal = grandTotal - currentDiscount;
+                    totalPriceElement.textContent = `₹ ${discountedTotal.toLocaleString('en-IN')}`;
+                }
+            }
+    
+            function resetCouponUI() {
+                couponStatus.textContent = '';
+                couponStatus.className = 'coupon-status';
+                appliedCoupon.classList.add('d-none');
+                applyButton.classList.remove('btn-success');
+                applyButton.classList.add('btn-outline-secondary');
+                applyButton.textContent = 'Apply';
+                couponInput.value = '';
+                currentDiscount = 0;
+                currentCoupon = null;
+                updateTotalPrice();
+            }
+    
+            function showSuccessCoupon(couponCode, discount, message) {
+                applyButton.classList.remove('btn-outline-secondary');
+                applyButton.classList.add('btn-success');
+                applyButton.textContent = 'Applied';
+                
+                couponStatus.textContent = message;
+                couponStatus.className = 'coupon-status coupon-success';
+                
+                appliedCoupon.classList.remove('d-none');
+
+                availableCouponLink.classList.add('d-none');
+                
+                currentDiscount = discount;
+                currentCoupon = couponCode;
+                
+                updateTotalPrice();
+            }
+    
+            function showErrorCoupon(message) {
+                couponStatus.textContent = message;
+                couponStatus.className = 'coupon-status coupon-error';
+                applyButton.classList.remove('btn-success');
+                applyButton.classList.add('btn-outline-secondary');
+                applyButton.textContent = 'Apply';
+            }
+
+            // Event listeners
+            addressInputs.forEach(input => {
+                input.addEventListener('change', toggleProceedButton);
+            });
+    
+            toggleProceedButton();
+    
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const code = button.getAttribute('data-code');
+                    navigator.clipboard.writeText(code).then(() => {
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = 'Copy';
+                        }, 1500);
+                    });
+                });
+            });
+    
+            removeCouponBtn.addEventListener('click', resetCouponUI);
+    
+            applyButton.addEventListener('click', async () => {
+                const couponCode = couponInput.value.trim();
+                
+                if (!couponCode) {
+                    showErrorCoupon('Please enter a coupon code');
+                    return;
+                }
+    
+                try {
+                    applyButton.disabled = true;
+                    applyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Applying...';
+    
+                    const response = await fetch('/user/validate-coupon', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            code: couponCode, 
+                            total: grandTotal,
+                            currentCoupon: currentCoupon
+                        })
+                    });
+    
+                    const data = await response.json();
+    
+                    if (data.success) {
+                        showSuccessCoupon(couponCode, data.discount, data.message);
+                    } else {
+                        showErrorCoupon(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showErrorCoupon('Something went wrong. Please try again.');
+                } finally {
+                    applyButton.disabled = false;
+                    if (!currentCoupon) {
+                        applyButton.innerHTML = 'Apply';
+                    }
+                }
+            });
+    
+            checkoutForm.addEventListener('submit', (e) => {
+                const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+                if (!selectedAddress) {
+                    e.preventDefault();
+                    alert('Please select a delivery address');
+                }
+            });
+        });
+    </script>
 </body>

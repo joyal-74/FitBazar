@@ -293,6 +293,7 @@
                                         <th>Item Count</th>
                                         <th>Created Date</th>
                                         <th>Status</th>
+                                        <th>Offer</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -319,6 +320,18 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <% if (category.offer > 0) { %>
+                                                <span class="badge" style="background-color: #ff8000; border-radius: 28px; color: rgb(255, 255, 255);"><%= category.offer %>% Off</span>
+                                                <button class="btn btn-sm remove-offer-btn p-0 m-0 text-danger" style="border-radius: 50%; font-size: 1rem;" data-category-id="<%= category._id %>">
+                                                    x
+                                                </button>
+                                            <% } else { %>
+                                                <button class="btn badge btn-sm add-offer-btn" style="background-color: #0e7a86; color: #fff; border-radius: 28px;" data-category-id="<%= category._id %>">
+                                                    Add Offer
+                                                </button>
+                                            <% } %>
+                                        </td>
+                                        <td>
                                             <button 
                                                 class="btn btn-sm me-2" 
                                                 style="color: #5b3f64;"
@@ -340,6 +353,38 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content shadow-lg border-0 rounded-3">
+                            <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                                <input type="hidden" id="originalCategoryName" name="originalCategoryName">
+                                <h5 class="modal-title fw-bold" id="addOfferModalLabel">Add Category Offer</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="addOfferForm" class="needs-validation" novalidate>
+                                    <div class="mb-4">
+                                        <label for="discountInput" class="form-label fw-semibold">Discount Percentage (%)</label>
+                                        <input type="number" class="form-control rounded-3" id="discountInput" name="discount" placeholder="Enter discount (e.g., 10)" min="1" max="100" step="1" required>
+                                        <div id="discountError" class="invalid-feedback" style="font-size: 0.8em; color: #ff0101;">
+                                            Please enter a valid discount percentage (1-100).
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="categoryIdInput" name="categoryId">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn px-4 py-2 text-white shadow-sm" id="submitOfferBtn" style="background-color: #5b3f64;">
+                                            <i class="fa fa-plus-circle me-2"></i> Add Offer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="d-flex justify-content-center mt-3">
                     <nav>
                         <ul class="pagination pagination-sm">
@@ -617,6 +662,126 @@
                     desc.textContent = desc.textContent.substring(0, maxLength) + "...";
                 }
             });
+
+            // Add Offer Button Click Handler with Bootstrap Modal
+            document.querySelectorAll('.add-offer-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const categoryId = this.getAttribute('data-category-id');
+                    const modal = new bootstrap.Modal(document.getElementById('addOfferModal'));
+                    const categoryIdInput = document.getElementById('categoryIdInput');
+                    const discountInput = document.getElementById('discountInput');
+        
+                    // Reset form and set productId
+                    discountInput.value = '';
+                    discountInput.classList.remove('is-invalid');
+                    categoryIdInput.value = categoryId;
+        
+                    // Show the modal
+                    modal.show();
+                });
+            });
+        
+            // Submit Offer Form Handler with Async/Await
+            document.getElementById('submitOfferBtn').addEventListener('click', async function () {
+                const discountInput = document.getElementById('discountInput');
+                const categoryId = document.getElementById('categoryIdInput').value;
+                const discount = discountInput.value.trim();
+        
+                // Validate input
+                if (!discount || isNaN(discount) || discount <= 0 || discount > 100) {
+                    discountInput.classList.add('is-invalid');
+                    return;
+                } else {
+                    discountInput.classList.remove('is-invalid');
+                }
+        
+                try {
+                    const response = await fetch('/admin/categories/offer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ categoryId, discount }),
+                    });
+        
+                    const data = await response.json();
+        
+                    if (response.ok) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addOfferModal'));
+                        modal.hide();
+                        await Swal.fire({
+                            text: 'Offer added successfully',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer : 2000
+                        });
+                        location.reload();
+                    } else {
+                        await Swal.fire({
+                            text: data.message,
+                            icon: 'error',
+                            showConfirmButton: false,
+                            timer : 2000
+                        });
+                    }
+                } catch (error) {
+                    await Swal.fire('Error', 'An error occurred: ' + error.message, 'error');
+                }
+            });
+        
+            // Remove Offer Button Click Handler 
+            document.querySelectorAll('.remove-offer-btn').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const categoryId = this.getAttribute('data-category-id');
+        
+                    const result = await Swal.fire({
+                        text: 'Are you sure you want to remove the offer for this category?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Remove',
+                        cancelButtonText: 'No, Cancel'
+                    });
+        
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch('/admin/categories/offer', {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ categoryId }),
+                            });
+        
+                            const data = await response.json();
+        
+                            if (response.ok) {
+                                await Swal.fire({
+                                    text: 'Offer deleted successfully',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer : 2000
+                                });
+                                location.reload();
+                            } else {
+                                await Swal.fire({
+                                    text: data.error || 'Offer deletion failed',
+                                    icon: 'warning',
+                                    showConfirmButton: false,
+                                    timer : 2000
+                                });
+                            }
+                        } catch (error) {
+                            await Swal.fire({
+                                    text: data.error || 'Internal Server error',
+                                    icon: 'error',
+                                    showConfirmButton: false,
+                                    timer : 2000
+                                });
+                        }
+                    }
+                });
+            });
         });
+        
     </script>
 </body>

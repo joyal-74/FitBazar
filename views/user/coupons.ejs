@@ -1,44 +1,86 @@
 <head>
     <link rel="stylesheet" href="/css/profile-section.css">
+    <style>
+        .coupon-card {
+            border: 1px solid #5B3F64;
+            background-color: #FFFFFF; 
+            border-radius: 16px;
+        }
+        .copy-btn {
+            background-color: #5B3F64;
+            border: none;
+            padding: 6px 12px;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+        .copy-btn:hover {
+            background-color: #5B3F64;
+        }
+
+        .sidebar-profile {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            position: fixed;
+            margin-top: 75px;
+            margin-left: 7px;
+        }
+        .coupon-status {
+            border-radius: 10px; 
+            padding: 6px 10px; 
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 
 <body>
-    <%- include('../partials/userNavbar', { activePage: '' }) %> 
+    <%- include('../partials/userNavbar', { activePage: 'coupons' }) %> 
 
-    <main class="container mt-4">
+    <main class="container mt-5">
         <div class="row g-5">
-
             <%- include('../partials/profileSidebar', { activePage: 'coupons' }) %> 
     
             <!-- My Coupons Section -->
-            <div class="col-md-9">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold">My Coupons</h4>
+            <div class="page-header-coupon col-md-9">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <h4 class="fw-bold text-dark" style="font-size: 1.75rem;">My Coupons</h4>
                 </div>
     
-                <!-- Coupon Card -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8; border-radius: 12px;">
-                    <div>
-                        <strong>SUMMER25</strong>
-                        <p class="mb-1 text-muted" style="font-size: 14px;">
-                            Get 25% off on all summer collections. Valid until 31st August 2023.
-                        </p>
-                        <span class="badge" style="background-color: #E0E0E0; color: #6C5DD3; border-radius: 8px; padding: 4px 8px; font-size: 12px;">Active</span>
+                <!-- Coupon Cards -->
+                <% coupons.forEach(coupon => { %>
+                    <div class="card coupon-card p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong class="text-dark" style="font-size: 1.25rem;"><%= coupon.name %></strong>
+                                <p class="mb-2 text-muted" style="font-size: 0.95rem; line-height: 1.4;">
+                                    <%= coupon.description %>
+                                </p>
+                                <p class="mb-2 text-muted" style="font-size: 0.9rem;">
+                                    Valid till <%= coupon.expiryDate.toDateString() %>
+                                </p>
+                            </div>
+                            <div class="d-flex  flex-column gap-2">
+                                <button class="copy-btn text-white rounded" onclick="navigator.clipboard.writeText('<%= coupon.code %>')">Copy Code</button>
+                                <span class="badge coupon-status" 
+                                    style="color: <%= new Date(coupon.expiryDate) > new Date() ? '#5b2864' : '#999' %>;" >
+                                    <%= new Date(coupon.expiryDate) > new Date() ? 'Active' : 'Expired' %>
+                                </span>
+
+                            </div>
+                        </div>
                     </div>
-                </div>
-    
-                <!-- Repeated Coupon Card -->
-                <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8; border-radius: 12px;">
-                    <div>
-                        <strong>WELCOME10</strong>
-                        <p class="mb-1 text-muted" style="font-size: 14px;">
-                            Get 10% off on your first order. Valid for new users only.
-                        </p>
-                        <span class="badge" style="background-color: #E0E0E0; color: #6C5DD3; border-radius: 8px; padding: 4px 8px; font-size: 12px;">Expired</span>
-                    </div>
-                </div>
+                <% }) %>
             </div>
         </div>
     </main>
-</body>
 
+    <script>
+        // Optional: Add feedback when code is copied
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy Code', 2000);
+            });
+        });
+    </script>
+</body>

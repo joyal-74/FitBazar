@@ -340,6 +340,10 @@
 .page-header {
     margin: 80px 0;
 }
+
+.page-header-coupon {
+    margin: 120px 0;
+}
 h1 {
     font-size: 28px;
     font-weight: 700;

@@ -1,0 +1,273 @@
+<body class="bg-violet">
+    <%- include('../partials/header') %>
+
+    <div class="container-fluid w-100 sidebar-header">
+        <div class="row g-0">
+            <%- include('../partials/sidebar', { activePage: 'sales' }) %>
+
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-3 fw-bold">Sales Report</h1>
+
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                    <form action="/admin/sales" method="GET" class="d-flex gap-2" id="filterForm">
+                        <div class="flex-grow-1" style="max-width: 180px;">
+                            <select class="form-select filter-select" name="filter" id="filterSelect">
+                                <option hidden>Filter ⇅</option>
+                                <option value="today">Daily</option>
+                                <option value="week">Weekly</option>
+                                <option value="month">Monthly</option>
+                                <option value="year">Yearly</option>
+                                <option value="custom">Custom Date</option>
+                            </select>
+                        </div>
+                        <div class="custom-date-range" id="customDateRange" style="display: none;">
+                            <input type="date" class="form-control me-2" id="startDate" name="startDate" style="max-width: 150px;">
+                            <input type="date" class="form-control" id="endDate" name="endDate" style="max-width: 150px;">
+                        </div>
+                    </form>
+                    <div class="download-buttons">
+                        <button type="button" class="btn btn-outline-primary me-2" id="downloadPdf">
+                            <i class="fa-solid fa-file-pdf me-1"></i> PDF
+                        </button>
+                        <button type="button" class="btn btn-outline-success" id="downloadExcel">
+                            <i class="fa-solid fa-file-excel me-1"></i> Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card shadow-sm border-0 h-100 summary-card">
+                            <div class="card-body p-4 d-flex align-items-center">
+                                <div class="icon-container me-3 flex-shrink-0">
+                                    <i class="fa-solid fa-cart-shopping fa-2x text-warning"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="text-muted mb-1 fw-medium">Total Orders</p>
+                                    <h4 class="fw-bold mb-0 text-dark"><%= summary.totalOrders.toLocaleString() %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card shadow-sm border-0 h-100 summary-card">
+                            <div class="card-body p-4 d-flex align-items-center">
+                                <div class="icon-container me-3 flex-shrink-0">
+                                    <i class="fas fa-wallet fa-2x text-primary"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="text-muted mb-1 fw-medium">Total Amount</p>
+                                    <h4 class="fw-bold mb-0 text-dark"> ₹ <%= summary.totalAmount.toLocaleString() %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card shadow-sm border-0 h-100 summary-card">
+                            <div class="card-body p-4 d-flex align-items-center">
+                                <div class="icon-container me-3 flex-shrink-0">
+                                    <i class="fa-solid fa-tag fa-2x text-success"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="text-muted mb-1 fw-medium">Total Discounts</p>
+                                    <h4 class="fw-bold mb-0 text-dark"> ₹ <%= summary.totalDiscounts.toLocaleString() %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-3">
+                        <div class="card shadow-sm border-0 h-100 summary-card">
+                            <div class="card-body p-4 d-flex align-items-center">
+                                <div class="icon-container me-3 flex-shrink-0">
+                                    <i class="fa-solid fa-sack-dollar fa-2x text-info"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="text-muted mb-1 fw-medium">Net Sales</p>
+                                    <h4 class="fw-bold mb-0 text-dark"> ₹ <%= (summary.totalAmount - summary.totalDiscounts).toLocaleString() %></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mb-4">
+                    <div style="width: 1000px;">
+                        <h4>Products Report</h4>
+                        <div class="card" >
+                            <div class="card-body p-0 m-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>SL No</th>
+                                                <th>Product Name</th>
+                                                <th>Orders</th>
+                                                <th>Coupon (₹)</th>
+                                                <th>Amount (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% products.forEach((product, index)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= index + 1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= product.productName.length> 35 ? product.productName.slice(0, 35) + '...' :
+                                                            product.productName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= product.totalOrders %>
+                                                    </td>
+                                                    <td>
+                                                        <%= product.totalDiscounts.toLocaleString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= product.totalAmount.toLocaleString() %>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" w-50 d-flex flex-column">
+                        <h4>Payment Report</h4>
+                        <div class="card mb-4">
+                            <div class="card-body p-0 m-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>SL No</th>
+                                                <th>Payment Method</th>
+                                                <th>Orders</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% paymentMethods.forEach((method, index) => { %>
+                                                <tr>
+                                                    <td><%= index + 1 %></td>
+                                                    <td><%= method.paymentMethod %></td>
+                                                    <td><%= method.totalOrders %></td>
+                                                </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-0 m-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>SL No</th>
+                                                <th>Order Status</th>
+                                                <th>Total Orders</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% categories.forEach((category, index) => { %>
+                                                <tr>
+                                                    <td><%= index + 1 %></td>
+                                                    <td><%= category.categoryName %></td>
+                                                    <td><%= category.totalOrders %></td>
+                                                </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="card">
+                        <div class="card-body p-0 m-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>SL No</th>
+                                            <th>Category Name</th>
+                                            <th>Orders</th>
+                                            <th>Sales(₹)</th>
+                                            <th>Best Selling Product</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% categorySales.forEach((category, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %></td>
+                                                <td><%= category.categoryName %></td>
+                                                <td><%= category.totalOrders %></td>
+                                                <td><%= category.totalSales.toLocaleString() %></td>
+                                                <td><%= category.bestSellingProduct.length > 35 ? category.bestSellingProduct.slice(0, 35) + '...' : category.bestSellingProduct %></td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+               
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Show/hide custom date inputs and submit form
+        document.getElementById('filterSelect').addEventListener('change', function() {
+            const customDateRange = document.getElementById('customDateRange');
+            customDateRange.style.display = this.value === 'custom' ? 'flex' : 'none';
+            if (this.value !== 'custom') {
+                document.getElementById('filterForm').submit();
+            }
+        });
+
+        // Submit form when custom dates change
+        document.getElementById('startDate').addEventListener('change', function() {
+            if (document.getElementById('endDate').value) {
+                document.getElementById('filterForm').submit();
+            }
+        });
+        document.getElementById('endDate').addEventListener('change', function() {
+            if (document.getElementById('startDate').value) {
+                document.getElementById('filterForm').submit();
+            }
+        });
+
+        // Handle download functionality
+        function handleDownload(format) {
+            const filter = document.getElementById('filterSelect').value;
+            let url = `/admin/sales/download/${format}?range=${filter}`;
+            
+            if (filter === 'custom') {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (startDate && endDate) {
+                    url += `&start=${startDate}&end=${endDate}`;
+                } else {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+            }
+            
+            window.location.href = url;
+        }
+
+        // Add click listeners to download buttons
+        document.getElementById('downloadPdf').addEventListener('click', function() {
+            handleDownload('pdf');
+        });
+
+        document.getElementById('downloadExcel').addEventListener('click', function() {
+            handleDownload('excel');
+        });
+    </script>
+</body>

@@ -6,11 +6,12 @@ import Address from "../model/addressModel.js";
 import Order from "../model/orderModel.js";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
 import Wishlist from "../model/wishlistModel.js";
+import Coupon from "../model/couponModel.js";
 
 
 const addItemToCart = async (req, res) => {
     try {
-        const { userId, productId, quantity, price, variants } = req.body;
+        const { userId, productId, quantity, basePrice, price, variants } = req.body;
 
         console.log('Request body:', req.body);
 
@@ -55,6 +56,7 @@ const addItemToCart = async (req, res) => {
             productId: product._id,
             quantity: parseInt(quantity),
             price,
+            basePrice,
             stock: availableStock,
             variants,
             productImage: product.images[0]
@@ -204,21 +206,48 @@ const deleteFromcart = async (req,res)=> {
 
 const loadCheckout = async (req, res) => {
     const userId = req.query.userId;
-    console.log(userId)
 
+    const user = await User.findOne({ _id: userId });
+    const address = await Address.find({ userId });
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
 
-    const user = await User.findOne({_id : userId});
-    const address = await Address.find({userId});
-    const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
+    let cartTotal = 0;
+    let deliveryCharge = 0;
+    let grandTotal = 0;
 
-    // console.log(address)
-    
-    res.render('user/checkout', {title : "Checkout", user, address, cart});
-}
+    if (cart && cart.items.length > 0) {
+        cartTotal = cart.items.reduce((acc, item) => acc + item.quantity * item.price, 0);
+        deliveryCharge = cartTotal < 499 ? 39 : 0;
+        grandTotal = cartTotal + deliveryCharge;
+    }
+
+    const currentDate = new Date();
+
+    const coupons = await Coupon.find({
+        status: 'Active',
+        startDate: { $lte: currentDate },
+        expiryDate: { $gte: currentDate },
+        minPrice: { $lte: grandTotal }
+    });
+
+    // Render checkout with all calculated values
+    res.render('user/checkout', { 
+        title: "Checkout", 
+        coupons, 
+        user, 
+        address, 
+        cart,
+        calculatedValues: {
+            cartTotal,
+            deliveryCharge,
+            grandTotal
+        }
+    });
+};
+
 
 const checkoutDetails = async (req,res) => {
     const {selectedAddress} = req.body
-    console.log('selectedAddress', selectedAddress);
 
     req.session.deliveryAddress = selectedAddress;
 

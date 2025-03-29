@@ -133,4 +133,48 @@ const deleteCoupon = async (req,res) => {
     }
 }
 
-export default {loadCouponPage, addCoupon, editCoupon, deleteCoupon}
+
+export const validateCoupon = async (req, res) => {
+    try {
+        const { code, total } = req.body;
+
+        const coupon = await Coupon.findOne({ code });
+
+        if (!coupon) {
+            return res.status(400).json({ success: false, message: 'Invalid coupon code.' });
+        }
+
+        // Check coupon status
+        if (coupon.status !== 'Active') {
+            return res.status(400).json({ success: false, message: 'Coupon is inactive.' });
+        }
+
+        // Check expiry date
+        const now = new Date();
+        if (now < coupon.startDate || now > coupon.expiryDate) {
+            return res.status(400).json({ success: false, message: 'Coupon has expired or is not yet active.' });
+        }
+
+        // Check minimum order value
+        if (total < coupon.minPrice) {
+            return res.status(400).json({
+                success: false,
+                message: `Minimum order value should be ₹${coupon.minPrice}.`
+            });
+        }
+
+
+        req.session.couponDiscount = coupon.offerPrice;
+
+        return res.status(200).json({
+            success: true,
+            message: `Coupon applied! ₹${coupon.offerPrice} discount applied.`,
+            discount: coupon.offerPrice
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+export default {loadCouponPage, addCoupon, editCoupon, deleteCoupon, validateCoupon}

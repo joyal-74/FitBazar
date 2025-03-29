@@ -50,9 +50,9 @@
                             </div>
                         </div>
                         <div class="info-item">
-                            <div class="info-label">Bio</div>
+                            <div class="info-label">Username</div>
                             <div class="info-value">
-                                <%= user.bio || 'No bio provided' %>
+                                <%= user.username || 'Username not set yet' %>
                             </div>
                         </div>
                     </div>
@@ -80,8 +80,40 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Referral Section -->
+                    <div class="referral-section d-flex justify-content-between" style="margin-top: 15px;">
+                        <div class="referral-content">
+                            <h6 style="color: #3C1549;">Refer a Friend</h6>
+                            <p class="text-muted">Share your referral code with friends and earn rewards!</p>   
+                        </div>
+                        <div class="input-group align-self-end" style="max-width: 400px;">
+                            <input type="text" 
+                                   class="form-control" 
+                                   value="<%= user.referalCode %>" 
+                                   id="referralCode" 
+                                   readonly 
+                                   style="font-size: 0.8rem; padding: 0px 15px; height: 40px; line-height: 1;">
+                            <button class="btn admin-btns text-white" 
+                                    onclick="copyReferralCode()" 
+                                    style="font-size: 0.75rem; padding: 0px 8px; height: 40px; line-height: 1;">
+                                <i class="fa-solid fa-copy me-1"></i>Copy
+                            </button>
+                        </div>
+                    </div>
+                    
+
                 </div>
             </div>
         </div>
     </main>
+
+    <script>
+        function copyReferralCode() {
+            const referralCode = document.getElementById('referralCode');
+            referralCode.select();
+            document.execCommand('copy');
+            alert('Referral code copied to clipboard!');
+        }
+    </script>
 </body>

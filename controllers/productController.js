@@ -315,10 +315,25 @@ const loadShop = async (req, res) => {
 
         const products = await Products.aggregate([
             { $match: filter },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'category',
+                    foreignField: '_id', 
+                    as: 'category'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$category',
+                    preserveNullAndEmptyArrays: true 
+                }
+            },
             { $sort: sortQuery },
             { $skip: skip },
             { $limit: limit }
         ]);
+        
 
 
         const categories = await Category.find({ visibility: true });

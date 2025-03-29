@@ -248,7 +248,7 @@
                             <p>Brand: <%= order.brand %></p>
                             <p>Variant: <%= order.variants?.color || 'N/A' %> <% if (order.variants?.weight) { %> | <%= order.variants.weight %> <% } %></p>
                             <p>Qty: <%= order.quantity %></p>
-                            <span class="product-price text-end" >₹ <%= order.price * order.quantity %></span>
+                            <span class="product-price align-self-end" >₹ <%= order.price * order.quantity %></span>
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,7 @@
 
         .progress-step.active i,
         .progress-step.active span {
-            color: #6C5DD3 !important;
+            color: #5B3F64 !important;
             font-weight: 600;
         }
 
@@ -24,7 +24,7 @@
             border: 1px solid #E0E0E0;
             border-radius: 50%;
             background-color: #FFFFFF;
-            color: #6C5DD3;
+            color: #5B3F64;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -32,9 +32,9 @@
         }
 
         .quantity-btn:hover {
-            background-color: #6C5DD3;
+            background-color: #5B3F64;
             color: #FFFFFF;
-            border-color: #6C5DD3;
+            border-color: #5B3F64;
         }
 
         .quantity-btn:active {
@@ -70,63 +70,18 @@
         }
 
         .order-summary {
-            background: linear-gradient(135deg, #F9F9F9, #F4F4FC);
+            background: linear-gradient(135deg, #F9F9F9, #fbf4fc);
             border-radius: 12px !important;
             position: sticky;
             top: 20px;
         }
 
-        .checkout-btn {
-            background: linear-gradient(90deg, #6C5DD3, #8A7DE8);
-            transition: transform 0.2s ease;
-        }
-
-        .checkout-btn:hover {
-            transform: scale(1.02);
-        }
     </style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="/user/profile" style="color: #3B3389;">
-                            <% if (user.profilePic) { %>
-                                <img src="<%= user.profilePic %>" alt="Profile Picture"
-                                    style="width: 40px; height: 40px; border-radius: 50%;">
-                                <% } else { %>
-                                    <i class="fa-solid fa-user" style="font-size: 24px;"></i>
-                            <% } %>
-                        </a>
-                    <% } else { %>
-                            <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-
+    <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Main Section -->
     <main class="container my-5">
@@ -174,9 +129,10 @@
                                             <p class="text-muted mb-2 small">
                                                 <%= item.variants.color %> | <%= item.variants?.weight || "" %>
                                             </p>
-                                            <p class="mb-0 text-dark fw-semibold" style="font-size: 1.1rem;">
-                                                ₹ <%= item.price.toLocaleString('en-IN') %>
-                                            </p>
+                                            <p class="mb-0 text-dark fw-semibold">
+                                                <span style="font-size: 1.2rem;">₹ <%= item.price.toLocaleString('en-IN') %></span> | 
+                                                <del style="font-size: 0.9rem; color: #888;">₹ <%= item.basePrice.toLocaleString('en-IN') %></del>
+                                            </p>                                            
                                             <input type="hidden" id="userId" value="<%= user._id %>">
                                         </div>
                                         <div class="d-flex align-items-center gap-3 flex-shrink-0">
@@ -210,10 +166,10 @@
                     <% }) %>
                 <% } else { %>
                     <div class="text-center py-5 bg-light rounded-3">
-                        <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4"></i>
+                        <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4" style="font-size: 3rem;"></i>
                         <p class="text-muted fs-4 fw-medium">Your cart is empty!</p>
-                        <a href="/shop" class="btn btn-primary mt-3 px-5 py-2"
-                            style="background: linear-gradient(90deg, #6C5DD3, #8A7DE8); border-radius: 20px;">
+                        <a href="/shop" class="btn mt-3 px-5 py-2 text-white"
+                            style="background: linear-gradient(90deg, #5B3F64, #3C1549); border-radius: 20px;">
                             Start Shopping
                         </a>
                     </div>
@@ -225,12 +181,18 @@
                 <div class="card p-4 shadow-sm border-0 order-summary">
                     <h5 class="fw-bold text-dark mb-4" style="font-size: 1.5rem;">Order Summary</h5>
                     <% if (cart && cart.items && cart.items.length> 0) { %>
-                        <% let total=0; %>
-                        <% cart.items.forEach(item=> { %>
-                            <% total +=item.quantity * item.price; %>
+                        <% 
+                                let total = 0;
+                                cart.items.forEach(item => { 
+                                    total += item.quantity * item.price;
+                                });
+                                let deliveryCharge = total < 499 ? 39 : 0;
+                                let grandTotal = total + deliveryCharge;
+                            %>
+                            <% cart.items.forEach(item => { %>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-muted text-truncate"
-                                        style="font-size: 0.95rem; max-width: 75%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <span class="text-muted text-truncate" 
+                                        style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                         <%= item.quantity %>x <%= item.productId.name %>
                                     </span>
                                     <span class="text-dark fw-medium flex-shrink-0">
@@ -238,17 +200,25 @@
                                     </span>
                                 </div>
                             <% }) %>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <!-- Delivery Charges -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                                <span class="text-success fw-semibold flex-shrink-0">Free</span>
+                                <span class="<%= deliveryCharge ? 'text-danger' : 'text-success' %> flex-shrink-0">
+                                    <%= deliveryCharge ? `₹ ${deliveryCharge}` : 'Free' %>
+                                </span>
                             </div>
+
                             <hr class="my-4" style="border-color: #E0E0E0;">
+
+                            <!-- Total Amount (Including GST and Delivery) -->
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
                                 <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
-                                    ₹ <%= total.toLocaleString('en-IN') %>
+                                    ₹ <%= grandTotal.toLocaleString('en-IN') %>
                                 </span>
                             </div>
+
                             <button class="btn checkout-btn w-100 mt-4"
                                 onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')"
                                 style="border-radius: 12px; padding: 12px; font-size: 1.1rem; color: #FFFFFF;">

@@ -23,7 +23,12 @@ const cartItemSchema = new Schema({
     },
     price: {
         type: Number,
-        required: true },
+        required: true 
+    },
+    basePrice: {
+        type: Number,
+        required: true 
+    },
     stock: {
         type: Number,
         required: true

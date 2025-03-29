@@ -1,79 +1,71 @@
 import mongoose from "mongoose";
 import Cart from "./cartModel.js";
+
 const { Schema } = mongoose
 
 const userSchema = new Schema(
   {
     name: {
-      type: String,
-      required: false,
-      unique: false
+        type: String,
+        required: false,
+        unique: false
     },
     userId: {
-      type: String,
-      required: false
+        type: String,
+        required: false
     },
     email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
     },
     password: {
-      type: String,
-      required: false,
+        type: String,
+        required: false,
     },
     phone: {
-      type: String,
-      required: false
+        type: String,
+        required: false
     },
     gender: {
-      type: String,
-      required: false
+        type: String,
+        required: false
     },
     profilePic: {
-      type: String,
-      required: false,
+        type: String,
+        required: false,
     },
-    bio: {
-      type: String,
-      required: false,
+    username: {
+        type: String,
+        required: false,
+        unique : true,
+        sparse : true
     },
     googleId: {
-      type: String
+        type: String
     },
     isBlocked: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false,
     },
     cart: {
-      type: Schema.Types.ObjectId,
-      ref: "Cart",
+        type: Schema.Types.ObjectId,
+        ref: "Cart",
     },
     wallet: {
-      type: Number,
-      default : 0
+        type: Number,
+        default : 0
+    },
+    referalCode : {
+        type : String,
+        unique : true,
+        required : true
     },
     orderHistory: [{
-      type: Schema.Types.ObjectId,
-      ref: "Order"
-    }],
-    searchHistory: [{
-      category: {
         type: Schema.Types.ObjectId,
-        ref: "Category",
-      },
-      brand: {
-        type: String
-      },
-      price: {
-        type: Number,
-      },
-      searchOn: {
-        type: Date,
-        default: Date.now
-      }
+        ref: "Order"
     }]
   }, { timestamps: true }
 );

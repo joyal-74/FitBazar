@@ -80,7 +80,8 @@ const orderSchema = new Schema({
         default: false
     },
     paymentMethod: {
-        type: String
+        type: String,
+        enum: ['cod', 'card', 'wallet', 'netbanking']
     },
     orderItemCount: { 
         type: Number,

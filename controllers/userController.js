@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { nanoid } from "nanoid";
 import User from "../model/userModel.js";
 import Category from '../model/categoryModel.js'
 import Products from "../model/productModel.js";
@@ -13,7 +14,7 @@ const getUserHome = async (req, res)=> {
 
     const user = await User.findOne({ _id : userId});
     const category = await Category.find({visibility : true});
-    const product = await Products.find({visibility : true}).sort({createdAt : -1}).limit(8);
+    const product = await Products.find({visibility : true}).populate('category').sort({createdAt : -1}).limit(8);
 
     res.render('home', { title: 'Home Page', category, product, user });
 }
@@ -45,7 +46,7 @@ const userLogin = async (req, res) => {
         }
 
         if (user.isBlocked) {
-            res.status(BAD_REQUEST).json({error : "Your account has been blocked. Please contact support." });
+            return res.status(BAD_REQUEST).json({error : "Your account has been blocked. Please contact support." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -72,6 +73,10 @@ const generateUserId = async () => {
     return `ID${1000 + count + 1}`;
 };
 
+function generateReferralCode() {
+    return nanoid(10).toUpperCase();
+}
+
 const otpTimer = async (req, res)=> {
     const otpExpire = req.session.otpExpire || 0;
     const timeLeft = Math.max(0, Math.ceil((otpExpire - Date.now()) / 1000));
@@ -88,23 +93,32 @@ const generateOtpCode = () => Math.floor(1000 + Math.random() * 9000);
 
 const userRegister = async (req, res) => {
     try {
-        const { email, password, fullName, phone } = req.body;
+        const { email, password, fullName, phone, userReferal } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(BAD_REQUEST).json({ error: "Email is already in use" });
         }
 
+        if(userReferal){
+            const referalUser = await User.findOne({ referalCode : userReferal });
+            referalUser.wallet += 49;
+            await referalUser.save();
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const userId = await generateUserId();
+        const referalCode = `REF${userId}`;
 
-
+        console.log(referalCode);
+        
         const newuser = {
             userId : userId,
             email : email,
             password : hashedPassword,
             name: fullName, 
-            phone : phone
+            phone : phone,
+            referalCode : referalCode,
         }
 
         req.session.newuser = newuser
@@ -260,8 +274,8 @@ const verifyOtp = async (req, res) => {
         console.log("OTP matched. Verification successful.");
 
         if (requestFrom === "register") {
-            const {userId, email, password, name, phone} = req.session.newuser
-            const newuser = new User({ userId, email, password, name, phone });
+            const {userId, email, password, name, phone, referalCode} = req.session.newuser
+            const newuser = new User({ userId, email, password, name, phone, referalCode });
             await newuser.save();
 
             console.log("Register successful Redirecting to login page...");
@@ -330,7 +344,7 @@ const logoutUser = (req, res) => {
         if (err) {
             return res.send("Error destroying session");
         }
-        res.reder('user/login', { title: "login page", errorMessage: "Session destroyed. You are logged out." });
+        res.render('user/login', { title: "login page", message: "Session destroyed. You are logged out." });
     });
 };
 

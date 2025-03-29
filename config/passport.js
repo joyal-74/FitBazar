@@ -21,6 +21,7 @@ passport.use(
             try {
                 let user = await User.findOne({ googleId: profile.id });
                 const userId = await generateUserId();
+                const referalCode = `FIT${userId}`
 
                 if (!user) {
                     user = new User({
@@ -28,6 +29,7 @@ passport.use(
                         email: profile.emails[0].value,
                         googleId: profile.id,
                         userId,
+                        referalCode,
                     });
                     await user.save();
                 }

@@ -5,6 +5,7 @@ import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
 import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
+import Coupon from "../model/couponModel.js";
 
 const loadOrders = async (req, res) => {
     const search = req.query.search || '';
@@ -179,14 +180,19 @@ const verifyOTP = (req, res) => {
 // to edit profile details
 const updateProfile = async (req,res) => {
     try {
-        let { firstName, lastName, email, name, phone, bio, gender } = req.body;
+        let { firstName, lastName, email, name, phone, username, gender } = req.body;
         const userId = req.query.id;
 
         const user = await User.findOne({userId : userId});
-        console.log(userId);
-        
-        console.log(user);
-        
+
+        if(user.username !== username){
+            const uniqueUsername = await User.findOne({username});
+
+            if(uniqueUsername){
+                return res.status(400).json({error : "Username already taken...!"})
+            }
+        }
+
         if (req.file) {
             user.profilePic = req.file.path;
         }
@@ -196,7 +202,7 @@ const updateProfile = async (req,res) => {
         user.name = name;
         user.email = email;
         user.phone = phone;
-        user.bio = bio;
+        user.username = username;
         user.gender = gender;
 
         await user.save();
@@ -413,8 +419,10 @@ const loadCoupons = async (req,res)=>{
 
     const [firstName] = user.name.split(' ');
 
+    const coupons = await Coupon.find({});
 
-    res.render('user/coupons', {title : "coupons", user, firstName});
+
+    res.render('user/coupons', {title : "coupons", coupons, user, firstName});
 }
 
 const loadPrivacy = async (req,res) => {

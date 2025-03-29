@@ -7,11 +7,17 @@ import refundController from '../controllers/refundController.js'
 import reviewController from '../controllers/reviewController.js'
 import upload from "../middleware/imageUpload.js";
 import wishlistController from "../controllers/wishlistController.js";
+import walletController from '../controllers/walletController.js'
+import couponController from "../controllers/couponController.js";
 
 
 // login route
 router.get('/login', userController.loadLogin);
 router.post('/login', userController.userLogin);
+
+// logout route
+router.post('/logout', userController.logoutUser);
+
 
 // register route
 router.get('/register', userController.loadRegister);
@@ -58,17 +64,17 @@ router.get('/cart', cartControlller.loadCart);
 router.patch('/cart', cartControlller.updateQuantity);
 router.delete('/cart', cartControlller.deleteFromcart);
 
-
+router.get('/wallet', walletController.loadWallet)
 
 router.get('/checkout', cartControlller.loadCheckout);
 router.post('/checkout', cartControlller.checkoutDetails);
+router.post('/validate-coupon', couponController.validateCoupon);
 
 router.get('/shoppingAddressAdd', cartControlller.loadAddShoppingAddress);
 router.post('/shoppingAddress', cartControlller.addShoppingAddress);
 
 router.get('/shoppingAddress', cartControlller.loadshoppingAddress);
 router.put('/shoppingAddress', cartControlller.editshoppingAddress);
-
 
 router.get('/confirmOrder', cartControlller.confirmOrder);
 

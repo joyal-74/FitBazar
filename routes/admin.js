@@ -9,7 +9,8 @@ import customerController from "../controllers/customerController.js";
 import adminAuth from "../middleware/authMiddleware.js";
 import refundController from "../controllers/refundController.js";
 import couponController from '../controllers/couponController.js'
-
+import offerController from "../controllers/offerController.js";
+import salesController from '../controllers/salesController.js'
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -26,6 +27,9 @@ router.put('/categories', upload.single('editThumbnail'),categoryController.edit
 router.get('/categories/filter', adminAuth.checkSession, categoryController.filterCategories);
 
 
+router.post('/categories/offer', offerController.addCategoryOffer);
+router.patch('/categories/offer', offerController.removeCategorytOffer);
+
 // product management
 router.get('/products', adminAuth.checkSession, productController.productInfo);
 router.get('/newProducts', adminAuth.checkSession, productController.loadaddProducts);
@@ -33,6 +37,8 @@ router.post('/addProducts',upload.any(),productController.addProducts);
 router.get('/updateProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
 router.put('/products/:productId',upload.any(),productController.editProducts);
 
+router.post('/products/offer', offerController.addProductOffer);
+router.patch('/products/offer', offerController.removeProductOffer);
 
 // user management
 router.get('/customers',adminAuth.checkSession, customerController.userInfo);
@@ -56,5 +62,9 @@ router.get('/coupons', couponController.loadCouponPage);
 router.post('/coupons', couponController.addCoupon);
 router.put('/coupons', couponController.editCoupon);
 router.delete('/coupons', couponController.deleteCoupon);
+
+
+// sales report
+router.get('/sales', salesController.loadSalesReport);
 
 export default router;

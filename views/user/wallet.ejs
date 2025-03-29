@@ -1,0 +1,118 @@
+<head>
+    <link rel="stylesheet" href="/css/profile-section.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <%- include('../partials/userNavbar', { activePage: 'wallet' }) %> 
+
+    <main class="container mt-4">
+        <div class="row g-5">
+            <%- include('../partials/profileSidebar', { activePage: 'wallet' }) %> 
+
+            <!-- Wallet Display -->
+            <div class="col-md-9">
+                <div class="profile-card">
+                    <div class="profile-header d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <i class="fa-solid fa-wallet me-3" style="font-size: 40px; color: #3C1549;"></i>
+                            <div>
+                                <h4 style="color: #3C1549; margin: 0;">Your Wallet</h4>
+                                <div class="mt-1">
+                                    <small class="text-muted">Manage your balance</small>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMoneyModal">
+                            <i class="fa-solid fa-plus me-2"></i>Add Money
+                        </button>
+                    </div>
+
+                    <!-- Wallet Balance -->
+                    <div class="info-grid" style="margin-top: 50px;">
+                        <div class="info-item">
+                            <div class="info-label">Current Balance</div>
+                            <div class="info-value" style="font-size: 24px; color: #3C1549;">
+                                ₹<%= user.wallet || '0.00' %>.00 
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Last Transaction</div>
+                            <div class="info-value">
+                                <%= user.lastTransaction ? new Date(user.lastTransaction.date).toLocaleDateString() + ' - ₹' + user.lastTransaction.amount : 'No transactions yet' %>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Wallet Benefits -->
+                    <div class="benefits-section" style="margin-top: 40px;">
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="benefit-item text-center">
+                                    <i class="fa-solid fa-bolt" style="font-size: 24px; color: #3C1549;"></i>
+                                    <p class="mt-2">Fast Checkout</p>
+                                    <small class="text-muted">Pay instantly without entering card details.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="benefit-item text-center">
+                                    <i class="fa-solid fa-shield-halved" style="font-size: 24px; color: #3C1549;"></i>
+                                    <p class="mt-2">Secure Payments</p>
+                                    <small class="text-muted">Your money is safe with us.</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="benefit-item text-center">
+                                    <i class="fa-solid fa-gift" style="font-size: 24px; color: #3C1549;"></i>
+                                    <p class="mt-2">Exclusive Offers</p>
+                                    <small class="text-muted">Get discounts when you use wallet.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips/Info Card -->
+                    <div class="tips-section" style="margin-top: 40px;">
+                        <div class="card bg-light p-3">
+                            <h6 style="color: #3C1549;">Wallet Tip</h6>
+                            <p class="mb-0">Keep a minimum balance of ₹500 to enjoy seamless shopping and exclusive wallet-only discounts!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Money Modal -->
+        <div class="modal fade" id="addMoneyModal" tabindex="-1" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addMoneyModalLabel" style="color: #3C1549;">Add Money to Wallet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/user/add-money" method="POST">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount (₹)</label>
+                                <input type="number" class="form-control" id="amount" name="amount" min="1" step="0.01" required placeholder="Enter amount">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method</label>
+                                <select class="form-select" name="paymentMethod" required>
+                                    <option value="" disabled selected>Select payment method</option>
+                                    <option value="credit_card">Online Payment</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Money</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
