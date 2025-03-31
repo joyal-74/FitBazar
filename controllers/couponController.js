@@ -163,7 +163,6 @@ export const validateCoupon = async (req, res) => {
             });
         }
 
-
         req.session.couponDiscount = coupon.offerPrice;
 
         return res.status(200).json({

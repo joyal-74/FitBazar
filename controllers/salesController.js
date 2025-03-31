@@ -1,5 +1,10 @@
+import ExcelJS from 'exceljs';
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
 import Order from '../model/orderModel.js';
 import Products from '../model/productModel.js';
+import Category from '../model/categoryModel.js';
+
 
 const loadSalesReport = async (req, res) => {
     try {
@@ -224,6 +229,27 @@ const loadSalesReport = async (req, res) => {
             { $sort: { categoryName: 1 } }
         ]);
 
+        const statusOrder = ["Pending", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"];
+
+        // Aggregate orders by status and count them
+        const orderStatusCount = await Order.aggregate([
+            {
+                $group: {
+                    _id: "$status",
+                    totalOrders: { $sum: 1 }
+                }
+            }
+        ]);
+
+        // Convert aggregation result into an object for easy mapping
+        const statusCountMap = Object.fromEntries(orderStatusCount.map(order => [order._id, order.totalOrders]));
+
+        // Ensure all statuses are included, even if they have 0 orders
+        const finalOrderStatusCount = statusOrder.map(status => ({
+            status: status,
+            totalOrders: statusCountMap[status] || 0
+        }));
+
         // Summary Data
         const summary = {
             totalOrders: productSales.reduce((sum, p) => sum + p.totalOrders, 0),
@@ -237,6 +263,7 @@ const loadSalesReport = async (req, res) => {
             products: productSales,
             paymentMethods,
             categories,
+            orderStatusCount: finalOrderStatusCount,
             categorySales,
             summary
         });
@@ -245,4 +272,8 @@ const loadSalesReport = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+
+
+
 export default { loadSalesReport };

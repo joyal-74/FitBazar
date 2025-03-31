@@ -110,7 +110,7 @@
                 } else {
                     Swal.fire({
                         icon : 'error',
-                        text : data.error,
+                        text : data.error || "Login Error",
                         timer : 2000,
                         showConfirmButton: false
                     })

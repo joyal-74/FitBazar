@@ -367,6 +367,10 @@
                                 <button class="btn btn-danger" onclick="openCancelModal('<%= order._id %>')">
                                     Cancel Order
                                 </button>
+                            <% } else if (order.status === 'Returned') { %>
+                                <button class="btn btn-warning">
+                                    Returned
+                                </button>
                             <% } %>
                         </div>
 

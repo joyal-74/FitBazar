@@ -1,0 +1,94 @@
+<head>
+    <style>
+        .container-b {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 40px 30px;
+        }
+        .confirmation-icon {
+            font-size: 80px;
+            color: #FF3B30;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 10px 0;
+        }
+        p.subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 0 0 30px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background-color: #6C5DD3;
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #5848C2;
+        }
+        .btn-outline {
+            border: 1px solid #6C5DD3;
+            color: #6C5DD3;
+            background-color: transparent;
+        }
+        .btn-outline:hover {
+            background-color: #f5f3ff;
+        }
+        .illustration {
+            max-width: 300px;
+            margin: 0 auto 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <%- include('../partials/userNavbar', { activePage: '' }) %>
+
+    <!-- Main Content -->
+    <div class="container-b">
+        <div class="card d-flex">
+            <!-- Illustration -->
+            <img src="/payment-failed.svg" alt="Payment Failed" class="illustration">
+            
+            <!-- Confirmation Header -->
+            <div>
+                <div class="confirmation-header">
+                    <i class="fas fa-times-circle confirmation-icon"></i>
+                    <h1>Payment Failed!</h1>
+                    <p class="subtitle">We couldn't process your payment. Please try again.</p>
+                </div>
+    
+                <!-- Buttons -->
+                <div class="btn-container">
+                    <a href="/user/orders" class="btn btn-outline">View Order Details</a>
+                    <a href="/user/cart" class="btn btn-primary">Retry Payment</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to redirect if payment succeeds -->
+    <script>
+        // Check if payment was retried and succeeded
+        if (new URLSearchParams(window.location.search).has('payment_success')) {
+            window.location.href = '/user/order-success';
+        }
+    </script>
+</body>

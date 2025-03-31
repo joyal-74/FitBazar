@@ -167,16 +167,11 @@ const loadReturnPage = async (req, res) => {
         }
 
         const refundRequests = await Refund.find(query)
-            .populate({
-                path: 'order',
-                select: 'orderId totalPrice createdAt status',
-                populate: {
-                    path: 'userId',
-                    select: 'name'
-                }
-            })
+            .populate('order')
             .sort({ createdAt: -1 })
             .lean();
+
+            console.log(refundRequests)
 
         res.render('admin/returnOrder', {
             title: 'Return page',
@@ -230,6 +225,9 @@ const updateRefundStatus = async (req, res) => {
                     }
                 }
             });
+            order.status = 'Returned';
+
+            await order.save()
             
 
             console.log(product, variant)

@@ -73,6 +73,7 @@
             border-color: #5B3F64;
         }
         .coupon-status {
+            color: #03d10d;
             font-size: 0.85rem;
             margin-top: 5px;
         }
@@ -242,6 +243,7 @@
                                         <input type="text" id="coupon" name="coupon" class="form-control form-control-sm px-3" 
                                             placeholder="Enter coupon code" 
                                             style="border-radius: 6px 0 0 6px; height: 52px; font-size: 0.9rem;">
+                                            <input type="hidden" id="couponDiscount" name="couponDiscount" value="0">
                                         <button class="btn btn-outline-secondary btn-sm apply-coupon" type="button" 
                                             style="border-radius: 0 6px 6px 0; height: 52px; font-size: 0.9rem;">
                                             Apply
@@ -376,6 +378,7 @@
             }
     
             function showSuccessCoupon(couponCode, discount, message) {
+                document.getElementById('couponDiscount').value = discount;
                 applyButton.classList.remove('btn-outline-secondary');
                 applyButton.classList.add('btn-success');
                 applyButton.textContent = 'Applied';
@@ -449,6 +452,7 @@
                     const data = await response.json();
     
                     if (data.success) {
+                        localStorage.setItem('couponDiscount', data.discount);
                         showSuccessCoupon(couponCode, data.discount, data.message);
                     } else {
                         showErrorCoupon(data.message);

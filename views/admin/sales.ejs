@@ -12,7 +12,7 @@
                     <form action="/admin/sales" method="GET" class="d-flex gap-2" id="filterForm">
                         <div class="flex-grow-1" style="max-width: 180px;">
                             <select class="form-select filter-select" name="filter" id="filterSelect">
-                                <option hidden>Filter ⇅</option>
+                                <option disabled hidden>Filter ⇅</option>
                                 <option value="today">Daily</option>
                                 <option value="week">Weekly</option>
                                 <option value="month">Monthly</option>
@@ -172,11 +172,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% categories.forEach((category, index) => { %>
+                                            <% orderStatusCount.forEach((order, index) => { %>
                                                 <tr>
                                                     <td><%= index + 1 %></td>
-                                                    <td><%= category.categoryName %></td>
-                                                    <td><%= category.totalOrders %></td>
+                                                    <td><%= order.status %></td>
+                                                    <td><%= order.totalOrders %></td>
                                                 </tr>
                                             <% }) %>
                                         </tbody>
@@ -187,87 +187,82 @@
                     </div>
                 </div>
 
-                    <div class="card">
-                        <div class="card-body p-0 m-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center">
-                                    <thead>
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center">
+                                <thead>
+                                    <tr>
+                                        <th>SL No</th>
+                                        <th>Category Name</th>
+                                        <th>Orders</th>
+                                        <th>Sales(₹)</th>
+                                        <th>Best Selling Product</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% categorySales.forEach((category, index) => { %>
                                         <tr>
-                                            <th>SL No</th>
-                                            <th>Category Name</th>
-                                            <th>Orders</th>
-                                            <th>Sales(₹)</th>
-                                            <th>Best Selling Product</th>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= category.categoryName %></td>
+                                            <td><%= category.totalOrders %></td>
+                                            <td><%= category.totalSales.toLocaleString() %></td>
+                                            <td><%= category.bestSellingProduct.length > 35 ? category.bestSellingProduct.slice(0, 35) + '...' : category.bestSellingProduct %></td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% categorySales.forEach((category, index) => { %>
-                                            <tr>
-                                                <td><%= index + 1 %></td>
-                                                <td><%= category.categoryName %></td>
-                                                <td><%= category.totalOrders %></td>
-                                                <td><%= category.totalSales.toLocaleString() %></td>
-                                                <td><%= category.bestSellingProduct.length > 35 ? category.bestSellingProduct.slice(0, 35) + '...' : category.bestSellingProduct %></td>
-                                            </tr>
-                                        <% }) %>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    <% }) %>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-               
+                </div>
             </main>
         </div>
     </div>
 
     <script>
-        // Show/hide custom date inputs and submit form
-        document.getElementById('filterSelect').addEventListener('change', function() {
-            const customDateRange = document.getElementById('customDateRange');
-            customDateRange.style.display = this.value === 'custom' ? 'flex' : 'none';
-            if (this.value !== 'custom') {
-                document.getElementById('filterForm').submit();
-            }
-        });
+        // document.getElementById('filterSelect').addEventListener('change', function() {
+        //     const customDateRange = document.getElementById('customDateRange');
+        //     customDateRange.style.display = this.value === 'custom' ? 'flex' : 'none';
+        //     if (this.value !== 'custom') {
+        //         document.getElementById('filterForm').submit();
+        //     }
+        // });
 
-        // Submit form when custom dates change
-        document.getElementById('startDate').addEventListener('change', function() {
-            if (document.getElementById('endDate').value) {
-                document.getElementById('filterForm').submit();
-            }
-        });
-        document.getElementById('endDate').addEventListener('change', function() {
-            if (document.getElementById('startDate').value) {
-                document.getElementById('filterForm').submit();
-            }
-        });
+        // document.getElementById('startDate').addEventListener('change', function() {
+        //     if (document.getElementById('endDate').value) {
+        //         document.getElementById('filterForm').submit();
+        //     }
+        // });
+        // document.getElementById('endDate').addEventListener('change', function() {
+        //     if (document.getElementById('startDate').value) {
+        //         document.getElementById('filterForm').submit();
+        //     }
+        // });
 
-        // Handle download functionality
-        function handleDownload(format) {
-            const filter = document.getElementById('filterSelect').value;
-            let url = `/admin/sales/download/${format}?range=${filter}`;
+        // function handleDownload(format) {
+        //     const filter = document.getElementById('filterSelect').value;
+        //     let url = `/admin/sales/download/${format}?range=${filter}`;
             
-            if (filter === 'custom') {
-                const startDate = document.getElementById('startDate').value;
-                const endDate = document.getElementById('endDate').value;
-                if (startDate && endDate) {
-                    url += `&start=${startDate}&end=${endDate}`;
-                } else {
-                    alert('Please select both start and end dates');
-                    return;
-                }
-            }
+        //     if (filter === 'custom') {
+        //         const startDate = document.getElementById('startDate').value;
+        //         const endDate = document.getElementById('endDate').value;
+        //         if (startDate && endDate) {
+        //             url += `&start=${startDate}&end=${endDate}`;
+        //         } else {
+        //             alert('Please select both start and end dates');
+        //             return;
+        //         }
+        //     }
             
-            window.location.href = url;
-        }
+        //     window.location.href = url;
+        // }
 
-        // Add click listeners to download buttons
-        document.getElementById('downloadPdf').addEventListener('click', function() {
-            handleDownload('pdf');
-        });
+        // document.getElementById('downloadPdf').addEventListener('click', function() {
+        //     handleDownload('pdf');
+        // });
 
-        document.getElementById('downloadExcel').addEventListener('click', function() {
-            handleDownload('excel');
-        });
+        // document.getElementById('downloadExcel').addEventListener('click', function() {
+        //     handleDownload('excel');
+        // });
     </script>
 </body>

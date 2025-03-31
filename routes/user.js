@@ -9,6 +9,7 @@ import upload from "../middleware/imageUpload.js";
 import wishlistController from "../controllers/wishlistController.js";
 import walletController from '../controllers/walletController.js'
 import couponController from "../controllers/couponController.js";
+import paymentController from "../controllers/paymentController.js";
 
 
 // login route
@@ -77,8 +78,11 @@ router.get('/shoppingAddress', cartControlller.loadshoppingAddress);
 router.put('/shoppingAddress', cartControlller.editshoppingAddress);
 
 router.get('/confirmOrder', cartControlller.confirmOrder);
+router.get('/payment-failed', paymentController.loadPaymentFailed);
+router.post('/payment-failed', paymentController.paymentFailed);
 
 router.get('/orders', profileController.loadOrders);
+router.post('/orders', paymentController.createOrder);
 router.get('/orderDetails', profileController.loadOrderDetails);
 
 router.post('/orders/return', refundController.requestRefund);

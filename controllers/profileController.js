@@ -25,7 +25,10 @@ const loadOrders = async (req, res) => {
         const [firstName] = user.name.split(' ');
 
         // Build filter with search and userId
-        const filter = { userId };
+        const filter = { 
+            userId, 
+            paymentStatus: { $ne: 'Failed' }
+        };
 
         if (search) {
             filter.$or = [

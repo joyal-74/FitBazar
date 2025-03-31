@@ -34,9 +34,6 @@
     <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Progress Bar -->
-    
-
-    <!-- Payment Section -->
     <main class="container mt-4">
         <div class="d-flex justify-content-between w-100 align-items-center mb-3"
             style="padding: 16px; border-radius: 10px;">
@@ -62,7 +59,6 @@
             <div class="row g-4">
                 <!-- Payment Methods -->
                 <div class="col-md-8">
-                    
                     <!-- Razorpay -->
                     <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
@@ -78,22 +74,6 @@
                             </label>
                         </div>
                     </div>
-            
-                    <!-- Google Pay / UPI -->
-                    <!-- <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="paymentMethod" value="gpay" id="gpay">
-                            <label class="form-check-label w-100" for="gpay">
-                                <div class="d-flex align-items-center">
-                                    <img src="/google-logo.png" alt="Google Pay" class="me-3" width="24">
-                                    <div>
-                                        <strong>UPI Payment</strong>
-                                        <p class="mb-0 text-muted" style="font-size: 14px;">Pay by any UPI app</p>
-                                    </div>
-                                </div>
-                            </label>
-                        </div>
-                    </div> -->
             
                     <!-- Credit/Debit Card -->
                     <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
@@ -149,9 +129,7 @@
                         <h5 class="fw-bold text-dark mb-4">Price Details</h5>
 
                         <% if (cart && cart.items && cart.items.length > 0) { %>
-                            <% let total = 0; %>
                             <% cart.items.forEach(item => { %>
-                                <% total += item.quantity * item.price; %>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted text-truncate" 
                                           style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -189,198 +167,319 @@
                         <% } %>
                     </div>
                 </div>
-                
             </div>
         </form>
     </main>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const paymentForm = document.getElementById('paymentForm');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const paymentForm = document.getElementById('paymentForm');
 
-        paymentForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            paymentForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            // Get the selected payment method with validation
-            const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-            if (!selectedPaymentMethod) {
-                Swal.fire({
-                    text: 'Please select a payment method!',
-                    icon: 'warning',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                return;
-            }
-
-            const paymentMethod = selectedPaymentMethod.value;
-            console.log('Selected Payment Method:', paymentMethod);
-
-            const totalValue = document.getElementById('grandTotal').getAttribute('value');
-            const totalPrice = Number(totalValue);
-
-            if (!totalPrice || totalPrice <= 0) {
-                Swal.fire({
-                    text: 'Invalid total amount!',
-                    icon: 'error',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                return;
-            }
-
-            if (paymentMethod === 'netbanking' || paymentMethod === 'card') {
-                await handleRazorpayPayment(paymentMethod, totalPrice);
-            } else {
-                await handleOtherPaymentMethods(paymentMethod, totalPrice);
-            }
-        });
-
-        async function handleRazorpayPayment(paymentMethod, totalPrice) {
-            try {
-                const response = await fetch('/user/payments/razorpay', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ totalPrice })
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Failed to create Razorpay order');
-
-                const options = {
-                    key: '<%= process.env.RAZOR_API_KEY %>',
-                    amount: data.amount,
-                    currency: data.currency,
-                    name: 'FitBazar',
-                    description: 'Fitness Equipment Purchase',
-                    order_id: data.orderId,
-                    config: {
-                        display: {
-                            blocks: {
-                                banks: {
-                                    name: `Pay Using ${paymentMethod === 'netbanking' ? 'Netbanking' : 'Debit/Credit Cards'}`,
-                                    instruments: [{ method: paymentMethod }]
-                                }
-                            },
-                            sequence: ['block.banks'],
-                            preferences: { show_default_blocks: false }
-                        }
-                    },
-                    handler: async function (response) {
-                        await verifyAndProcessOrder(response, totalPrice, paymentMethod);
-                    },
-                    prefill: {
-                        name: '<%= user ? user.name : "" %>',
-                        email: '<%= user ? user.email : "" %>',
-                        contact: '<%= user ? user.phone : "" %>'
-                    },
-                    theme: { color: '#3B3389' }
-                };
-
-                const rzp = new Razorpay(options);
-                rzp.on('payment.failed', function (response) {
+                // Get the selected payment method with validation
+                const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+                if (!selectedPaymentMethod) {
                     Swal.fire({
-                        text: `Payment failed: ${response.error.description || 'Unknown error'}`,
-                        icon: 'error',
-                        timer: 3000,
+                        text: 'Please select a payment method!',
+                        icon: 'warning',
+                        timer: 2000,
                         showConfirmButton: false
                     });
-                });
-                rzp.open();
-            } catch (error) {
-                console.error('Razorpay Error:', error);
-                Swal.fire({
-                    text: error.message || 'An error occurred with Razorpay',
-                    icon: 'error',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
-        }
+                    return;
+                }
 
-        async function verifyAndProcessOrder(response, totalPrice, paymentMethod) {
-            try {
-                console.log('Verifying with Payment Method:', paymentMethod);
-                const verifyResponse = await fetch('/user/payments/verify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                const paymentMethod = selectedPaymentMethod.value;
+                const totalValue = document.getElementById('grandTotal').getAttribute('value');
+                const totalPrice = Number(totalValue);
+
+                if (!totalPrice || totalPrice <= 0) {
+                    Swal.fire({
+                        text: 'Invalid total amount!',
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+                // Show loading state
+                const submitButton = paymentForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+                try {
+                    // First create pending orders
+                    const orderResponse = await fetch('/user/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            paymentMethod,
+                            totalPrice,
+                            couponApplied: document.getElementById('couponApplied')?.checked || false
+                        })
+                    });
+
+                    const orderData = await orderResponse.json();
+                    if (!orderResponse.ok) throw new Error(orderData.error || 'Failed to create order');
+
+                    // Handle different payment methods
+                    if (paymentMethod === 'netbanking' || paymentMethod === 'card') {
+                        await handleRazorpayPayment(orderData, paymentMethod, totalPrice);
+                    } else {
+                        await handleOtherPaymentMethods(orderData, paymentMethod, totalPrice);
+                    }
+                } catch (error) {
+                    console.error('Payment Error:', error);
+                    Swal.fire({
+                        title: 'Payment Error',
+                        text: error.message || 'An error occurred during payment processing',
+                        icon: 'error'
+                    });
+                } finally {
+                    const submitButton = paymentForm.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Place Order';
+                    }
+                }
+            });
+
+            async function handleRazorpayPayment(orderData, paymentMethod, totalPrice) {
+                try {
+                    // Initialize Razorpay payment
+                    const razorpayResponse = await fetch('/user/payments/razorpay', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            totalPrice,
+                            orderIds: orderData.orders.map(o => o.orderId),
+                            cartId: orderData.cartId
+                        })
+                    });
+
+                    const razorpayData = await razorpayResponse.json();
+                    if (!razorpayResponse.ok) throw new Error(razorpayData.error || 'Payment initialization failed');
+
+                    // Open Razorpay checkout
+                    const options = {
+                        key: '<%= process.env.RAZOR_API_KEY %>',
+                        amount: razorpayData.amount,
+                        currency: razorpayData.currency,
+                        name: 'FitBazar',
+                        description: 'Fitness Equipment Purchase',
+                        order_id: razorpayData.orderId,
+                        config: {
+                            display: {
+                                blocks: {
+                                    banks: {
+                                        name: `Pay Using ${paymentMethod === 'netbanking' ? 'Netbanking' : 'Debit/Credit Cards'}`,
+                                        instruments: [{ method: paymentMethod }]
+                                    }
+                                },
+                                sequence: ['block.banks'],
+                                preferences: { show_default_blocks: false }
+                            }
+                        },
+                        handler: async (response) => {
+                            await verifyAndConfirmPayment(
+                                response, 
+                                orderData.orders.map(o => o.orderId),
+                                paymentMethod,
+                                orderData.cartId
+                            );
+                        },
+                        prefill: {
+                            name: '<%= user ? user.name : "" %>',
+                            email: '<%= user ? user.email : "" %>',
+                            contact: '<%= user ? user.phone : "" %>'
+                        },
+                        theme: { color: '#3B3389' }
+                    };
+
+                    const rzp = new Razorpay(options);
+                    
+                    rzp.on('payment.failed', async (response) => {
+                        try {
+                            // Update orders to failed status
+                            const failResponse = await fetch('/user/payment-failed', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    orderIds: orderData.orders.map(o => o.orderId),
+                                    error: response.error,
+                                    paymentMethod
+                                })
+                            });
+
+                            const failData = await failResponse.json();
+                            
+                            if (failData.redirectUrl) {
+                                window.location.href = failData.redirectUrl;
+                            }
+                        } catch (error) {
+                            console.error('Failed to process payment failure:', error);
+                            Swal.fire({
+                                title: 'Payment Error',
+                                text: 'Failed to update order status after payment failure',
+                                icon: 'error'
+                            });
+                        }
+                    });
+
+                    rzp.open();
+
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            async function handleOtherPaymentMethods(orderData, paymentMethod, totalPrice) {
+                try {
+                    const paymentResponse = await fetch('/user/payments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            orderIds: orderData.orders.map(o => o.orderId),
+                            paymentMethod,
+                            totalPrice,
+                            cartId: orderData.cartId
+                        })
+                    });
+
+                    const paymentData = await paymentResponse.json();
+                    if (!paymentResponse.ok) throw new Error(paymentData.error || 'Payment processing failed');
+
+                    // Show success and redirect
+                    Swal.fire({
+                        title: 'Order Placed!',
+                        text: paymentMethod === 'cod' 
+                            ? 'Your order has been placed. Pay when delivered.' 
+                            : 'Payment successful and order placed.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/user/confirmOrder';
+                    });
+
+                } catch (error) {
+                    // Update orders to failed status
+                    try {
+                        await fetch('/user/payment-failed', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                error: { description: error.message }
+                            })
+                        });
+                    } catch (err) {
+                        console.error('Failed to update order status:', err);
+                    }
+                    
+                    throw error; // Re-throw to be caught by the main handler
+                }
+            }
+
+            async function verifyAndConfirmPayment(response, totalPrice, paymentMethod, cartId) {
+                try {
+                    // 1. First validate we have all required parameters
+                    if (!response.razorpay_payment_id || 
+                        !response.razorpay_order_id || 
+                        !response.razorpay_signature) {
+                        throw new Error('Missing payment verification parameters from Razorpay');
+                    }
+
+                    console.log('Verifying payment with:', {
                         razorpayPaymentId: response.razorpay_payment_id,
                         razorpayOrderId: response.razorpay_order_id,
                         razorpaySignature: response.razorpay_signature
-                    })
-                });
+                    });
 
-                const verifyData = await verifyResponse.json();
-                if (!verifyData.success) throw new Error(verifyData.error || 'Payment verification failed');
+                    // 2. Verify with your existing endpoint
+                    const verifyResponse = await fetch('/user/payments/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature,
+                            cartId 
+                        })
+                    });
 
-                const orderData = {
-                    couponApplied: false,
-                    paymentMethod: paymentMethod,
-                    totalPrice,
-                    razorpayPaymentId: response.razorpay_payment_id,
-                    razorpayOrderId: response.razorpay_order_id
-                };
+                    const verifyData = await verifyResponse.json();
+                    
+                    if (!verifyResponse.ok || !verifyData.success) {
+                        throw new Error(verifyData.error || 'Payment verification failed');
+                    }
 
-                const orderResponse = await fetch('/user/payments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData)
-                });
+                    // 3. Process order with your existing endpoint
+                    const orderResponse = await fetch('/user/payments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            couponApplied: document.getElementById('couponApplied')?.checked || false,
+                            paymentMethod,
+                            totalPrice,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            cartId
+                        })
+                    });
 
-                const orderDataResult = await orderResponse.json();
-                if (!orderResponse.ok) throw new Error(orderDataResult.error || 'Failed to process order');
+                    const orderDataResult = await orderResponse.json();
+                    console.log(orderDataResult)
+                    
+                    if (!orderResponse.ok) {
+                        throw new Error(orderDataResult.error || 'Failed to process order');
+                    }
 
-                Swal.fire({
-                    text: orderDataResult.message || 'Payment successful and order placed!',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => window.location.href = '/user/confirmOrder');
-            } catch (error) {
-                console.error('Verification/Order Error:', error);
-                Swal.fire({
-                    text: `Error processing order with ${paymentMethod || 'unknown method'}: ${error.message}`,
-                    icon: 'error',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
+                    // 4. Show success
+                    Swal.fire({
+                        text: orderDataResult.message || 'Payment successful and order placed!',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/user/confirmOrder';
+                    });
+
+                } catch (error) {
+                    console.error('Verification/Order Error:', error);
+                    
+                    // Try to report the failure
+                    try {
+                        const response = await fetch('/user/payment-failed', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                error: {
+                                    code: 'CLIENT_VERIFICATION_ERROR',
+                                    description: error.message
+                                }
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if(response.ok){
+                            window.location.href = data.redirectUrl;
+                        }
+
+                    } catch (err) {
+                        console.error('Failed to report payment failure:', err);
+                    }
+
+                    Swal.fire({
+                        title: 'Payment Error',
+                        text: `Error processing ${paymentMethod} payment: ${error.message}`,
+                        icon: 'error'
+                    });
+                }
             }
-        }
-
-        async function handleOtherPaymentMethods(paymentMethod, totalPrice) {
-            try {
-                console.log('Handling Other Payment Method:', paymentMethod);
-                const response = await fetch('/user/payments', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        couponApplied: false,
-                        paymentMethod: paymentMethod,
-                        totalPrice
-                    })
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Payment processing failed');
-
-                Swal.fire({
-                    text: data.message || 'Order placed successfully',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => window.location.href = '/user/confirmOrder');
-            } catch (error) {
-                console.error('Other Payment Error:', error);
-                Swal.fire({
-                    text: `Error with ${paymentMethod || 'unknown method'}: ${error.message}`,
-                    icon: 'error',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }
-        }
-    });
-</script>
+        });
+    </script>
 </body>

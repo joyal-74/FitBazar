@@ -37,7 +37,7 @@ const userLogin = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(BAD_REQUEST).json({message : "User Not exist please signUp"});
+            return res.status(BAD_REQUEST).json({error : "User Not exist please signUp"});
         }
 
         if (!user.password === "") {
