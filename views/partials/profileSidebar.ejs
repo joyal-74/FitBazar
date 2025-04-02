@@ -9,7 +9,7 @@
         </div>
 
         <nav class="nav flex-column gap-3">
-            <a href="/user/orders" class="nav-link sidebar-linkz <%= activePage === 'orders' ? 'active' : '' %>">
+            <a href="/user/orders" class="nav-link sidebar-linkz <%= activePage === 'orders' || 'orderDetails' ? 'active' : '' %>">
                 <i class="fa-solid fa-box me-2"></i>My Orders
             </a>
             <a href="/user/profile" class="nav-link sidebar-linkz <%= activePage === 'profile' ? 'active' : '' %>">

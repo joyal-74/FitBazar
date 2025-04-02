@@ -14,7 +14,7 @@ _________________
 2. category remove - offer/ size/ weight [x]
 3. add product - save objectId of category in products db [x]
 4. stock is not listed in db [x]
-5. cancel order confirmation
+5. cancel order confirmation [x]
 
 
 Updations
@@ -31,7 +31,14 @@ _________________
 New Bugs
 ----------
 
-1. Fix admin product filter on stock issue []
-2. User side hide returned as return button hide []
-3. Include tax/GST on order
+1. Fix admin product filter on stock issue [x]
+2. User side hide returned as return button hide [x]
+3. Include tax/GST on order []
  
+
+Week review bugs
+________________
+
+1. wishlist to cart [x]
+2. admin refunds
+3. wallet not loading [x]

@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 const {Schema} = mongoose;
 
-
-
 const orderSchema = new Schema({
     orderId: {
         type: String,
@@ -20,27 +18,16 @@ const orderSchema = new Schema({
         type: Number,
         required: true,
     },
+    basePrice : {
+        type : Number
+    },
     price: {
         type: Number,
         required: true,
     },
-    name: {
-        type: String,
-        required: true
-    },
-    customer : {
-        type : String
-    },
-    brand: {
-        type: String,
-    },
     variant: {
         color: { type: String },
         weight: { type: String }
-    },
-    productImage: {
-        type: String,
-        required : true
     },
     totalPrice: {
         type: Number,
@@ -54,10 +41,6 @@ const orderSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Address',
         required: true
-    },
-    invoiceDate: {
-        type: Date,
-        default: Date.now
     },
     paymentStatus : {
         type: String,
@@ -74,9 +57,8 @@ const orderSchema = new Schema({
     cancelReason : {
         type : String
     },
-    couponApplied: {
-        type: Boolean,
-        default: false
+    coupon : {
+        type : Number
     },
     paymentMethod: {
         type: String,
@@ -85,6 +67,9 @@ const orderSchema = new Schema({
     orderItemCount: { 
         type: Number,
         required: true 
+    },
+    delivery : {
+        type : Number
     },
     statusHistory: [{
         status: { 

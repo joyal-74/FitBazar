@@ -63,21 +63,20 @@
                                     }) %>
                                 </div>
                                 <div>
-                                    <span>Total: </span>₹ <%= order.totalPrice %>
+                                    <span>Total: </span>₹ <%= order.price * order.quantity + order.delivery - order.coupon %>
                                 </div>
                             </div>
                 
 
                             <div class="order-items">
                                 <div class="item-row">
-                                    <img src="<%= order.productImage || '/images/default-product.png' %>" 
+                                    <img src="<%= order.product.images[0] || '/images/default-product.png' %>" 
                                         alt="Product Image" 
                                         class="item-img">
                                     <div class="item-info">
-                                        <h6><%= order.name %></h6>
+                                        <h6><%= order.product.name %></h6>
                                         <p>Qty: <%= order.quantity %> | ₹ <%= order.price %></p>
                                     </div>
-                                    <span class="item-price">₹ <%= order.price * order.quantity %></span>
                                 </div>
                             </div>
                 

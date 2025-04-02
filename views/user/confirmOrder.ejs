@@ -198,13 +198,13 @@
                         <span><%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod %></span>
                     </div>
                 </div>
-                <% grandTotal += order.totalPrice; %>
+                <% grandTotal += order.price; %>
 
                 <!-- Product Details -->
                 <div>
                     <h5 class="section-title">Product Details</h5>
                     <div class="order-product-card align-items-center">
-                        <img src="<%= order.productImage %>" alt="<%= order.name %>" class="product-img">
+                        <img src="<%= order.product.images[0] %>" alt="<%= order.name %>" class="product-img">
                         <div class="product-info">
                             <h6><%= order.name %></h6>
                             <p>Brand: <%= order.brand %></p>

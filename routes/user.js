@@ -66,6 +66,9 @@ router.patch('/cart', cartControlller.updateQuantity);
 router.delete('/cart', cartControlller.deleteFromcart);
 
 router.get('/wallet', walletController.loadWallet)
+router.post('/wallet/razorpay', walletController.createRazorpayWallet);
+router.post('/wallet/verify', walletController.verifyWalletPayment);
+router.post('/wallet', walletController.moneyAddWallet);
 
 router.get('/checkout', cartControlller.loadCheckout);
 router.post('/checkout', cartControlller.checkoutDetails);
@@ -82,7 +85,6 @@ router.get('/payment-failed', paymentController.loadPaymentFailed);
 router.post('/payment-failed', paymentController.paymentFailed);
 
 router.get('/orders', profileController.loadOrders);
-router.post('/orders', paymentController.createOrder);
 router.get('/orderDetails', profileController.loadOrderDetails);
 
 router.post('/orders/return', refundController.requestRefund);

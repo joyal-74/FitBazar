@@ -11,56 +11,6 @@ const loadSalesReport = async (req, res) => {
         const { filter, startDate, endDate } = req.query;
         let dateFilter = {};
 
-        // Set date range based on filter
-        const now = new Date();
-        switch (filter) {
-            case 'today':
-                dateFilter = {
-                    createdAt: {
-                        $gte: new Date(now.setHours(0, 0, 0, 0)),
-                        $lte: new Date(now.setHours(23, 59, 59, 999))
-                    }
-                };
-                break;
-            case 'week':
-                dateFilter = {
-                    createdAt: {
-                        $gte: new Date(now.setDate(now.getDate() - now.getDay())),
-                        $lte: new Date(now.setDate(now.getDate() - now.getDay() + 6))
-                    }
-                };
-                break;
-            case 'month':
-                dateFilter = {
-                    createdAt: {
-                        $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-                        $lte: new Date(now.getFullYear(), now.getMonth() + 1, 0)
-                    }
-                };
-                break;
-            case 'year':
-                dateFilter = {
-                    createdAt: {
-                        $gte: new Date(now.getFullYear(), 0, 1),
-                        $lte: new Date(now.getFullYear(), 11, 31)
-                    }
-                };
-                break;
-            case 'custom':
-                if (startDate && endDate) {
-                    dateFilter = {
-                        createdAt: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        }
-                    };
-                }
-                break;
-            default:
-                dateFilter = {}; // No filter applied by default
-        }
-
-        // Product Sales Aggregation
         const productSales = await Order.aggregate([
             {
                 $match: {
@@ -98,7 +48,6 @@ const loadSalesReport = async (req, res) => {
             { $sort: { productName: 1 } }
         ]);
 
-        // Payment Methods Aggregation
         const paymentMethods = await Order.aggregate([
             {
                 $match: {
@@ -122,7 +71,6 @@ const loadSalesReport = async (req, res) => {
             { $sort: { paymentMethod: 1 } }
         ]);
 
-        // Category Orders Aggregation
         const categories = await Order.aggregate([
             {
                 $match: {
@@ -165,7 +113,6 @@ const loadSalesReport = async (req, res) => {
             { $sort: { categoryName: 1 } }
         ]);
 
-        // Detailed Category Sales Aggregation
         const categorySales = await Order.aggregate([
             {
                 $match: {
@@ -231,7 +178,6 @@ const loadSalesReport = async (req, res) => {
 
         const statusOrder = ["Pending", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"];
 
-        // Aggregate orders by status and count them
         const orderStatusCount = await Order.aggregate([
             {
                 $group: {
@@ -241,10 +187,8 @@ const loadSalesReport = async (req, res) => {
             }
         ]);
 
-        // Convert aggregation result into an object for easy mapping
         const statusCountMap = Object.fromEntries(orderStatusCount.map(order => [order._id, order.totalOrders]));
 
-        // Ensure all statuses are included, even if they have 0 orders
         const finalOrderStatusCount = statusOrder.map(status => ({
             status: status,
             totalOrders: statusCountMap[status] || 0

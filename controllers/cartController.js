@@ -466,6 +466,7 @@ const confirmOrder = async (req, res) => {
 
         // Fetch all orders with the same orderItemCount
         const orders = await Order.find({ userId })
+        .populate('product')
             .sort({ createdAt: -1 }).limit(orderItemCount);
 
         if (!orders.length) {

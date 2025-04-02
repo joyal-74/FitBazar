@@ -73,9 +73,7 @@ const generateUserId = async () => {
     return `ID${1000 + count + 1}`;
 };
 
-function generateReferralCode() {
-    return nanoid(10).toUpperCase();
-}
+
 
 const otpTimer = async (req, res)=> {
     const otpExpire = req.session.otpExpire || 0;

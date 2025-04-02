@@ -38,7 +38,7 @@ const loadOrders = async (req, res) => {
         }
 
         // Apply search filter and sort by latest orders
-        const orders = await Order.find(filter).sort({ createdAt: -1 });
+        const orders = await Order.find(filter).populate('product').sort({ createdAt: -1 });
 
         res.render('user/orders', {
             title: 'My Orders',
@@ -70,7 +70,7 @@ const loadOrderDetails = async (req,res)=> {
 
         const [firstName] = user.name.split(' ');
 
-        const order = await Order.findOne({ orderId });
+        const order = await Order.findOne({ orderId }).populate('product');
 
         const addressId = order.address
 

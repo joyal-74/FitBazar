@@ -20,7 +20,7 @@
                 <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                 <% if (user) { %>
                     <div class="dropdown">
-                        <a href="#" class="dropdown-toggle text-decoration-none text-white" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="text-decoration-none text-white" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <%= user.name %>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -32,6 +32,11 @@
                             <li>
                                 <a class="dropdown-item" href="/user/orders">
                                     <i class="fa-solid fa-box me-2"></i>My Orders
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/user/wallet">
+                                    <i class="fa-solid fa-wallet me-2"></i>My Wallet
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>

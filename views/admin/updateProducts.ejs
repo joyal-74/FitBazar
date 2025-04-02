@@ -538,20 +538,19 @@
                             type: "image/jpeg",
                         });
                         onCropComplete(croppedFile);
-
-                        bootstrap.Modal.getInstance(document.getElementById("cropModal")).hide();
-                        cropper.destroy();
-                        cropper = null;
+                        modal.hide();
                     }, "image/jpeg", 0.95);
                 }
             }, { once: true });
 
-            document.getElementById("cropModal").addEventListener("hidden.bs.modal", () => {
+            modalElement.addEventListener("hidden.bs.modal", function onHidden() {
                 if (cropper) {
                     cropper.destroy();
                     cropper = null;
                 }
-            }, { once: true });
+                // Remove this listener after it runs
+                modalElement.removeEventListener("hidden.bs.modal", onHidden);
+            });
         }
 
         // Initialize image slots

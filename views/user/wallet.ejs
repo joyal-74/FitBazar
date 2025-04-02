@@ -92,7 +92,7 @@
                         <h5 class="modal-title" id="addMoneyModalLabel" style="color: #3C1549;">Add Money to Wallet</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="/user/add-money" method="POST">
+                    <form id="addMoneyForm">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="amount" class="form-label">Amount (₹)</label>
@@ -100,9 +100,10 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Payment Method</label>
-                                <select class="form-select" name="paymentMethod" required>
+                                <select class="form-select" id="paymentMethod" name="paymentMethod">
                                     <option value="" disabled selected>Select payment method</option>
-                                    <option value="credit_card">Online Payment</option>
+                                    <option value="netbanking">Netbanking</option>
+                                    <option value="card">Credit/Debit Card</option>
                                 </select>
                             </div>
                         </div>
@@ -115,4 +116,130 @@
             </div>
         </div>
     </main>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        document.getElementById('addMoneyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const amount = document.getElementById('amount').value.trim();
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            if (!amount || isNaN(amount) || amount <= 0) {
+                return Swal.fire({
+                    title: "Invalid Amount",
+                    text: "Please enter a valid amount.",
+                    icon: "warning"
+                });
+            }
+
+            if (!paymentMethod) {
+                return Swal.fire({
+                    title: "Payment Method Required",
+                    text: "Please select a payment method.",
+                    icon: "warning"
+                });
+            }
+
+            try {
+                const response = await fetch('/user/wallet/razorpay', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, paymentMethod })
+                });
+
+                const razorpayData = await response.json();
+                console.log("Razorpay Response:", razorpayData);
+
+                if (!razorpayData || !razorpayData.orderId) {
+                    throw new Error("Failed to create Razorpay order");
+                }
+
+                const options = {
+                    key: '<%= process.env.RAZOR_API_KEY %>', 
+                    amount: razorpayData.amount,
+                    currency: razorpayData.currency,
+                    name: 'FitBazar',
+                    description: 'Add money to wallet',
+                    order_id: razorpayData.orderId, // Razorpay Order ID
+                    handler: async function (response) {
+                        await verifyAndConfirmPayment(response, amount, paymentMethod);
+                    },
+                    prefill: {
+                        name: '<%= user ? user.name : "" %>',
+                        email: '<%= user ? user.email : "" %>',
+                        contact: '<%= user ? user.phone : "" %>'
+                    },
+                    theme: { color: '#3B3389' }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open(); // Open Razorpay Payment UI
+
+            } catch (error) {
+                console.error('Payment Initialization Error:', error);
+
+                Swal.fire({
+                    title: "Error",
+                    text: "Failed to start the payment. Please try again.",
+                    icon: "error"
+                });
+            }
+        });
+
+        // Payment Verification Function
+        async function verifyAndConfirmPayment(response, amount, paymentMethod) {
+            try {
+                if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
+                    throw new Error("Missing payment verification parameters");
+                }
+
+                console.log("Verifying payment with:", response);
+
+                const verifyResponse = await fetch('/user/wallet/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(response)
+                });
+
+                const verifyData = await verifyResponse.json();
+
+                if (!verifyResponse.ok || !verifyData.success) {
+                    throw new Error(verifyData.error || "Payment verification failed");
+                }
+
+                // Update Wallet
+                const orderResponse = await fetch('/user/wallet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentMethod, amount })
+                });
+
+                const orderDataResult = await orderResponse.json();
+
+                if (!orderResponse.ok) {
+                    throw new Error(orderDataResult.error || "Failed to process order");
+                }
+
+                Swal.fire({
+                    text: "Payment successful! Wallet updated.",
+                    icon: "success",
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload(); // Refresh Wallet Balance
+                });
+
+            } catch (error) {
+                console.error("Payment Verification Error:", error);
+
+                Swal.fire({
+                    title: "Payment Failed",
+                    text: error.message,
+                    icon: "error"
+                });
+            }
+        }
+    </script>
 </body>
