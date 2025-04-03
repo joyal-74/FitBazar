@@ -82,7 +82,7 @@ router.put('/shoppingAddress', cartControlller.editshoppingAddress);
 
 router.get('/confirmOrder', cartControlller.confirmOrder);
 router.get('/payment-failed', paymentController.loadPaymentFailed);
-router.post('/payment-failed', paymentController.paymentFailed);
+// router.post('/payment-failed', paymentController.paymentFailed);
 
 router.get('/orders', profileController.loadOrders);
 router.get('/orderDetails', profileController.loadOrderDetails);

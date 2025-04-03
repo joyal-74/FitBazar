@@ -312,9 +312,9 @@
         }
 
         function openCancelModal(orderId) {
-            document.getElementById('cancelOrderId').value = orderId; // Correct ID
-            document.getElementById('cancelReason').value = ''; // Reset the select dropdown
-            const modal = new bootstrap.Modal(document.getElementById('cancelModal')); // Correct modal ID
+            document.getElementById('cancelOrderId').value = orderId;
+            document.getElementById('cancelReason').value = ''; 
+            const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
             modal.show();
         }
 

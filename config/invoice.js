@@ -34,9 +34,9 @@ export const generateInvoicePDF = async (order, address) => {
                         margin: 20px 40px;
                         color: #333;
                     }
-                    h1 {
+                    h3 {
                         text-align: center;
-                        color:#3e106a;
+                        color:#3C1549;
                         margin-bottom: 20px;
                     }
                     .order-details, .address-details {
@@ -79,7 +79,7 @@ export const generateInvoicePDF = async (order, address) => {
                 </style>
             </head>
             <body>
-                <h1>FitBazar Invoice</h1>
+                <h3>Tax Invoice</h3>
 
                 <!-- Order Details -->
                 <div class="order-details">
@@ -90,7 +90,7 @@ export const generateInvoicePDF = async (order, address) => {
 
                 <!-- Address Details -->
                 <div class="address-details">
-                    <h3>Billing Address</h3>
+                    <h4>Billing Address</h4>
                     <p><strong>Name:</strong> ${address?.name || 'N/A'}</p>
                     <p>
                         <strong>Address:</strong> 
@@ -108,26 +108,26 @@ export const generateInvoicePDF = async (order, address) => {
                         <tr>
                             <th>#</th>
                             <th>Product</th>
-                            <th>Quantity</th>
+                            <th>Qty</th>
                             <th>Base Price(₹)</th>
                             <th>Coupon Discount(₹)</th>
                             <th>GST/Tax(₹)</th>
-                            <th>Final Price(₹)</th>
+                            <th>Total(₹)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>${1}</td>
-                            <td>${order.product.name}<br></td>
+                            <td>1</td>
+                            <td>${order.product.name}</td>
                             <td>${order.quantity}</td>
                             <td>₹${(order.price / 1.18).toFixed(2)}</td>
-                            <td>₹${(order.coupon / order.quantity).toFixed(2)}</td>
+                            <td>₹${(order.coupon).toFixed(2)}</td>
                             <td>₹${(order.price - order.price / 1.18).toFixed(2)}</td>
                             <td>₹${((order.price - order.coupon) * order.quantity).toFixed(2)}</td>
                         </tr>
                         <tr>
-                            <td>${2}</td>
-                            <td>Delivery Charges<br></td>
+                            <td>2</td>
+                            <td>Delivery Charges</td>
                             <td>-</td>
                             <td>₹${order.delivery ? '39.00' : '0.00'}</td> 
                             <td>-</td> 
@@ -159,7 +159,7 @@ export const generateInvoicePDF = async (order, address) => {
         path: filePath,
         format: 'A4',
         printBackground: true,
-        margin: { top: '10px', right: '10px', bottom: '10px', left: '10px' }
+        margin: { top: '5px', right: '5px', bottom: '5px', left: '5px' }
     });
 
     await browser.close();

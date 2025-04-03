@@ -198,7 +198,7 @@
                         <span><%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod %></span>
                     </div>
                 </div>
-                <% grandTotal += order.price; %>
+                <% grandTotal += (order.price - order.coupon + order.delivery); %>
 
                 <!-- Product Details -->
                 <div>
@@ -215,7 +215,7 @@
                             <!-- Flexbox for Qty and Price on the same line -->
                             <div class="d-flex justify-content-between">
                                 <p class="mb-0">Qty: <%= order.quantity %></p>
-                                <span class="product-price fw-semibold">₹ <%= order.price * order.quantity %></span>
+                                <span class="product-price fw-semibold">₹ <%= (order.price - order.coupon + order.delivery) * order.quantity %></span>
                             </div>
                         </div>
                     </div>

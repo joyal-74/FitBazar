@@ -223,7 +223,6 @@
 
             async function handleRazorpayPayment(couponApplied, paymentMethod, totalPrice) {
                 try {
-                    // Initialize Razorpay payment
                     const razorpayResponse = await fetch('/user/payments/razorpay', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -235,7 +234,6 @@
                     const razorpayData = await razorpayResponse.json();
                     if (!razorpayResponse.ok) throw new Error(razorpayData.error || 'Payment initialization failed');
 
-                    // Open Razorpay checkout
                     const options = {
                         key: '<%= process.env.RAZOR_API_KEY %>',
                         amount: razorpayData.amount,
@@ -274,30 +272,8 @@
                     const rzp = new Razorpay(options);
                     
                     rzp.on('payment.failed', async (response) => {
-                        try {
-                            const failResponse = await fetch('/user/payment-failed', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    orderIds: orderData.orders.map(o => o.orderId),
-                                    error: response.error,
-                                    paymentMethod
-                                })
-                            });
-
-                            const failData = await failResponse.json();
-                            
-                            if (failData.redirectUrl) {
-                                window.location.href = failData.redirectUrl;
-                            }
-                        } catch (error) {
-                            console.error('Failed to process payment failure:', error);
-                            Swal.fire({
-                                title: 'Payment Error',
-                                text: 'Failed to update order status after payment failure',
-                                icon: 'error'
-                            });
-                        }
+                        window.location.href = '/user/payment-failed'
+                        console.log(response)
                     });
 
                     rzp.open();
@@ -322,7 +298,6 @@
                     const paymentData = await paymentResponse.json();
                     if (!paymentResponse.ok) throw new Error(paymentData.error || 'Payment processing failed');
 
-                    // Show success and redirect
                     Swal.fire({
                         title: 'Order Placed!',
                         text: paymentMethod === 'cod' 
@@ -336,20 +311,8 @@
                     });
 
                 } catch (error) {
-                    // Update orders to failed status
-                    try {
-                        await fetch('/user/payment-failed', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                error: { description: error.message }
-                            })
-                        });
-                    } catch (err) {
-                        console.error('Failed to update order status:', err);
-                    }
-                    
-                    throw error;
+                    window.location.href = '/user/payment-failed'
+                    console.log(error)
                 }
             }
 
@@ -384,7 +347,6 @@
                         throw new Error(verifyData.error || 'Payment verification failed');
                     }
 
-                    // 3. Process order with your existing endpoint
                     const orderResponse = await fetch('/user/payments', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -416,29 +378,6 @@
 
                 } catch (error) {
                     console.error('Verification/Order Error:', error);
-                    
-                    // Try to report the failure
-                    try {
-                        const response = await fetch('/user/payment-failed', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                error: {
-                                    code: 'CLIENT_VERIFICATION_ERROR',
-                                    description: error.message
-                                }
-                            })
-                        });
-
-                        const data = await response.json();
-
-                        if(response.ok){
-                            window.location.href = data.redirectUrl;
-                        }
-
-                    } catch (err) {
-                        console.error('Failed to report payment failure:', err);
-                    }
 
                     Swal.fire({
                         title: 'Payment Error',

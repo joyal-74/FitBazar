@@ -29,7 +29,8 @@ export const requestRefund = async (req, res) => {
         const refund = new Refund({
             order: orderId,
             userId,
-            reason
+            reason,
+            product : order.product
         });
 
         await refund.save();
@@ -168,10 +169,9 @@ const loadReturnPage = async (req, res) => {
 
         const refundRequests = await Refund.find(query)
             .populate('order')
+            .populate('product')
             .sort({ createdAt: -1 })
             .lean();
-
-            console.log(refundRequests)
 
         res.render('admin/returnOrder', {
             title: 'Return page',

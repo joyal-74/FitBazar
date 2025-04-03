@@ -98,10 +98,16 @@ const userRegister = async (req, res) => {
             return res.status(BAD_REQUEST).json({ error: "Email is already in use" });
         }
 
-        if(userReferal){
-            const referalUser = await User.findOne({ referalCode : userReferal });
-            referalUser.wallet += 49;
-            await referalUser.save();
+        if (userReferal) {
+            const referalUser = await User.findOneAndUpdate(
+                { referalCode: userReferal },
+                { $inc: { wallet: 49 } },
+                { new: true }
+            );
+        
+            if (!referalUser) {
+                console.log("Invalid referral code");
+            }
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);

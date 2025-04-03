@@ -1,7 +1,7 @@
 <div class="col-md-3">
     <div class="sidebar-profile p-3">
         <div class="d-flex align-items-center mb-5">
-            <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="rounded-circle me-2" width="50"
+            <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="me-2" width="50"
                 height="50">
             <span>Hello, <strong>
                     <%= firstName %>
@@ -9,7 +9,7 @@
         </div>
 
         <nav class="nav flex-column gap-3">
-            <a href="/user/orders" class="nav-link sidebar-linkz <%= activePage === 'orders' || 'orderDetails' ? 'active' : '' %>">
+            <a href="/user/orders" class="nav-link sidebar-linkz <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>">
                 <i class="fa-solid fa-box me-2"></i>My Orders
             </a>
             <a href="/user/profile" class="nav-link sidebar-linkz <%= activePage === 'profile' ? 'active' : '' %>">

@@ -6,6 +6,11 @@ const refundSchema = new mongoose.Schema({
         ref: 'Order',
         required: true
     },
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Products',
+        required: true
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -23,4 +28,5 @@ const refundSchema = new mongoose.Schema({
 },{timestamps : true});
 
 const Refund = mongoose.model('Refund', refundSchema);
+
 export default Refund;
