@@ -112,7 +112,7 @@
                                     <strong>Product Name:</strong> <span id="refundProductName"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <strong>Amount:</strong> ₹<span id="refundProductAmount"></span>
+                                    <strong>Amount:</strong><span id="refundProductAmount"></span>
                                 </div>
                                 <div class="mb-3">
                                     <strong>Refund Reason:</strong> <span id="refundReason"></span>
@@ -130,7 +130,7 @@
                                         <i class="fa fa-check-circle me-2"></i> Approve
                                     </button>
                                     <button type="button" class="btn px-4 py-2 text-white shadow-sm reject-btn" style="background-color: #ff0011;">
-                                        <i class="fa fa-check-circle me-2"></i> Reject
+                                        <i class="fa fa-circle-xmark me-2"></i> Reject
                                     </button>
                                 </div>
                             </div>
@@ -150,30 +150,54 @@
                 return;
             }
 
-            // Extract data from button
             const productName = button.getAttribute('data-product-name');
             const price = button.getAttribute('data-price');
             const reason = button.getAttribute('data-reason');
             const date = button.getAttribute('data-date');
             const status = button.getAttribute('data-status');
-            const orderId = button.getAttribute('data-id'); // Required for status update
+            const orderId = button.getAttribute('data-id');
 
-            // Populate modal
             document.getElementById('refundProductName').textContent = productName;
             document.getElementById('refundProductAmount').textContent = `₹${price}`;
             document.getElementById('refundReason').textContent = reason;
             document.getElementById('refundDate').textContent = new Date(date).toLocaleString();
             document.getElementById('refundStatus').textContent = status;
 
-            // Set orderId on approve/reject buttons
-            document.querySelector('.approve-btn').setAttribute('onclick', `updateRefundStatus('${orderId}', 'Approved')`);
-            document.querySelector('.reject-btn').setAttribute('onclick', `updateRefundStatus('${orderId}', 'Rejected')`);
+            const approveBtn = document.querySelector('.approve-btn');
+            const rejectBtn = document.querySelector('.reject-btn');
 
-            // Show modal
+            if (status === 'Pending') {
+            approveBtn.textContent = 'Approve';
+            approveBtn.disabled = false;
+            approveBtn.setAttribute('onclick', `updateRefundStatus('${orderId}', 'Approved')`);
+            
+            rejectBtn.textContent = 'Reject';
+            rejectBtn.disabled = false;
+            rejectBtn.setAttribute('onclick', `updateRefundStatus('${orderId}', 'Rejected')`);
+            
+            approveBtn.classList.remove('d-none');
+            rejectBtn.classList.remove('d-none');
+
+        } else if (status === 'Approved') {
+            approveBtn.textContent = 'Approved';
+            approveBtn.disabled = true;
+            approveBtn.removeAttribute('onclick');
+
+            rejectBtn.classList.add('d-none');
+            rejectBtn.removeAttribute('onclick');
+
+        } else {
+            rejectBtn.textContent = 'Rejected';
+            rejectBtn.disabled = true;
+            rejectBtn.removeAttribute('onclick');
+
+            approveBtn.classList.add('d-none');
+            approveBtn.removeAttribute('onclick');
+        }
+
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         };
-
 
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.view-refund-btn').forEach(button => {

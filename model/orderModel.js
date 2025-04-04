@@ -29,7 +29,7 @@ const orderSchema = new Schema({
         color: { type: String },
         weight: { type: String }
     },
-    totalPrice: {
+    discountPrice: {
         type: Number,
         required: true,
     },

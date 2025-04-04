@@ -40,5 +40,18 @@ Week review bugs
 ________________
 
 1. wishlist to cart [x]
-2. admin refunds
+2. admin refunds [x] - it comes because of deleting orders(be alert)
 3. wallet not loading [x]
+
+
+pendings need to fix
+_______________________
+
+1. coupon user side modal ui []
+2. pagination to sales report []
+3. user side seeion handling []
+4. session for sales report []
+5. status code fix to all controller []
+6. remove unwanted consoles []
+7. double check all functionalities before review []
+8. add to cart in details and home page cads []

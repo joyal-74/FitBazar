@@ -1,4 +1,6 @@
-import User from "../model/userModel.js"
+import User from "../model/userModel.js";
+import { razorpay } from "../config/razorpay.js";
+import crypto from 'crypto'; 
 
 const loadWallet = async(req, res) =>{
     try {

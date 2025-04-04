@@ -63,9 +63,9 @@
                                         <% orders.forEach(order => { %>
                                             <tr class="text-center">
                                                 <td>#<%= order.orderId %></td>
-                                                <td><%= order.customer || 'N/A' %></td>
+                                                <td><%= order.userId.name || 'N/A' %></td>
                                                 <td><%= order.createdAt.toISOString().split('T')[0] %></td>
-                                                <td>₹<%= order.totalPrice.toLocaleString('en-IN') %></td>
+                                                <td>₹<%= order.discountPrice.toLocaleString('en-IN') %></td>
                                                 <td>
                                                     <% if (order.status === 'Delivered') { %>
                                                         <span class="badge bg-success" style="border-radius: 28px; width: 130px;">Delivered</span>

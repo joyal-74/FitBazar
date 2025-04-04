@@ -65,5 +65,8 @@ router.delete('/coupons', couponController.deleteCoupon);
 
 // sales report
 router.get('/sales', salesController.loadSalesReport);
+router.get('/sales/download/pdf', salesController.generateSalesReportPDF);
+router.get('/sales/download/excel', salesController.downloadSalesReportExcel);
+
 
 export default router;

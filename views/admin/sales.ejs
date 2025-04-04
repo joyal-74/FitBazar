@@ -26,10 +26,10 @@
                         </div>
                     </form>
                     <div class="download-buttons">
-                        <button type="button" class="btn btn-outline-primary me-2" id="downloadPdf">
+                        <button type="button" class="btn btn-danger me-2" id="downloadPdf">
                             <i class="fa-solid fa-file-pdf me-1"></i> PDF
                         </button>
-                        <button type="button" class="btn btn-outline-success" id="downloadExcel">
+                        <button type="button" class="btn btn-success" id="downloadExcel">
                             <i class="fa-solid fa-file-excel me-1"></i> Excel
                         </button>
                     </div>
@@ -90,128 +90,44 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-3 mb-4">
-                    <div style="width: 1000px;">
-                        <h4>Products Report</h4>
-                        <div class="card" >
-                            <div class="card-body p-0 m-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>SL No</th>
-                                                <th>Product Name</th>
-                                                <th>Orders</th>
-                                                <th>Coupon (₹)</th>
-                                                <th>Amount (₹)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% products.forEach((product, index)=> { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= index + 1 %>
-                                                    </td>
-                                                    <td>
-                                                        <%= product.productName.length> 35 ? product.productName.slice(0, 35) + '...' :
-                                                            product.productName %>
-                                                    </td>
-                                                    <td>
-                                                        <%= product.totalOrders %>
-                                                    </td>
-                                                    <td>
-                                                        <%= product.totalDiscounts.toLocaleString() %>
-                                                    </td>
-                                                    <td>
-                                                        <%= product.totalAmount.toLocaleString() %>
-                                                    </td>
-                                                </tr>
-                                                <% }) %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class=" w-50 d-flex flex-column">
-                        <h4>Payment Report</h4>
-                        <div class="card mb-4">
-                            <div class="card-body p-0 m-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>SL No</th>
-                                                <th>Payment Method</th>
-                                                <th>Orders</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% paymentMethods.forEach((method, index) => { %>
-                                                <tr>
-                                                    <td><%= index + 1 %></td>
-                                                    <td><%= method.paymentMethod %></td>
-                                                    <td><%= method.totalOrders %></td>
-                                                </tr>
-                                            <% }) %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-body p-0 m-0">
-                                <div class="table-responsive">
-                                    <table class="table table-hover text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>SL No</th>
-                                                <th>Order Status</th>
-                                                <th>Total Orders</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% orderStatusCount.forEach((order, index) => { %>
-                                                <tr>
-                                                    <td><%= index + 1 %></td>
-                                                    <td><%= order.status %></td>
-                                                    <td><%= order.totalOrders %></td>
-                                                </tr>
-                                            <% }) %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body p-0 m-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover text-center">
-                                <thead>
-                                    <tr>
-                                        <th>SL No</th>
-                                        <th>Category Name</th>
-                                        <th>Orders</th>
-                                        <th>Sales(₹)</th>
-                                        <th>Best Selling Product</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% categorySales.forEach((category, index) => { %>
-                                        <tr>
-                                            <td><%= index + 1 %></td>
-                                            <td><%= category.categoryName %></td>
-                                            <td><%= category.totalOrders %></td>
-                                            <td><%= category.totalSales.toLocaleString() %></td>
-                                            <td><%= category.bestSellingProduct.length > 35 ? category.bestSellingProduct.slice(0, 35) + '...' : category.bestSellingProduct %></td>
+                <div>
+                    <div class="card" >
+                        <div class="card-body p-0 m-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>SL No</th>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Order Date</th>
+                                            <th>Products</th>
+                                            <th>Qty</th>
+                                            <th>Amount (₹)</th>
+                                            <th>Discount (₹)</th>
+                                            <th>Payment</th>
+                                            <th>Status</th>
                                         </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        <% salesData.forEach((order, index) => { %>
+                                          <tr class="text-center">
+                                            <td><%= index + 1 %></td>
+                                            <td>#<%= order.orderId %></td>
+                                            <td><%= order.userId?.name || 'N/A' %></td>
+                                            <td><%= order.createdAt.toISOString().split('T')[0] %></td>
+                                            <td><%= order.product.productId %></td>
+                                            <td><%= order.quantity %></div></td>
+                                            <td>₹<%= (order.discountPrice).toLocaleString('en-IN') %></td>
+                                            <td>₹<%= (order.coupon || 0).toLocaleString('en-IN') %></td>
+                                            <td><%= order.paymentMethod %></td>
+                                            <td class="text-start"><%= order.status %></td>
+                                          </tr>
+                                        <% }) %>
+                                      </tbody>   
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -220,49 +136,68 @@
     </div>
 
     <script>
-        // document.getElementById('filterSelect').addEventListener('change', function() {
-        //     const customDateRange = document.getElementById('customDateRange');
-        //     customDateRange.style.display = this.value === 'custom' ? 'flex' : 'none';
-        //     if (this.value !== 'custom') {
-        //         document.getElementById('filterForm').submit();
-        //     }
-        // });
-
-        // document.getElementById('startDate').addEventListener('change', function() {
-        //     if (document.getElementById('endDate').value) {
-        //         document.getElementById('filterForm').submit();
-        //     }
-        // });
-        // document.getElementById('endDate').addEventListener('change', function() {
-        //     if (document.getElementById('startDate').value) {
-        //         document.getElementById('filterForm').submit();
-        //     }
-        // });
-
-        // function handleDownload(format) {
-        //     const filter = document.getElementById('filterSelect').value;
-        //     let url = `/admin/sales/download/${format}?range=${filter}`;
+        // Set initial filter value from query params if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const filterParam = urlParams.get('filter');
+        if (filterParam) {
+            document.getElementById('filterSelect').value = filterParam;
+            if (filterParam === 'custom') {
+                document.getElementById('customDateRange').style.display = 'flex';
+                document.getElementById('startDate').value = urlParams.get('startDate') || '';
+                document.getElementById('endDate').value = urlParams.get('endDate') || '';
+            }
+        }
+    
+        document.getElementById('filterSelect').addEventListener('change', function() {
+            const customDateRange = document.getElementById('customDateRange');
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'flex';
+                // Don't submit immediately for custom date selection
+            } else {
+                customDateRange.style.display = 'none';
+                document.getElementById('filterForm').submit();
+            }
+        });
+    
+        // Handle date changes for custom range
+        document.getElementById('startDate').addEventListener('change', function() {
+            if (document.getElementById('filterSelect').value === 'custom' && 
+                this.value && document.getElementById('endDate').value) {
+                document.getElementById('filterForm').submit();
+            }
+        });
+    
+        document.getElementById('endDate').addEventListener('change', function() {
+            if (document.getElementById('filterSelect').value === 'custom' && 
+                this.value && document.getElementById('startDate').value) {
+                document.getElementById('filterForm').submit();
+            }
+        });
+    
+        function handleDownload(format) {
+            const filter = document.getElementById('filterSelect').value;
+            let url = `/admin/sales/download/${format}?range=${filter}`;
             
-        //     if (filter === 'custom') {
-        //         const startDate = document.getElementById('startDate').value;
-        //         const endDate = document.getElementById('endDate').value;
-        //         if (startDate && endDate) {
-        //             url += `&start=${startDate}&end=${endDate}`;
-        //         } else {
-        //             alert('Please select both start and end dates');
-        //             return;
-        //         }
-        //     }
+            if (filter === 'custom') {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (startDate && endDate) {
+                    url += `&start=${startDate}&end=${endDate}`;
+                } else {
+                    alert('Please select both start and end dates for custom range');
+                    return;
+                }
+            }
             
-        //     window.location.href = url;
-        // }
-
-        // document.getElementById('downloadPdf').addEventListener('click', function() {
-        //     handleDownload('pdf');
-        // });
-
-        // document.getElementById('downloadExcel').addEventListener('click', function() {
-        //     handleDownload('excel');
-        // });
+            window.location.href = url;
+        }
+    
+        document.getElementById('downloadPdf').addEventListener('click', function() {
+            handleDownload('pdf');
+        });
+    
+        document.getElementById('downloadExcel').addEventListener('click', function() {
+            handleDownload('excel');
+        });
     </script>
 </body>

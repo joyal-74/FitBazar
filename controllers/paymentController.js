@@ -9,8 +9,7 @@ import crypto from 'crypto';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 import mongoose from "mongoose";
-import { TextQueryHandler } from "puppeteer";
-import { log } from "console";
+
 
 
 const loadPayments = async (req, res) => {
@@ -193,6 +192,7 @@ const paymentSuccess = async (req, res) => {
             const delivery = itemTotal > 499 ? 0 : 39;
             const productTotal = item.price * item.quantity;
             const coupon = couponApplied / orderItemCount;
+            const discountPrice = productTotal - coupon + delivery;
 
             const orderData = {
                 userId,
@@ -202,7 +202,7 @@ const paymentSuccess = async (req, res) => {
                 quantity: item.quantity,
                 price: productTotal,
                 variant: item.variants,
-                totalPrice,
+                discountPrice,
                 paymentMethod,
                 paymentStatus : 'Pending',
                 status: 'Pending',

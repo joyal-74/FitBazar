@@ -1,22 +1,78 @@
-import ExcelJS from 'exceljs';
-import PDFDocument from 'pdfkit';
+import puppeteer from 'puppeteer';
 import fs from 'fs';
+import path from 'path';
 import Order from '../model/orderModel.js';
-import Products from '../model/productModel.js';
-import Category from '../model/categoryModel.js';
+import {salesReportPDF, salesReportExcel} from '../helpers/salesReport.js';
 
+const dateFilterFun = async (filter, startDate, endDate)=> {
+    let dateFilter = {};
+
+    const today = new Date();
+    
+    switch(filter) {
+        case 'today':
+            dateFilter = { 
+                createdAt: { 
+                    $gte: new Date(today.setHours(0, 0, 0, 0)),
+                    $lte: new Date(today.setHours(23, 59, 59, 999))
+                } 
+            };
+            break;
+        case 'week':
+            const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(firstDayOfWeek.setHours(0, 0, 0, 0)),
+                    $lte: new Date()
+                }
+            };
+            break;
+        case 'month':
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+                    $lte: new Date()
+                }
+            };
+            break;
+        case 'year':
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(today.getFullYear(), 0, 1),
+                    $lte: new Date()
+                }
+            };
+            break;
+        case 'custom':
+            if (startDate && endDate) {
+                dateFilter = {
+                    createdAt: {
+                        $gte: new Date(startDate),
+                        $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+                    }
+                };
+            }
+            break;
+        default:
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(today.getFullYear(), today.getMonth(), 1),
+                    $lte: new Date()
+                }
+            };
+    }
+    return dateFilter;
+}
 
 const loadSalesReport = async (req, res) => {
     try {
         const { filter, startDate, endDate } = req.query;
-        let dateFilter = {};
+
+        const dateFilter = await dateFilterFun(filter, startDate, endDate);
 
         const productSales = await Order.aggregate([
             {
-                $match: {
-                    status: { $in: ['Shipped', 'Delivered', 'Out for Delivery'] },
-                    ...dateFilter
-                }
+                $match: dateFilter
             },
             {
                 $lookup: {
@@ -32,8 +88,8 @@ const loadSalesReport = async (req, res) => {
                     _id: '$productInfo._id',
                     productName: { $first: '$productInfo.name' },
                     totalOrders: { $sum: 1 },
-                    totalDiscounts: { $sum: '$discount' },
-                    totalAmount: { $sum: '$totalPrice' }
+                    totalDiscounts: { $sum: '$coupon' },
+                    totalAmount: { $sum: '$price' }
                 }
             },
             {
@@ -48,152 +104,6 @@ const loadSalesReport = async (req, res) => {
             { $sort: { productName: 1 } }
         ]);
 
-        const paymentMethods = await Order.aggregate([
-            {
-                $match: {
-                    status: { $in: ['Shipped', 'Delivered', 'Out for Delivery'] },
-                    ...dateFilter
-                }
-            },
-            {
-                $group: {
-                    _id: '$paymentMethod',
-                    totalOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    paymentMethod: '$_id',
-                    totalOrders: 1
-                }
-            },
-            { $sort: { paymentMethod: 1 } }
-        ]);
-
-        const categories = await Order.aggregate([
-            {
-                $match: {
-                    status: { $in: ['Shipped', 'Delivered', 'Out for Delivery'] },
-                    ...dateFilter
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product',
-                    foreignField: '_id',
-                    as: 'productInfo'
-                }
-            },
-            { $unwind: '$productInfo' },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'productInfo.category',
-                    foreignField: '_id',
-                    as: 'categoryInfo'
-                }
-            },
-            { $unwind: '$categoryInfo' },
-            {
-                $group: {
-                    _id: '$categoryInfo._id',
-                    categoryName: { $first: '$categoryInfo.name' },
-                    totalOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    categoryName: 1,
-                    totalOrders: 1
-                }
-            },
-            { $sort: { categoryName: 1 } }
-        ]);
-
-        const categorySales = await Order.aggregate([
-            {
-                $match: {
-                    status: { $in: ['Shipped', 'Delivered', 'Out for Delivery'] },
-                    ...dateFilter
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product',
-                    foreignField: '_id',
-                    as: 'productInfo'
-                }
-            },
-            { $unwind: '$productInfo' },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'productInfo.category',
-                    foreignField: '_id',
-                    as: 'categoryInfo'
-                }
-            },
-            { $unwind: '$categoryInfo' },
-            {
-                $group: {
-                    _id: {
-                        categoryId: '$categoryInfo._id',
-                        productId: '$productInfo._id'
-                    },
-                    categoryName: { $first: '$categoryInfo.name' },
-                    productName: { $first: '$productInfo.name' },
-                    totalOrders: { $sum: 1 },
-                    totalSales: { $sum: '$totalPrice' }
-                }
-            },
-            {
-                $group: {
-                    _id: '$_id.categoryId',
-                    categoryName: { $first: '$categoryName' },
-                    totalOrders: { $sum: '$totalOrders' },
-                    totalSales: { $sum: '$totalSales' },
-                    products: { $push: { name: '$productName', orders: '$totalOrders' } }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    categoryName: 1,
-                    totalOrders: 1,
-                    totalSales: 1,
-                    bestSellingProduct: {
-                        $arrayElemAt: [
-                            '$products.name',
-                            { $indexOfArray: ['$products.orders', { $max: '$products.orders' }] }
-                        ]
-                    }
-                }
-            },
-            { $sort: { categoryName: 1 } }
-        ]);
-
-        const statusOrder = ["Pending", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"];
-
-        const orderStatusCount = await Order.aggregate([
-            {
-                $group: {
-                    _id: "$status",
-                    totalOrders: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const statusCountMap = Object.fromEntries(orderStatusCount.map(order => [order._id, order.totalOrders]));
-
-        const finalOrderStatusCount = statusOrder.map(status => ({
-            status: status,
-            totalOrders: statusCountMap[status] || 0
-        }));
-
         // Summary Data
         const summary = {
             totalOrders: productSales.reduce((sum, p) => sum + p.totalOrders, 0),
@@ -201,15 +111,13 @@ const loadSalesReport = async (req, res) => {
             totalAmount: productSales.reduce((sum, p) => sum + p.totalAmount, 0)
         };
 
+        const salesData = await Order.find(dateFilter).populate('product').populate('userId')
+
         // Render the sales report page
         res.render('admin/sales', {
             title: 'Sales Report',
-            products: productSales,
-            paymentMethods,
-            categories,
-            orderStatusCount: finalOrderStatusCount,
-            categorySales,
-            summary
+            summary,
+            salesData
         });
     } catch (error) {
         console.error('Error loading sales report:', error);
@@ -218,6 +126,65 @@ const loadSalesReport = async (req, res) => {
 };
 
 
+const generateSalesReportPDF = async (req, res) => {
+    try {
+        const { range, start, end } = req.query;
+        console.log(req.query)
+
+        const dateFilter = await dateFilterFun(range, start, end);
+
+        const salesData = await Order.find(dateFilter)
+            .populate('product')
+            .populate('userId')
 
 
-export default { loadSalesReport };
+        const htmlContent = salesReportPDF(salesData);
+
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(htmlContent);
+
+        const pdfPath = path.join(process.cwd(), 'sales-report.pdf');
+        await page.pdf({ path: pdfPath, format: 'A4' });
+
+        await browser.close();
+
+        res.download(pdfPath, 'Sales_Report.pdf', (err) => {
+            if (err) console.error('Error sending PDF:', err);
+            fs.unlinkSync(pdfPath);
+        });
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).json({ message: 'Failed to generate report' });
+    }
+};
+
+
+const downloadSalesReportExcel = async (req, res) => {
+    try {
+        const { range, start, end } = req.query;
+        console.log(req.query)
+
+        const dateFilter = await dateFilterFun(range, start, end);
+
+        const salesData = await Order.find(dateFilter)
+            .populate('product')
+            .populate('userId')
+        
+        const filePath = await salesReportExcel(salesData);
+
+        res.download(filePath, 'Sales_Report.xlsx', (err) => {
+            if (err) {
+                console.error('Error sending file:', err);
+                res.status(500).send('Error downloading the file');
+            }
+        });
+
+    } catch (error) {
+        console.error('Error generating sales report:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+export default { loadSalesReport, generateSalesReportPDF, downloadSalesReportExcel };

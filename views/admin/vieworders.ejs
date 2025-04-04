@@ -41,7 +41,7 @@
                                             <% } %>
                                         </p>
                                         <p class="mb-2"><strong class="text-muted">Quantity:</strong> <%= order.quantity %></p>
-                                        <p class="mb-2"><strong class="text-muted">Total Price:</strong> ₹<%= order.totalPrice.toLocaleString('en-IN') %></p>
+                                        <p class="mb-2"><strong class="text-muted">Total Price:</strong> ₹<%= order.discountPrice.toLocaleString('en-IN') %></p>
                                         <p class="mb-2"><strong class="text-muted">Payment Method:</strong> <%= order.paymentMethod %></p>
                                     </div>
                                 </div>

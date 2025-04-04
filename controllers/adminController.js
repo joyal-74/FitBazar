@@ -85,6 +85,7 @@ const loadOrders = async (req, res) => {
 
         // Fetch Orders based on Query
         const orders = await Order.find(query)
+            .populate('userId')
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });

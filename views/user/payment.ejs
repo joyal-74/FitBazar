@@ -299,7 +299,6 @@
                     if (!paymentResponse.ok) throw new Error(paymentData.error || 'Payment processing failed');
 
                     Swal.fire({
-                        title: 'Order Placed!',
                         text: paymentMethod === 'cod' 
                             ? 'Your order has been placed. Pay when delivered.' 
                             : 'Payment successful and order placed.',
@@ -311,7 +310,14 @@
                     });
 
                 } catch (error) {
-                    window.location.href = '/user/payment-failed'
+                    Swal.fire({
+                        text: error.message,
+                        icon: 'error',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(()=>{
+                        window.location.href = '/user/payment-failed';
+                    })
                     console.log(error)
                 }
             }
@@ -380,10 +386,11 @@
                     console.error('Verification/Order Error:', error);
 
                     Swal.fire({
-                        title: 'Payment Error',
                         text: `Error processing ${paymentMethod} payment: ${error.message}`,
                         icon: 'error'
-                    });
+                    }).then(()=>{
+                        window.location.href = '/user/payment-failed';
+                    })
                 }
             }
         });
