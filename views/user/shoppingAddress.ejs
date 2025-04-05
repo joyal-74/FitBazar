@@ -91,7 +91,7 @@
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .btn-secondary:hover {
-            background-color: #e0dbfc;
+            background-color: #efdbfc;
             transform: translateY(-1px);
         }
 
@@ -114,47 +114,16 @@
 </head>
 
 <body>
-    <!-- Navbar (unchanged) -->
-    <nav class="navbar navbar-expand-lg shadow-sm">
-        <div class="container d-flex flex-column">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <a class="navbar-brand fw-bold" href="#">FitBazar</a>
-                <ul class="nav align-items-center">
-                    <li class="nav-item"><a class="nav-link text-white btn py-1 px-4 user-nav-text" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn" type="submit" style="background-color: #E0DBFC;">
-                        <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                    </button>
-                </form>
-                <div class="d-flex align-items-center">
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
-                    <% if (user) { %>
-                        <a href="#" class="btn btn-light" style="color: #3B3389; border-radius: 50%;">
-                            <i class="fa-solid fa-user"></i>
-                        </a>
-                    <% } else { %>
-                        <a href="/user/register" class="btn btn-light" style="color: #3B3389;">Sign Up</a>
-                    <% } %>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Navbar -->
+    <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Main Section -->
     <main class="container my-5">
         <div class="row gx-5 gy-2">
             <!-- Delivery Address Section -->
-            <div class="col-md-8">
+            <div class="col-md-12">
                     <h4 class="fw-bold mb-4 text-dark">Edit Delivery Address</h4>
                     
-
                 <div class="p-4 address-card">
                     <form id="addAddressForm">
                         <div class="form-group-pair">
@@ -263,41 +232,6 @@
                     </form>
                 </div>
             </div>
-
-            <!-- Order Summary -->
-            <div class="col-md-4 mt-5">
-                <div class="card p-4 shadow-sm border-0 order-summary mt-2">
-                    <h5 class="fw-bold mb-4 text-dark" style="font-size: 1.5rem;">Order Summary</h5>
-                    <% if (orderItems && orderItems.length > 0) { %>
-                        <% orderItems.forEach(item => { %>
-                            <div class="d-flex justify-content-between mb-3">
-                                <span class="text-muted" style="font-size: 0.95rem;">
-                                    <%= item.quantity %>x <%= item.name %> - <%= item.weight %> kg
-                                </span>
-                                <span class="fw-medium">₹ <%= item.price.toLocaleString('en-IN') %></span>
-                            </div>
-                        <% }) %>
-                        <hr class="my-4" style="border-color: #E0E0E0;">
-                        <div class="mb-4">
-                            <label for="coupon" class="form-label fw-medium">Enter Coupon Code</label>
-                            <div class="input-group coupon-input">
-                                <input type="text" id="coupon" class="form-control" placeholder="Paste your code here" style="border-radius: 8px 0 0 8px;">
-                                <button class="btn btn-outline-secondary" type="button">Apply</button>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
-                            <span class="fw-bold text-dark" style="font-size: 1.2rem;">
-                                ₹ <%= orderItems.reduce((total, item) => total + (item.price * item.quantity), 0).toLocaleString('en-IN') %>
-                            </span>
-                        </div>
-                    <% } else { %>
-                        <p class="text-muted">No items in cart</p>
-                    <% } %>
-                    <button class="btn btn-primary w-100 mt-4" <%= (!orderItems || orderItems.length === 0) ? 'disabled' : '' %>>Proceed to Payment</button>
-                </div>
-            </div>
-        </div>
     </main>
     <script>
         document.getElementById("addAddressForm").addEventListener('submit', async (event) => {

@@ -969,3 +969,34 @@ td {
     font-size: 1.1rem; 
     color: #FFFFFF;
 }
+
+.btn-save {
+    background-color: #5B3F64;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+}
+
+.btn-save:hover {
+    background-color: #45304c;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+}
+
+.btn-cancel {
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid #5b3f64;
+}
+
+.btn-cancel:hover {
+    background-color: #f0e7f4;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid #5b3f64;
+}

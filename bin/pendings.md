@@ -47,9 +47,9 @@ ________________
 pendings need to fix
 _______________________
 
-1. coupon user side modal ui []
+1. coupon user side modal ui [x]
 2. pagination to sales report []
-3. user side seeion handling []
+3. user side session handling []
 4. session for sales report []
 5. status code fix to all controller []
 6. remove unwanted consoles []

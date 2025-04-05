@@ -74,10 +74,7 @@ router.get('/checkout', cartControlller.loadCheckout);
 router.post('/checkout', cartControlller.checkoutDetails);
 router.post('/validate-coupon', couponController.validateCoupon);
 
-router.get('/shoppingAddressAdd', cartControlller.loadAddShoppingAddress);
 router.post('/shoppingAddress', cartControlller.addShoppingAddress);
-
-router.get('/shoppingAddress', cartControlller.loadshoppingAddress);
 router.put('/shoppingAddress', cartControlller.editshoppingAddress);
 
 router.get('/confirmOrder', cartControlller.confirmOrder);

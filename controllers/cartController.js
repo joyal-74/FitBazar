@@ -254,25 +254,6 @@ const checkoutDetails = async (req,res) => {
     res.redirect('/user/payments')
 }
 
-const loadAddShoppingAddress = async(req,res) => {
-    try {
-        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-
-        const user = await User.findOne({_id : userId})
-
-        const cart = await Cart.findOne({ userId }).populate({
-            path: 'items',
-            select: 'name price brand variants'
-        }).sort({ createdAt: -1 });
-
-        const orderItems = cart.items
-    
-        res.render('user/shoppingAddress', {title : "Address", user, orderItems});
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 const addShoppingAddress = async (req,res) =>{
     try {
         const {fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode} = req.body;
@@ -320,45 +301,6 @@ const addShoppingAddress = async (req,res) =>{
     } catch (error) {
         console.error("Error adding address:", error);
         return res.status(INTERNAL_SERVER_ERROR).json({ error: error.message || "Address creation error" });
-    }
-}
-
-
-const loadshoppingAddress = async (req,res) => {
-    try {
-        const { id, index } = req.query;
-
-        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({_id : userId})
-        if (!user) {
-            return res.status(UNAUTHORIZED).json({ error: "Please Login to continue" });
-        }
-
-        const address = await Address.findOne({ userId });
-
-        if (!address) {
-            return res.status(NOT_FOUND).json({ error: "Address not found" });
-        }
-
-        const selectedAddress = address.details[index];
-        console.log(selectedAddress);
-
-        if (!selectedAddress) {
-            return res.status(NOT_FOUND).json({ error: "Address details not found" });
-        }
-
-        const cart = await Cart.findOne({ userId }).populate({
-            path: 'items',
-            select: 'name price brand variants'
-        }).sort({ createdAt: -1 });
-
-        const orderItems = cart.items
-
-        res.render('user/checkout-Up', { title: "Add new Address",address: selectedAddress,user, addressId: id,orderItems,index });
-
-    } catch (error) {
-        console.error("Error loading address:", error);
-        res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error", message: error.message });
     }
 }
 
@@ -499,4 +441,4 @@ const confirmOrder = async (req, res) => {
 
 
 export default {loadCart, updateQuantity, addItemToCart, deleteFromcart, loadCheckout, addShoppingAddress,
-    checkoutDetails, loadAddShoppingAddress, loadshoppingAddress, editshoppingAddress, loadCheckoutUp, confirmOrder};
+    checkoutDetails, editshoppingAddress, loadCheckoutUp, confirmOrder};
