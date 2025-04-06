@@ -55,9 +55,9 @@ const userLogin = async (req, res) => {
             return res.status(BAD_REQUEST).json({error : "Invalid email or password"});
         }
 
-        req.session.user = user
+        req.session.user = user;
         req.session.userId = user._id;
-
+        req.session.userLogged = true
 
         return res.status(OK).json({message : "Login successful", redirectUrl : '/'});
 

@@ -22,7 +22,7 @@ _________________
 
 1. out of stock products cannot add to cart [x]
 2. shopping address in admin side order [x]
-3. Pagination in order management admin side
+3. Pagination in order management admin side [x]
 4. order as individual order if there are many products in single order in cart [x]
 
 
@@ -50,8 +50,8 @@ _______________________
 1. coupon user side modal ui [x]
 2. pagination to sales report [x]
 3. user side session handling []
-4. session for sales report []
-5. status code fix to all controller []
+4. session for sales report [x]
+5. status code fix to all controller [x]
 6. remove unwanted consoles [x]
 7. double check all functionalities before review []
 8. add to cart in details and home page cads []

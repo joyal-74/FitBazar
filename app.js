@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import nocache from "nocache";
 const app = express()
 import session from "express-session";
 import { fileURLToPath } from "url";
@@ -21,6 +22,7 @@ import homeRoute from './routes/homeRoute.js'
 import paymentRoutes from './routes/paymenRoute.js';
 
 const PORT = process.env.PORT
+app.use(nocache());
 
 app.use(session({
         secret: process.env.SESSION_KEY,
@@ -28,6 +30,8 @@ app.use(session({
         saveUninitialized: false,
     })
 );
+
+
 
 app.use(passport.initialize());
 app.use(passport.session());

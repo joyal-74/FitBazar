@@ -57,14 +57,14 @@ router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 router.get('/refunds', adminAuth.checkSession, refundController.loadReturnPage);
 router.patch('/refunds', refundController.updateRefundStatus);
 
-router.get('/coupons', couponController.loadCouponPage);
-router.post('/coupons', couponController.addCoupon);
-router.put('/coupons', couponController.editCoupon);
-router.delete('/coupons', couponController.deleteCoupon);
+router.get('/coupons',adminAuth.checkSession, couponController.loadCouponPage);
+router.post('/coupons',adminAuth.checkSession, couponController.addCoupon);
+router.put('/coupons', adminAuth.checkSession, couponController.editCoupon);
+router.delete('/coupons', adminAuth.checkSession, couponController.deleteCoupon);
 
 
 // sales report
-router.get('/sales', salesController.loadSalesReport);
+router.get('/sales',adminAuth.checkSession, salesController.loadSalesReport);
 router.get('/sales/download/pdf', salesController.generateSalesReportPDF);
 router.get('/sales/download/excel', salesController.downloadSalesReportExcel);
 
