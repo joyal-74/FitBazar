@@ -1,5 +1,6 @@
 import User from "../model/userModel.js";
 import Wishlist from "../model/wishlistModel.js";
+import { INTERNAL_SERVER_ERROR, UNAUTHORIZED } from '../config/statusCodes.js'
 
 const getWishlist = async (req, res) => {
     try {
@@ -8,7 +9,7 @@ const getWishlist = async (req, res) => {
         const user = await User.findOne({_id : userId})
 
         if(!userId){
-            res.status(401).json({error : "Please login to view wishlist"})
+            res.status(UNAUTHORIZED).json({error : "Please login to view wishlist"})
         }
 
         const wishlist = await Wishlist.find({ userId }).populate('product');
@@ -20,7 +21,7 @@ const getWishlist = async (req, res) => {
         });
     } catch (error) {
         console.log(error)
-        res.status(500).json({error : "internal error"})
+        res.status(INTERNAL_SERVER_ERROR).json({error : "internal error"})
     }
 };
 
@@ -34,7 +35,7 @@ const addToWishlist = async (req, res) => {
         // console.log(existingItem)
         
         if (existingItem) {
-            return res.status(400).json({ error: 'Item already in wishlist' });
+            return res.status(BAD_REQUEST).json({ error: 'Item already in wishlist' });
         }
 
         const wishlistItem = new Wishlist({
@@ -48,7 +49,7 @@ const addToWishlist = async (req, res) => {
         res.json({ message: 'Added to wishlist successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ error: 'Server error' });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Server error' });
     }
 };
 
@@ -58,7 +59,7 @@ const removeFromWishlist = async (req, res) => {
         await Wishlist.findByIdAndDelete(wishlistId);
         res.json({ message: 'Item removed from wishlist' });
     } catch (error) {
-        res.status(500).json({ error: 'Error removing item' });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Error removing item' });
     }
 };
 

@@ -114,7 +114,7 @@ const userRegister = async (req, res) => {
         const userId = await generateUserId();
         const referalCode = `REF${userId}`;
 
-        console.log(referalCode);
+        // console.log(referalCode);
         
         const newuser = {
             userId : userId,
@@ -201,7 +201,7 @@ const generateOtp = async (req, res) => {
 
     try {
         await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent);
-        console.log(req.session.otpExpire)
+        // console.log(req.session.otpExpire)
         return res.status(OK).json({
             success: true,
             message: "OTP sent successfully",
@@ -224,13 +224,13 @@ const resendOtp = async (req, res) => {
 
         req.session.otp = otp;
         const email = req.session.email;
-        console.log(email)
+        // console.log(email)
         req.session.otpExpire = Date.now() + 60 * 1000;
         const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
 
         const emailContent = emailTemplate.getOtpResetEmailTemplate(email,otp);
 
-        console.log(emailContent);
+        // console.log(emailContent);
         
 
         if (!email) {
@@ -238,7 +238,7 @@ const resendOtp = async (req, res) => {
         }
 
         await sendEmail(email, "Your OTP for FitBazar Password Reset", emailContent);
-        console.log('done')
+
         return res.status(OK).json({ message: "OTP sent successfully" , timeLeft });
     } catch (error) {
         console.error("OTP Sending Error:", error);
@@ -263,7 +263,7 @@ const verifyOtp = async (req, res) => {
 
     console.log("Session OTP:", sentOtp);
     console.log("Form OTP:", formOtp);
-    console.log(requestFrom)
+    // console.log(requestFrom)
 
     if (!formOtp || !sentOtp) {
         return res.status(BAD_REQUEST).json({ error : "Invalid OTP. Please try again."});
@@ -305,7 +305,7 @@ const changePassword = async (req, res) => {
         const { newPassword, confirmPassword } = req.body;
         const email = req.session.email;
 
-        console.log(email);
+        // console.log(email);
 
         if (!newPassword || !confirmPassword) {
             return res.status(BAD_REQUEST).json({ success: false, message: "All fields are required" });

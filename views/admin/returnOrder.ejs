@@ -29,11 +29,11 @@
                         <!-- Search Bar -->
                         <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<%= search %>">
-                            <button class="btn" type="submit" style="background-color: #3e29a8;">
+                            <button class="btn" type="submit" style="background-color: #5b3f64;">
                                 <i class="fas fa-search text-white"></i>
                             </button>
-                            <button type="button" class="btn text-info" onclick="clearFilters()">
-                                <i class="fa-regular fa-circle-xmark fa-xl"></i>
+                            <button type="button" class="btn btn-secondary ms-2" onclick="clearFilters()">
+                                Clear
                             </button>
                         </div>
                     </div>
@@ -60,8 +60,8 @@
                                         <% refundRequests.forEach(request => { %>
                                             <tr class="text-center">
                                                 <td>#<%= request.order.orderId %></td>
-                                                <td><%= request.order.userId.name || 'N/A' %></td>
-                                                <td><%= request.createdAt.toISOString().split('T')[0] %></td>
+                                                <td><%= request.userId.name || 'N/A' %></td>
+                                                <td><%= new Date(request.createdAt).toLocaleDateString("en-GB") %></td>
                                                 <td>₹<%= (request.order?.price - request.order.coupon + request.order.delivery).toLocaleString('en-IN') || "" %></td>
                                                 <td><%= request.reason || 'N/A' %></td>
                                                 <td>
@@ -80,7 +80,7 @@
                                                         data-product-name="<%= request.product.name %>" 
                                                         data-price="<%= (request.order?.price - request.order.coupon + request.order.delivery) %>" 
                                                         data-reason="<%= request.reason %>" 
-                                                        data-date="<%= request.createdAt.toISOString() %>" 
+                                                        data-date="<%= new Date(request.createdAt).toLocaleDateString("en-GB") %>" 
                                                         data-status="<%= request.status %>"
                                                         data-id="<%= request.order._id %>"
                                                         onclick="openRefundModal(this)">

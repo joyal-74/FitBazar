@@ -12,7 +12,7 @@
                     <form action="/admin/sales" method="GET" class="d-flex gap-2" id="filterForm">
                         <div class="flex-grow-1" style="max-width: 180px;">
                             <select class="form-select filter-select" name="filter" id="filterSelect">
-                                <option disabled hidden>Filter ⇅</option>
+                                <option hidden>Filter ⇅</option>
                                 <option value="today">Daily</option>
                                 <option value="week">Weekly</option>
                                 <option value="month">Monthly</option>
@@ -114,9 +114,9 @@
                                         <% salesData.forEach((order, index) => { %>
                                           <tr class="text-center">
                                             <td><%= index + 1 %></td>
-                                            <td>#<%= order.orderId %></td>
+                                            <td class="text-start">#<%= order.orderId %></td>
                                             <td><%= order.userId?.name || 'N/A' %></td>
-                                            <td><%= order.createdAt.toISOString().split('T')[0] %></td>
+                                            <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>                                          
                                             <td><%= order.product.productId %></td>
                                             <td><%= order.quantity %></div></td>
                                             <td>₹<%= (order.discountPrice).toLocaleString('en-IN') %></td>
@@ -131,12 +131,39 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- pagination -->
+                 
+                <div class="d-flex justify-content-center mt-3">
+                    <nav>
+                        <ul class="pagination pagination-sm">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %><%= filterQueryString %>" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %><%= filterQueryString %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %><%= filterQueryString %>" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
             </main>
         </div>
     </div>
 
     <script>
-        // Set initial filter value from query params if present
         const urlParams = new URLSearchParams(window.location.search);
         const filterParam = urlParams.get('filter');
         if (filterParam) {
@@ -152,14 +179,12 @@
             const customDateRange = document.getElementById('customDateRange');
             if (this.value === 'custom') {
                 customDateRange.style.display = 'flex';
-                // Don't submit immediately for custom date selection
             } else {
                 customDateRange.style.display = 'none';
                 document.getElementById('filterForm').submit();
             }
         });
     
-        // Handle date changes for custom range
         document.getElementById('startDate').addEventListener('change', function() {
             if (document.getElementById('filterSelect').value === 'custom' && 
                 this.value && document.getElementById('endDate').value) {

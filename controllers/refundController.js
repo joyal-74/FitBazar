@@ -13,7 +13,7 @@ export const requestRefund = async (req, res) => {
     const orderId = req.query.id;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    console.log(orderId, reason, userId)
+    // console.log(orderId, reason, userId)
 
     try {
         const order = await Order.findById(orderId);
@@ -35,7 +35,7 @@ export const requestRefund = async (req, res) => {
 
         await refund.save();
 
-        res.status(201).json({ message: 'Refund request submitted' });
+        res.status(CREATED).json({ message: 'Refund request submitted' });
     } catch (error) {
         console.error(error);
         res.status(INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
@@ -87,7 +87,7 @@ export const cancelOrder = async (req, res) => {
         });
         
 
-        console.log(product, variant)
+        // console.log(product, variant)
 
         if (product) {
             const variant = product.variants.find(v =>
@@ -122,7 +122,7 @@ const generateInvoice = async (req, res) => {
 
         const addressId = order.address
 
-        console.log(addressId)
+        // console.log(addressId)
 
         const addresses = await Address.findOne(
             { 'details._id': addressId },
@@ -170,6 +170,7 @@ const loadReturnPage = async (req, res) => {
         const refundRequests = await Refund.find(query)
             .populate('order')
             .populate('product')
+            .populate('userId')
             .sort({ createdAt: -1 })
             .lean();
 
@@ -181,7 +182,7 @@ const loadReturnPage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error loading return page:', error);
-        res.status(500).send('Server Error');
+        res.status(INTERNAL_SERVER_ERROR).send('Server Error');
     }
 };
 
@@ -194,19 +195,19 @@ const updateRefundStatus = async (req, res) => {
 
         const refund = await Refund.findOne({ order: orderId });
         if (!refund) {
-            return res.status(404).json({ error: "Refund not found" });
+            return res.status(NOT_FOUND).json({ error: "Refund not found" });
         }
 
         // Find the related order
         const order = await Order.findById(orderId);
         if (!order) {
-            return res.status(404).json({ error: "Order not found" });
+            return res.status(NOT_FOUND).json({ error: "Order not found" });
         }
 
         // Find the user associated with the order
         const user = await User.findById(order.userId);
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(NOT_FOUND).json({ error: "User not found" });
         }
 
         if (status === 'Approved') {
@@ -230,7 +231,7 @@ const updateRefundStatus = async (req, res) => {
             await order.save()
             
 
-            console.log(product, variant)
+            // console.log(product, variant)
 
             if (product) {
                 const variant = product.variants.find(v =>
@@ -246,16 +247,16 @@ const updateRefundStatus = async (req, res) => {
             refund.status = status;
             await refund.save();
 
-            return res.status(200).json({ message: `Refund of ₹${order.totalPrice.toFixed(2)} processed successfully` });
+            return res.status(OK).json({ message: `Refund of ₹${order.totalPrice.toFixed(2)} processed successfully` });
         } else {
             refund.status = status;
             await refund.save();
 
-            return res.status(400).json({ message: `Refund for order #${order._id} rejected` });
+            return res.status(BAD_REQUEST).json({ message: `Refund for order #${order._id} rejected` });
         }
     } catch (error) {
         console.error("Error updating refund status:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
 };
 

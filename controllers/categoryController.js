@@ -50,8 +50,8 @@ const addCategory = async (req, res) => {
         });
 
         await newCategory.save();
-        console.log("Uploaded file:", req.file);
-        console.log("Request body:", req.body);
+        // console.log("Uploaded file:", req.file);
+        // console.log("Request body:", req.body);
 
         return res.status(OK).json({ message: "Category added successfully." });
 
@@ -115,8 +115,13 @@ const filterCategories = async (req, res) => {
         const totalcategories = await Category.countDocuments(filter);
         const totalPages = Math.ceil(totalcategories / limit);
 
-        res.render("admin/categories", {title: "Categories", errorMessage: "", cat: categories,
-            currentPage: page, totalPages: totalPages,totalcategories: totalcategories,
+        res.render("admin/categories", {
+            title: "Categories", 
+            errorMessage: "", 
+            cat: categories,
+            currentPage: page, 
+            totalPages: totalPages,
+            totalcategories: totalcategories,
             selectedFilter: visibility || undefined, searchQuery: ""
         });
 

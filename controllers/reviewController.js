@@ -6,7 +6,7 @@ import Reviews from "../model/reviewsModel.js"
 const addReview = async (req,res) => {
     try {
         const {userId, productId, name, star, comment} = req.body
-        console.log(req.body)
+        // console.log(req.body)
 
         if(!userId){
             return res.status(UNAUTHORIZED).json({error : "Please Login to add a review"})

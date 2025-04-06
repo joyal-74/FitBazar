@@ -1,5 +1,6 @@
 import Products from "../model/productModel.js";
 import Category from "../model/categoryModel.js";
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 
 const addProductOffer = async (req,res)=> {
     try {
@@ -8,16 +9,16 @@ const addProductOffer = async (req,res)=> {
             const products = await Products.findOne({productId})
 
             if(!products){
-                return res.status(404).json({error : "product not found"})
+                return res.status(NOT_FOUND).json({error : "product not found"})
             }
     
             products.productOffer = discount;
     
             await products.save()
-            return res.status(200).json({message : "Offer added successfully...!"})
+            return res.status(OK).json({message : "Offer added successfully...!"})
         } catch (error) {
             console.log(error)
-            return res.status(500).json({error : error})
+            return res.status(INTERNAL_SERVER_ERROR).json({error : error})
         }
     } catch (error) {
         
@@ -32,10 +33,10 @@ const removeProductOffer = async (req,res)=> {
         products.productOffer = 0;
 
         await products.save()
-        return res.status(200).json({message : "Offer deleted successfully...!"})
+        return res.status(OK).json({message : "Offer deleted successfully...!"})
     } catch (error) {
         console.log(error)
-        return res.status(500).json({error : error})
+        return res.status(INTERNAL_SERVER_ERROR).json({error : error})
     }
 }
 
@@ -46,16 +47,16 @@ const addCategoryOffer = async (req,res)=> {
             const category = await Category.findOne({_id : categoryId})
 
             if(!category){
-                return res.status(404).json({error : "product not found"})
+                return res.status(NOT_FOUND).json({error : "product not found"})
             }
     
             category.offer = discount;
     
             await category.save()
-            return res.status(200).json({message : "Offer added successfully...!"})
+            return res.status(OK).json({message : "Offer added successfully...!"})
         } catch (error) {
             console.log(error)
-            return res.status(500).json({error : error})
+            return res.status(INTERNAL_SERVER_ERROR).json({error : error})
         }
     } catch (error) {
         
@@ -70,10 +71,10 @@ const removeCategorytOffer = async (req,res)=> {
         category.offer = 0;
 
         await category.save()
-        return res.status(200).json({message : "Offer deleted successfully...!"})
+        return res.status(OK).json({message : "Offer deleted successfully...!"})
     } catch (error) {
         console.log(error)
-        return res.status(500).json({error : error})
+        return res.status(INTERNAL_SERVER_ERROR).json({error : error})
     }
 }
 

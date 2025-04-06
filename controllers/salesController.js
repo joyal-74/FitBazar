@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import Order from '../model/orderModel.js';
 import {salesReportPDF, salesReportExcel} from '../helpers/salesReport.js';
+import { INTERNAL_SERVER_ERROR } from '../config/statusCodes.js';
 
 const dateFilterFun = async (filter, startDate, endDate)=> {
     let dateFilter = {};
@@ -66,7 +67,21 @@ const dateFilterFun = async (filter, startDate, endDate)=> {
 
 const loadSalesReport = async (req, res) => {
     try {
-        const { filter, startDate, endDate } = req.query;
+        const filter = req.query.filter || '';
+        const startDate = req.query.startDate || '';
+        const endDate = req.query.endDate || '';
+
+        let filterQueryString = '';
+        if (filter) {
+            filterQueryString += `&filter=${filter}`;
+            if (filter === 'custom' && startDate && endDate) {
+                filterQueryString += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+        }
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6;
+        const skip = (page - 1) * limit;
 
         const dateFilter = await dateFilterFun(filter, startDate, endDate);
 
@@ -104,24 +119,27 @@ const loadSalesReport = async (req, res) => {
             { $sort: { productName: 1 } }
         ]);
 
-        // Summary Data
         const summary = {
             totalOrders: productSales.reduce((sum, p) => sum + p.totalOrders, 0),
             totalDiscounts: productSales.reduce((sum, p) => sum + p.totalDiscounts, 0),
             totalAmount: productSales.reduce((sum, p) => sum + p.totalAmount, 0)
         };
 
-        const salesData = await Order.find(dateFilter).populate('product').populate('userId')
+        const salesData = await Order.find(dateFilter).populate('product').populate('userId').sort({createdAt : -1}).skip(skip).limit(limit);
+        const totalSales = await Order.countDocuments(dateFilter);
+        const totalPages = Math.ceil(totalSales / limit);
 
-        // Render the sales report page
         res.render('admin/sales', {
             title: 'Sales Report',
             summary,
-            salesData
+            salesData,
+            filterQueryString,
+            currentPage: page, 
+            totalPages
         });
     } catch (error) {
         console.error('Error loading sales report:', error);
-        res.status(500).send('Server Error');
+        res.status(INTERNAL_SERVER_ERROR).send('Server Error');
     }
 };
 
@@ -129,7 +147,6 @@ const loadSalesReport = async (req, res) => {
 const generateSalesReportPDF = async (req, res) => {
     try {
         const { range, start, end } = req.query;
-        console.log(req.query)
 
         const dateFilter = await dateFilterFun(range, start, end);
 
@@ -156,7 +173,7 @@ const generateSalesReportPDF = async (req, res) => {
 
     } catch (error) {
         console.error('Error generating PDF:', error);
-        res.status(500).json({ message: 'Failed to generate report' });
+        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Failed to generate report' });
     }
 };
 
@@ -164,7 +181,6 @@ const generateSalesReportPDF = async (req, res) => {
 const downloadSalesReportExcel = async (req, res) => {
     try {
         const { range, start, end } = req.query;
-        console.log(req.query)
 
         const dateFilter = await dateFilterFun(range, start, end);
 
@@ -177,13 +193,13 @@ const downloadSalesReportExcel = async (req, res) => {
         res.download(filePath, 'Sales_Report.xlsx', (err) => {
             if (err) {
                 console.error('Error sending file:', err);
-                res.status(500).send('Error downloading the file');
+                res.status(INTERNAL_SERVER_ERROR).send('Error downloading the file');
             }
         });
 
     } catch (error) {
         console.error('Error generating sales report:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
 };
 

@@ -183,6 +183,7 @@
                             <table class="table table-hover text-center">
                                 <thead>
                                     <tr>
+                                        <th>SL No</th>
                                         <th class="text-start ps-5">Coupon Name</th>
                                         <th>Coupon Code</th>
                                         <th>Start Date</th>
@@ -196,10 +197,11 @@
                                 <tbody>
                                     <% coupons.reverse().forEach((coupon, index) => { %>
                                     <tr>
+                                        <td><%= index + 1 %></td>
                                         <td class="text-start ps-4"><%= coupon.name %></td>
                                         <td><%= coupon.code %></td>
-                                        <td><%= new Date(coupon.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) %></td>
-                                        <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) %></td>
+                                        <td><%= new Date(coupon.startDate).toLocaleDateString("en-GB") %></td>
+                                        <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-GB") %></td>
                                         <td><%= coupon.minPrice %></td>
                                         <td><%= coupon.offerPrice %></td>
                                         <td>

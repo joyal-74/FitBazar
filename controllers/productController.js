@@ -156,12 +156,6 @@ const productInfo = async (req, res) => {
             }
         }
 
-        if (req.query.stock === "1") {
-            filter.stock = { $gt: 0 };
-        } else if (req.query.stock === "2") {
-            filter.stock = { $eq: 0 };
-        }
-
         if (req.query.status === "1") {
             filter.visibility = true;
         } else if (req.query.status === "2") {
@@ -191,7 +185,6 @@ const productInfo = async (req, res) => {
             totalPages: totalPages,
             totalProducts: totalProducts,
             selectedCategory: req.query.category || "all",
-            selectedStock: req.query.stock || "all",
             selectedStatus: req.query.status || "all",
             searchQuery: req.query.query || "",
         });

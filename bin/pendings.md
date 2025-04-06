@@ -48,10 +48,10 @@ pendings need to fix
 _______________________
 
 1. coupon user side modal ui [x]
-2. pagination to sales report []
+2. pagination to sales report [x]
 3. user side session handling []
 4. session for sales report []
 5. status code fix to all controller []
-6. remove unwanted consoles []
+6. remove unwanted consoles [x]
 7. double check all functionalities before review []
 8. add to cart in details and home page cads []

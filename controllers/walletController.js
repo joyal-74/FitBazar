@@ -1,6 +1,7 @@
 import User from "../model/userModel.js";
 import { razorpay } from "../config/razorpay.js";
 import crypto from 'crypto'; 
+import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
 
 const loadWallet = async(req, res) =>{
     try {
@@ -22,8 +23,7 @@ const createRazorpayWallet = async (req, res) => {
     try {
         const { amount } = req.body;
 
-        console.log(req.body);
-        
+        // console.log(req.body);
 
         const options = {
             amount: amount * 100,
@@ -37,7 +37,7 @@ const createRazorpayWallet = async (req, res) => {
         return res.json({ success: true,orderId: order.id,amount: order.amount, currency: order.currency });
     } catch (error) {
         console.error('Error creating Razorpay order:', error);
-        res.status(500).json({ success: false, error: 'Failed to create order' });
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to create order' });
     }
 };
 
@@ -47,7 +47,7 @@ const verifyWalletPayment = (req, res) => {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-            return res.status(400).json({ success: false, error: 'Missing required parameters' });
+            return res.status(BAD_REQUEST).json({ success: false, error: 'Missing required parameters' });
         }
 
         const hmac = crypto.createHmac('sha256', process.env.RAZOR_API_SECRET);
@@ -64,11 +64,11 @@ const verifyWalletPayment = (req, res) => {
             return res.json({ success: true, message: 'Payment verified' });
         } else {
             console.warn('Payment verification failed:', razorpay_payment_id);
-            return res.status(400).json({ success: false, error: 'Invalid payment signature' });
+            return res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
         }
     } catch (error) {
         console.error('Error verifying payment:', error);
-        return res.status(500).json({ success: false, error: 'Payment verification failed' });
+        return res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Payment verification failed' });
     }
 };
 
@@ -81,13 +81,11 @@ const moneyAddWallet = async (req,res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
     
         await User.findByIdAndUpdate({_id : userId}, {$inc: {wallet : amount }}, { new: true })
-        return res.status(200).json({ success: true, message : 'Payment successful and wallet updated' });
+        return res.status(OK).json({ success: true, message : 'Payment successful and wallet updated' });
     } catch (error) {
         console.error("Error adding money to wallet:", error);
-        return res.status(500).json({ success: false, message: "Server error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
     }
 }
-
-
 
 export default {loadWallet, createRazorpayWallet, verifyWalletPayment, moneyAddWallet}

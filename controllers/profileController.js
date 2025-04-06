@@ -14,12 +14,12 @@ const loadOrders = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!userId) {
-            return res.status(401).redirect('/user/login');
+            return res.status(UNAUTHORIZED).redirect('/user/login');
         }
 
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(NOT_FOUND).send('User not found');
         }
 
         const [firstName] = user.name.split(' ');
@@ -49,7 +49,7 @@ const loadOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('Error loading orders:', error.message);
-        res.status(500).send('An error occurred while loading your orders');
+        res.status(INTERNAL_SERVER_ERROR).send('An error occurred while loading your orders');
     }
 };
 
@@ -192,7 +192,7 @@ const updateProfile = async (req,res) => {
             const uniqueUsername = await User.findOne({username});
 
             if(uniqueUsername){
-                return res.status(400).json({error : "Username already taken...!"})
+                return res.status(BAD_REQUEST).json({error : "Username already taken...!"})
             }
         }
 
@@ -223,7 +223,7 @@ const updateProfile = async (req,res) => {
 
 const loadAddress = async (req, res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-    console.log(userId)
+    // console.log(userId)
 
     if (!userId) return res.redirect('/user/login');
 
@@ -308,7 +308,7 @@ const loadEditAddress = async (req, res) => {
     try {
         const { id, index, from } = req.query;
 
-        console.log(from)
+        // console.log(from)
         
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})

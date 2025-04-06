@@ -45,7 +45,7 @@ const loadPayments = async (req, res) => {
         // Calculate grand total
         grandTotal = cartTotal + deliveryCharge - couponDiscount;
 
-        console.log(grandTotal,cartTotal);
+        // console.log(grandTotal,cartTotal);
 
         res.render('user/payment', {
             title: "Checkout",
@@ -86,7 +86,7 @@ const createRazorpayOrder = async (req, res) => {
         });
     } catch (error) {
         console.error('Error creating Razorpay order:', error);
-        res.status(500).json({ success: false, error: 'Failed to create order' });
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to create order' });
     }
 };
 
@@ -99,18 +99,18 @@ const paymentSuccess = async (req, res) => {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         if (!userId) {
             await session.abortTransaction();
-            return res.status(401).json({ error: "Unauthorized. Please log in." });
+            return res.status(UNAUTHORIZED).json({ error: "Unauthorized. Please log in." });
         }
 
         // Input validation
         const { couponApplied, paymentMethod, totalPrice, razorpayPaymentId } = req.body;
-        console.log(req.body)
+        // console.log(req.body)
         
         // Address validation
         const addressId = req.session.deliveryAddress;
         if (!addressId) {
             await session.abortTransaction();
-            return res.status(400).json({ error: "Delivery address not found." });
+            return res.status(BAD_REQUEST).json({ error: "Delivery address not found." });
         }
 
         // Cart validation
@@ -120,7 +120,7 @@ const paymentSuccess = async (req, res) => {
             
         if (!cart || cart.items.length === 0) {
             await session.abortTransaction();
-            return res.status(400).json({ error: "Cart is empty." });
+            return res.status(BAD_REQUEST).json({ error: "Cart is empty." });
         }
 
         // Address retrieval
@@ -131,7 +131,7 @@ const paymentSuccess = async (req, res) => {
 
         if (!address?.details?.[0]) {
             await session.abortTransaction();
-            return res.status(404).json({ error: 'Address not found.' });
+            return res.status(NOT_FOUND).json({ error: 'Address not found.' });
         }
 
         const customer = address.details[0].name;
@@ -144,7 +144,7 @@ const paymentSuccess = async (req, res) => {
             const product = await Products.findById(item.productId._id).session(session);
             if (!product) {
                 await session.abortTransaction();
-                return res.status(404).json({ error: `Product ${item.productId.name} not found.` });
+                return res.status(NOT_FOUND).json({ error: `Product ${item.productId.name} not found.` });
             }
 
             const variantUpdate = await Products.findOneAndUpdate(
@@ -160,7 +160,7 @@ const paymentSuccess = async (req, res) => {
 
             if (!variantUpdate) {
                 await session.abortTransaction();
-                return res.status(400).json({
+                return res.status(BAD_REQUEST).json({
                     error: `Insufficient stock for "${product.name}" (${item.variants.color}, ${item.variants.weight}).`
                 });
             }
@@ -168,7 +168,7 @@ const paymentSuccess = async (req, res) => {
             itemTotal += item.price;
         }
 
-        console.log(itemTotal);
+        // console.log(itemTotal);
         
 
         // Wallet balance check for wallet payments
@@ -176,7 +176,7 @@ const paymentSuccess = async (req, res) => {
             const user = await User.findById(userId).session(session);
             if (user.wallet < totalPrice) {
                 await session.abortTransaction();
-                return res.status(400).json({ error: "Insufficient wallet balance." });
+                return res.status(BAD_REQUEST).json({ error: "Insufficient wallet balance." });
             }
             
             // Deduct from wallet
@@ -228,7 +228,7 @@ const paymentSuccess = async (req, res) => {
 
         await session.commitTransaction();
 
-        return res.status(200).json({
+        return res.status(OK).json({
             success: true,
             message: paymentMethod === 'cod' 
                 ? 'Order placed successfully. Payment pending.' 
@@ -240,7 +240,7 @@ const paymentSuccess = async (req, res) => {
         await session.abortTransaction();
         console.error("Order Processing Error:", error);
         
-        return res.status(500).json({ 
+        return res.status(INTERNAL_SERVER_ERROR).json({ 
             error: "Internal server error.",
         });
     } finally {
@@ -260,11 +260,11 @@ const verifyPayment = (req, res) => {
             console.log('Payment verified');
             res.json({ success: true });
         } else {
-            res.status(400).json({ success: false, error: 'Invalid payment signature' });
+            res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
         }
     } catch (error) {
         console.error('Error verifying payment:', error);
-        res.status(500).json({ success: false, error: 'Payment verification failed' });
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Payment verification failed' });
     }
 };
 
@@ -275,7 +275,7 @@ const paymentFailed = async (req, res) => {
 
         if (!userId) {
             console.error('User ID is missing in session.');
-            return res.status(400).render('error', { title: "Error", message: 'Invalid session. Please log in again.' });
+            return res.status(BAD_REQUEST).render('error', { title: "Error", message: 'Invalid session. Please log in again.' });
         }
 
         const user = await User.findById(userId);
@@ -287,7 +287,7 @@ const paymentFailed = async (req, res) => {
 
         if (!latestOrder) {
             console.error('No order found for user.');
-            return res.status(400).render('error', { title: "Error", message: 'No recent order found.' });
+            return res.status(BAD_REQUEST).render('error', { title: "Error", message: 'No recent order found.' });
         }
 
         const orderItemCount = req.session.orderItemCount;
@@ -305,14 +305,14 @@ const paymentFailed = async (req, res) => {
 
         if (!orders.length) {
             console.error('No matching orders found.');
-            return res.status(400).render('error', { title: "Error", message: 'No matching orders found.' });
+            return res.status(BAD_REQUEST).render('error', { title: "Error", message: 'No matching orders found.' });
         }
 
 
-        return res.status(200).json({message :'payment failed', redirectUrl : '/user/payment-failed'})
+        return res.status(OK).json({message :'payment failed', redirectUrl : '/user/payment-failed'})
     } catch (err) {
         console.error('Error handling payment failure:', err);
-        res.status(500).render('error', { title: "Error", message: 'Error processing payment failure' });
+        res.status(INTERNAL_SERVER_ERROR).render('error', { title: "Error", message: 'Error processing payment failure' });
     }
 };
 

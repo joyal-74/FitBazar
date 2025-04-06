@@ -13,39 +13,35 @@ const addItemToCart = async (req, res) => {
     try {
         const { userId, productId, quantity, basePrice, price, variants } = req.body;
 
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
 
         if (!userId) {
-            return res.status(401).json({ error: 'Please log in to add items to your cart.' });
+            return res.status(UNAUTHORIZED).json({ error: 'Please log in to add items to your cart.' });
         }
 
-        // Validate inputs
         if (!productId || !quantity || !price || quantity <= 0 || price <= 0) {
-            return res.status(400).json({ error: 'Invalid input values.' });
+            return res.status(NOT_FOUND).json({ error: 'Invalid input values.' });
         }
 
-        // Find product and validate visibility
         const product = await Products.findOne({ _id: productId, visibility: true });
         if (!product) {
-            return res.status(404).json({ error: 'Product not found.' });
+            return res.status(NOT_FOUND).json({ error: 'Product not found.' });
         }
 
         let availableStock = product.stock;
 
-        // Check variant stock if applicable
         if (variants?.color || variants?.weight) {
             const variant = product.variants.find(
                 v => v.color === variants.color && v.weight === variants.weight
             );
             if (!variant) {
-                return res.status(400).json({ error: 'Selected variant not available.' });
+                return res.status(NOT_FOUND).json({ error: 'Selected variant not available.' });
             }
             availableStock = variant.stock;
         }
 
-        // Validate quantity against stock
         if (quantity > availableStock) {
-            return res.status(400).json({
+            return res.status(NOT_FOUND).json({
                 error: `Only ${availableStock} units of "${product.name}" available in stock for this variant.`
             });
         }
@@ -62,7 +58,6 @@ const addItemToCart = async (req, res) => {
             productImage: product.images[0]
         };
 
-        // Update or create cart using atomic updates
         const cart = await Cart.findOneAndUpdate(
             { userId, 'items.productId': product._id, 'items.variants.color': variants?.color, 'items.variants.weight': variants?.weight },
             {
@@ -80,16 +75,15 @@ const addItemToCart = async (req, res) => {
             );
         }
 
-        // Remove from wishlist and update user cart reference in parallel
         await Promise.all([
             Wishlist.findOneAndDelete({ product: productId }),
             User.findByIdAndUpdate(userId, { $set: { cart: cart?._id } })
         ]);
 
-        return res.status(200).json({ message: 'Item added to cart successfully!' });
+        return res.status(OK).json({ message: 'Item added to cart successfully!' });
     } catch (error) {
         console.error('Add to cart error:', error);
-        return res.status(500).json({ error: 'Internal server error.' });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal server error.' });
     }
 };
 
@@ -126,7 +120,7 @@ const updateQuantity = async (req, res) => {
         const cart = await Cart.findOne({ userId: userId });
 
         if (!cart) {
-            return res.status(404).json({ message: "Cart not found" });
+            return res.status(NOT_FOUND).json({ message: "Cart not found" });
         }
 
         const item = cart.items.find(item =>
@@ -136,7 +130,7 @@ const updateQuantity = async (req, res) => {
         );
 
         if (!item) {
-            return res.status(404).json({ message: "Product not found in cart" });
+            return res.status(NOT_FOUND).json({ message: "Product not found in cart" });
         }
 
         const product = await Products.findOne({
@@ -150,7 +144,7 @@ const updateQuantity = async (req, res) => {
         });
 
         if (!product) {
-            return res.status(404).json({ message: "Product not found" });
+            return res.status(NOT_FOUND).json({ message: "Product not found" });
         }
 
         const variant = product.variants.find(v =>
@@ -161,20 +155,20 @@ const updateQuantity = async (req, res) => {
             if (item.quantity < variant.stock) {
                 item.quantity += 1;
             } else {
-                return res.status(400).json({ error: "Product stock limit reached" });
+                return res.status(NOT_FOUND).json({ error: "Product stock limit reached" });
             }
         } else if (change < 0 && item.quantity > 1) {
             item.quantity -= 1;
         } else if (change < 0 && item.quantity === 1) {
-            return res.status(200).json({ message: "Quantity unchanged as it’s already at minimum", cart });
+            return res.status(OK).json({ message: "Quantity unchanged as it’s already at minimum", cart });
         }
 
         await cart.save();
 
-        return res.status(200).json({ message: "Quantity updated successfully", cart });
+        return res.status(OK).json({ message: "Quantity updated successfully", cart });
     } catch (error) {
         console.error("Error updating quantity:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
 };
 
@@ -230,7 +224,6 @@ const loadCheckout = async (req, res) => {
         minPrice: { $lte: grandTotal }
     });
 
-    // Render checkout with all calculated values
     res.render('user/checkout', { 
         title: "Checkout", 
         coupons, 
@@ -309,7 +302,7 @@ const editshoppingAddress = async (req,res) =>{
     try {
         const { fullName, phone, addressLine1, addressLine2, landmark, city, state, country, altNumber, addressType, zipCode, index } = req.body;
 
-        console.log(req.body)
+        // console.log(req.body)
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
@@ -389,7 +382,7 @@ const confirmOrder = async (req, res) => {
     
         if (!userId) {
             console.error('User ID is missing in session.');
-            return res.status(400).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
+            return res.status(NOT_FOUND).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
         }
 
         const user = await User.findById(userId);
@@ -401,7 +394,7 @@ const confirmOrder = async (req, res) => {
         
         if (!latestOrder) {
             console.error('No order found for user.');
-            return res.status(400).render('error', { title : "error", message: 'No recent order found.' });
+            return res.status(NOT_FOUND).render('error', { title : "error", message: 'No recent order found.' });
         }
 
         const orderItemCount = latestOrder.orderItemCount;
@@ -413,11 +406,11 @@ const confirmOrder = async (req, res) => {
 
         if (!orders.length) {
             console.error('No matching orders found.');
-            return res.status(400).render('error', { title : "error", message: 'No matching orders found.' });
+            return res.status(NOT_FOUND).render('error', { title : "error", message: 'No matching orders found.' });
         }
 
         const addressId = orders[0].address;
-        console.log(`Address ID: ${addressId}`);
+        // console.log(`Address ID: ${addressId}`);
 
         // Fetch the full address directly by _id
         const address = await Address.findOne(
@@ -427,7 +420,7 @@ const confirmOrder = async (req, res) => {
 
         if (!address) {
             console.error('Address not found.');
-            return res.status(400).render('error', {title : "error", message: 'Shipping address not found.' });
+            return res.status(NOT_FOUND).render('error', {title : "error", message: 'Shipping address not found.' });
         }
 
         const shippingAddress = address.details[0];
@@ -435,7 +428,7 @@ const confirmOrder = async (req, res) => {
         return res.render('user/confirmOrder', { title : "Order Confirmation", user, shippingAddress, orders });
     } catch (error) {
         console.error(`Error confirming order: ${error}`);
-        return res.status(500).render('error', { title : "error", message: 'Something went wrong. Please try again later.' });
+        return res.status(INTERNAL_SERVER_ERROR).render('error', { title : "error", message: 'Something went wrong. Please try again later.' });
     }
 };
 

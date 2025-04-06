@@ -40,7 +40,7 @@ const adminLogin = async (req, res) => {
 
 const logout = (req, res) => {
     req.session.destroy(err => {
-        if (err) return res.status(500).send("Error logging out.");
+        if (err) return res.status(INTERNAL_SERVER_ERROR).send("Error logging out.");
         res.clearCookie("connect.sid").redirect("/admin/login");
     });
 };
@@ -100,7 +100,7 @@ const loadOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).send('Server Error');
+        res.status(INTERNAL_SERVER_ERROR).send('Server Error');
     }
 
 };
@@ -109,23 +109,18 @@ const loadOrders = async (req, res) => {
 
 const viewOrders = async (req, res) => {
     const orderId = req.query.id;
-    console.log(orderId);
-    
-    const order = await Order.findOne({ orderId }).populate('userId', 'name');
+
+    const order = await Order.findOne({ orderId }).populate('userId').populate('product','name');
     // console.log(order);
 
     const addressId = order.address
-
-    console.log(addressId)
 
     const addresses = await Address.findOne(
         { 'details._id': addressId },
         { details: { $elemMatch: { _id: addressId } } }
     );
 
-    const address = addresses?.details?.[0] || null;
-    console.log(address);
-    
+    const address = addresses?.details?.[0] || null; 
 
     res.render('admin/vieworders', { title: 'Orders', order, address });
 }
@@ -141,7 +136,7 @@ async function updateStatus(req, res) {
     
         const order = await Order.findOne({ orderId: id });
         if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
         order.status = status;
@@ -150,9 +145,9 @@ async function updateStatus(req, res) {
         order.updatedAt = new Date();
         await order.save();
 
-        res.status(200).json({ message: 'Status updated successfully', order });
+        res.status(OK).json({ message: 'Status updated successfully', order });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating status', error });
+        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Error updating status', error });
     }
 }
 
