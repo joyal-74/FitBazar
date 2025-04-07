@@ -8,19 +8,14 @@ const checkStatus = (req, res, next) => {
 };
 
 
-const redirectIfLoggedIn = (req, res, next) => {
-    if (req.session.userLogged && req.session.user) {
-        return res.redirect('/');
-    }
-    next();
-};
-
 const isLogin = (req,res,next)=>{
-    if(req.session.user){
+    console.log(req.session.userLogged);
+    
+    if(req.session.userLogged){
         res.redirect('/')
     }else{
         next()
     }
 }
 
-export default {checkStatus, redirectIfLoggedIn , isLogin };
+export default {checkStatus , isLogin };

@@ -6,7 +6,7 @@ import userAuth from "../middleware/userAuth.js";
 
 
 //session handled home route
-router.get('/', userAuth.redirectIfLoggedIn, userController.getUserHome);
+router.get('/', userController.getUserHome);
 
 //shop page
 router.get('/shop', productController.loadShop)

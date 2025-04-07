@@ -12,6 +12,10 @@ import emailTemplate from "../helpers/emailTemplate.js";
 const getUserHome = async (req, res)=> {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
+    if(!userId){
+        req.session.userLogged = false;
+    }
+
     const user = await User.findOne({ _id : userId});
     const category = await Category.find({visibility : true});
     const product = await Products.find({visibility : true}).populate('category').sort({createdAt : -1}).limit(8);
@@ -193,6 +197,7 @@ const generateOtp = async (req, res) => {
     req.session.otp = otp;
     req.session.email = email;
     req.session.otpExpire = Date.now() + 60 * 1000;
+    
     const timeLeft = Math.floor((req.session.otpExpire - Date.now()) / 1000);
     req.session.requestFrom = "forgot-password";
 

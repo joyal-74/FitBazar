@@ -70,14 +70,8 @@ router.post('/wallet', walletController.moneyAddWallet);
 router.get('/checkout', cartControlller.loadCheckout);
 router.post('/checkout', cartControlller.checkoutDetails);
 router.post('/validate-coupon', couponController.validateCoupon);
-
 router.post('/shoppingAddress', cartControlller.addShoppingAddress);
 router.put('/shoppingAddress', cartControlller.editshoppingAddress);
-
-router.get('/confirmOrder', cartControlller.confirmOrder);
-router.get('/payment-failed', paymentController.loadPaymentFailed);
-// router.post('/payment-failed', paymentController.paymentFailed);
-
 
 // order management
 router.get('/orders', profileController.loadOrders);
@@ -85,7 +79,10 @@ router.get('/orderDetails', profileController.loadOrderDetails);
 router.post('/orders/return', refundController.requestRefund);
 router.patch('/orders/cancel', refundController.cancelOrder);
 router.get('/orders/invoice', refundController.generateInvoice);
+router.get('/confirmOrder', cartControlller.confirmOrder);
+router.get('/payment-failed', paymentController.loadPaymentFailed);
 
+// review route
 router.post('/review', reviewController.addReview);
 
 // logout route

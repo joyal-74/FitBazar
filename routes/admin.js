@@ -24,8 +24,6 @@ router.get('/categories',adminAuth.checkSession, categoryController.categoryInfo
 router.post('/categories', upload.single("addThumbnail"), categoryController.addCategory);
 router.put('/categories', upload.single('editThumbnail'),categoryController.editCategory);
 router.get('/categories/filter', adminAuth.checkSession, categoryController.filterCategories);
-
-
 router.post('/categories/offer', offerController.addCategoryOffer);
 router.patch('/categories/offer', offerController.removeCategorytOffer);
 
@@ -35,7 +33,6 @@ router.get('/newProducts', adminAuth.checkSession, productController.loadaddProd
 router.post('/addProducts',upload.any(),productController.addProducts);
 router.get('/updateProducts/:productId',adminAuth.checkSession, productController.loadEditProducts);
 router.put('/products/:productId',upload.any(),productController.editProducts);
-
 router.post('/products/offer', offerController.addProductOffer);
 router.patch('/products/offer', offerController.removeProductOffer);
 
@@ -46,22 +43,20 @@ router.get('/viewcustomers',adminAuth.checkSession, customerController.userDeata
 router.post('/viewcustomers', customerController.changeBlockStatus);
 router.get('/customers/filter',adminAuth.checkSession, customerController.filterCustomers);
 
-
 // order management
 router.get('/orders',adminAuth.checkSession, adminController.loadOrders);
 router.patch('/orders', adminController.updateStatus);
 router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 
-
 // Return management
 router.get('/refunds', adminAuth.checkSession, refundController.loadReturnPage);
 router.patch('/refunds', refundController.updateRefundStatus);
 
+// coupon management
 router.get('/coupons',adminAuth.checkSession, couponController.loadCouponPage);
 router.post('/coupons',adminAuth.checkSession, couponController.addCoupon);
 router.put('/coupons', adminAuth.checkSession, couponController.editCoupon);
 router.delete('/coupons', adminAuth.checkSession, couponController.deleteCoupon);
-
 
 // sales report
 router.get('/sales',adminAuth.checkSession, salesController.loadSalesReport);

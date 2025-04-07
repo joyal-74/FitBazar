@@ -217,8 +217,6 @@ const loadEditProducts = async (req, res) => {
 
 const loadproductDetails = async (req, res) => {
     const { productId, category } = req.query;
-
-    console.log(productId,category);
     
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
