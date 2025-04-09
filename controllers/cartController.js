@@ -53,7 +53,6 @@ const addItemToCart = async (req, res) => {
             quantity: parseInt(quantity),
             price,
             basePrice,
-            stock: availableStock,
             variants,
             productImage: product.images[0]
         };
@@ -82,7 +81,7 @@ const addItemToCart = async (req, res) => {
 
         return res.status(OK).json({ message: 'Item added to cart successfully!' });
     } catch (error) {
-        console.error('Add to cart error:', error);
+        console.error('Add to cart error:', error.message);
         return res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal server error.' });
     }
 };
@@ -155,12 +154,12 @@ const updateQuantity = async (req, res) => {
             if (item.quantity < variant.stock) {
                 item.quantity += 1;
             } else {
-                return res.status(NOT_FOUND).json({ error: "Product stock limit reached" });
+                return res.status(BAD_REQUEST).json({ error: "Product stock limit reached" });
             }
         } else if (change < 0 && item.quantity > 1) {
             item.quantity -= 1;
         } else if (change < 0 && item.quantity === 1) {
-            return res.status(OK).json({ message: "Quantity unchanged as it’s already at minimum", cart });
+            return res.status(BAD_REQUEST).json({ message: "Quantity unchanged as it’s already at minimum", cart });
         }
 
         await cart.save();

@@ -99,7 +99,7 @@
                     };
 
                     try {
-                        const response = await fetch('/user/addTocart', {
+                        const response = await fetch('/user/cart', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(productDetails)
@@ -146,8 +146,8 @@
                     const wishlistId = button.dataset.wishlistId;
 
                     try {
-                        const response = await fetch('/user/wishlist/remove', {
-                            method: 'POST',
+                        const response = await fetch('/user/wishlist', {
+                            method: 'DELETE',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ wishlistId })
                         });

@@ -29,10 +29,6 @@ const cartItemSchema = new Schema({
         type: Number,
         required: true 
     },
-    stock: {
-        type: Number,
-        required: true
-    },
     variants: {
         color: {
             type: String,

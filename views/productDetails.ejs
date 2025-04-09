@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const response = await fetch('/user/addTocart', {
+            const response = await fetch('/user/cart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(productDetails)
@@ -533,15 +533,15 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Added to Wishlist',
+                    text: 'Added to Wishlist',
                     showConfirmButton: false,
                     timer: 1500
                 });
-                // Update button appearance
+
                 addToWishlistBtn.querySelector('.wishlist-text').textContent = 'In Wishlist';
                 addToWishlistBtn.classList.remove('btn-outline-secondary');
                 addToWishlistBtn.classList.add('btn-success');
-                addToWishlistBtn.disabled = true; // Prevent multiple adds
+                addToWishlistBtn.disabled = true;
             }
         } catch (error) {
             console.log(error)
@@ -620,9 +620,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initialize display
+
     if (variants && variants.length > 0) {
-        // Set initial values from the buttons marked as active in HTML
+ 
         const initialColorButton = Array.from(colorButtons).find(btn => btn.classList.contains('active'));
         const initialWeightButton = Array.from(weightButtons).find(btn => btn.classList.contains('active'));
 
@@ -633,7 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedWeightInput.value = initialWeightButton.dataset.weight;
         }
 
-        // If no active buttons found, set first available variant
         if (!selectedColorInput.value || !selectedWeightInput.value) {
             const firstVariant = variants[0];
             if (!selectedColorInput.value && firstVariant.color) {

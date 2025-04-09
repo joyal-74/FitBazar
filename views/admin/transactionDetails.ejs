@@ -1,0 +1,124 @@
+<body class="bg-violet">
+    <!-- Navbar -->
+    <%- include('../partials/header') %>
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid w-100 sidebar-header">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <%- include('../partials/sidebar', { activePage: 'transaction' }) %>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-2 py-4 mx-auto">
+                <h1 class="h3 mb-4 fw-bold text-dark">Transaction Details</h1>
+                <div class="row">
+                    <!-- Order Summary -->
+                    <div class="col-md-7">
+                        <div class="card mb-4 border-0" style="border-radius: 15px; overflow: hidden;">
+                            <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
+                                <h5 class="card-title mb-0 fw-bold">Order Details</h5>
+                            </div>
+                            <div class="card-body p-4" style="background: #fff;">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p class="mb-2"><strong class="text-muted">Transaction ID</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Transaction Date</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Payment Type</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Payment Amount</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Payment Status</strong></p>
+                                    </div> 
+                                    <div class="col-md-7">
+                                        <p class="mb-2" class="text-muted"><%= wallet.transactionId %> </p>
+                                        <p class="mb-2" class="text-muted"><%= new Date(wallet.createdAt).toLocaleString('en-GB') %> </p>
+                                        <p class="mb-2" class="text-muted"><%= wallet.type %> </p>
+                                        <p class="mb-2" class="text-muted">₹<%= wallet.amount %> </p>
+                                        <p class="mb-2" class="text-muted"><%= wallet.entryType %> </p>
+                                    </div> 
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4 border-0" style="border-radius: 15px; overflow: hidden;">
+                            <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
+                                <h5 class="card-title mb-0 fw-bold">Product Details</h5>
+                            </div>
+                            <div class="card-body p-4" style="background: #fff;">
+                                <div class="row">
+                                    <div class="mt-2">
+                                        <p class="mb-1 text-muted fw-bold"></p>
+                                        <p class="mb-1 text-muted">
+                                            
+                                        </p>                                        
+                                        <p class="mb-1 text-muted"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Change Status Section -->
+                    <div class="col-md-5">
+                        <div class="card border-0" style="border-radius: 15px; overflow: hidden; height: 480px;">
+                            <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
+                                <h5 class="card-title mb-0 fw-bold">User Details</h5>
+                            </div>
+                            <div class="card-body py-4 px-4" style="background: #ffffff;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <p class="mb-2"><strong class="text-muted">User ID </strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Name</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Phone Number</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Email</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Total Orders</strong></p>
+                                        <p class="mb-2"><strong class="text-muted">Address</strong></p>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="mb-2" class="text-muted"><%= wallet.userId.userId %> </p>
+                                        <p class="mb-2" class="text-muted"><%= wallet.userId.name %></p>
+                                        <p class="mb-2" class="text-muted"><%= wallet.userId.phone || "no phone number" %></p>
+                                        <p class="mb-2" class="text-muted"><%= wallet.userId.email %></p>
+                                        <p class="mb-2" class="text-muted">Total Orders</p>
+                                        <p class="mb-2" class="text-muted"><%= address.addressLine1 %>, <%= address.addressLine2 %>, <%= address.city %>, <%= address.state %>, <%= address.pincode %>, India</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Cancel Reason Modal -->
+    <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #5b3f64; color: white;">
+                    <h5 class="modal-title" id="cancelReasonModalLabel">Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="cancelOrderId">
+                    <div class="mb-3">
+                        <label for="cancelReason" class="form-label fw-bold text-muted">Reason for Cancellation</label>
+                        <select class="form-select" id="cancelReason" required>
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="Customer changed mind">Customer changed mind</option>
+                            <option value="Product out of stock">Product out of stock</option>
+                            <option value="Shipping delay">Shipping delay</option>
+                            <option value="Order placed by mistake">Order placed by mistake</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a reason for cancellation.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" onclick="submitCancelReason()">Confirm Cancellation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>

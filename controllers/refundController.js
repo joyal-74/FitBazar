@@ -122,7 +122,7 @@ const generateInvoice = async (req, res) => {
 
         const addressId = order.address
 
-        // console.log(addressId)
+        console.log(addressId)
 
         const addresses = await Address.findOne(
             { 'details._id': addressId },
@@ -130,6 +130,9 @@ const generateInvoice = async (req, res) => {
         );
 
         const address = addresses?.details?.[0] || null;
+
+        console.log(address);
+        
 
 
         const filePath = await generateInvoicePDF(order, address);
@@ -211,7 +214,7 @@ const updateRefundStatus = async (req, res) => {
         }
 
         if (status === 'Approved') {
-            user.wallet += order.totalPrice;
+            user.wallet += order.discountPrice;
             await user.save();
 
             const productId = order.product
@@ -247,7 +250,7 @@ const updateRefundStatus = async (req, res) => {
             refund.status = status;
             await refund.save();
 
-            return res.status(OK).json({ message: `Refund of ₹${order.totalPrice.toFixed(2)} processed successfully` });
+            return res.status(OK).json({ message: `Refund of ₹${order.discountPrice} processed successfully` });
         } else {
             refund.status = status;
             await refund.save();

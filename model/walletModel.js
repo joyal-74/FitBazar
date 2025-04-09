@@ -7,6 +7,15 @@ const walletSchema = new Schema({
         ref: 'User',
         required: true
     },
+    address: {
+        type: Schema.Types.ObjectId,
+        ref: 'Address',
+        required: true
+    },
+    transactionId : {
+        type : String,
+        required : true
+    },
     type: {
         type: String,
         required: true
@@ -18,6 +27,10 @@ const walletSchema = new Schema({
     status: {
         type: String,
         default: 'pending'
+    },
+    entryType : {
+        type : String,
+        enum : ['CREDIT','DEBIT']
     }
 },{timestamps : true});
 

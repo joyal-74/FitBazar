@@ -34,7 +34,7 @@ router.post('/resetpass',userController.changePassword)
 // profile management
 router.get('/profile', profileController.loadprofile);
 router.get('/profileU', profileController.loadUpdateProfile);
-router.put('/profile', upload.single('profilePic'), profileController.updateProfile)
+router.put('/profile', upload.single('profilePic'), profileController.updateProfile);
 router.post('/sendotp', profileController.sendOTP);
 router.post('/verifymail', profileController.verifyOTP);
 
@@ -52,10 +52,10 @@ router.post('/privacy', profileController.updatePassword);
 // wishlist routes
 router.get('/wishlist', wishlistController.getWishlist);
 router.post('/wishlist', wishlistController.addToWishlist);
-router.post('/wishlist/remove', wishlistController.removeFromWishlist);
+router.delete('/wishlist', wishlistController.removeFromWishlist);
 
 //cart routes
-router.post('/addToCart', cartControlller.addItemToCart)
+router.post('/cart', cartControlller.addItemToCart);
 router.get('/cart', cartControlller.loadCart);
 router.patch('/cart', cartControlller.updateQuantity);
 router.delete('/cart', cartControlller.deleteFromcart);

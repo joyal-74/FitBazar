@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import User from "../model/userModel.js";
-import Addresses from '../model/addressModel.js'
 import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
@@ -232,7 +231,7 @@ const loadAddress = async (req, res) => {
     const [firstName, lastName] = user.name.split(' ');
 
     try {
-        const addresses = await Addresses.find({ userId : userId });
+        const addresses = await Address.find({ userId : userId });
 
         res.render('user/address', {
             title: 'Manage Addresses',

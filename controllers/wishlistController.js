@@ -13,6 +13,7 @@ const getWishlist = async (req, res) => {
         }
 
         const wishlist = await Wishlist.find({ userId }).populate('product');
+        
         res.render('user/wishlist', { 
             title : "Wishlist",
             wishlist,

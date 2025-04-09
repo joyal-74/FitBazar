@@ -55,3 +55,10 @@ _______________________
 6. remove unwanted consoles [x]
 7. double check all functionalities before review []
 8. add to cart in details and home page cads []
+
+
+week - 11 - suggetions
+_______________________
+
+1. coupon applied with - discount -checkout page
+2. 

@@ -2,6 +2,8 @@ import User from "../model/userModel.js";
 import { razorpay } from "../config/razorpay.js";
 import crypto from 'crypto'; 
 import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
+import Wallet from "../model/walletModel.js";
+import Address from "../model/addressModel.js";
 
 const loadWallet = async(req, res) =>{
     try {
@@ -88,4 +90,37 @@ const moneyAddWallet = async (req,res) => {
     }
 }
 
-export default {loadWallet, createRazorpayWallet, verifyWalletPayment, moneyAddWallet}
+
+const loadTransactions = async (req,res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 7;
+    const skip = (page - 1) * limit;
+    const filter = {};
+
+    const wallet = await Wallet.find(filter).sort({createdAt : -1}).skip(skip).limit(limit).populate('userId');
+
+    const totalTransactions = await Wallet.countDocuments(filter);
+    const totalPages = Math.ceil(totalTransactions / limit);
+
+    res.render('admin/transactions', {title : "Wallet management", wallet, totalPages, currentPage : page });
+}
+
+const loadTransactionDetails = async (req,res) => {
+    const {walletId} = req.query
+    const wallet = await Wallet.findOne({_id : walletId}).populate('userId')
+
+    const addressId = wallet.address
+    
+        const addresses = await Address.findOne(
+            { 'details._id': addressId },
+            { details: { $elemMatch: { _id: addressId } } }
+        );
+    
+        const address = addresses?.details?.[0] || null; 
+
+    res.render('admin/transactionDetails', {title : "Wallet management", wallet, address });
+}
+
+export default {loadWallet, createRazorpayWallet, verifyWalletPayment, moneyAddWallet,
+    loadTransactions, loadTransactionDetails
+}

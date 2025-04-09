@@ -9,6 +9,7 @@ import crypto from 'crypto';
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
 
 
@@ -90,6 +91,10 @@ const createRazorpayOrder = async (req, res) => {
     }
 };
 
+function generateTxnId(prefix = 'TXN') {
+    const id = nanoid(10).toUpperCase();
+    return `${prefix}-${id}`;
+  }
 
 const paymentSuccess = async (req, res) => {
     const session = await mongoose.startSession();
@@ -102,18 +107,15 @@ const paymentSuccess = async (req, res) => {
             return res.status(UNAUTHORIZED).json({ error: "Unauthorized. Please log in." });
         }
 
-        // Input validation
         const { couponApplied, paymentMethod, totalPrice, razorpayPaymentId } = req.body;
         // console.log(req.body)
-        
-        // Address validation
+
         const addressId = req.session.deliveryAddress;
         if (!addressId) {
             await session.abortTransaction();
             return res.status(BAD_REQUEST).json({ error: "Delivery address not found." });
         }
 
-        // Cart validation
         const cart = await Cart.findOne({ userId })
             .populate('items.productId')
             .session(session);
@@ -123,11 +125,11 @@ const paymentSuccess = async (req, res) => {
             return res.status(BAD_REQUEST).json({ error: "Cart is empty." });
         }
 
-        // Address retrieval
         const address = await Address.findOne(
             { 'details._id': new mongoose.Types.ObjectId(addressId) },
             { 'details.$': 1 }
         ).session(session);
+
 
         if (!address?.details?.[0]) {
             await session.abortTransaction();
@@ -135,11 +137,11 @@ const paymentSuccess = async (req, res) => {
         }
 
         const customer = address.details[0].name;
+        const shoppingAddress = address?.details?.[0]
         const orderItemCount = cart.items.length;
         const createdOrders = [];
         let itemTotal = 0;
 
-        // Stock verification and reduction
         for (const item of cart.items) {
             const product = await Products.findById(item.productId._id).session(session);
             if (!product) {
@@ -171,7 +173,6 @@ const paymentSuccess = async (req, res) => {
         // console.log(itemTotal);
         
 
-        // Wallet balance check for wallet payments
         if (paymentMethod === 'wallet') {
             const user = await User.findById(userId).session(session);
             if (user.wallet < totalPrice) {
@@ -179,7 +180,6 @@ const paymentSuccess = async (req, res) => {
                 return res.status(BAD_REQUEST).json({ error: "Insufficient wallet balance." });
             }
             
-            // Deduct from wallet
             await User.findByIdAndUpdate(
                 userId,
                 { $inc: { wallet: -totalPrice } },
@@ -197,7 +197,7 @@ const paymentSuccess = async (req, res) => {
             const orderData = {
                 userId,
                 orderId,
-                address: addressId,
+                address: shoppingAddress,
                 product: item.productId._id,
                 quantity: item.quantity,
                 price: productTotal,
@@ -221,9 +221,20 @@ const paymentSuccess = async (req, res) => {
             const order = new Order(orderData);
             await order.save({ session });
             createdOrders.push(order);
+
+            const transactionId = generateTxnId()
+
+            await Wallet.create({
+                userId,
+                address : shoppingAddress,
+                transactionId, 
+                type: paymentMethod,
+                amount: discountPrice,
+                status: paymentMethod === 'cod' ? 'Pending' : 'Paid',
+                entryType : 'DEBIT',
+            });
         }
 
-        // Clear cart
         await Cart.findByIdAndDelete(cart._id).session(session);
 
         await session.commitTransaction();

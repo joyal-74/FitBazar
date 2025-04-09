@@ -231,7 +231,7 @@
                                 <button class="btn btn-warning" onclick="openReturnModal('<%= order._id %>')">
                                     Return Order
                                 </button>
-                            <% } else if (order.status === 'Pending') { %>
+                            <% } else if (order.status !== 'Delivered') { %>
                                 <button class="btn btn-danger" onclick="openCancelModal('<%= order._id %>')">
                                     Cancel Order
                                 </button>

@@ -209,6 +209,16 @@
                     return;
                 }
 
+                if (totalPrice > 1000 && paymentMethod =='cod' ) {
+                    Swal.fire({
+                        text: 'Cash on delivery Not allowed for payments above ₹1000',
+                        icon: 'warning',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
                 // Show loading state
                 const submitButton = paymentForm.querySelector('button[type="submit"]');
                 submitButton.disabled = true;

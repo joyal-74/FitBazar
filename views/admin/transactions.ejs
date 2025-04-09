@@ -1,0 +1,104 @@
+<body class="bg-violet">
+
+    <!-- Navbar -->
+    <%- include('../partials/header') %>
+
+    <!-- Sidebar + Main Content Wrapper -->
+    <div class="container-fluid w-100 sidebar-header">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <%- include('../partials/sidebar', { activePage: 'transaction' }) %>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+                <h1 class="h3 mb-4 fw-bold">Transactions</h1>
+
+                <!-- Filters and Add Product Button -->
+                <div class="d-flex flex-wrap align-items-center justify-content-end gap-3 mb-4">
+            
+                    <!-- Search Bar -->
+                    <form class="d-flex search-container flex-grow-1" id="searchForm" style="max-width: 300px;">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchval">
+                        <button class="btn" type="submit" style="background-color: #6d4e77;">
+                            <i class="fas fa-search text-white"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Products Table -->
+                <div class="card">
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover text-center customer-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Transaction ID</th>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+
+                                <% wallet.forEach((wallet, index) => { %>
+                                    <tbody>
+                                        <td><%= index+1 %></td>
+                                        <td><%= wallet.transactionId  %></td>
+                                        <td><%= new Date(wallet.createdAt).toLocaleString('en-GB') %></td>
+                                        <td><%= wallet.userId?.name %></td>
+                                        <td><%= wallet.type %></td>
+                                        <td>₹<%= wallet.amount %></td>
+                                        <td><%= wallet.status %></td>
+                                        <td><button class="btn btn-outline-secondary txnDetailsBtn " id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
+                                    </tbody>
+                                <% }) %>
+                            </table>                     
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-3 ">
+                    <nav>
+                        <ul class="pagination pagination-sm">
+                            <!-- Previous Page Button -->
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <!-- Page Numbers -->
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <!-- Next Page Button -->
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.txnDetailsBtn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const walletId = e.target.getAttribute('data-walletId');
+                window.location.href = `/admin/transactionDetails?walletId=${walletId}`;
+            });
+        });
+      </script>  
+</body>

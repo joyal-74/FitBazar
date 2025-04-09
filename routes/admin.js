@@ -10,6 +10,7 @@ import refundController from "../controllers/refundController.js";
 import couponController from '../controllers/couponController.js'
 import offerController from "../controllers/offerController.js";
 import salesController from '../controllers/salesController.js'
+import walletController from "../controllers/walletController.js";
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -62,6 +63,10 @@ router.delete('/coupons', adminAuth.checkSession, couponController.deleteCoupon)
 router.get('/sales',adminAuth.checkSession, salesController.loadSalesReport);
 router.get('/sales/download/pdf', salesController.generateSalesReportPDF);
 router.get('/sales/download/excel', salesController.downloadSalesReportExcel);
+
+// Wallet management routes
+router.get('/transactions', walletController.loadTransactions);
+router.get('/transactionDetails', walletController.loadTransactionDetails);
 
 
 export default router;

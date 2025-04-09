@@ -8,9 +8,7 @@ const checkStatus = (req, res, next) => {
 };
 
 
-const isLogin = (req,res,next)=>{
-    console.log(req.session.userLogged);
-    
+const isLogin = (req,res,next)=>{    
     if(req.session.userLogged){
         res.redirect('/')
     }else{

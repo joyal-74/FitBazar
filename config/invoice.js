@@ -85,7 +85,7 @@ export const generateInvoicePDF = async (order, address) => {
                 <div class="order-details">
                     <p><strong>Order ID:</strong> ${order.orderId}</p>
                     <p><strong>Date:</strong> ${date}</p>
-                    <p><strong>Total Price:</strong> ₹${order.price.toFixed(2)}</p>
+                    <p><strong>Total Price:</strong> ₹${(order.discountPrice).toFixed(2)}</p>
                 </div>
 
                 <!-- Address Details -->
