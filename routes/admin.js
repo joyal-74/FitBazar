@@ -11,6 +11,7 @@ import couponController from '../controllers/couponController.js'
 import offerController from "../controllers/offerController.js";
 import salesController from '../controllers/salesController.js'
 import walletController from "../controllers/walletController.js";
+import dashboardController from "../controllers/dashboardController.js";
 
 // admin login route
 router.get('/login', adminAuth.isLogin, adminController.loadLogin);
@@ -18,7 +19,7 @@ router.post('/login', adminController.adminLogin);
 router.get('/logout', adminController.logout);
 
 // dashboard
-router.get('/dashboard', adminAuth.checkSession, adminController.loadDashboard);
+router.get('/dashboard', dashboardController.loadDashboard);
 
 // category Management
 router.get('/categories',adminAuth.checkSession, categoryController.categoryInfo);

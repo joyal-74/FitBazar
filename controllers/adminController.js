@@ -12,24 +12,23 @@ function loadLogin(req, res) {
 
 const adminLogin = async (req, res) => {
     const { email, password } = req.body;
+    console.log(req.body)
     let errorMessage = "";
 
     try {
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            errorMessage = "Invalid email or password";
-            return res.render('admin/login', { title: "Login Page", errorMessage });
+            return res.status(401).json({error : "Admin not found Successfull...!"});
         }
 
         const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) {
-            errorMessage = "Invalid email or password";
-            return res.render('admin/login', { title: "Login Page", errorMessage });
+            return res.status(401).json({error : "Email or password is Incorrect...!"});
         }
 
         req.session.admin = admin;
 
-        return res.render('admin/dashboard', { title: "dashboard", errorMessage: "" });
+        return res.status(200).json({message : "Admin Login Successfull...!"});
 
     } catch (err) {
         console.error(err);
@@ -47,13 +46,6 @@ const logout = (req, res) => {
 
 
 
-const loadDashboard = (req, res) => {
-    res.render('admin/dashboard', {
-        title: 'Admin Dashboard',
-        errorMessage: "",
-        admin: req.session.admin
-    });
-};
 
 
 
@@ -112,6 +104,9 @@ const viewOrders = async (req, res) => {
 
     const order = await Order.findOne({ orderId }).populate('userId').populate('product','name');
     // console.log(order);
+    if(!order){
+        return res.status(NOT_FOUND).json({message : 'Order not found'})
+    }
 
     const addressId = order.address
 
@@ -159,4 +154,4 @@ function loadCustomers(req, res) {
 }
 
 
-export default { loadLogin, adminLogin, loadDashboard, updateStatus, loadOrders, viewOrders, loadCustomers, logout }
+export default { loadLogin, adminLogin, updateStatus, loadOrders, viewOrders, loadCustomers, logout }

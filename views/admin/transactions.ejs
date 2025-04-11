@@ -50,7 +50,9 @@
                                         <td><%= new Date(wallet.createdAt).toLocaleString('en-GB') %></td>
                                         <td><%= wallet.userId?.name %></td>
                                         <td><%= wallet.type %></td>
-                                        <td>₹<%= wallet.amount %></td>
+                                        <td class="text-<%= wallet.entryType === 'CREDIT' ? 'success' : 'danger' %>">
+                                            <%= wallet.entryType === 'CREDIT' ? '+' : '-' %>₹<%= wallet.amount %>
+                                          </td>                                          
                                         <td><%= wallet.status %></td>
                                         <td><button class="btn btn-outline-secondary txnDetailsBtn " id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
                                     </tbody>

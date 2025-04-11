@@ -208,12 +208,13 @@
                 if (!verifyResponse.ok || !verifyData.success) {
                     throw new Error(verifyData.error || "Payment verification failed");
                 }
+                const razorpay_payment_id = response.razorpay_payment_id
 
                 // Update Wallet
                 const orderResponse = await fetch('/user/wallet', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ paymentMethod, amount })
+                    body: JSON.stringify({ paymentMethod, amount, razorpay_payment_id })
                 });
 
                 const orderDataResult = await orderResponse.json();

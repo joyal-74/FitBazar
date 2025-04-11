@@ -1,91 +1,285 @@
-<body class="bg-violet">
+<body class="bg-light">
     <!-- Navbar -->
     <%- include('../partials/header') %>
-
-        <!-- Sidebar + Main Content in the same row -->
-        <div class="container-fluid w-100 sidebar-header">
-            <div class="row g-0">
-                <!-- Sidebar -->
-                <%- include('../partials/sidebar', { activePage: 'dashboard' }) %>
-
-                <!-- Main Content -->
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-5 mt-4">
-                    <div class="row g-4">
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card shadow-sm p-3 d-flex align-items-center">
-                                <div class="icon-container p-3 bg-danger text-white"><i class="fas fa-users fa-lg"></i>
-                                </div>
-                                <div class="ms-3">
-                                    <p class="text-muted mb-1">Total Clients</p>
-                                    <h5>6389</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card shadow-sm p-3 d-flex align-items-center">
-                                <div class="icon-container p-3 bg-primary text-white"><i
-                                        class="fas fa-wallet fa-lg p-1"></i></div>
-                                <div class="ms-3">
-                                    <p class="text-muted mb-1">Total Sales</p>
-                                    <h5>46,760</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card shadow-sm p-3 d-flex align-items-center">
-                                <div class="icon-container p-3 bg-warning text-white"><i
-                                        class="fa-solid fa-dumbbell fa-lg"></i></i></div>
-                                <div class="ms-3">
-                                    <p class="text-muted mb-1">Total Orders</p>
-                                    <h5>6389</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card shadow-sm p-3 d-flex align-items-center">
-                                <div class="icon-container p-3 bg-success text-white"><i
-                                        class="fa-solid fa-chart-pie-simple fa-lg px-1"></i></div>
-                                <div class="ms-3">
-                                    <p class="text-muted mb-1">Products Sold</p>
-                                    <h5>676</h5>
-                                </div>
-                            </div>
-                        </div>
+  
+    <!-- Sidebar + Main Content in the same row -->
+    <div class="container-fluid w-100">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <%- include('../partials/sidebar', { activePage: 'dashboard' }) %>
+  
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin: 80px 0;">
+          <!-- First Row: Wallet Chart and Revenue Chart -->
+            <h1 class="h3 mb-4 fw-bold">Transactions</h1>
+            <div class="row g-3 mb-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Transactions Data</h5>
+                        <div id="walletChart"></div>
                     </div>
-
-                    <h4 class="mt-4">Recent Orders</h4>
-                    <div class="card mt-4">
-                        <div class="card-body p-0 m-0">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#12345</td>
-                                        <td>John Doe</td>
-                                        <td>2023-10-01</td>
-                                        <td>₹1,200</td>
-                                        <td><span class="badge bg-success">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>#12346</td>
-                                        <td>Jane Smith</td>
-                                        <td>2023-10-02</td>
-                                        <td>₹2,500</td>
-                                        <td><span class="badge bg-warning">Pending</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Revenue (Last 7 Days)</h5>
+                        <div id="revenueLineChart"></div>
                     </div>
-                </main>
+                </div>
             </div>
-        </div>
-</body>
+  
+            <!-- Second Row: Best Selling Products and Top Categories -->
+            <div class="row g-3 mb-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Best Selling Products</h5>
+                        <div id="bestSellingChart"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Best Selling Categories</h5>
+                        <div id="categoryBarChart"></div>
+                    </div>
+                </div>
+            </div>
+  
+            <!-- Third Row: Top Selling Brands and Sales by Location -->
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Top Selling Brands</h5>
+                        <div id="bestBrandBarChart"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm rounded p-4 h-100">
+                        <h5 class="mb-3 fw-bold text-center">Sales by Location</h5>
+                        <div id="salesLocationPieChart"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+      </div>
+    </div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  
+    <!-- Wallet Chart (Donut) -->
+    <script>
+      const options = {
+        chart: {
+          type: 'donut',
+          height: 300,
+        },
+        series: <%- JSON.stringify(chartData) %>,
+        labels: <%- JSON.stringify(chartLabels) %>,
+        colors: ['#198754', '#ffc107', '#dc3545'],
+        legend: {
+          position: 'bottom',
+        },
+        dataLabels: {
+          formatter: function (val, opts) {
+            return opts.w.config.series[opts.seriesIndex];
+          },
+        },
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      const chart = new ApexCharts(document.querySelector("#walletChart"), options);
+      chart.render();
+    </script>
+  
+    <!-- Revenue Line Chart -->
+    <script>
+      const revenueOptions = {
+        chart: {
+          type: 'line',
+          height: 300,
+          toolbar: { show: false },
+        },
+        series: [{
+          name: 'Revenue',
+          data: <%- JSON.stringify(revenueData) %>
+        }],
+        xaxis: {
+          categories: <%- JSON.stringify(revenueLabels) %>,
+        },
+        stroke: {
+          curve: 'smooth',
+        },
+        colors: ['#4CAF50'],
+        dataLabels: {
+          enabled: false,
+        },
+        yaxis: {
+          labels: {
+            formatter: (val) => `₹${val}`,
+          },
+        },
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      const revenueChart = new ApexCharts(document.querySelector("#revenueLineChart"), revenueOptions);
+      revenueChart.render();
+    </script>
+  
+    <!-- Best Selling Products Bar Chart -->
+    <script>
+      const bestSellingLabels = <%- JSON.stringify(bestSellingProducts.map(p => p.name)) %>;
+      const bestSellingData = <%- JSON.stringify(bestSellingProducts.map(p => p.totalSold)) %>;
+  
+      var options3 = {
+        chart: {
+          type: 'bar',
+          height: 300,
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 6,
+            horizontal: false,
+            columnWidth: '50%',
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        xaxis: {
+          categories: bestSellingLabels,
+        },
+        colors: ['#5b3f64'],
+        series: [{
+          name: 'Units Sold',
+          data: bestSellingData,
+        }],
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      var chart3 = new ApexCharts(document.querySelector("#bestSellingChart"), options3);
+      chart3.render();
+    </script>
+  
+    <!-- Top Selling Categories Bar Chart -->
+    <script>
+      const categoryOptions = {
+        chart: {
+          type: 'bar',
+          height: 300,
+        },
+        series: [{
+          name: 'Units Sold',
+          data: <%- JSON.stringify(topCategories.map(c => c.totalSold)) %>
+        }],
+        xaxis: {
+          categories: <%- JSON.stringify(topCategories.map(c => c.categoryName)) %>
+        },
+        colors: ['#5b3f64'],
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            horizontal: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      const chart4 = new ApexCharts(document.querySelector("#categoryBarChart"), categoryOptions);
+      chart4.render();
+    </script>
+  
+    <!-- Top Selling Brands Bar Chart -->
+    <script>
+      const options5 = {
+        chart: {
+          type: 'bar',
+          height: 300,
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            borderRadius: 4,
+          },
+        },
+        dataLabels: {
+          enabled: true,
+        },
+        series: [{
+          name: 'Units Sold',
+          data: <%- JSON.stringify(brandData.series) %>
+        }],
+        xaxis: {
+          categories: <%- JSON.stringify(brandData.labels) %>,
+          title: {
+            text: 'Units Sold',
+          },
+        },
+        colors: ['#3E8E7E'],
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      const chart5 = new ApexCharts(document.querySelector("#bestBrandBarChart"), options5);
+      chart5.render();
+    </script>
+  
+    <!-- Sales by Location Pie Chart -->
+    <script>
+      const pieOptions = {
+        chart: {
+          type: 'pie',
+          height: 300,
+        },
+        labels: <%- JSON.stringify(locationChartData.labels) %>,
+        series: <%- JSON.stringify(locationChartData.series) %>,
+        legend: {
+          position: 'bottom',
+        },
+        responsive: [{
+          breakpoint: 768,
+          options: {
+            chart: {
+              height: 250,
+            },
+          },
+        }],
+      };
+  
+      new ApexCharts(document.querySelector("#salesLocationPieChart"), pieOptions).render();
+    </script>
+  </body>

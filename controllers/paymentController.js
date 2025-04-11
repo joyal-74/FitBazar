@@ -94,7 +94,7 @@ const createRazorpayOrder = async (req, res) => {
 function generateTxnId(prefix = 'TXN') {
     const id = nanoid(10).toUpperCase();
     return `${prefix}-${id}`;
-  }
+}
 
 const paymentSuccess = async (req, res) => {
     const session = await mongoose.startSession();
@@ -227,8 +227,10 @@ const paymentSuccess = async (req, res) => {
             await Wallet.create({
                 userId,
                 address : shoppingAddress,
+                orderId,
                 transactionId, 
-                type: paymentMethod,
+                payment_type: paymentMethod,
+                type:'product_purchase',
                 amount: discountPrice,
                 status: paymentMethod === 'cod' ? 'Pending' : 'Paid',
                 entryType : 'DEBIT',
@@ -258,6 +260,7 @@ const paymentSuccess = async (req, res) => {
         session.endSession();
     }
 };
+
 
 const verifyPayment = (req, res) => {
     try {

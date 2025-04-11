@@ -12,11 +12,14 @@ const walletSchema = new Schema({
         ref: 'Address',
         required: true
     },
+    orderId: {
+        type : String,
+    },
     transactionId : {
         type : String,
         required : true
     },
-    type: {
+    payment_type: {
         type: String,
         required: true
     },
@@ -30,8 +33,14 @@ const walletSchema = new Schema({
     },
     entryType : {
         type : String,
-        enum : ['CREDIT','DEBIT']
-    }
+        enum : ['CREDIT','DEBIT'],
+        required: true
+    },
+    type: {
+        type: String,
+        enum: ['add_money', 'product_purchase', 'refund'],
+        required: true
+    },
 },{timestamps : true});
 
 

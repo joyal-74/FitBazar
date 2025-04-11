@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
 import Wallet from "../model/walletModel.js";
 import Address from "../model/addressModel.js";
+import {nanoid} from 'nanoid';
 
 const loadWallet = async(req, res) =>{
     try {
@@ -63,7 +64,7 @@ const verifyWalletPayment = (req, res) => {
 
         if (isValidSignature) {
             console.log('Payment successfully verified:', razorpay_payment_id);
-            return res.json({ success: true, message: 'Payment verified' });
+            return res.json({ success: true, message: 'Payment verified', razorpay_payment_id });
         } else {
             console.warn('Payment verification failed:', razorpay_payment_id);
             return res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
@@ -74,15 +75,39 @@ const verifyWalletPayment = (req, res) => {
     }
 };
 
-
+function generateTxnId(prefix = 'TXN') {
+    const id = nanoid(10).toUpperCase();
+    return `${prefix}-${id}`;
+}
 
 const moneyAddWallet = async (req,res) => {
 
     try {
-        const { amount } = req.body;
+        const { amount, paymentMethod, razorpay_payment_id } = req.body;
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+        const addresses = await Address.findOne({ userId: userId });
+        const userAddress = addresses?.details[0];
+        // console.log(userAddress);
+
     
-        await User.findByIdAndUpdate({_id : userId}, {$inc: {wallet : amount }}, { new: true })
+        await User.findByIdAndUpdate({_id : userId}, 
+            {$inc: {wallet : amount }}, 
+            { new: true })
+        
+        const transactionId = generateTxnId();
+
+        await Wallet.create({
+            userId,
+            address : userAddress,
+            transactionId : transactionId, 
+            payment_type: paymentMethod,
+            type : 'add_money',
+            amount: amount,
+            status: 'Paid',
+            entryType : 'CREDIT',
+        });
+
         return res.status(OK).json({ success: true, message : 'Payment successful and wallet updated' });
     } catch (error) {
         console.error("Error adding money to wallet:", error);

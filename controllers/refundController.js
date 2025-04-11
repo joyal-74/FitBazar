@@ -1,11 +1,13 @@
 import Refund from '../model/refundModel.js';
 import Order from '../model/orderModel.js';
 import Address from '../model/addressModel.js';
+import Wallet from '../model/walletModel.js';
 import { generateInvoicePDF } from '../config/invoice.js'
 import fs from 'fs';
 import { OK, NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 import User from '../model/userModel.js';
 import Products from '../model/productModel.js';
+import { nanoid } from 'nanoid';
 
 
 export const requestRefund = async (req, res) => {
@@ -190,9 +192,16 @@ const loadReturnPage = async (req, res) => {
 };
 
 
+function generateTxnId(prefix = 'TXN') {
+    const id = nanoid(10).toUpperCase();
+    return `${prefix}-${id}`;
+}
+
 const updateRefundStatus = async (req, res) => {
     const orderId = req.query.id;
     const { status } = req.body;
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
 
     try {
 
@@ -224,11 +233,12 @@ const updateRefundStatus = async (req, res) => {
                 _id: productId,
                 variants: {
                     $elemMatch: {
-                        color: order.variant.color,
-                        weight: order.variant.weight
+                        color: variant.color,
+                        weight: variant.weight
                     }
                 }
             });
+
             order.status = 'Returned';
 
             await order.save()
@@ -249,6 +259,20 @@ const updateRefundStatus = async (req, res) => {
 
             refund.status = status;
             await refund.save();
+
+            const transactionId = generateTxnId();
+
+            await Wallet.create({
+                userId,
+                orderId,
+                address : order.address,
+                transactionId : transactionId, 
+                payment_type: 'wallet',
+                type : 'refund',
+                amount: order.discountPrice,
+                status: 'Paid',
+                entryType : 'CREDIT',
+            });
 
             return res.status(OK).json({ message: `Refund of ₹${order.discountPrice} processed successfully` });
         } else {
