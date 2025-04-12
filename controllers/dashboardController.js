@@ -125,14 +125,14 @@ const loadDashboard = async (req, res) => {
           $sort: { totalSold: -1 }
         },
         {
-          $limit: 5 // or more if you want
+          $limit: 5 
         }
       ]);
       
 
       const brandData = {
-        labels: bestSellingBrands.map(item => item._id),         // Brand names
-        series: bestSellingBrands.map(item => item.totalSold)    // Quantities
+        labels: bestSellingBrands.map(item => item._id),       
+        series: bestSellingBrands.map(item => item.totalSold)
       };
 
 
@@ -145,12 +145,12 @@ const loadDashboard = async (req, res) => {
             as: "addressDoc"
           }
         },
-        { $unwind: "$addressDoc" },        // Unwind the address document
-        { $unwind: "$addressDoc.details" },// Unwind the details array
+        { $unwind: "$addressDoc" }, 
+        { $unwind: "$addressDoc.details" },
         {
           $match: {
             $expr: {
-              $eq: ["$address", "$addressDoc.details._id"] // Match on detail _id
+              $eq: ["$address", "$addressDoc.details._id"] 
             }
           }
         },

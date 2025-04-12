@@ -125,13 +125,13 @@ const changeBlockStatus = async (req, res) => {
             return res.status(NOT_FOUND).json({ error: "Customer not found" });
         }
 
-        customer.isBlocked = isBlocked === "true"; // Convert string to boolean
+        customer.isBlocked = isBlocked === "true";
         await customer.save();
 
-        res.redirect(`/admin/viewcustomers?user=${userId}`); // Redirect back to customer page
+        res.redirect(`/admin/viewcustomers?user=${userId}`);
     } catch (error) {
         console.error("Error updating status:", error);
-        res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error"); // Simple error handling
+        res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 };
     

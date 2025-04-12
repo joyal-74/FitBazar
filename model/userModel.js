@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Cart from "./cartModel.js";
 
 const { Schema } = mongoose
 
@@ -27,11 +26,9 @@ const userSchema = new Schema(
     },
     phone: {
         type: String,
-        required: false
     },
     gender: {
         type: String,
-        required: false
     },
     profilePic: {
         type: String,
@@ -50,10 +47,6 @@ const userSchema = new Schema(
         type: Boolean,
         default: false,
     },
-    cart: {
-        type: Schema.Types.ObjectId,
-        ref: "Cart",
-    },
     wallet: {
         type: Number,
         default : 0
@@ -62,11 +55,7 @@ const userSchema = new Schema(
         type : String,
         unique : true,
         required : true
-    },
-    orderHistory: [{
-        type: Schema.Types.ObjectId,
-        ref: "Order"
-    }]
+    }
   }, { timestamps: true }
 );
 

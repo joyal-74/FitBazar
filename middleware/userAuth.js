@@ -1,3 +1,5 @@
+import User from "../model/userModel.js";
+
 const checkStatus = (req, res, next) => {
     if (req.session.isBlocked === true) {
         console.log("User is blocked. Redirecting to login...");
@@ -12,8 +14,9 @@ const isLogin = (req,res,next)=>{
     if(req.session.userLogged){
         res.redirect('/')
     }else{
-        next()
+        next();
     }
 }
+
 
 export default {checkStatus , isLogin };

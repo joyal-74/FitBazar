@@ -2,7 +2,8 @@ import express from "express";
 const router = express.Router();
 import userController from '../controllers/userController.js';
 import profileController from "../controllers/profileController.js";
-import cartControlller from '../controllers/cartController.js'
+import cartControlller from '../controllers/cartController.js';
+import checkoutController from "../controllers/checkoutController.js";
 import refundController from '../controllers/refundController.js'
 import reviewController from '../controllers/reviewController.js'
 import upload from "../middleware/imageUpload.js";
@@ -27,9 +28,9 @@ router.post('/sendmail', userController.generateOtp);
 router.post('/resendOtp', userController.resendOtp);
 router.get('/otpverify', userController.loadOtpVerify);
 router.get('/otpTimer', userController.otpTimer);
-router.post('/otpverify', userController.verifyOtp)
+router.post('/otpverify', userController.verifyOtp);
 router.get('/resetpass', userController.loadConfirmOtp);
-router.post('/resetpass',userController.changePassword)
+router.post('/resetpass',userController.changePassword);
 
 // profile management
 router.get('/profile', profileController.loadprofile);
@@ -61,17 +62,17 @@ router.patch('/cart', cartControlller.updateQuantity);
 router.delete('/cart', cartControlller.deleteFromcart);
 
 // wallet routes
-router.get('/wallet', walletController.loadWallet)
+router.get('/wallet', walletController.loadWallet);
 router.post('/wallet/razorpay', walletController.createRazorpayWallet);
 router.post('/wallet/verify', walletController.verifyWalletPayment);
 router.post('/wallet', walletController.moneyAddWallet);
 
 // payment and checkout routes
-router.get('/checkout', cartControlller.loadCheckout);
-router.post('/checkout', cartControlller.checkoutDetails);
+router.get('/checkout', checkoutController.loadCheckout);
+router.post('/checkout', checkoutController.checkoutDetails);
 router.post('/validate-coupon', couponController.validateCoupon);
-router.post('/shoppingAddress', cartControlller.addShoppingAddress);
-router.put('/shoppingAddress', cartControlller.editshoppingAddress);
+router.post('/shoppingAddress', checkoutController.addShoppingAddress);
+router.put('/shoppingAddress', checkoutController.editshoppingAddress);
 
 // order management
 router.get('/orders', profileController.loadOrders);
@@ -79,7 +80,7 @@ router.get('/orderDetails', profileController.loadOrderDetails);
 router.post('/orders/return', refundController.requestRefund);
 router.patch('/orders/cancel', refundController.cancelOrder);
 router.get('/orders/invoice', refundController.generateInvoice);
-router.get('/confirmOrder', cartControlller.confirmOrder);
+router.get('/confirmOrder', checkoutController.confirmOrder);
 router.get('/payment-failed', paymentController.loadPaymentFailed);
 
 // review route

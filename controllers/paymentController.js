@@ -6,12 +6,10 @@ import Order from "../model/orderModel.js";
 import Address from "../model/addressModel.js";
 import Wallet from "../model/walletModel.js";
 import crypto from 'crypto';
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from "../config/statusCodes.js";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
-
-
 
 const loadPayments = async (req, res) => {
     try {
@@ -23,7 +21,6 @@ const loadPayments = async (req, res) => {
             return res.redirect('/cart');
         }
 
-        // Calculate cart total
         let cartTotal = 0;
         let deliveryCharge = 0;
         let grandTotal = 0;
@@ -43,28 +40,14 @@ const loadPayments = async (req, res) => {
             await req.session.save();
         }
 
-        // Calculate grand total
         grandTotal = cartTotal + deliveryCharge - couponDiscount;
 
-        // console.log(grandTotal,cartTotal);
-
-        res.render('user/payment', {
-            title: "Checkout",
-            user,
-            cart,
-            cartTotal,
-            deliveryCharge,
-            grandTotal,
-            couponDiscount
-            
-        });
+        res.render('user/payment', {title: "Checkout", user, cart, cartTotal, deliveryCharge, grandTotal, couponDiscount});
     } catch (error) {
         console.error('Error loading payment:', error);
         
     }
 }
-
-
 
 const createRazorpayOrder = async (req, res) => {
     try {
@@ -108,7 +91,6 @@ const paymentSuccess = async (req, res) => {
         }
 
         const { couponApplied, paymentMethod, totalPrice, razorpayPaymentId } = req.body;
-        // console.log(req.body)
 
         const addressId = req.session.deliveryAddress;
         if (!addressId) {
@@ -136,7 +118,6 @@ const paymentSuccess = async (req, res) => {
             return res.status(NOT_FOUND).json({ error: 'Address not found.' });
         }
 
-        const customer = address.details[0].name;
         const shoppingAddress = address?.details?.[0]
         const orderItemCount = cart.items.length;
         const createdOrders = [];
@@ -166,12 +147,8 @@ const paymentSuccess = async (req, res) => {
                     error: `Insufficient stock for "${product.name}" (${item.variants.color}, ${item.variants.weight}).`
                 });
             }
-
             itemTotal += item.price;
         }
-
-        // console.log(itemTotal);
-        
 
         if (paymentMethod === 'wallet') {
             const user = await User.findById(userId).session(session);
@@ -284,15 +261,12 @@ const verifyPayment = (req, res) => {
 
 const paymentFailed = async (req, res) => {
     try {
-        const { error } = req.body;
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!userId) {
             console.error('User ID is missing in session.');
             return res.status(BAD_REQUEST).render('error', { title: "Error", message: 'Invalid session. Please log in again.' });
         }
-
-        const user = await User.findById(userId);
 
         const latestOrder = await Order.findOne({ userId })
             .sort({ createdAt: -1 })
@@ -322,7 +296,6 @@ const paymentFailed = async (req, res) => {
             return res.status(BAD_REQUEST).render('error', { title: "Error", message: 'No matching orders found.' });
         }
 
-
         return res.status(OK).json({message :'payment failed', redirectUrl : '/user/payment-failed'})
     } catch (err) {
         console.error('Error handling payment failure:', err);
@@ -336,7 +309,6 @@ const loadPaymentFailed = async (req,res) => {
 
     res.render('user/paymentFailed', {title : "Payment Failed", user});
 }
-
 
 
 export default { loadPayments, createRazorpayOrder, paymentSuccess, verifyPayment, paymentFailed, loadPaymentFailed };

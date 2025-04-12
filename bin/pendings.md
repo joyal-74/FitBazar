@@ -61,4 +61,5 @@ week - 11 - suggetions
 _______________________
 
 1. coupon applied with - discount -checkout page
-2. 
+2. user blocked - should logged out on reload
+3. controllers with < 250 lines

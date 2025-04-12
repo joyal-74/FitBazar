@@ -3,7 +3,7 @@ import User from "../model/userModel.js";
 import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
-import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
+import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, CREATED, BAD_REQUEST } from '../config/statusCodes.js'
 import Coupon from "../model/couponModel.js";
 
 const loadOrders = async (req, res) => {
@@ -180,45 +180,53 @@ const verifyOTP = (req, res) => {
 
 
 // to edit profile details
-const updateProfile = async (req,res) => {
+const updateProfile = async (req, res) => {
     try {
         let { firstName, lastName, email, name, phone, username, gender } = req.body;
         const userId = req.query.id;
 
-        const user = await User.findOne({userId : userId});
+        // Trim username if it's a string
+        if (typeof username === "string") {
+            username = username.trim();
+        }
 
-        if(user.username !== username){
-            const uniqueUsername = await User.findOne({username});
+        const user = await User.findOne({ userId });
 
-            if(uniqueUsername){
-                return res.status(BAD_REQUEST).json({error : "Username already taken...!"})
+        if (!user) {
+            return res.status(NOT_FOUND).json({ error: "User not found" });
+        }
+
+        // Check if username is valid and changed
+        if (username && username !== user.username) {
+            const uniqueUsername = await User.findOne({ username });
+            if (uniqueUsername) {
+                return res.status(BAD_REQUEST).json({ error: "Username already taken...!" });
             }
+            user.username = username;
         }
 
         if (req.file) {
             user.profilePic = req.file.path;
         }
 
-        name = `${firstName} ${lastName}`
+        name = `${firstName} ${lastName}`;
 
         user.name = name;
         user.email = email;
         user.phone = phone;
-        user.username = username;
         user.gender = gender;
 
         await user.save();
-        
-        req.session.user = user
+
+        req.session.user = user;
 
         return res.status(OK).json({ message: "Profile updated successfully", user });
+
     } catch (error) {
         console.error("Error updating profile:", error);
         return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
-
-}
-
+};
 
 const loadAddress = async (req, res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;

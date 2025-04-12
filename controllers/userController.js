@@ -16,7 +16,7 @@ const getUserHome = async (req, res)=> {
         req.session.userLogged = false;
     }
 
-    const user = await User.findOne({ _id : userId});
+    const user = await User.findOne({ _id : userId, isBlocked : false});
     const category = await Category.find({visibility : true});
     const product = await Products.find({visibility : true}).populate('category').sort({createdAt : -1}).limit(8);
 

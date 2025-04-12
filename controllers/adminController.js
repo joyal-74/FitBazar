@@ -12,7 +12,7 @@ function loadLogin(req, res) {
 
 const adminLogin = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body)
+
     let errorMessage = "";
 
     try {
