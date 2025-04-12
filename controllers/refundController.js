@@ -15,8 +15,6 @@ export const requestRefund = async (req, res) => {
     const orderId = req.query.id;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    // console.log(orderId, reason, userId)
-
     try {
         const order = await Order.findById(orderId);
         if (!order) {
@@ -44,9 +42,7 @@ export const requestRefund = async (req, res) => {
     }
 };
 
-
 // user side cancellation
-
 export const cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
@@ -76,7 +72,6 @@ export const cancelOrder = async (req, res) => {
         order.statusHistory.push({ status : 'Cancelled', timestamp: new Date() });
 
         const productId = order.product
-        const variant = order.variant
 
         const product = await Products.findOne({
             _id: productId,
@@ -87,9 +82,6 @@ export const cancelOrder = async (req, res) => {
                 }
             }
         });
-        
-
-        // console.log(product, variant)
 
         if (product) {
             const variant = product.variants.find(v =>
@@ -110,7 +102,6 @@ export const cancelOrder = async (req, res) => {
         return res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
 };
-
 
 const generateInvoice = async (req, res) => {
     try {
@@ -133,10 +124,6 @@ const generateInvoice = async (req, res) => {
 
         const address = addresses?.details?.[0] || null;
 
-        console.log(address);
-        
-
-
         const filePath = await generateInvoicePDF(order, address);
 
         res.download(filePath, `invoice-${order._id}.pdf`, (err) => {
@@ -152,8 +139,6 @@ const generateInvoice = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
     }
 }
-
-
 
 const loadReturnPage = async (req, res) => {
     try {
@@ -172,19 +157,10 @@ const loadReturnPage = async (req, res) => {
             ];
         }
 
-        const refundRequests = await Refund.find(query)
-            .populate('order')
-            .populate('product')
-            .populate('userId')
-            .sort({ createdAt: -1 })
-            .lean();
+        const refundRequests = await Refund.find(query).populate('order').populate('product').populate('userId').sort({ createdAt: -1 }).lean();
 
-        res.render('admin/returnOrder', {
-            title: 'Return page',
-            refundRequests,
-            status,
-            search
-        });
+        res.render('admin/returnOrder', {title: 'Return page', refundRequests, status, search });
+
     } catch (error) {
         console.error('Error loading return page:', error);
         res.status(INTERNAL_SERVER_ERROR).send('Server Error');
@@ -210,13 +186,11 @@ const updateRefundStatus = async (req, res) => {
             return res.status(NOT_FOUND).json({ error: "Refund not found" });
         }
 
-        // Find the related order
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(NOT_FOUND).json({ error: "Order not found" });
         }
 
-        // Find the user associated with the order
         const user = await User.findById(order.userId);
         if (!user) {
             return res.status(NOT_FOUND).json({ error: "User not found" });
@@ -242,9 +216,6 @@ const updateRefundStatus = async (req, res) => {
             order.status = 'Returned';
 
             await order.save()
-            
-
-            // console.log(product, variant)
 
             if (product) {
                 const variant = product.variants.find(v =>

@@ -1,285 +1,221 @@
 <body class="bg-light">
     <!-- Navbar -->
     <%- include('../partials/header') %>
-  
-    <!-- Sidebar + Main Content in the same row -->
+
+    <!-- Sidebar + Main Content -->
     <div class="container-fluid w-100">
         <div class="row g-0">
             <!-- Sidebar -->
             <%- include('../partials/sidebar', { activePage: 'dashboard' }) %>
-  
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin: 80px 0;">
-          <!-- First Row: Wallet Chart and Revenue Chart -->
-            <h1 class="h3 mb-4 fw-bold">Transactions</h1>
-            <div class="row g-3 mb-4">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Transactions Data</h5>
-                        <div id="walletChart"></div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin: 80px 0;">
+                <h1 class="h3 mb-4 fw-bold">Dashboard</h1>
+                <!-- Filter Section -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="btn-group w-100" role="group" id="filterButtons">
+                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'weekly' ? 'active' : '' %>" data-filter="weekly">Weekly</button>
+                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'monthly' ? 'active' : '' %>" data-filter="monthly">Monthly</button>
+                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'yearly' ? 'active' : '' %>" data-filter="yearly">Yearly</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Revenue (Last 7 Days)</h5>
-                        <div id="revenueLineChart"></div>
+                <!-- First Row: Wallet and Revenue Charts -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Transactions Data</h5>
+                            <div id="walletChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Revenue</h5>
+                            <div id="revenueLineChart"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-  
-            <!-- Second Row: Best Selling Products and Top Categories -->
-            <div class="row g-3 mb-4">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Best Selling Products</h5>
-                        <div id="bestSellingChart"></div>
+                <!-- Second Row: Best Selling Products and Categories -->
+                <div class="row g-3 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Best Selling Products</h5>
+                            <div id="bestSellingChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Best Selling Categories</h5>
+                            <div id="categoryBarChart"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Best Selling Categories</h5>
-                        <div id="categoryBarChart"></div>
+                <!-- Third Row: Top Brands and Sales by Location -->
+                <div class="row g-3">
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Top Selling Brands</h5>
+                            <div id="bestBrandBarChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card border-0 shadow-sm rounded p-4 h-100">
+                            <h5 class="mb-3 fw-bold text-center">Sales by Location</h5>
+                            <div id="salesLocationPieChart"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-  
-            <!-- Third Row: Top Selling Brands and Sales by Location -->
-            <div class="row g-3">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Top Selling Brands</h5>
-                        <div id="bestBrandBarChart"></div>
+                <!-- Loading Indicator -->
+                <div id="loadingIndicator" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-sm rounded p-4 h-100">
-                        <h5 class="mb-3 fw-bold text-center">Sales by Location</h5>
-                        <div id="salesLocationPieChart"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
-      </div>
+            </main>
+        </div>
     </div>
-  
+
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  
-    <!-- Wallet Chart (Donut) -->
     <script>
-      const options = {
-        chart: {
-          type: 'donut',
-          height: 300,
-        },
-        series: <%- JSON.stringify(chartData) %>,
-        labels: <%- JSON.stringify(chartLabels) %>,
-        colors: ['#198754', '#ffc107', '#dc3545'],
-        legend: {
-          position: 'bottom',
-        },
-        dataLabels: {
-          formatter: function (val, opts) {
-            return opts.w.config.series[opts.seriesIndex];
-          },
-        },
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      const chart = new ApexCharts(document.querySelector("#walletChart"), options);
-      chart.render();
+        // Store chart instances
+        let charts = {
+            walletChart: null,
+            revenueLineChart: null,
+            bestSellingChart: null,
+            categoryBarChart: null,
+            bestBrandBarChart: null,
+            salesLocationPieChart: null
+        };
+
+        // Fetch data function
+        async function fetchData(filter) {
+            try {
+                document.getElementById('loadingIndicator').style.display = 'block';
+                const response = await fetch(`/admin/dashboard?filter=${filter}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                return null;
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+
+        // Render all charts
+        function renderCharts(data) {
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => chart?.destroy());
+
+            // Wallet Chart (Donut)
+            const walletOptions = {
+                chart: { type: 'donut', height: 300 },
+                series: data.chartData || [0],
+                labels: data.chartLabels || ['No Data'],
+                colors: ['#198754', '#ffc107', '#dc3545'],
+                legend: { position: 'bottom' },
+                dataLabels: {
+                    formatter: (val, opts) => opts.w.config.series[opts.seriesIndex]
+                },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.walletChart = new ApexCharts(document.querySelector("#walletChart"), walletOptions);
+            charts.walletChart.render();
+
+            // Revenue Line Chart
+            const revenueOptions = {
+                chart: { type: 'line', height: 300, toolbar: { show: false } },
+                series: [{ name: 'Revenue', data: data.revenueData || [0] }],
+                xaxis: { categories: data.revenueLabels || ['No Data'] },
+                stroke: { curve: 'smooth' },
+                colors: ['#4CAF50'],
+                dataLabels: { enabled: false },
+                yaxis: { labels: { formatter: val => `₹${val}` } },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.revenueLineChart = new ApexCharts(document.querySelector("#revenueLineChart"), revenueOptions);
+            charts.revenueLineChart.render();
+
+            // Best Selling Products Bar Chart
+            const bestSellingOptions = {
+                chart: { type: 'bar', height: 300 },
+                plotOptions: { bar: { borderRadius: 6, horizontal: false, columnWidth: '50%' } },
+                dataLabels: { enabled: false },
+                xaxis: { categories: data.bestSellingProducts.map(p => p.name) || ['No Data'] },
+                colors: ['#5b3f64'],
+                series: [{ name: 'Units Sold', data: data.bestSellingProducts.map(p => p.totalSold) || [0] }],
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.bestSellingChart = new ApexCharts(document.querySelector("#bestSellingChart"), bestSellingOptions);
+            charts.bestSellingChart.render();
+
+            // Top Categories Bar Chart
+            const categoryOptions = {
+                chart: { type: 'bar', height: 300 },
+                series: [{ name: 'Units Sold', data: data.topCategories.map(c => c.totalSold) || [0] }],
+                xaxis: { categories: data.topCategories.map(c => c.categoryName) || ['No Data'] },
+                colors: ['#5b3f64'],
+                plotOptions: { bar: { borderRadius: 4, horizontal: false } },
+                dataLabels: { enabled: false },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.categoryBarChart = new ApexCharts(document.querySelector("#categoryBarChart"), categoryOptions);
+            charts.categoryBarChart.render();
+
+            // Top Selling Brands Bar Chart
+            const brandOptions = {
+                chart: { type: 'bar', height: 300 },
+                plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                dataLabels: { enabled: true },
+                series: [{ name: 'Units Sold', data: data.brandData.series || [0] }],
+                xaxis: { categories: data.brandData.labels || ['No Data'], title: { text: 'Units Sold' } },
+                colors: ['#3E8E7E'],
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.bestBrandBarChart = new ApexCharts(document.querySelector("#bestBrandBarChart"), brandOptions);
+            charts.bestBrandBarChart.render();
+
+            // Sales by Location Pie Chart
+            const pieOptions = {
+                chart: { type: 'pie', height: 300 },
+                labels: data.locationChartData.labels || ['No Data'],
+                series: data.locationChartData.series || [0],
+                legend: { position: 'bottom' },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+            };
+            charts.salesLocationPieChart = new ApexCharts(document.querySelector("#salesLocationPieChart"), pieOptions);
+            charts.salesLocationPieChart.render();
+        }
+
+        // Initialize charts with initial data
+        const initialData = {
+            chartLabels: <%- JSON.stringify(chartLabels) %>,
+            chartData: <%- JSON.stringify(chartData) %>,
+            revenueLabels: <%- JSON.stringify(revenueLabels) %>,
+            revenueData: <%- JSON.stringify(revenueData) %>,
+            bestSellingProducts: <%- JSON.stringify(bestSellingProducts) %>,
+            topCategories: <%- JSON.stringify(topCategories) %>,
+            brandData: <%- JSON.stringify(brandData) %>,
+            locationChartData: <%- JSON.stringify(locationChartData) %>
+        };
+        renderCharts(initialData);
+
+        // Handle filter button clicks
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', async () => {
+                const filter = button.getAttribute('data-filter');
+                
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Fetch new data
+                const response = await fetch(`/admin/dashboard?filter=${filter}`);
+                if (response.ok) {
+                    window.location.href = `/admin/dashboard?filter=${filter}`;
+                }
+            });
+        });
     </script>
-  
-    <!-- Revenue Line Chart -->
-    <script>
-      const revenueOptions = {
-        chart: {
-          type: 'line',
-          height: 300,
-          toolbar: { show: false },
-        },
-        series: [{
-          name: 'Revenue',
-          data: <%- JSON.stringify(revenueData) %>
-        }],
-        xaxis: {
-          categories: <%- JSON.stringify(revenueLabels) %>,
-        },
-        stroke: {
-          curve: 'smooth',
-        },
-        colors: ['#4CAF50'],
-        dataLabels: {
-          enabled: false,
-        },
-        yaxis: {
-          labels: {
-            formatter: (val) => `₹${val}`,
-          },
-        },
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      const revenueChart = new ApexCharts(document.querySelector("#revenueLineChart"), revenueOptions);
-      revenueChart.render();
-    </script>
-  
-    <!-- Best Selling Products Bar Chart -->
-    <script>
-      const bestSellingLabels = <%- JSON.stringify(bestSellingProducts.map(p => p.name)) %>;
-      const bestSellingData = <%- JSON.stringify(bestSellingProducts.map(p => p.totalSold)) %>;
-  
-      var options3 = {
-        chart: {
-          type: 'bar',
-          height: 300,
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 6,
-            horizontal: false,
-            columnWidth: '50%',
-          },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        xaxis: {
-          categories: bestSellingLabels,
-        },
-        colors: ['#5b3f64'],
-        series: [{
-          name: 'Units Sold',
-          data: bestSellingData,
-        }],
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      var chart3 = new ApexCharts(document.querySelector("#bestSellingChart"), options3);
-      chart3.render();
-    </script>
-  
-    <!-- Top Selling Categories Bar Chart -->
-    <script>
-      const categoryOptions = {
-        chart: {
-          type: 'bar',
-          height: 300,
-        },
-        series: [{
-          name: 'Units Sold',
-          data: <%- JSON.stringify(topCategories.map(c => c.totalSold)) %>
-        }],
-        xaxis: {
-          categories: <%- JSON.stringify(topCategories.map(c => c.categoryName)) %>
-        },
-        colors: ['#5b3f64'],
-        plotOptions: {
-          bar: {
-            borderRadius: 4,
-            horizontal: false,
-          },
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      const chart4 = new ApexCharts(document.querySelector("#categoryBarChart"), categoryOptions);
-      chart4.render();
-    </script>
-  
-    <!-- Top Selling Brands Bar Chart -->
-    <script>
-      const options5 = {
-        chart: {
-          type: 'bar',
-          height: 300,
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            borderRadius: 4,
-          },
-        },
-        dataLabels: {
-          enabled: true,
-        },
-        series: [{
-          name: 'Units Sold',
-          data: <%- JSON.stringify(brandData.series) %>
-        }],
-        xaxis: {
-          categories: <%- JSON.stringify(brandData.labels) %>,
-          title: {
-            text: 'Units Sold',
-          },
-        },
-        colors: ['#3E8E7E'],
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      const chart5 = new ApexCharts(document.querySelector("#bestBrandBarChart"), options5);
-      chart5.render();
-    </script>
-  
-    <!-- Sales by Location Pie Chart -->
-    <script>
-      const pieOptions = {
-        chart: {
-          type: 'pie',
-          height: 300,
-        },
-        labels: <%- JSON.stringify(locationChartData.labels) %>,
-        series: <%- JSON.stringify(locationChartData.series) %>,
-        legend: {
-          position: 'bottom',
-        },
-        responsive: [{
-          breakpoint: 768,
-          options: {
-            chart: {
-              height: 250,
-            },
-          },
-        }],
-      };
-  
-      new ApexCharts(document.querySelector("#salesLocationPieChart"), pieOptions).render();
-    </script>
-  </body>
+</body>

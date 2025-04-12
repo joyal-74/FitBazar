@@ -86,9 +86,7 @@ const loadSalesReport = async (req, res) => {
         const dateFilter = await dateFilterFun(filter, startDate, endDate);
 
         const productSales = await Order.aggregate([
-            {
-                $match: dateFilter
-            },
+            { $match: dateFilter },
             {
                 $lookup: {
                     from: 'products',
@@ -143,17 +141,13 @@ const loadSalesReport = async (req, res) => {
     }
 };
 
-
 const generateSalesReportPDF = async (req, res) => {
     try {
         const { range, start, end } = req.query;
 
         const dateFilter = await dateFilterFun(range, start, end);
 
-        const salesData = await Order.find(dateFilter)
-            .populate('product')
-            .populate('userId')
-
+        const salesData = await Order.find(dateFilter).populate('product').populate('userId')
 
         const htmlContent = salesReportPDF(salesData);
 
@@ -176,7 +170,6 @@ const generateSalesReportPDF = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ message: 'Failed to generate report' });
     }
 };
-
 
 const downloadSalesReportExcel = async (req, res) => {
     try {

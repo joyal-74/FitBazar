@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import { nanoid } from "nanoid";
 import User from "../model/userModel.js";
 import Category from '../model/categoryModel.js'
 import Products from "../model/productModel.js";
@@ -76,7 +75,6 @@ const generateUserId = async () => {
     const count = await User.countDocuments();
     return `ID${1000 + count + 1}`;
 };
-
 
 
 const otpTimer = async (req, res)=> {
@@ -163,8 +161,6 @@ const userRegister = async (req, res) => {
 };
 
 
-
-
 const loadForgetPass = (req, res) => {
     res.render('user/forgetPass', { title: 'Forgot Password ?', errorMessage: "" })
 }
@@ -235,9 +231,6 @@ const resendOtp = async (req, res) => {
 
         const emailContent = emailTemplate.getOtpResetEmailTemplate(email,otp);
 
-        // console.log(emailContent);
-        
-
         if (!email) {
             return res.status(BAD_REQUEST).json({ error: "Session expired. Please start the verification process again." });
         }
@@ -298,8 +291,6 @@ const verifyOtp = async (req, res) => {
     }
 };
 
-
-
 let loadConfirmOtp = (req, res) => {
     res.render('user/resetpass', { title: 'Confirm Password ?', errorMessage: "" })
 }
@@ -309,8 +300,6 @@ const changePassword = async (req, res) => {
     try {
         const { newPassword, confirmPassword } = req.body;
         const email = req.session.email;
-
-        // console.log(email);
 
         if (!newPassword || !confirmPassword) {
             return res.status(BAD_REQUEST).json({ success: false, message: "All fields are required" });
@@ -345,8 +334,6 @@ const changePassword = async (req, res) => {
         res.status(INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
     }
 };
-
-
 
 const logoutUser = (req, res) => {
     req.session.destroy((err) => {

@@ -12,6 +12,8 @@ import walletController from '../controllers/walletController.js'
 import couponController from "../controllers/couponController.js";
 import paymentController from "../controllers/paymentController.js";
 import userAuth from "../middleware/userAuth.js";
+import addressController from "../controllers/addressController.js";
+import privacyController from "../controllers/privacyController.js";
 
 
 // login route
@@ -40,15 +42,15 @@ router.post('/sendotp', profileController.sendOTP);
 router.post('/verifymail', profileController.verifyOTP);
 
 //address management
-router.get('/address',profileController.loadAddress);
-router.post('/address',profileController.addAddress);
-router.get('/addAddress',profileController.loadAddAddress);
-router.get('/editaddress', profileController.loadEditAddress);
-router.put('/address', profileController.editAddress);
-router.delete('/address', profileController.deleteAddress);
-router.get('/coupons', profileController.loadCoupons);
-router.get('/privacy', profileController.loadPrivacy);
-router.post('/privacy', profileController.updatePassword);
+router.get('/address',addressController.loadAddress);
+router.post('/address',addressController.addAddress);
+router.get('/addAddress',addressController.loadAddAddress);
+router.get('/editaddress', addressController.loadEditAddress);
+router.put('/address', addressController.editAddress);
+router.delete('/address', addressController.deleteAddress);
+router.get('/coupons', couponController.loadCoupons);
+router.get('/privacy', privacyController.loadPrivacy);
+router.post('/privacy', privacyController.updatePassword);
 
 // wishlist routes
 router.get('/wishlist', wishlistController.getWishlist);

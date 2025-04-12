@@ -7,12 +7,10 @@ const loadCouponPage = async(req,res)=>{
         const limit = 7;
         let query = {};
 
-        // Search by name
         if (q) {
             query.name = { $regex: q, $options: 'i' };
         }
 
-        // Filter by status
         if (status) {
             query.status = status === 'true' ? 'Active' : 'Inactive';
         }
@@ -42,7 +40,6 @@ const addCoupon = async (req, res)=> {
     try {
         const { addName, addCode, addDescription, addStartDate, addExpiryDate, addMinPrice, addOfferPrice, addStatus } = req.body;
    
-        // Validation
         if (new Date(addStartDate) >= new Date(addExpiryDate)) {
             return res.status(BAD_REQUEST).json({ error: 'Expiry date must be after start date' });
         }
@@ -78,10 +75,6 @@ const editCoupon = async (req, res) => {
     try {
         const { orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus } = req.body;
 
-        // console.log(req.body);
-        
-
-        // Validation
         if (new Date(editStartDate) >= new Date(editExpiryDate)) {
             return res.status(BAD_REQUEST).json({ error: 'Expiry date must be after start date' });
         }
@@ -117,7 +110,6 @@ const editCoupon = async (req, res) => {
     }
 }
 
-
 const deleteCoupon = async (req,res) => {
     try {
         const {couponName} = req.body;
@@ -144,18 +136,15 @@ export const validateCoupon = async (req, res) => {
             return res.status(BAD_REQUEST).json({ success: false, message: 'Invalid coupon code.' });
         }
 
-        // Check coupon status
         if (coupon.status !== 'Active') {
             return res.status(BAD_REQUEST).json({ success: false, message: 'Coupon is inactive.' });
         }
 
-        // Check expiry date
         const now = new Date();
         if (now < coupon.startDate || now > coupon.expiryDate) {
             return res.status(BAD_REQUEST).json({ success: false, message: 'Coupon has expired or is not yet active.' });
         }
 
-        // Check minimum order value
         if (total < coupon.minPrice) {
             return res.status(BAD_REQUEST).json({
                 success: false,
@@ -176,4 +165,21 @@ export const validateCoupon = async (req, res) => {
     }
 };
 
-export default {loadCouponPage, addCoupon, editCoupon, deleteCoupon, validateCoupon}
+// user side coupon showing
+const loadCoupons = async (req,res)=>{
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+    if(!userId){
+        res.redirect('/user/login')
+    }
+
+    const user = await User.findOne({_id : userId})
+
+    const [firstName] = user.name.split(' ');
+
+    const coupons = await Coupon.find({});
+
+
+    res.render('user/coupons', {title : "coupons", coupons, user, firstName});
+}
+
+export default {loadCouponPage, addCoupon, editCoupon, deleteCoupon, validateCoupon, loadCoupons }

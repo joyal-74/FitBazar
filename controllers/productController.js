@@ -1,7 +1,5 @@
 import Products from '../model/productModel.js';
 import Category from '../model/categoryModel.js';
-import User from '../model/userModel.js';
-import Reviews from '../model/reviewsModel.js';
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, CREATED } from '../config/statusCodes.js'
 import cloudinary from '../config/cloudinary.js';
 
@@ -21,7 +19,6 @@ const loadaddProducts = async (req, res) => {
     }
 };
 
-
 const generateProductId = async () => {
     const count = await Products.countDocuments();
     return `FBZ${1000 + count + 1}`;
@@ -32,7 +29,6 @@ const generateProductId = async () => {
 const addProducts = async (req, res) => {
     try {
         const { productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant } = req.body;
-
 
             const variants = [];
             for (let i = 0; i < colorVariant.length; i++) {
@@ -80,12 +76,7 @@ const editProducts = async (req, res) => {
     try {
         const { productId, productName, productCategory, productBrand, productPrice, productOffer, shortDescription, productDescription, productSpec, colorVariant, weightVariant, stockVariant, visibility } = req.body;
 
-        // console.log(productId)
-        // console.log(productCategory)
-
         const removedImages = req.body.removedImages ? JSON.parse(req.body.removedImages) : [];
-        // console.log(removedImages);
-        
 
         const product = await Products.findOne({productId});
 
@@ -196,7 +187,6 @@ const productInfo = async (req, res) => {
 };
 
 
-
 const loadEditProducts = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -215,140 +205,5 @@ const loadEditProducts = async (req, res) => {
     }
 };
 
-const loadproductDetails = async (req, res) => {
-    const { productId, category } = req.query;
-    
-    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    const user = await User.findOne({ _id: userId });
-
-    const reviews = await Reviews.find({productId})
-
-    const product = await Products.findOne({ _id : productId }).populate('category')
-    const relateproducts = await Products.find({ category }).limit(4);
-
-    res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
-}
-
-
-
-// shop pages and product details
-
-const loadShop = async (req, res) => {
-    try {
-        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({ _id: userId });
-
-        const page = parseInt(req.query.page) || 1;
-        const limit = 12;
-        const skip = (page - 1) * limit;
-
-        let filter = { visibility: true };
-
-        if (req.query.result) {
-            filter.name = { $regex: req.query.result, $options: "i" };
-        }
-
-        if (req.query.category) {
-            let categories = Array.isArray(req.query.category)
-                ? req.query.category
-                : [req.query.category];
-            const matchedCategories = await Category.find({ 
-                name: { $in: categories },
-                visibility: true 
-            }).select('_id');
-            if (matchedCategories.length) {
-                filter.category = { $in: matchedCategories.map(cat => cat._id) };
-            }
-        }
-
-        if (req.query.brand) {
-            let brands = Array.isArray(req.query.brand)
-                ? req.query.brand
-                : req.query.brand.includes(',')
-                    ? req.query.brand.split(',')
-                    : [req.query.brand];
-            filter.brand = { $in: brands };
-        }
-        
-
-        if (req.query.price) {
-            filter.price = { $lte: parseInt(req.query.price) };
-        }
-        
-
-
-        if (req.query.availability) {
-            filter.stock = { $gt: 0 };
-        }
-
-        const sortOption = req.query.sort || "newest";
-        let sortQuery = {};
-        switch (sortOption) {
-            case "priceLowToHigh":
-                sortQuery = { price: 1 };
-                break;
-            case "priceHighToLow":
-                sortQuery = { price: -1 };
-                break;
-            case "aToZ":
-                sortQuery = { name: 1 };
-                break;
-            case "zToA":
-                sortQuery = { name: -1 };
-                break;
-            case "ratingHighToLow":
-                sortQuery = { rating: -1 };
-                break;
-            default:
-                sortQuery = { createdAt: -1 };
-        }
-
-        const products = await Products.aggregate([
-            { $match: filter },
-            {
-                $lookup: {
-                    from: 'categories',
-                    localField: 'category',
-                    foreignField: '_id', 
-                    as: 'category'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$category',
-                    preserveNullAndEmptyArrays: true 
-                }
-            },
-            { $sort: sortQuery },
-            { $skip: skip },
-            { $limit: limit }
-        ]);
-        
-
-
-        const categories = await Category.find({ visibility: true });
-        const brands = await Products.distinct("brand", { visibility: true });
-        const totalProducts = await Products.countDocuments(filter);
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.render("shop", {
-            title: "Shop",
-            product: products,
-            brands,
-            category: categories,
-            appliedFilters: req.query,
-            currentPage: page,
-            totalPages,
-            sortOption,
-            user
-        });
-
-    } catch (error) {
-        console.error("Error loading shop:", error);
-        res.status(INTERNAL_SERVER_ERROR).send("Error fetching products");
-    }
-};
-
-
-export default { productInfo, loadaddProducts, addProducts, loadEditProducts, editProducts, loadShop, loadproductDetails }
+export default { productInfo, loadaddProducts, addProducts, loadEditProducts, editProducts }
