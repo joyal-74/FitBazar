@@ -46,6 +46,7 @@ export const requestRefund = async (req, res) => {
 export const cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         const { reason } = req.body;
 
@@ -95,6 +96,30 @@ export const cancelOrder = async (req, res) => {
         }
 
         await order.save();
+
+        const transactionId = generateTxnId();
+
+        await Wallet.create({
+            userId,
+            orderId,
+            address : order.address,
+            transactionId : transactionId, 
+            payment_type: 'wallet',
+            type : 'cancel',
+            amount: order.discountPrice,
+            status: 'Paid',
+            entryType : 'CREDIT',
+        });
+
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: order.userId },
+            { $inc: { wallet: Number(order.discountPrice) || 0 } },
+            { new: true }
+            );
+
+            if (!updatedUser) {
+            console.error('User not found for wallet refund');
+            }
 
         return res.status(OK).json({ message: 'Order cancelled successfully' });
     } catch (error) {
@@ -177,7 +202,6 @@ const updateRefundStatus = async (req, res) => {
     const orderId = req.query.id;
     const { status } = req.body;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-
 
     try {
 

@@ -125,7 +125,6 @@ async function updateStatus(req, res) {
     const { status, cancelReason } = req.body;
 
     try {
-
         const updateData = { status };
         if (cancelReason) updateData.cancelReason = cancelReason;
     
@@ -145,8 +144,6 @@ async function updateStatus(req, res) {
         res.status(INTERNAL_SERVER_ERROR).json({ message: 'Error updating status', error });
     }
 }
-
-
 
 
 function loadCustomers(req, res) {
