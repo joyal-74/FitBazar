@@ -50,8 +50,6 @@ const addCategory = async (req, res) => {
         });
 
         await newCategory.save();
-        // console.log("Uploaded file:", req.file);
-        // console.log("Request body:", req.body);
 
         return res.status(OK).json({ message: "Category added successfully." });
 

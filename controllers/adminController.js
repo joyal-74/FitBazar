@@ -1,39 +1,41 @@
 import bcrypt from "bcryptjs";
 import Admin from "../model/adminModel.js";
 import Order from "../model/orderModel.js";
-import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED } from '../config/statusCodes.js'
 import Address from "../model/addressModel.js";
 
 
 // Login Page Handler
 function loadLogin(req, res) {
-    res.render('admin/login', { title: 'Admin Login Page', errorMessage: "" });
+    try {
+        res.render('admin/login', { title: 'Admin Login Page' });
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const adminLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    let errorMessage = "";
-
     try {
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.status(401).json({error : "Admin not found Successfull...!"});
+            return res.status(UNAUTHORIZED).json({error : "Admin not found Successfull...!"});
         }
 
         const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) {
-            return res.status(401).json({error : "Email or password is Incorrect...!"});
+            return res.status(UNAUTHORIZED).json({error : "Email or password is Incorrect...!"});
         }
 
         req.session.admin = admin;
 
-        return res.status(200).json({message : "Admin Login Successfull...!"});
+        return res.status(OK).json({message : "Admin Login Successfull...!"});
 
     } catch (err) {
         console.error(err);
         errorMessage = "Internal server error";
-        return res.render('admin/login', { title: "Login Page", errorMessage });
+        return res.render('admin/login', { title: "Login Page" });
     }
 };
 
@@ -45,12 +47,7 @@ const logout = (req, res) => {
 };
 
 
-
-
-
-
 const loadOrders = async (req, res) => {
-
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 7;
@@ -67,7 +64,6 @@ const loadOrders = async (req, res) => {
             ];
         }
 
-        // Filter Logic
         if (status) {
             query.status = status;
         }
@@ -75,7 +71,6 @@ const loadOrders = async (req, res) => {
         const totalProducts = await Order.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
-        // Fetch Orders based on Query
         const orders = await Order.find(query)
             .populate('userId')
             .skip(skip)
@@ -94,9 +89,7 @@ const loadOrders = async (req, res) => {
         console.error('Error fetching orders:', error);
         res.status(INTERNAL_SERVER_ERROR).send('Server Error');
     }
-
 };
-
 
 
 const viewOrders = async (req, res) => {
@@ -145,10 +138,4 @@ async function updateStatus(req, res) {
     }
 }
 
-
-function loadCustomers(req, res) {
-    res.render('admin/customers', { title: 'Customers', errorMessage: "" });
-}
-
-
-export default { loadLogin, adminLogin, updateStatus, loadOrders, viewOrders, loadCustomers, logout }
+export default { loadLogin, adminLogin, updateStatus, loadOrders, viewOrders, logout }

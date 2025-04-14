@@ -7,18 +7,22 @@ import Wishlist from '../model/wishlistModel.js';
 
 
 const loadproductDetails = async (req, res) => {
-    const { productId, category } = req.query;
+    try {
+        const { productId, category } = req.query;
     
-    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id: userId });
 
-    const reviews = await Reviews.find({productId})
+        const reviews = await Reviews.find({productId})
 
-    const product = await Products.findOne({ _id : productId }).populate('category')
-    const relateproducts = await Products.find({ category }).limit(4);
+        const product = await Products.findOne({ _id : productId }).populate('category')
+        const relateproducts = await Products.find({ category }).limit(4);
 
-    res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
+        return res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 
@@ -59,13 +63,10 @@ const loadShop = async (req, res) => {
             filter.brand = { $in: brands };
         }
         
-
         if (req.query.price) {
             filter.price = { $lte: parseInt(req.query.price) };
         }
-        
-
-
+  
         if (req.query.availability) {
             filter.stock = { $gt: 0 };
         }

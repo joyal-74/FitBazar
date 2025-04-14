@@ -74,7 +74,6 @@ const addAddress = async (req, res) => {
 };
 
 
-
 const loadAddAddress = async (req,res)=>{
 
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
@@ -90,7 +89,6 @@ const loadEditAddress = async (req, res) => {
     try {
         const { id, index, from } = req.query;
 
-        
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({_id : userId})
         if (!user) {

@@ -19,7 +19,7 @@ router.post('/login', adminController.adminLogin);
 router.get('/logout', adminController.logout);
 
 // dashboard
-router.get('/dashboard', dashboardController.loadDashboard);
+router.get('/dashboard', adminAuth.checkSession, dashboardController.loadDashboard);
 
 // category Management
 router.get('/categories',adminAuth.checkSession, categoryController.categoryInfo);
@@ -66,8 +66,8 @@ router.get('/sales/download/pdf', salesController.generateSalesReportPDF);
 router.get('/sales/download/excel', salesController.downloadSalesReportExcel);
 
 // Wallet management routes
-router.get('/transactions', walletController.loadTransactions);
-router.get('/transactionDetails', walletController.loadTransactionDetails);
+router.get('/transactions', adminAuth.checkSession, walletController.loadTransactions);
+router.get('/transactionDetails', adminAuth.checkSession, walletController.loadTransactionDetails);
 
 
 export default router;

@@ -46,15 +46,23 @@
                                 <% wallet.forEach((wallet, index) => { %>
                                     <tbody>
                                         <td><%= index+1 %></td>
-                                        <td><%= wallet.transactionId  %></td>
-                                        <td><%= new Date(wallet.createdAt).toLocaleString('en-GB') %></td>
+                                        <td class="text-start"><%= wallet.transactionId %></td>
+                                        <td><%= new Date(wallet.createdAt).toLocaleDateString('en-GB') %></td>
                                         <td><%= wallet.userId?.name %></td>
-                                        <td><%= wallet.type %></td>
+                                        <td>
+                                            <%= 
+                                                wallet.type === 'add_money' ? 'Wallet Updated' : 
+                                                wallet.type === 'cancel' ? 'Order Cancelled' : 
+                                                wallet.type === 'refund' ? 'Order Refund' : 
+                                                wallet.type === 'product_purchase' ? 'Product Purchased' : 
+                                                wallet.type 
+                                            %>
+                                        </td>
                                         <td class="text-<%= wallet.entryType === 'CREDIT' ? 'success' : 'danger' %>">
                                             <%= wallet.entryType === 'CREDIT' ? '+' : '-' %>₹<%= wallet.amount %>
                                           </td>                                          
                                         <td><%= wallet.status %></td>
-                                        <td><button class="btn btn-outline-secondary txnDetailsBtn " id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
+                                        <td><button class="btn btn-outline-secondary txnDetailsBtn my-0 py-1" id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
                                     </tbody>
                                 <% }) %>
                             </table>                     

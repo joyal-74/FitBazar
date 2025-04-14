@@ -1,7 +1,7 @@
 import User from "../model/userModel.js";
 import { razorpay } from "../config/razorpay.js";
 import crypto from 'crypto'; 
-import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
+import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST, UNAUTHORIZED } from '../config/statusCodes.js'
 import Wallet from "../model/walletModel.js";
 import Address from "../model/addressModel.js";
 import {nanoid} from 'nanoid';
@@ -10,11 +10,19 @@ const loadWallet = async(req, res) =>{
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
+        if(!userId){
+            return res.status(UNAUTHORIZED).json({message : 'Please login to continue..!'})
+        }
+
         const user = await User.findOne({_id : userId})
+
+        const lastTransaction = await Wallet.findOne({ userId }).sort({ createdAt: -1 });
+        console.log(lastTransaction);
+        
 
         const [firstName] = user.name.split(" ");
 
-        res.render('user/wallet', {title : 'Wallet page', user, firstName})
+        res.render('user/wallet', {title : 'Wallet page', user, firstName, lastTransaction})
     } catch (error) {
         
     }

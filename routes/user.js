@@ -8,7 +8,7 @@ import refundController from '../controllers/refundController.js'
 import reviewController from '../controllers/reviewController.js'
 import upload from "../middleware/imageUpload.js";
 import wishlistController from "../controllers/wishlistController.js";
-import walletController from '../controllers/walletController.js'
+import walletController from '../controllers/walletController.js';
 import couponController from "../controllers/couponController.js";
 import paymentController from "../controllers/paymentController.js";
 import userAuth from "../middleware/userAuth.js";

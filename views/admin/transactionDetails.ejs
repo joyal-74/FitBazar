@@ -103,7 +103,7 @@
                                             <span class="transaction-icon" aria-hidden="true">
                                                 <% if (wallet.type==='add_money' ) { %>
                                                     <i class="fa-solid fa-wallet text-success"></i>
-                                                    <% } else if (wallet.type==='refund' ) { %>
+                                                    <% } else if (wallet.type==='refund' || wallet.type==='cancel' ) { %>
                                                         <i class="fa-solid fa-undo text-warning"></i>
                                                     <% } else if (wallet.type==='product_purchase' ) { %>
                                                         <i class="fa-solid fa-shopping-cart text-danger"></i>
@@ -112,13 +112,14 @@
                                             <p class="mb-0">
                                                 <strong>Transaction:</strong>
                                                 <%= wallet.type==='add_money' ? 'Added money to wallet' :
-                                                    wallet.type==='refund' ? 'Product amount refunded'
+                                                    wallet.type==='refund' ? 'Product amount refunded to wallet' :
+                                                    wallet.type==='cancel' ? 'Product cancelled & amound refunded to wallet'
                                                     : 'Product purchased' 
                                                 %>
                                             </p>
                                         </div>
                                         <div>
-                                            <% if (wallet.type==='product_purchase' || wallet.type==='refund' ) { %>
+                                            <% if (wallet.type==='product_purchase' || wallet.type==='refund' || wallet.type==='cancel' ) { %>
                                                 <a href="/admin/vieworders?id=<%= wallet?.orderId %>"
                                                     class="btn custom-btn btn-sm" target="_blank"
                                                     aria-label="View order details">

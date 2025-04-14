@@ -1,8 +1,6 @@
 import User from '../model/userModel.js'
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
 
-
-
 const userInfo = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;

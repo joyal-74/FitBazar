@@ -9,11 +9,11 @@
             <%- include('../partials/sidebar', { activePage: 'orders' }) %>
             
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-2 py-4 mx-auto">
+            <main class="col-md-12 ms-sm-auto col-lg-9 px-md-2 py-4 mx-auto">
                 <h1 class="h3 mb-4 fw-bold text-dark">Order Details</h1>
                 <div class="row">
                     <!-- Order Summary -->
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <div class="card mb-4 border-0" style="border-radius: 15px; overflow: hidden;">
                             <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
                                 <h5 class="card-title mb-0 fw-bold">Order Summary</h5>
@@ -81,12 +81,12 @@
                     </div>
 
                     <!-- Change Status Section -->
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="card border-0" style="border-radius: 15px; overflow: hidden; height: 480px;">
                             <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
                                 <h5 class="card-title mb-0 fw-bold">Change Order Status</h5>
                             </div>
-                            <div class="card-body py-4 px-5" style="background: #ffffff;">
+                            <div class="card-body py-4 px-4" style="background: #ffffff;">
                                 <div class="d-flex flex-column gap-5">
                                     <div class="form-check d-flex align-items-center gap-2">
                                         <input 
@@ -171,18 +171,18 @@
     <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #5b3f64; color: white;">
+                <div class="modal-header py-2" style="background-color: #5b3f64; color: white;">
                     <h5 class="modal-title" id="cancelReasonModalLabel">Cancel Order</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="cancelOrderId">
                     <div class="mb-3">
-                        <label for="cancelReason" class="form-label fw-bold text-muted">Reason for Cancellation</label>
+                        <label for="cancelReason" class="form-label fw-bold">Reason for Cancellation</label>
                         <select class="form-select" id="cancelReason" required>
                             <option value="" selected disabled>Select a reason</option>
-                            <option value="Customer changed mind">Customer changed mind</option>
-                            <option value="Product out of stock">Product out of stock</option>
+                            <option value="Product Damaged">Product Damaged</option>
+                            <option value="Customer not responding">Customer not responding</option>
                             <option value="Shipping delay">Shipping delay</option>
                             <option value="Order placed by mistake">Order placed by mistake</option>
                             <option value="Other">Other</option>
@@ -192,7 +192,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" onclick="submitCancelReason()">Confirm Cancellation</button>
+                    <button type="button" class="btn custom-btn" onclick="submitCancelReason()">Confirm</button>
                 </div>
             </div>
         </div>
@@ -202,16 +202,14 @@
         let currentOrderId = null;
     
         function confirmStatusChange(orderId, newStatus) {
-            currentOrderId = orderId; // Store the order ID globally for use in modal
+            currentOrderId = orderId;
     
             if (newStatus === 'Cancelled') {
-                // Open the cancel reason modal
                 const modal = new bootstrap.Modal(document.getElementById('cancelReasonModal'));
                 document.getElementById('cancelOrderId').value = orderId;
-                document.getElementById('cancelReason').value = ''; // Reset the select
+                document.getElementById('cancelReason').value = '';
                 modal.show();
             } else {
-                // For other statuses, proceed with confirmation
                 Swal.fire({
                     text: `Do you really want to change the status to "${newStatus}"?`,
                     icon: "warning",
@@ -241,18 +239,16 @@
                 document.getElementById('cancelReason').classList.remove('is-invalid');
             }
     
-            // Hide the modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('cancelReasonModal'));
             modal.hide();
     
-            // Proceed with status update including the reason
             await updateOrderStatus(orderId, 'Cancelled', reason);
         }
     
         async function updateOrderStatus(orderId, newStatus, reason = null) {
             try {
                 const body = { status: newStatus };
-                if (reason) body.cancelReason = reason; // Include reason if provided
+                if (reason) body.cancelReason = reason;
     
                 const response = await fetch(`/admin/orders?id=${orderId}`, {
                     method: 'PATCH',

@@ -22,6 +22,7 @@ import homeRoute from './routes/homeRoute.js'
 import paymentRoutes from './routes/paymenRoute.js';
 
 const PORT = process.env.PORT
+
 app.use(nocache());
 
 app.use(session({
@@ -44,13 +45,10 @@ app.set('layout', 'layouts/layout')
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
-// Serve static files from the "public" directory
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-// Connect to MongoDB Atlas
 db();
 
 app.use('/user', userRoutes);

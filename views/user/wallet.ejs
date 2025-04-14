@@ -39,7 +39,14 @@
                         <div class="info-item">
                             <div class="info-label">Last Transaction</div>
                             <div class="info-value">
-                                <%= user.lastTransaction ? new Date(user.lastTransaction.date).toLocaleDateString() + ' - ₹' + user.lastTransaction.amount : 'No transactions yet' %>
+                                <%= lastTransaction ? 
+                                    new Date(lastTransaction.createdAt).toLocaleDateString() + ` - ` + 
+                                    (lastTransaction.type === 'add_money' ? 'Add money to wallet' : 
+                                    lastTransaction.type === 'refund' ? 'Product refund' :
+                                    lastTransaction.type === 'cancel' ? 'Transaction canceled' :
+                                    lastTransaction.type === 'product_purchase' ? 'Product purchased' : '') + 
+                                    ' - ₹' + lastTransaction.amount 
+                                : 'No transactions yet' %>
                             </div>
                         </div>
                     </div>
