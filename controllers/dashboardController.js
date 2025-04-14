@@ -47,45 +47,54 @@ const loadDashboard = async (req, res) => {
     let groupBy;
 
     if (filter === 'weekly') {
-        // Daily data for weekly view
         for (let i = 6; i >= 0; i--) {
             const day = moment().subtract(i, 'days');
             const dayStart = day.startOf('day').toDate();
             const dayEnd = day.endOf('day').toDate();
-
+    
             const orders = await Order.find({
-                createdAt: { $gte: dayStart, $lte: dayEnd }
+                createdAt: { $gte: dayStart, $lte: dayEnd },
             });
-
+    
             revenueLabels.push(day.format('ddd'));
             revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
         }
     } else if (filter === 'monthly') {
-      const startOfMonth = moment().startOf('month');
-      const revenueMap = new Map();
-  
-      for (let i = 0; i < 4; i++) {
-          const weekStart = startOfMonth.clone().add(i * 7, 'days');
-          const weekEnd = weekStart.clone().add(6, 'days').endOf('day');
-  
-          // Prevent overshooting the current month
-          const actualEnd = weekEnd.isAfter(moment().endOf('month')) ? moment().endOf('month').endOf('day') : weekEnd;
-  
-          const orders = await Order.find({
-              createdAt: {
-                  $gte: weekStart.toDate(),
-                  $lte: actualEnd.toDate()
-              },
-              status: 'completed'
-          });
-  
-          const label = `Week ${i + 1}`;
-          const total = orders.reduce((sum, order) => sum + order.discountPrice, 0);
-  
-          revenueLabels.push(label);
-          revenueData.push(total);
-      }
-  }
+        const startOfMonth = moment().startOf('month');
+        const weeksInMonth = Math.ceil(moment().daysInMonth() / 7);
+    
+        for (let i = 0; i < weeksInMonth; i++) {
+            const weekStart = startOfMonth.clone().add(i * 7, 'days');
+            const weekEnd = weekStart.clone().add(6, 'days').endOf('day');
+    
+            const actualEnd = weekEnd.isAfter(moment().endOf('month')) ? moment().endOf('month').endOf('day') : weekEnd;
+    
+            const orders = await Order.find({
+                createdAt: {
+                    $gte: weekStart.toDate(),
+                    $lte: actualEnd.toDate()
+                },
+            });
+    
+            const label = `Week ${i + 1}`;
+            revenueLabels.push(label);
+            revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
+        }
+    } else if (filter === 'yearly') {
+        for (let i = 11; i >= 0; i--) {
+            const month = moment().subtract(i, 'months');
+            const startOfMonth = month.startOf('month').toDate();
+            const endOfMonth = month.endOf('month').toDate();
+    
+            const orders = await Order.find({
+                createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+            });
+    
+            revenueLabels.push(month.format('MMM'));
+            revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
+        }
+    }
+    
 
     // 3. Best Selling Products (with filter)
     const bestSellingProducts = await Order.aggregate([
@@ -95,7 +104,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: "$productInfo" },
         { $project: { _id: 0, name: "$productInfo.productId", totalSold: 1 } },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 6 }
     ]);
 
     // 4. Top Categories (with filter)
@@ -108,7 +117,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: "$categoryInfo" },
         { $project: { categoryName: "$categoryInfo.name", totalSold: 1 } },
         { $sort: { totalSold: -1 } },
-        { $limit: 10 }
+        { $limit: 5 }
     ]);
 
     // 5. Best Selling Brands (with filter)
@@ -118,7 +127,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: '$productInfo' },
         { $group: { _id: '$productInfo.brand', totalSold: { $sum: '$quantity' } } },
         { $sort: { totalSold: -1 } },
-        { $limit: 5 }
+        { $limit: 6 }
     ]);
 
     const brandData = {
@@ -136,7 +145,7 @@ const loadDashboard = async (req, res) => {
         { $group: { _id: "$addressDoc.details.city", totalSales: { $sum: "$price" } } },
         { $project: { location: "$_id", totalSales: 1, _id: 0 } },
         { $sort: { totalSales: -1 } },
-        { $limit: 10 }
+        { $limit: 6 }
     ]);
 
     const locationChartData = {

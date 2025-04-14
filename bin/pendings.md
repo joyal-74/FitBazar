@@ -60,7 +60,7 @@ _______________________
 week - 11 - suggetions
 _______________________
 
-1. coupon applied with - discount - checkout page
+1. coupon applied with - discount - checkout page [x]
 2. user blocked - should logged out on reload [x]
 3. controllers with < 250 lines [x] - except user-controller
 4. revenue chart - monthly, yearly issue - []

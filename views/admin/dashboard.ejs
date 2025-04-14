@@ -10,17 +10,20 @@
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin: 80px 0;">
-                <h1 class="h3 mb-4 fw-bold">Dashboard</h1>
-                <!-- Filter Section -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="btn-group w-100" role="group" id="filterButtons">
-                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'weekly' ? 'active' : '' %>" data-filter="weekly">Weekly</button>
-                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'monthly' ? 'active' : '' %>" data-filter="monthly">Monthly</button>
-                            <button type="button" class="btn btn-outline-primary filter-btn <%= currentFilter === 'yearly' ? 'active' : '' %>" data-filter="yearly">Yearly</button>
+                <div class="d-flex justify-content-between">
+                    <h1 class="h3 mb-4 fw-bold">Dashboard</h1>
+                    <!-- Filter Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="btn-group w-100" role="group" id="filterButtons">
+                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'weekly' ? 'active' : '' %>" data-filter="weekly">Weekly</button>
+                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'monthly' ? 'active' : '' %>" data-filter="monthly">Monthly</button>
+                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'yearly' ? 'active' : '' %>" data-filter="yearly">Yearly</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- First Row: Wallet and Revenue Charts -->
                 <div class="row g-3 mb-4">
                     <div class="col-lg-6">
@@ -36,6 +39,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Second Row: Best Selling Products and Categories -->
                 <div class="row g-3 mb-4">
                     <div class="col-lg-6">
@@ -51,6 +55,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Third Row: Top Brands and Sales by Location -->
                 <div class="row g-3">
                     <div class="col-lg-6">
@@ -66,6 +71,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Loading Indicator -->
                 <div id="loadingIndicator" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
                     <div class="spinner-border text-primary" role="status">
@@ -88,7 +94,6 @@
             salesLocationPieChart: null
         };
 
-        // Fetch data function
         async function fetchData(filter) {
             try {
                 document.getElementById('loadingIndicator').style.display = 'block';
@@ -103,17 +108,15 @@
             }
         }
 
-        // Render all charts
         function renderCharts(data) {
-            // Destroy existing charts
             Object.values(charts).forEach(chart => chart?.destroy());
 
             // Wallet Chart (Donut)
             const walletOptions = {
-                chart: { type: 'donut', height: 300 },
+                chart: { type: 'donut', height: 300, fontFamily: 'Outfit, sans-serif', },
                 series: data.chartData || [0],
                 labels: data.chartLabels || ['No Data'],
-                colors: ['#198754', '#ffc107', '#dc3545'],
+                colors: ['#198754', '#ffc107', '#5b3f64', ],
                 legend: { position: 'bottom' },
                 dataLabels: {
                     formatter: (val, opts) => opts.w.config.series[opts.seriesIndex]
@@ -125,22 +128,24 @@
 
             // Revenue Line Chart
             const revenueOptions = {
-                chart: { type: 'line', height: 300, toolbar: { show: false } },
+                chart: { type: 'area', height: 300, toolbar: { show: false }, fontFamily: 'Outfit, sans-serif', },
                 series: [{ name: 'Revenue', data: data.revenueData || [0] }],
                 xaxis: { categories: data.revenueLabels || ['No Data'] },
                 stroke: { curve: 'smooth' },
+                fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.1 } },
                 colors: ['#4CAF50'],
                 dataLabels: { enabled: false },
                 yaxis: { labels: { formatter: val => `₹${val}` } },
                 responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
             };
+
             charts.revenueLineChart = new ApexCharts(document.querySelector("#revenueLineChart"), revenueOptions);
             charts.revenueLineChart.render();
 
             // Best Selling Products Bar Chart
             const bestSellingOptions = {
-                chart: { type: 'bar', height: 300 },
-                plotOptions: { bar: { borderRadius: 6, horizontal: false, columnWidth: '50%' } },
+                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false } },
+                plotOptions: { bar: { horizontal: false, columnWidth: '50%' } },
                 dataLabels: { enabled: false },
                 xaxis: { categories: data.bestSellingProducts.map(p => p.name) || ['No Data'] },
                 colors: ['#5b3f64'],
@@ -152,11 +157,11 @@
 
             // Top Categories Bar Chart
             const categoryOptions = {
-                chart: { type: 'bar', height: 300 },
+                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false } },
                 series: [{ name: 'Units Sold', data: data.topCategories.map(c => c.totalSold) || [0] }],
                 xaxis: { categories: data.topCategories.map(c => c.categoryName) || ['No Data'] },
                 colors: ['#5b3f64'],
-                plotOptions: { bar: { borderRadius: 4, horizontal: false } },
+                plotOptions: { bar: { horizontal: false , columnWidth: '50%' }},
                 dataLabels: { enabled: false },
                 responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
             };
@@ -165,12 +170,12 @@
 
             // Top Selling Brands Bar Chart
             const brandOptions = {
-                chart: { type: 'bar', height: 300 },
-                plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
+                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false }  },
+                plotOptions: { bar: { horizontal: true} },
                 dataLabels: { enabled: true },
                 series: [{ name: 'Units Sold', data: data.brandData.series || [0] }],
-                xaxis: { categories: data.brandData.labels || ['No Data'], title: { text: 'Units Sold' } },
-                colors: ['#3E8E7E'],
+                xaxis: { categories: data.brandData.labels || ['No Data'] },
+                colors: ['#5b3f64'],
                 responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
             };
             charts.bestBrandBarChart = new ApexCharts(document.querySelector("#bestBrandBarChart"), brandOptions);
@@ -178,7 +183,7 @@
 
             // Sales by Location Pie Chart
             const pieOptions = {
-                chart: { type: 'pie', height: 300 },
+                chart: { type: 'pie', height: 300, fontFamily: 'Outfit, sans-serif', },
                 labels: data.locationChartData.labels || ['No Data'],
                 series: data.locationChartData.series || [0],
                 legend: { position: 'bottom' },

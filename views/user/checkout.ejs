@@ -248,6 +248,11 @@
                                         <%= deliveryCharge ? `₹ ${deliveryCharge}` : 'Free' %>
                                     </span>
                                 </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted" style="font-size: 0.95rem;" id="couponText"></span>
+                                    <span class="text-success" id="couponValue"></span>
+                                </div>
                                 
                                 <hr class="my-2" style="border-color: #E0E0E0;">
                     
@@ -911,9 +916,14 @@
     
             function showSuccessCoupon(couponCode, discount, message) {
                 document.getElementById('couponDiscount').value = discount;
+                const couponText = document.getElementById('couponText');
+                const couponValue = document.getElementById('couponValue');
+
                 applyButton.classList.remove('btn-outline-secondary');
                 applyButton.classList.add('btn-success');
                 applyButton.textContent = 'Applied';
+                couponText.innerHTML = 'Coupon Discount';
+                couponValue.innerHTML = - discount;
                 
                 couponStatus.textContent = message;
                 couponStatus.className = 'coupon-status coupon-success';

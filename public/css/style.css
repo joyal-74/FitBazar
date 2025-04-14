@@ -816,7 +816,7 @@ td {
 
 
 .custom-outline-btn {
-    border: 1px solid #3C1549;
+    border: 1px solid #3C1549 ;
     color: #3C1549;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -999,4 +999,10 @@ td {
     padding: 8px 20px;
     border-radius: 8px;
     border: 1px solid #5b3f64;
+}
+
+.custom-outline-btn.active {
+    border: 1px solid #3C1549 ;
+    background-color: #3C1549;
+    color: #fff;
 }
