@@ -1,4 +1,5 @@
 import Coupon from "../model/couponModel.js";
+import User from "../model/userModel.js";
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
 
 const loadCouponPage = async(req,res)=>{
@@ -126,7 +127,7 @@ const deleteCoupon = async (req,res) => {
 }
 
 
-export const validateCoupon = async (req, res) => {
+const validateCoupon = async (req, res) => {
     try {
         const { code, total } = req.body;
 
@@ -153,6 +154,8 @@ export const validateCoupon = async (req, res) => {
         }
 
         req.session.couponDiscount = coupon.offerPrice;
+        coupon.used ++
+        await coupon.save();
 
         return res.status(OK).json({
             success: true,

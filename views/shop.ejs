@@ -36,10 +36,10 @@
                     <h6 class="mt-3">Price</h6>
                     <div class="mb-4 w-75">
                         <input type="range" class="form-range custom-range" min="0" max="10000" step="100" id="priceRange" name="price"
-                            value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 5000 %>">
+                            value="<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 8000 %>">
                         <div class="d-flex justify-content-between fw-bold">
                             <small id="minValue">₹0</small>
-                            <small id="currValue">₹<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 5000 %></small>
+                            <small id="currValue">₹<%= appliedFilters && appliedFilters.price ? appliedFilters.price : 8000 %></small>
                             <small id="maxValue">₹10,000</small>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                     
                         <input class="form-control me-2" type="search" name="result" placeholder="Search products"
                             value="<%= appliedFilters && appliedFilters.result ? appliedFilters.result : '' %>">
-                        <button class="btn" type="submit" style="background-color: #beb8f2;">
+                        <button class="btn text-white" type="submit" style="background-color: #5B3F64;">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
@@ -120,25 +120,39 @@
                 <div class="row" id="product-container">
                     <% product.forEach(product => { %>
                         <div class="col-md-3 col-lg-3 my-3">
-                            <div class="card shadow-sm p-2 bg-white">
-                                <!-- Image Container with Offer Badge -->
-                                <a href="/product?productId=<%= product._id %>&category=<%= product.category._id %>" class="text-decoration-none text-dark">
-                                    <div class="position-relative">
-                                        <img src="<%= product.images[0] %>" alt="<%= product.name %>"
-                                            class="product-img card-img-top mx-auto d-block" 
-                                            style="height: 250px; object-fit: cover;">
+                            <div class="card shadow-sm p-2 bg-white h-100">
                 
-                                        <% const displayOffer = Math.max(product.productOffer || 0, product.category?.offer || 0);
-                                            if (displayOffer > 0) { 
-                                        %>
-                                            <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
-                                                <%= displayOffer %>% OFF
-                                            </span>
-                                        <% } %>
-                                    </div>
-                                </a>
+                                <!-- Image Container with Offer Badge & Wishlist Button -->
+                                <div class="position-relative">
+                                    <a href="/product?productId=<%= product._id %>&category=<%= product.category._id %>" class="text-decoration-none text-dark">
+                                        <img src="<%= product.images[0] %>" alt="<%= product.name %>"
+                                            class="product-img card-img-top mx-auto d-block"
+                                            style="height: 250px; object-fit: cover;">
+                                    </a>
+                
+                                    <% const displayOffer = Math.max(product.productOffer || 0, product.category?.offer || 0);
+                                        if (displayOffer > 0) { 
+                                    %>
+                                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
+                                            <%= displayOffer %>% OFF
+                                        </span>
+                                    <% } %>
+                
+                                    <!-- Wishlist Button -->
+                                    <button 
+                                        class="btn btn-sm position-absolute top-0 end-0 m-2 px-2 add-to-wishlist-btn" 
+                                        style="background-color: rgba(255, 255, 255, 0.9); border-radius: 50%;" 
+                                        data-user-id="<%= user?._id %>" 
+                                        data-product-id="<%= product._id %>"  
+                                        data-color="<%= product.variants[0]?.color %>" 
+                                        data-weight="<%= product.variants[0]?.weight %>" 
+                                        data-is-wishlisted="<%= wishlistProductIds?.includes(product._id.toString()) %>">
+                                        <i class="<%= wishlistProductIds?.includes(product._id.toString()) ? 'fa-solid' : 'fa-regular' %> fa-heart text-danger"></i>
+                                    </button>
 
-            
+                                </div>
+                
+                                <!-- Card Body -->
                                 <div class="card-body p-2">
                                     <h6 class="card-title text-truncate mb-1"><%= product.name %></h6>
                                     <p class="text-warning mb-1">&#9733; <%= product.rating %> (<%= product.reviewCount %>)</p>
@@ -146,8 +160,17 @@
                                         <strong class="fs-6 text-success">₹<%= Math.round(product.price - (product.price * displayOffer / 100)) %></strong> 
                                         <del class="text-dark small">₹<%= product.price %></del>
                                     </p>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn w-50 btn-sm custom-outline-btn" id="addToCart" onclick="addToCart()">
+                
+                                    <div class="d-flex gap-2 justify-content-between">
+                                        <button 
+                                            class="btn w-50 btn-sm text-dark custom-outline-btn addToCartBtn" 
+                                            style="background-color: #ffffff; border: 1px solid #3C1549;" 
+                                            data-user-id="<%= user?._id %>" 
+                                            data-product-id="<%= product._id %>" 
+                                            data-sale-price="<%= Math.round(product.price - (product.price * displayOffer / 100)) %>" 
+                                            data-base-price="<%= product.price %>" 
+                                            data-color="<%= product.variants[0]?.color %>" 
+                                            data-weight="<%= product.variants[0]?.weight %>">
                                             <i class="fa fa-cart-shopping me-2"></i> Add to Cart
                                         </button>
                                         <button class="btn w-50 btn-sm text-white" style="background: linear-gradient(to right, #5B3F64, #3C1549); border: none; font-size: 0.8em;">
@@ -211,6 +234,7 @@
         const priceRange = document.getElementById("priceRange");
         const minValue = document.getElementById("minValue");
         const maxValue = document.getElementById("currValue");
+        const addToCartBtn = document.getElementById('addToCartBtn');
     
         priceRange.addEventListener("input", function () {
             let selectedValue = parseInt(this.value);
@@ -221,13 +245,6 @@
         function updatePrice(value) {
             document.getElementById("currValue").textContent = "₹" + value;
         }
-
-        document.getElementById("sortSelect").addEventListener("change", function() {
-            const selectedSort = this.value;
-            const form = document.getElementById("filterForm");
-            form.action = `/shop?sort=${selectedSort}`;
-            form.submit();
-        });
 
         document.getElementById("searchProductForm")?.addEventListener("submit", async function (event) {
             event.preventDefault();
@@ -242,6 +259,131 @@
             }
 
             window.location.href = currentUrl.toString();
+        });
+
+        document.querySelectorAll('.addToCartBtn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const btnEl = e.currentTarget;
+
+                const userId = btnEl.dataset.userId;
+                const productId = btnEl.dataset.productId;
+                const price = btnEl.dataset.salePrice;
+                const basePrice = btnEl.dataset.basePrice;
+                const selectedColor = btnEl.dataset.color;
+                const selectedWeight = btnEl.dataset.weight;
+                const quantity = 1;
+
+                const productDetails = {
+                    userId,
+                    productId,
+                    quantity,
+                    price,
+                    basePrice,
+                    variants: { color: selectedColor, weight: selectedWeight }
+                };
+
+                try {
+                    const response = await fetch('/user/cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(productDetails)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        Swal.fire({
+                        icon: 'warning',
+                        text: data.error,
+                        showConfirmButton: false,
+                        timer: 2000
+                        });
+                    } else {
+                        Swal.fire({
+                        icon: 'success',
+                        text: 'Added to cart successfully',
+                        showConfirmButton: true,
+                        confirmButtonText: 'Go to Cart',
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/user/cart';
+                        }
+                    });
+                }
+
+                } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'An error occurred',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                }
+            });
+        });
+
+        document.querySelectorAll('.add-to-wishlist-btn').forEach(btn => {
+            const icon = btn.querySelector('i');
+
+            // On load: set heart based on data-is-wishlisted
+            if (btn.dataset.isWishlisted === 'true') {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+            }
+
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                const userId = btn.dataset.userId;
+                const productId = btn.dataset.productId;
+                const selectedColor = btn.dataset.color;
+                const selectedWeight = btn.dataset.weight;
+
+                const productDetails = { userId, productId, color: selectedColor, weight: selectedWeight };
+
+                try {
+                    const response = await fetch('/user/wishlist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(productDetails)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            icon: 'warning',
+                            text: data.error,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    } else {
+                        // Set icon to solid heart
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                        btn.dataset.isWishlisted = 'true';
+
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'Added to wishlist successfully',
+                            showConfirmButton: true,
+                            confirmButtonText: 'Go to wishlist',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/user/wishlist';
+                            }
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        text: 'An error occurred',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            });
         });
 
     </script>

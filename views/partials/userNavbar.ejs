@@ -16,8 +16,14 @@
                 </button>
             </form>
             <div class="d-flex align-items-center">
-                <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                <% if (!user) { %>
+                    <a href="#" class="me-3 text-white guest-wishlist"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white guest-cart"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                <% } else { %>
+                    <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                <% } %>
+                
                 <% if (user) { %>
                     <div class="dropdown">
                         <a href="#" class="text-decoration-none text-white" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -54,5 +60,26 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          document.querySelectorAll(".guest-wishlist, .guest-cart").forEach(el => {
+            el.addEventListener("click", function (e) {
+              e.preventDefault();
+              Swal.fire({
+                icon: 'info',
+                text: 'Please login to continue',
+                showConfirmButton: true,
+                confirmButtonText: 'Login',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  window.location.href = "/user/login";
+                }
+              });
+            });
+          });
+        });
+      </script>      
 </nav>
 

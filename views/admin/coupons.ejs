@@ -190,6 +190,7 @@
                                         <th>Expiry Date</th>
                                         <th>Min Price</th>
                                         <th>Offer Price</th>
+                                        <th>Used</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -204,6 +205,7 @@
                                         <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-GB") %></td>
                                         <td><%= coupon.minPrice %></td>
                                         <td><%= coupon.offerPrice %></td>
+                                        <td><%= coupon.used %></td>
                                         <td>
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <p style=" margin: 0;" class="badge stock-color <%= coupon.status === 'Active' ? '' : 'd-none' %>">

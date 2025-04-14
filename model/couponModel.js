@@ -33,6 +33,10 @@ const couponSchema = new Schema({
         required: true,
         min: 0
     },
+    used : {
+        type : Number,
+        default : 0
+    },
     status: {
         type: String,
         enum: ['Active', 'Inactive'],

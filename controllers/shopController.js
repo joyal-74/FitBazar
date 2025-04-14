@@ -3,6 +3,7 @@ import Category from '../model/categoryModel.js';
 import User from '../model/userModel.js';
 import Reviews from '../model/reviewsModel.js';
 import { INTERNAL_SERVER_ERROR } from '../config/statusCodes.js'
+import Wishlist from '../model/wishlistModel.js';
 
 
 const loadproductDetails = async (req, res) => {
@@ -111,6 +112,9 @@ const loadShop = async (req, res) => {
             { $skip: skip },
             { $limit: limit }
         ]);
+
+        const wishlistItems = await Wishlist.find({ userId }).select('product');
+        const wishlistProductIds = wishlistItems.map(item => item.product.toString());
         
         const categories = await Category.find({ visibility: true });
         const brands = await Products.distinct("brand", { visibility: true });
@@ -126,7 +130,8 @@ const loadShop = async (req, res) => {
             currentPage: page,
             totalPages,
             sortOption,
-            user
+            user,
+            wishlistProductIds
         });
 
     } catch (error) {

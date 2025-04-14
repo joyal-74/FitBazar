@@ -29,6 +29,10 @@ const getWishlist = async (req, res) => {
 const addToWishlist = async (req, res) => {
     try {
         const { userId, productId, color, weight } = req.body;
+
+        if(!userId){
+            return res.status(UNAUTHORIZED).json({error : 'Please login to continue..!'})
+        }
         
         // Check if item already exists
         const existingItem = await Wishlist.findOne({ userId, product : productId, color,  weight });

@@ -33,7 +33,7 @@ New Bugs
 
 1. Fix admin product filter on stock issue [x]
 2. User side hide returned as return button hide [x]
-3. Include tax/GST on order []
+3. Include tax/GST on order [x]
  
 
 Week review bugs
@@ -53,13 +53,14 @@ _______________________
 4. session for sales report [x]
 5. status code fix to all controller [x]
 6. remove unwanted consoles [x]
-7. double check all functionalities before review []
-8. add to cart in details and home page cads []
+7. double check all functionalities before review [x]
+8. add to cart in details and home page cads [x]
 
 
 week - 11 - suggetions
 _______________________
 
 1. coupon applied with - discount - checkout page
-2. user blocked - should logged out on reload
+2. user blocked - should logged out on reload [x]
 3. controllers with < 250 lines [x] - except user-controller
+4. revenue chart - monthly, yearly issue - []
