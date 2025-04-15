@@ -32,12 +32,14 @@ const loadDashboard = async (req, res) => {
     const summary = {
         'Add Money to Wallet': 0,
         'Refund Product': 0,
+        'Product Cancelled': 0,
         'Product Purchase': 0
     };
 
     transactions.forEach(tx => {
         if (tx.type === 'add_money') summary['Add Money to Wallet'] += tx.amount;
         else if (tx.type === 'refund') summary['Refund Product'] += tx.amount;
+        else if (tx.type === 'cancel') summary['Product Cancelled'] += tx.amount;
         else if (tx.type === 'product_purchase') summary['Product Purchase'] += tx.amount;
     });
 
@@ -104,7 +106,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: "$productInfo" },
         { $project: { _id: 0, name: "$productInfo.productId", totalSold: 1 } },
         { $sort: { totalSold: -1 } },
-        { $limit: 6 }
+        { $limit: 10 }
     ]);
 
     // 4. Top Categories (with filter)
@@ -117,7 +119,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: "$categoryInfo" },
         { $project: { categoryName: "$categoryInfo.name", totalSold: 1 } },
         { $sort: { totalSold: -1 } },
-        { $limit: 5 }
+        { $limit: 10 }
     ]);
 
     // 5. Best Selling Brands (with filter)
@@ -127,7 +129,7 @@ const loadDashboard = async (req, res) => {
         { $unwind: '$productInfo' },
         { $group: { _id: '$productInfo.brand', totalSold: { $sum: '$quantity' } } },
         { $sort: { totalSold: -1 } },
-        { $limit: 6 }
+        { $limit: 10 }
     ]);
 
     const brandData = {

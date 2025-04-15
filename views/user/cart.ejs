@@ -248,7 +248,7 @@
                     window.location.reload();
                 } else {
                     Swal.fire({
-                        icon: 'error',
+                        icon: 'warning',
                         text: data.error || 'Failed to update quantity!'
                     });
                 }
@@ -256,7 +256,7 @@
                 console.error('Error updating quantity:', error);
                 Swal.fire({
                     icon: 'error',
-                    text: 'Something went wrong. Please try again later.'
+                    text: error.message || 'Something went wrong. Please try again later.'
                 });
             }
         }

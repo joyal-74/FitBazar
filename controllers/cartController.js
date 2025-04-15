@@ -22,6 +22,21 @@ const addItemToCart = async (req, res) => {
         }
 
         let availableStock = product.stock;
+        const userCart = await Cart.findOne({ userId });
+        let existingQuantity = 0;
+
+        if (userCart) {
+            const matchingItem = userCart.items.find(item =>
+                item.productId.toString() === product._id.toString() &&
+                item.variants?.color === variants?.color &&
+                item.variants?.weight === variants?.weight
+            );
+        
+            if (matchingItem) {
+                existingQuantity = matchingItem.quantity;
+            }
+        }
+        
 
         if (variants?.color || variants?.weight) {
             const variant = product.variants.find(
@@ -33,8 +48,17 @@ const addItemToCart = async (req, res) => {
             availableStock = variant.stock;
         }
 
+        console.log(existingQuantity + Number(quantity))
+        console.log(availableStock);
+
+        if (existingQuantity + Number(quantity) > availableStock) {
+            return res.status(BAD_REQUEST).json({
+                error: `Only ${availableStock - existingQuantity} more units of "${product.name}" available in stock for this variant.`
+            });
+        }
+
         if (quantity > availableStock) {
-            return res.status(NOT_FOUND).json({
+            return res.status(BAD_REQUEST).json({
                 error: `Only ${availableStock} units of "${product.name}" available in stock for this variant.`
             });
         }
@@ -141,6 +165,10 @@ const updateQuantity = async (req, res) => {
         const variant = product.variants.find(v =>
             v.color === color && v.weight === weight
         );
+
+        if(item.quantity > 10){
+            return res.status(BAD_REQUEST).json({ error: "Maximum 10 product can purchase in a single order" });
+        }
 
         if (change > 0) {
             if (item.quantity < variant.stock) {

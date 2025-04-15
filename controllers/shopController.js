@@ -37,10 +37,12 @@ const loadShop = async (req, res) => {
 
         let filter = { visibility: true };
 
+        // Handle search result query
         if (req.query.result) {
             filter.name = { $regex: req.query.result, $options: "i" };
         }
 
+        // Handle category filter
         if (req.query.category) {
             let categories = Array.isArray(req.query.category)
                 ? req.query.category
@@ -54,6 +56,7 @@ const loadShop = async (req, res) => {
             }
         }
 
+        // Handle brand filter
         if (req.query.brand) {
             let brands = Array.isArray(req.query.brand)
                 ? req.query.brand
@@ -62,15 +65,21 @@ const loadShop = async (req, res) => {
                     : [req.query.brand];
             filter.brand = { $in: brands };
         }
-        
-        if (req.query.price) {
-            filter.price = { $lte: parseInt(req.query.price) };
+
+        // Handle price range filter (before offer)
+        if (req.query.minPrice && req.query.maxPrice) {
+            const minPrice = parseInt(req.query.minPrice);
+            const maxPrice = parseInt(req.query.maxPrice);
+
+            filter.price = { $gte: minPrice, $lte: maxPrice };
         }
-  
+
+        // Handle availability filter
         if (req.query.availability) {
             filter.stock = { $gt: 0 };
         }
 
+        // Handle sorting options
         const sortOption = req.query.sort || "newest";
         let sortQuery = {};
         switch (sortOption) {
@@ -93,6 +102,7 @@ const loadShop = async (req, res) => {
                 sortQuery = { createdAt: -1 };
         }
 
+        // Fetch filtered and sorted products from database (without applying offers yet)
         const products = await Products.aggregate([
             { $match: filter },
             {
@@ -114,17 +124,36 @@ const loadShop = async (req, res) => {
             { $limit: limit }
         ]);
 
+        // Apply offers/discounts dynamically on the server side
+        const filteredProducts = products.filter(product => {
+            // Calculate the offer display
+            const displayOffer = Math.max(product.productOffer || 0, product.category?.offer || 0);
+
+            // Calculate the final price after applying offer
+            const finalPrice = Math.round(product.price - (product.price * displayOffer / 100));
+
+            // Filter based on the final price after applying the offer
+            const minPrice = req.query.minPrice ? parseInt(req.query.minPrice) : 0;
+            const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : Number.MAX_SAFE_INTEGER;
+            return finalPrice >= minPrice && finalPrice <= maxPrice;
+        });
+
+        // Fetch wishlist items and user data
         const wishlistItems = await Wishlist.find({ userId }).select('product');
         const wishlistProductIds = wishlistItems.map(item => item.product.toString());
         
+        // Fetch categories and brands for filters
         const categories = await Category.find({ visibility: true });
         const brands = await Products.distinct("brand", { visibility: true });
-        const totalProducts = await Products.countDocuments(filter);
+
+        // Calculate total products and pages for pagination
+        const totalProducts = filteredProducts.length;
         const totalPages = Math.ceil(totalProducts / limit);
 
+        // Render the shop page with products and filters
         res.render("shop", {
             title: "Shop",
-            product: products,
+            product: filteredProducts,
             brands,
             category: categories,
             appliedFilters: req.query,

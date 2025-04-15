@@ -132,53 +132,7 @@ footer {
 }
 
 /* Custom Range Slider Styling */
-.custom-range {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 8px;
-    background: #ddd;
-    border-radius: 5px;
-    outline: none;
-    opacity: 0.9;
-    transition: opacity 0.2s;
-}
 
-/* Track before the thumb */
-.custom-range::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, #da22ff 0%, #2f1b9d 100%);
-    height: 8px;
-    border-radius: 5px;
-}
-
-/* Thumb (Handle) - Chrome, Safari, Edge */
-.custom-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #d322ff;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-top: -5px;
-}
-
-/* Thumb (Handle) - Firefox */
-.custom-range::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: #8522ff;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* Hover Effect */
-.custom-range:hover {
-    opacity: 1;
-}
-
-/* Active Thumb */
-.custom-range:active::-webkit-slider-thumb {
-    background: #7a1ba9;
-}
 
 
 .variant-btn {
@@ -255,4 +209,88 @@ footer {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+
+input[type="range"]::-webkit-slider-thumb {
+    pointer-events: all;
+    position: relative;
+    z-index: 1;
+}
+input[type="range"] {
+    pointer-events: none;
+}
+
+.form-range {
+    margin-top: 2rem;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    background: transparent;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+}
+
+/* Track styles (Chrome, Safari) */
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: #dee2e6; /* default track */
+    border-radius: 5px;
+    z-index: 3;
+}
+
+/* Thumb styles */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #5B3F64; /* green thumb */
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: all;
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+/* First slider (min range) - shows track color */
+.range-1::-webkit-slider-runnable-track {
+    height: 8px;
+    background: #5B3F64; /* Your colored track */
+    border-radius: 5px;
+}
+
+.range-1::-moz-range-track {
+    height: 8px;
+    background: #5B3F64;
+    border-radius: 5px;
+}
+
+.range-2::-webkit-slider-runnable-track {
+    height: 8px;
+    background: transparent !important;
+    border-radius: 5px;
+}
+
+.range-2::-moz-range-track {
+    height: 8px;
+    background: transparent !important;
+    border-radius: 5px;
+}
+
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #4caf50;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }

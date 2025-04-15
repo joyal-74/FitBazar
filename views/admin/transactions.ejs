@@ -58,8 +58,8 @@
                                                 wallet.type 
                                             %>
                                         </td>
-                                        <td class="text-<%= wallet.entryType === 'CREDIT' ? 'success' : 'danger' %>">
-                                            <%= wallet.entryType === 'CREDIT' ? '+' : '-' %>₹<%= wallet.amount %>
+                                        <td class="text-<%= wallet.entryType === 'CREDIT' ? 'danger' : 'success' %>">
+                                            <%= wallet.entryType === 'CREDIT' ? '-' : '+' %>₹<%= wallet.amount %>
                                           </td>                                          
                                         <td><%= wallet.status %></td>
                                         <td><button class="btn btn-outline-secondary txnDetailsBtn my-0 py-1" id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
