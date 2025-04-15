@@ -102,12 +102,12 @@ const loadShop = async (req, res) => {
                 sortQuery = { createdAt: -1 };
         }
 
-        // Fetch filtered and sorted products from database (without applying offers yet)
+        // Fetch filtered and sorted products from database
         const products = await Products.aggregate([
             { $match: filter },
             {
                 $lookup: {
-                    from: 'categories',
+                    from: 'categories', 
                     localField: 'category',
                     foreignField: '_id', 
                     as: 'category'
@@ -120,22 +120,19 @@ const loadShop = async (req, res) => {
                 }
             },
             { $sort: sortQuery },
-            { $skip: skip },
-            { $limit: limit }
         ]);
 
-        // Apply offers/discounts dynamically on the server side
         const filteredProducts = products.filter(product => {
-            // Calculate the offer display
             const displayOffer = Math.max(product.productOffer || 0, product.category?.offer || 0);
 
-            // Calculate the final price after applying offer
             const finalPrice = Math.round(product.price - (product.price * displayOffer / 100));
 
-            // Filter based on the final price after applying the offer
             const minPrice = req.query.minPrice ? parseInt(req.query.minPrice) : 0;
             const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : Number.MAX_SAFE_INTEGER;
-            return finalPrice >= minPrice && finalPrice <= maxPrice;
+
+            const unblockedCategory = product.category.visibility === true
+
+            return finalPrice >= minPrice && finalPrice <= maxPrice && unblockedCategory;
         });
 
         // Fetch wishlist items and user data
@@ -144,16 +141,15 @@ const loadShop = async (req, res) => {
         
         // Fetch categories and brands for filters
         const categories = await Category.find({ visibility: true });
+        const totalProducts = await Products.countDocuments(filter);
         const brands = await Products.distinct("brand", { visibility: true });
-
-        // Calculate total products and pages for pagination
-        const totalProducts = filteredProducts.length;
+        
         const totalPages = Math.ceil(totalProducts / limit);
+        const paginatedProducts = filteredProducts.slice(skip, skip + limit);
 
-        // Render the shop page with products and filters
         res.render("shop", {
             title: "Shop",
-            product: filteredProducts,
+            product: paginatedProducts,
             brands,
             category: categories,
             appliedFilters: req.query,

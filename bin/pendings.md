@@ -63,4 +63,16 @@ _______________________
 1. coupon applied with - discount - checkout page [x]
 2. user blocked - should logged out on reload [x]
 3. controllers with < 250 lines [x] - except user-controller
-4. revenue chart - monthly, yearly issue - []
+4. revenue chart - monthly, yearly issue - [x]
+
+
+week 11 - review Pendings
+_________________________
+
+1. fix add to cart limit [x]
+2. Shop page price filter min - max [x]
+3. top 10 for dashbord chart - [x]
+4. max quantity per order - 10 [x]
+5. payment failure also create as an order - []
+5. multiple products as single order not multiple - []
+6. transaction credit/debit color - []
