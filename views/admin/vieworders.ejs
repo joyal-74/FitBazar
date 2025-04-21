@@ -13,37 +13,75 @@
                 <h1 class="h3 mb-4 fw-bold text-dark">Order Details</h1>
                 <div class="row">
                     <!-- Order Summary -->
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="card mb-4 border-0" style="border-radius: 15px; overflow: hidden;">
-                            <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
-                                <h5 class="card-title mb-0 fw-bold">Order Summary</h5>
+                            <div class="card-header text-white py-3">
+                                <h5 class="card-title mb-0 fw-bold">#Order - <%= order.orderId %></h5>
                             </div>
                             <div class="card-body p-4" style="background: #fff;">
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <p class="mb-2"><strong class="text-muted">Order ID:</strong> #<%= order.orderId %></p>
-                                        <p class="mb-2"><strong class="text-muted">Product:</strong> <%= order.product.name %></p>
-                                        <p class="mb-2"><strong class="text-muted">Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
-                                        <p class="mb-2"><strong class="text-muted">Customer:</strong> <%= order.userId ? order.userId.name : 'Unknown' %></p>
+                                <div class="row mb-3">
+                                    <div class="">
+                                        <% 
+                                            let total = 0; 
+                                            order.orderItems.forEach(item => {
+                                                total += item.quantity * (item.discountPrice || 0);
+                                            });
+                                        %>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="mb-2"><strong class="text-muted">Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
+                                            <p class="fw-bold me-4">Grand Total : ₹ <%= total %></p>
+                                        </div>
+                                        <p class="mb-2"><strong class="text-muted">Payment Method:</strong> 
+                                            <% 
+                                                let paymentLabel = order.paymentMethod;
+                                                if (order.paymentMethod === 'cod') {
+                                                    paymentLabel = 'Cash on Delivery';
+                                                } else if (order.paymentMethod === 'netbanking') {
+                                                    paymentLabel = 'Net Banking';
+                                                } else if (order.paymentMethod === 'wallet') {
+                                                    paymentLabel = 'FitBazar Wallet';
+                                                } else if (order.paymentMethod === 'card') {
+                                                    paymentLabel = 'Credit/Debit Card';
+                                                }
+                                            %>
+                                            <%= paymentLabel %>
+                                        </p>                                        
+                
                                     </div>
-                                    <div class="col-md-4">
-                                        <p class="mb-2"><strong class="text-muted">Status:</strong> 
-                                            <% if (order.status === 'Pending') { %>
-                                                <span class="badge bg-warning text-dark px-2 py-1" style="border-radius: 10px;"><%= order.status %></span>
-                                            <% } else if (order.status === 'Shipped') { %>
-                                                <span class="badge bg-primary px-2 py-1" style="border-radius: 10px;"><%= order.status %></span>
-                                            <% } else if (order.status === 'Out for Delivery') { %>
-                                                <span class="badge bg-info px-2 py-1" style="border-radius: 10px;"><%= order.status %></span>
-                                            <% } else if (order.status === 'Delivered') { %>
-                                                <span class="badge bg-success px-2 py-1" style="border-radius: 10px;"><%= order.status %></span>
-                                            <% } else if (order.status === 'Cancelled') { %>
-                                                <span class="badge bg-danger px-2 py-1" style="border-radius: 10px;"><%= order.status %></span>
-                                            <% } %>
-                                        </p>
-                                        <p class="mb-2"><strong class="text-muted">Quantity:</strong> <%= order.quantity %></p>
-                                        <p class="mb-2"><strong class="text-muted">Total Price:</strong> ₹<%= order.discountPrice.toLocaleString('en-IN') %></p>
-                                        <p class="mb-2"><strong class="text-muted">Payment Method:</strong> <%= order.paymentMethod %></p>
-                                    </div>
+                                </div>
+                                <!-- Product Details Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Product Name</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Unit Price</th>
+                                                <th scope="col">Qty</th>
+                                                <th scope="col">Subtotal</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% order.orderItems.forEach((item, index) => { %>
+                                                <tr class="text-center align-items-center">
+                                                    <input type="hidden" class="prdouct-id" value="<%= item.product?._id %>">
+                                                    <td class="text-start"><%= item.product?.name || 'Unknown product' %></td>
+                                                    <td>
+                                                        <div class="border p-1 rounded text-center"><%= item.statusHistory[item.statusHistory.length - 1].status %></div>
+                                                    </td>
+                                                    <td>₹<%= item.discountPrice || 0 %></td>
+                                                    <td><%= item.quantity %></td>
+                                                    <td>₹<%= (item.quantity * (item.discountPrice || 0)) %></td>
+                                                    <td class="text-center align-middle">
+                                                        <button class="btn custom-outline-btn btn-sm update-btn" data-bs-toggle="modal" data-bs-target="#statusChangeModal" data-product-id="<%= item.product._id %>">
+                                                            Update
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -63,103 +101,20 @@
                                             <% if (address.landmark) { %>
                                                 , <%= address.landmark %>
                                             <% } %>
+                                            , <%= address.city %>, <%= address.state %>, <%= address.pincode %>
                                         </p>                                        
-                                        <p class="mb-1 text-muted"><%= address.city %>, <%= address.state %>, <%= address.pincode %></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card border-0" style="border-radius: 15px; overflow: hidden;">
-                            <% if (order.cancelReason ) { %>
+                            <% if (order.cancelReason) { %>
                                 <div class="card-body py-2 px-4" style="background: #fff;">
                                     <div class="mt-1">
-                                        <p class="mb-1 text-muted fw-bold"> Cancel Reason : <%= order.cancelReason %> </p>
+                                        <p class="mb-1 text-muted fw-bold">Cancel Reason: <%= order.cancelReason %></p>
                                     </div>
                                 </div>
                             <% } %>
-                        </div>
-                    </div>
-
-                    <!-- Change Status Section -->
-                    <div class="col-md-3">
-                        <div class="card border-0" style="border-radius: 15px; overflow: hidden; height: 480px;">
-                            <div class="card-header bg-gradient text-white py-3" style="background-color: #5b3f64;">
-                                <h5 class="card-title mb-0 fw-bold">Change Order Status</h5>
-                            </div>
-                            <div class="card-body py-4 px-4" style="background: #ffffff;">
-                                <div class="d-flex flex-column gap-5">
-                                    <div class="form-check d-flex align-items-center gap-2">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="radio" 
-                                            name="orderStatus" 
-                                            id="pending" 
-                                            value="Pending" 
-                                            <%= order.status === 'Pending' ? 'checked' : '' %>
-                                            onchange="confirmStatusChange('<%= order.orderId %>', this.value)"
-                                        >
-                                        <label class="form-check-label d-flex align-items-center gap-1" for="pending">
-                                            <i class="fas fa-clock text-warning me-2"></i> Pending
-                                        </label>
-                                    </div>
-                                    <div class="form-check d-flex align-items-center gap-2">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="radio" 
-                                            name="orderStatus" 
-                                            id="shipped" 
-                                            value="Shipped" 
-                                            <%= order.status === 'Shipped' ? 'checked' : '' %>
-                                            onchange="confirmStatusChange('<%= order.orderId %>', this.value)"
-                                        >
-                                        <label class="form-check-label d-flex align-items-center gap-1" for="shipped">
-                                            <i class="fas fa-truck text-primary me-2"></i> Shipped
-                                        </label>
-                                    </div>
-                                    <div class="form-check d-flex align-items-center gap-2">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="radio" 
-                                            name="orderStatus" 
-                                            id="outForDelivery" 
-                                            value="Out for Delivery" 
-                                            <%= order.status === 'Out for Delivery' ? 'checked' : '' %>
-                                            onchange="confirmStatusChange('<%= order.orderId %>', this.value)"
-                                        >
-                                        <label class="form-check-label d-flex align-items-center gap-1" for="outForDelivery">
-                                            <i class="fas fa-shipping-fast text-info me-2"></i> Out for Delivery
-                                        </label>
-                                    </div>
-                                    <div class="form-check d-flex align-items-center gap-2">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="radio" 
-                                            name="orderStatus" 
-                                            id="delivered" 
-                                            value="Delivered" 
-                                            <%= order.status === 'Delivered' ? 'checked' : '' %>
-                                            onchange="confirmStatusChange('<%= order.orderId %>', this.value)"
-                                        >
-                                        <label class="form-check-label d-flex align-items-center gap-1" for="delivered">
-                                            <i class="fas fa-check-circle text-success me-2"></i> Delivered
-                                        </label>
-                                    </div>
-                                    <div class="form-check d-flex align-items-center gap-2">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="radio" 
-                                            name="orderStatus" 
-                                            id="cancelled" 
-                                            value="Cancelled" 
-                                            <%= order.status === 'Cancelled' ? 'checked' : '' %>
-                                            onchange="confirmStatusChange('<%= order.orderId %>', this.value)"
-                                        >
-                                        <label class="form-check-label d-flex align-items-center gap-1" for="cancelled">
-                                            <i class="fas fa-times-circle text-danger me-2"></i> Cancelled
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,19 +122,31 @@
         </div>
     </div>
 
-    <!-- Cancel Reason Modal -->
-    <div class="modal fade" id="cancelReasonModal" tabindex="-1" aria-labelledby="cancelReasonModalLabel" aria-hidden="true">
+    <!-- Status Change Modal -->
+    <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header py-2" style="background-color: #5b3f64; color: white;">
-                    <h5 class="modal-title" id="cancelReasonModalLabel">Cancel Order</h5>
+                    <h5 class="modal-title" id="statusChangeModalLabel">Change Order Status</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="cancelOrderId">
+                    <input type="hidden" id="statusOrderId" value="<%= order.orderId %>">
                     <div class="mb-3">
+                        <label for="orderStatus" class="form-label fw-bold">Select Status</label>
+                        <select class="form-select" id="orderStatus" required>
+                            <option value="" selected disabled>Select a status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a status.</div>
+                    </div>
+                    <div class="mb-3" id="cancelReasonContainer" style="display: none;">
                         <label for="cancelReason" class="form-label fw-bold">Reason for Cancellation</label>
-                        <select class="form-select" id="cancelReason" required>
+                        <select class="form-select" id="cancelReason">
                             <option value="" selected disabled>Select a reason</option>
                             <option value="Product Damaged">Product Damaged</option>
                             <option value="Customer not responding">Customer not responding</option>
@@ -192,64 +159,62 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn custom-btn" onclick="submitCancelReason()">Confirm</button>
+                    <button type="button" class="btn custom-btn" onclick="submitStatusChange()">Confirm</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let currentOrderId = null;
-    
-        function confirmStatusChange(orderId, newStatus) {
-            currentOrderId = orderId;
-    
-            if (newStatus === 'Cancelled') {
-                const modal = new bootstrap.Modal(document.getElementById('cancelReasonModal'));
-                document.getElementById('cancelOrderId').value = orderId;
-                document.getElementById('cancelReason').value = '';
-                modal.show();
+        function toggleCancelReason() {
+            const status = document.getElementById('orderStatus').value;
+            const cancelReasonContainer = document.getElementById('cancelReasonContainer');
+            if (status === 'Cancelled') {
+                cancelReasonContainer.style.display = 'block';
             } else {
-                Swal.fire({
-                    text: `Do you really want to change the status to "${newStatus}"?`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Yes, change it!",
-                    cancelButtonText: "Cancel"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        updateOrderStatus(orderId, newStatus);
-                    } else {
-                        document.querySelector(`input[name="orderStatus"][value="<%= order.status %>"]`).checked = true;
-                    }
-                });
+                cancelReasonContainer.style.display = 'none';
+                document.getElementById('cancelReason').value = '';
             }
         }
-    
-        async function submitCancelReason() {
-            const orderId = document.getElementById('cancelOrderId').value;
-            const reason = document.getElementById('cancelReason').value;
-    
-            if (!reason.trim()) {
+
+        let selectedProductId = null;
+
+        document.querySelectorAll('.update-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                selectedProductId = button.getAttribute('data-product-id');
+            });
+        });
+
+        async function submitStatusChange() {
+            const orderId = document.getElementById('statusOrderId').value;
+            const status = document.getElementById('orderStatus').value;
+            const cancelReason = document.getElementById('cancelReason').value;
+
+            if (!status) {
+                document.getElementById('orderStatus').classList.add('is-invalid');
+                return;
+            } else {
+                document.getElementById('orderStatus').classList.remove('is-invalid');
+            }
+
+            if (status === 'Cancelled' && !cancelReason) {
                 document.getElementById('cancelReason').classList.add('is-invalid');
                 return;
             } else {
                 document.getElementById('cancelReason').classList.remove('is-invalid');
             }
-    
-            const modal = bootstrap.Modal.getInstance(document.getElementById('cancelReasonModal'));
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
             modal.hide();
-    
-            await updateOrderStatus(orderId, 'Cancelled', reason);
+
+            await updateOrderStatus(orderId, status, cancelReason);
         }
-    
+
         async function updateOrderStatus(orderId, newStatus, reason = null) {
             try {
-                const body = { status: newStatus };
+                const body = { productId : selectedProductId, status: newStatus };
                 if (reason) body.cancelReason = reason;
-    
+
                 const response = await fetch(`/admin/orders?id=${orderId}`, {
                     method: 'PATCH',
                     headers: {
@@ -257,9 +222,9 @@
                     },
                     body: JSON.stringify(body)
                 });
-    
+
                 const data = await response.json();
-    
+
                 if (response.ok) {
                     Swal.fire({
                         text: data.message,
@@ -275,8 +240,6 @@
                         icon: "error",
                         timer: 2000,
                         showConfirmButton: false
-                    }).then(() => {
-                        document.querySelector(`input[name="orderStatus"][value="<%= order.status %>"]`).checked = true;
                     });
                 }
             } catch (error) {
@@ -286,10 +249,11 @@
                     icon: "error",
                     timer: 2000,
                     showConfirmButton: false
-                }).then(() => {
-                    document.querySelector(`input[name="orderStatus"][value="<%= order.status %>"]`).checked = true;
                 });
             }
         }
+
+        // Add event listener for status change
+        document.getElementById('orderStatus').addEventListener('change', toggleCancelReason);
     </script>
 </body>

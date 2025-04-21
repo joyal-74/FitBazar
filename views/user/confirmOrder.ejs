@@ -17,7 +17,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         .container-b {
-            max-width: 900px;
+            max-width: 1300px;
             margin: 20px auto;
             padding: 20px;
         }
@@ -161,9 +161,9 @@
                 <div>
                     <strong><%= shippingAddress.name %> &nbsp; <%= shippingAddress.phone %></strong>
                     <p>
-                        <%= shippingAddress.addressLine1 %>,<br>
+                        <%= shippingAddress.addressLine1 %>,
                         <%= shippingAddress.addressLine2 ? `${shippingAddress.addressLine2}, ` : '' %>
-                        <%= shippingAddress.city %>, <%= shippingAddress.landmark ? `${shippingAddress.landmark}, ` : '' %>, <%= shippingAddress.pincode %>,<br> 
+                        <%= shippingAddress.city %>, <%= shippingAddress.landmark ? `${shippingAddress.landmark} ` : '' %> <%= shippingAddress.state %>, India, <%= shippingAddress.pincode %>,
                         <%= shippingAddress.phone %>, <%= shippingAddress.altPhone ? `, Alt: ${shippingAddress.altPhone}` : '' %>
                     </p>
                 </div>
@@ -198,34 +198,38 @@
                         <span><%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod %></span>
                     </div>
                 </div>
-                <% grandTotal += (order.price - order.coupon + order.delivery); %>
 
-                <!-- Product Details -->
-                <div>
-                    <h5 class="section-title">Product Details</h5>
-                    <div class="order-product-card align-items-center">
-                        <img src="<%= order.product.images[0] %>" alt="<%= order.name %>" class="product-img">
+                <!-- Products Loop -->
+                <h5 class="section-title px-3">Product Details</h5>
+                <% order.orderItems.forEach(item => { %>
+                    <div class="order-product-card align-items-center mb-3 px-3">
+                        <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>" class="product-img">
                         <div class="product-info">
-                            <h6><%= order.name %></h6>
-                            <p>Brand: <%= order.brand %></p>
-                            <p>Variant: <%= order.variants?.color || 'N/A' %> 
-                                <% if (order.variants?.weight) { %> | <%= order.variants.weight %> <% } %>
+                            <h6><%= item.product.name %></h6>
+                            <p>Brand: <%= item.product.brand %></p>
+                            <p>Variant: <%= item.variant?.color || 'N/A' %> 
+                                <% if (item.variant?.weight) { %> | <%= item.variant.weight %> <% } %>
                             </p>
-                    
-                            <!-- Flexbox for Qty and Price on the same line -->
+
+                            <!-- Qty & Price -->
                             <div class="d-flex justify-content-between">
-                                <p class="mb-0">Qty: <%= order.quantity %></p>
-                                <span class="product-price fw-semibold">₹ <%= (order.price - order.coupon + order.delivery) * order.quantity %></span>
+                                <p class="mb-0">Qty: <%= item.quantity %></p>
+                                <span class="product-price fw-semibold">
+                                    ₹ <%= (item.discountPrice) * item.quantity %>
+                                </span>
                             </div>
                         </div>
                     </div>
-                </div>
+                    <% grandTotal += (item.discountPrice) * item.quantity; %>
+                <% }) %>
                 <hr>
-                 <!-- Grand Total -->
             <% }) %>
+
+            <!-- Final Grand Total -->
             <div class="grand-total">
                 Grand Total: ₹ <%= grandTotal %>
             </div>
+         
             <hr>
             <!-- Buttons -->
             <div class="btn-container">

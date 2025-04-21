@@ -39,7 +39,7 @@
             
                 <% if (orders && orders.length > 0) { %>
                     <% orders.forEach(order => { %>
-                        <div class="order-card" style="background-color: #f8edfc;">
+                        <div class="order-card" style="background-color: #b971c416;">
                             <!-- Order Header -->
                             <div class="order-header">
                                 <span class="order-id">Order #<%= order.orderId %></span>
@@ -62,34 +62,49 @@
                                         hour12: false
                                     }) %>
                                 </div>
+                                <%
+                                    let totalAmount = 0;
+                                    order.orderItems.forEach(item => {
+                                        totalAmount += item.discountPrice * item.quantity;
+                                    });
+                                %>
                                 <div>
-                                    <span>Total: </span>₹ <%= order.price * order.quantity + order.delivery - order.coupon %>
+                                    <span>Total: </span>₹ <%= totalAmount + (order.delivery || 0) - (order.coupon || 0) %>
                                 </div>
                             </div>
                 
 
                             <div class="order-items">
-                                <div class="item-row">
-                                    <img src="<%= order.product.images[0] || '/images/default-product.png' %>" 
-                                        alt="Product Image" 
-                                        class="item-img">
-                                    <div class="item-info">
-                                        <h6><%= order.product.name %></h6>
-                                        <p>Qty: <%= order.quantity %> | ₹ <%= order.price %></p>
+                                <% order.orderItems.forEach(item => { %>
+                                    <div class="item-row">
+                                        <img src="<%= item.product.images?.[0] || '/images/default-product.png' %>" 
+                                            alt="Product Image" 
+                                            class="item-img">
+                                        <div class="item-info">
+                                            <h6><%= item.product.name %></h6>
+                                            <p>
+                                                Qty: <%= item.quantity %> | ₹ <%= item.discountPrice %>
+                                                <% if (item.variants) { %>
+                                                    <br>Variant: 
+                                                    <%= item.variants.color || '' %> 
+                                                    <% if (item.variants.weight) { %> | <%= item.variants.weight %> <% } %>
+                                                <% } %>
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                <% }) %>
                             </div>
                 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-3 justify-content-end">
                                 <button class="btn btn-primary details-btn" data-order-id="<%= order.orderId %>">View Order</button>
-                                <% if (order.status !== 'Cancelled') { %>
+                                <% if (order.status !== 'Cancelled' && order.status !== 'Payment Failed') { %>
                                     <% if (order.status === 'Delivered') { %>
-                                        <button class="btn btn-outline-secondary return-btn" onclick="openReturnModal('<%= order._id%>')" data-order-id="<%= order.orderId %>">Return</button>
+                                        <button class="btn btn-outline-secondary return-btn" onclick="openReturnModal('<%= order._id %>')" data-order-id="<%= order.orderId %>">Return</button>
                                     <% } else { %>
-                                        <button class="btn btn-outline-secondary cancel-btn" onclick="openCancelModal('<%= order._id%>')" data-order-id="<%= order.orderId %>">Cancel</button>
+                                        <button class="btn btn-outline-secondary cancel-btn" onclick="openCancelModal('<%= order._id %>')" data-order-id="<%= order.orderId %>">Cancel</button>
                                     <% } %>
-                                <% } %>
+                                <% } %>                                
                             </div>
                         </div>
                     <% }) %>

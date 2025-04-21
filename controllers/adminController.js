@@ -54,7 +54,7 @@ const loadOrders = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const { status, search } = req.query;
-        let query = {};
+        let query = { status: { $ne: 'Payment Failed' }};
 
         // Search Logic
         if (search) {
@@ -65,7 +65,8 @@ const loadOrders = async (req, res) => {
         }
 
         if (status) {
-            query.status = status;
+            query['orderItems.currentStatus'] = status;
+
         }
 
         const totalProducts = await Order.countDocuments(query);
@@ -73,6 +74,7 @@ const loadOrders = async (req, res) => {
 
         const orders = await Order.find(query)
             .populate('userId')
+            .populate('orderItems.product')
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 });
@@ -95,7 +97,7 @@ const loadOrders = async (req, res) => {
 const viewOrders = async (req, res) => {
     const orderId = req.query.id;
 
-    const order = await Order.findOne({ orderId }).populate('userId').populate('product','name');
+    const order = await Order.findOne({ orderId }).populate('userId').populate('orderItems.product');
     // console.log(order);
     if(!order){
         return res.status(NOT_FOUND).json({message : 'Order not found'})
@@ -115,26 +117,35 @@ const viewOrders = async (req, res) => {
 
 async function updateStatus(req, res) {
     const { id } = req.query;
-    const { status, cancelReason } = req.body;
+    const { productId, status, cancelReason } = req.body;
 
     try {
-        const updateData = { status };
-        if (cancelReason) updateData.cancelReason = cancelReason;
-    
         const order = await Order.findOne({ orderId: id });
         if (!order) {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
-        order.status = status;
-        order.cancelReason = cancelReason;
-        order.statusHistory.push({ status, timestamp: new Date() });
+        const item = order.orderItems.find(item => item.product?.toString() === productId);
+        if (!item) {
+            return res.status(NOT_FOUND).json({ message: 'Product not found in order' });
+        }
+
+        // Add status update to history
+        item.statusHistory.push({ status, timestamp: new Date() });
+
+        item.currentStatus = status;
+
+        if (status === 'Cancelled') {
+            item.cancelReason = cancelReason;
+        }
+
         order.updatedAt = new Date();
         await order.save();
 
-        res.status(OK).json({ message: 'Status updated successfully', order });
+        return res.status(OK).json({ message: 'Status updated successfully', order });
     } catch (error) {
-        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Error updating status', error });
+        console.error(error);
+        return res.status(INTERNAL_SERVER_ERROR).json({ message: 'Error updating status', error });
     }
 }
 

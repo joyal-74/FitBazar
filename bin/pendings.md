@@ -76,3 +76,11 @@ _________________________
 5. payment failure also create as an order - []
 5. multiple products as single order not multiple - []
 6. transaction credit/debit color - []
+
+
+
+order changed so fix the following
+------------------------------------
+
+1. retry payment in order details
+2. 

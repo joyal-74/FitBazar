@@ -2,26 +2,13 @@
     <link rel="stylesheet" href="/css/profile-section.css">
     <style>
         
-        .page-header {
-            margin-top: 50px;
-            margin-bottom: 20px;
-        }
         h1 {
             font-size: 28px;
             font-weight: 700;
             color: #1a1a1a;
             margin: 0;
         }
-        .order-details-card {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .order-section {
-            margin-bottom: 20px;
-        }
+
         .order-section h3 {
             font-size: 16px;
             font-weight: 600;
@@ -88,40 +75,7 @@
             gap: 10px;
             margin-top: 20px;
         }
-        /* Timeline Styles */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-        }
-        .timeline-item {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .timeline-item i {
-            position: absolute;
-            left: -30px;
-            top: 5px;
-            font-size: 16px;
-        }
-        .timeline-item p {
-            margin: 0;
-            font-size: 14px;
-        }
-        .timeline-item .status {
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-        .timeline-item .timestamp {
-            color: #777;
-        }
-        .timeline-line {
-            position: absolute;
-            top: 0;
-            left: 8px;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, #3C1549, #E0DBFC);
-        }
+
     </style>
 </head>
 <body>
@@ -129,21 +83,33 @@
     <%- include('../partials/userNavbar', { activePage: 'orderDetails' }) %>  
 
     <!-- Main Content -->
-    <main class="container mt-4">
+    <main class="container" style="margin-top: 95px;">
         <div class="row g-5">
             
             <%- include('../partials/profileSidebar', { activePage: 'orderDetails' }) %>
 
             <!-- Order Details Content -->
             <div class="col-9">
-                <div class="page-header">
-                    <h1>Order Details</h1>
+                <div class="mb-4">
+                    <h3 class="fw-bold pb-2">Order Details</h3>
                 </div>
                 <div class="row">
                     <!-- Left Column: Order Details -->
-                    <div class="col-md-6">
-                        <div class="order-details-card">
-                            <div class="order-section">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="order-section w-100">
+                                <%
+                                    let itemTotal = 0;
+                                    order.orderItems.forEach(item => {
+                                        const isCancelled = item.statusHistory?.[item.statusHistory.length - 1]?.status === 'Cancelled';
+                                        if (!isCancelled) {
+                                            itemTotal += item.discountPrice * item.quantity;
+                                        }
+                                    });
+
+                                    let grandTotal = itemTotal + (order.delivery || 0) - (order.coupon || 0);
+                                %>
+
                                 <h3>Order Summary</h3>
                                 <div class="order-info">
                                     <p><span>Order ID:</span> <%= order.orderId %></p>
@@ -156,11 +122,11 @@
                                         minute: '2-digit',
                                         hour12: false
                                     }) %></p>
-                                    <p><span>Total Amount:</span> ₹ <%= order.totalPrice %></p>
-                                    <p><span>Status:</span> <%= order.status || 'Pending' %></p>
+                                    <p><span>Total Amount:</span> ₹ <%= itemTotal || 0  %></p>
+                                    <p><span>Payment Method:</span> <%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod %></p>
                                 </div>
                             </div>
-                            <div class="order-section pt-2">
+                            <div class="order-section w-100">
                                 <h3>Shipping Address</h3>
                                 <div class="order-info">
                                     <p><span>Name:</span> <%= address?.name || 'N/A' %></p>
@@ -169,79 +135,99 @@
                                     <p><span>Phone:</span> <%= address?.phone || 'N/A' %></p>
                                 </div>
                             </div>
-                            <div class="order-section">
-                                <h3>Payment Details</h3>
-                                <div class="order-info">
-                                    <p><span>Payment Method:</span> <%= order.paymentMethod === 'cod' ? 'Cash on Delivery' : order.paymentMethod %></p>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
 
                     <!-- Right Column: Product Details and Timeline -->
-                    <div class="col-md-6">
-                        <div class="order-details-card">
-                            <div class="order-section">
-                                <h3>Product Details</h3>
-                                <div class="item-row">
-                                    <img src="<%= order.product.images[0] || '/images/default-product.png' %>" 
-                                        alt="Product Image" 
-                                        class="item-img">
-                                    <div class="item-info">
-                                        <h6><%= order.product.name %></h6>
-                                        <p>Qty: <%= order.quantity %> | ₹ <%= order.price %></p>
-                                        <p>Color: <%= order.variant.color %> <% if (order.variant.weight) { %>
-                                            | weight: <%= order.variant.weight %>
-                                        <% } %></p>
-
-                                    </div>
-                                    <span class="item-price">₹<%= (order.price * order.quantity) + order.delivery - order.coupon %></span>
-                                </div>
+                    <% order.orderItems.forEach(item => {
+                        const isCancelled = item.statusHistory?.[item.statusHistory.length - 1]?.status === 'Cancelled';
+                    %>
+                        <div class="item-row p-2">
+                            <img src="<%= item.product.images?.[0] || '/images/default-product.png' %>" 
+                                alt="Product Image" class="item-img">
+                            <div class="item-info">
+                                <h6><%= item.product.name %></h6>
+                                <p>
+                                    Qty: <%= item.quantity %> | ₹ <%= item.basePrice %>
+                                    <% if (item.variant) { %>
+                                        | Variant: <%= item.variant.color || '' %>
+                                        <% if (item.variant.weight) { %> | <%= item.variant.weight %> <% } %>
+                                    <% } %>
+                                </p>
                             </div>
-                            <div class="order-section">
-                                <h3>Order Tracking</h3>
-                                <div class="timeline">
-                                    <% order.statusHistory.forEach((entry) => { %>
-                                        <div class="timeline-item">
-                                            <i class="<%= entry.status === 'Pending' ? 'fas fa-clock text-warning' : entry.status === 'Shipped' ? 'fas fa-truck text-primary' : entry.status === 'Out for Delivery' ? 'fas fa-shipping-fast text-info' : entry.status === 'Delivered' ? 'fas fa-check-circle text-success' : 'fas fa-times-circle text-danger' %>"></i>
-                                            <p class="status">
-                                                <%= entry.status === 'Shipped' ? 'Order Shipped' : entry.status === 'Out for Delivery' ? 'Out for Delivery' : entry.status === 'Delivered' ? 'Order Delivered' : entry.status === 'Cancelled' ? 'Order Cancelled' : 'Order Placed' %>
-                                            </p>
-                                            <p class="timestamp"><%= new Date(entry.timestamp).toLocaleString('en-US', {
-                                                weekday: 'short',
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: false
-                                            }) %></p>
-                                        </div>
-                                    <% }) %>
-                                    <div class="timeline-line"></div>
-                                </div>
-                            </div>
+                            <span class="item-price d-flex align-items-center gap-2">
+                                <% if (isCancelled) { %>
+                                    <span class="text-danger">Cancelled</span>
+                                <% } else { %>
+                                    ₹<%= item.discountPrice * item.quantity %>
+                                <% } %>
+                            </span>
+                            
                         </div>
-                        <div class="order-actions">
-                            <a href="/user/orders" class="btn btn-outline-primary">Back to Orders</a>
-                            <% if (order.status === 'Delivered') { %>
-                                <button class="btn custom-btn" onclick="window.location.href='/user/orders/invoice?id=<%= order.orderId %>'">
-                                    Download Invoice
-                                </button>
-                                <button class="btn btn-warning" onclick="openReturnModal('<%= order._id %>')">
-                                    Return Order
-                                </button>
-                            <% } else if (order.status !== 'Delivered') { %>
-                                <button class="btn btn-danger" onclick="openCancelModal('<%= order._id %>')">
-                                    Cancel Order
-                                </button>
-                            <% } else if (order.status === 'Returned') { %>
-                                <button class="btn btn-info">
-                                    Returned
-                                </button>
-                            <% } %>
-                        </div>
+                    <% }) %>
 
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Subtotal:</small>
+                        <small>₹<%= itemTotal %></small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Delivery Charges:</small>
+                        <small>₹<%= order.delivery || 0 %></small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Coupon Discount:</small>
+                        <small>- ₹<%= order.coupon %></small>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span>₹<%= grandTotal %></span>
+                    </div>
+
+
+                    <div class="order-actions">
+                        <a href="/user/orders" class="btn btn-outline-primary">Back to Orders</a>
+                    
+                        <% 
+                            const allCancelled = order.orderItems.every(item => item.status === 'Cancelled');
+                            const anyDelivered = order.orderItems.some(item => item.status === 'Delivered');
+                            const anyReturnable = order.orderItems.some(item => item.status === 'Delivered');
+                            const allReturned = order.orderItems.every(item => item.status === 'Returned');
+                            const anyCancellable = order.orderItems.some(item => item.status !== 'Cancelled' && item.status !== 'Delivered');
+                        %>
+                    
+                        <% if (anyDelivered) { %>
+                            <button class="btn custom-btn" onclick="window.location.href='/user/orders/invoice?id=<%= order.orderId %>'">
+                                Download Invoice
+                            </button>
+                        <% } %>
+                    
+                        <% if (anyReturnable) { %>
+                            <button class="btn btn-warning" onclick="openReturnModal('<%= order._id %>')">
+                                Return Order
+                            </button>
+                        <% } %>
+                    
+                        <% if (order.status === 'Payment Failed') { %>
+                            <button class="btn btn-primary">
+                                Retry Payment
+                            </button>
+                        <% } else if (anyCancellable) { %>
+                            <button class="btn btn-danger" onclick='openCancelModal("<%= order._id %>", <%- JSON.stringify(order.orderItems) %>)'>
+                                Cancel Order
+                            </button>
+                        <% } else if (allCancelled) { %>
+                            <button class="btn btn-outline-secondary" disabled>
+                                All Items Cancelled
+                            </button>
+                        <% } else if (allReturned) { %>
+                            <button class="btn btn-info" disabled>
+                                Returned
+                            </button>
+                        <% } %>
+                    </div>
+                    
                         <!-- Return Modal -->
                         <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
@@ -267,36 +253,48 @@
                         </div>
 
                         <!-- Cancel Modal -->
-
                         <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="cancelModalLabel">Cancel Order</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" id="cancelOrderId">
-                                        <div class="mb-3">
-                                            <label for="cancelReason" class="form-label">Reason for Cancellation</label>
-                                            <select class="form-select" id="cancelReason" required>
-                                                <option value="" selected disabled>Select a reason</option>
-                                                <option value="Changed my mind">Changed my mind</option>
-                                                <option value="Found a better deal">Found a better deal</option>
-                                                <option value="Ordered by mistake">Ordered by mistake</option>
-                                                <option value="Shipping is delayed">Shipping is delayed</option>
-                                                <option value="Product no longer needed">Product no longer needed</option>
-                                            </select>
-                                            <div class="invalid-feedback">Please select a reason for cancelling the order.</div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-info" data-bs-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-danger" onclick="submitCancel()">Confirm Cancel</button>
-                                    </div>
+                            <div class="modal-content">
+                                
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="cancelModalLabel">Cancel Order Item(s)</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                
+                                <div class="modal-body">
+                                <!-- Hidden to track order ID -->
+                                <input type="hidden" id="cancelOrderId">
+                        
+                                <!-- Product List -->
+                                <div id="cancelProductList" class="mb-3">
+                                    <!-- Dynamically filled by JS -->
+                                </div>
+                        
+                                <!-- Reason Dropdown -->
+                                <div class="mb-3">
+                                    <label for="cancelReason" class="form-label">Reason for Cancellation</label>
+                                    <select class="form-select" id="cancelReason" required>
+                                    <option value="" selected disabled>Select a reason</option>
+                                    <option value="Changed my mind">Changed my mind</option>
+                                    <option value="Found a better deal">Found a better deal</option>
+                                    <option value="Ordered by mistake">Ordered by mistake</option>
+                                    <option value="Shipping is delayed">Shipping is delayed</option>
+                                    <option value="Product no longer needed">Product no longer needed</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a reason for cancelling the order.</div>
+                                </div>
+                                </div>
+                        
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-danger" onclick="submitCancel()">Confirm Cancel</button>
+                                </div>
+                        
+                            </div>
                             </div>
                         </div>
+  
                     </div>
                 </div>
             </div>
@@ -311,12 +309,31 @@
             modal.show();
         }
 
-        function openCancelModal(orderId) {
-            document.getElementById('cancelOrderId').value = orderId;
-            document.getElementById('cancelReason').value = ''; 
+        function openCancelModal(orderId, products) {
             const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+            document.getElementById('cancelOrderId').value = orderId;
+
+            const listContainer = document.getElementById('cancelProductList');
+            listContainer.innerHTML = '';
+
+            products.forEach(item => {
+                const isCancelled = item.statusHistory?.[item.statusHistory.length - 1]?.status === 'Cancelled';
+                const label = `
+                    <div class="d-flex justify-content-start gap-2 align-items-center mb-2">
+                        <input class="form-check-input" type="checkbox" name="cancelProduct" value="${item.product._id}" ${isCancelled ? 'disabled' : ''}>
+                        <small class="w-100 ${isCancelled ? 'text-muted text-decoration-line-through' : ''}">
+                            ${item.product.name} (${item.variant.color || ''}${item.variant.weight ? ' | ' + item.variant.weight : ''})
+                            ${isCancelled ? ' - Cancelled' : ''}
+                        </small>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', label);
+            });
+
+
             modal.show();
         }
+
 
         async function submitReturn() {
             const orderId = document.getElementById('returnOrderId').value;
@@ -369,9 +386,10 @@
         }
 
         async function submitCancel() {
-
             const orderId = document.getElementById('cancelOrderId').value;
             const reason = document.getElementById('cancelReason').value;
+            const checkboxes = document.querySelectorAll('input[name="cancelProduct"]:checked');
+            const selectedProducts = Array.from(checkboxes).map(cb => cb.value);
 
             if (!reason.trim()) {
                 document.getElementById('cancelReason').classList.add('is-invalid');
@@ -380,33 +398,48 @@
                 document.getElementById('cancelReason').classList.remove('is-invalid');
             }
 
+            if (selectedProducts.length === 0) {
+                Swal.fire({
+                    text: 'Please select at least one product to cancel.',
+                    icon: 'warning',
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
+                return;
+            }
+
             try {
-                const response = await fetch(`/user/orders/cancel?id=${orderId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },body : JSON.stringify({ reason })
+                for (const productId of selectedProducts) {
+                    const response = await fetch(`/user/orders/cancel?id=${orderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ reason, productId })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            text: data?.message || 'Failed to cancel order.',
+                            icon: 'error',
+                            timer: 2000,
+                            showConfirmButton: false,
+                        });
+                        return;
+                    }
+                }
+
+                Swal.fire({
+                    text: 'Selected item(s) cancelled successfully.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                }).then(() => {
+                    window.location.reload();
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    Swal.fire({
-                        text: data.message,
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false,
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        text: data?.message || 'Failed to cancel order.',
-                        icon: 'error',
-                        timer: 2000,
-                        showConfirmButton: false,
-                    });
-                }
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire({
@@ -417,5 +450,6 @@
                 });
             }
         }
+
     </script>
 </body>

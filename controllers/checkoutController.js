@@ -158,16 +158,7 @@ const confirmOrder = async (req, res) => {
 
         const user = await User.findById(userId);
 
-        const latestOrder = await Order.findOne({ userId }).sort({ createdAt: -1 }).select('orderItemCount');
-        
-        if (!latestOrder) {
-            console.error('No order found for user.');
-            return res.status(NOT_FOUND).render('error', { title : "error", message: 'No recent order found.' });
-        }
-
-        const orderItemCount = latestOrder.orderItemCount;
-
-        const orders = await Order.find({ userId }).populate('product').sort({ createdAt: -1 }).limit(orderItemCount);
+        const orders = await Order.find({ userId }).populate('orderItems.product').sort({ createdAt: -1 }).limit(1);
 
         if (!orders.length) {
             console.error('No matching orders found.');

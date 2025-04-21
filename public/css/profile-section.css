@@ -338,7 +338,8 @@
     flex-grow: 1;
 }
 .page-header {
-    margin: 80px 0;
+    margin-top: 80px;
+    margin-bottom: 40px;
 }
 
 .page-header-coupon {
@@ -391,6 +392,10 @@ h1 {
 }
 .order-status.out-for-delivery {
     background-color: #148cd1;
+    color: #fff;
+}
+.order-status.payment-failed {
+    background-color: #ff7424;
     color: #fff;
 }
 

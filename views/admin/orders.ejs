@@ -1,4 +1,3 @@
-
 <body class="bg-violet">
 
     <!-- Navbar -->
@@ -60,28 +59,57 @@
                                 </thead>
                                 <tbody>
                                     <% if (orders.length > 0) { %>
-                                        <% orders.forEach((order,index) => { %>
+                                        <% orders.forEach((order, index) => { %>
                                             <tr class="text-center">
                                                 <td><%= index + 1 %></td>
                                                 <td>#<%= order.orderId %></td>
-                                                <td><%= order.userId.name || 'N/A' %></td>
+                                                <td><%= order.userId && order.userId.name ? order.userId.name : 'N/A' %></td>
                                                 <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>
-                                                <td>₹<%= order.discountPrice.toLocaleString('en-IN') %></td>
                                                 <td>
-                                                    <% if (order.status === 'Delivered') { %>
+                                                    ₹<%= order.orderItems.reduce((total, item) => total + item.discountPrice, 0).toLocaleString('en-IN') %>
+                                                </td>
+                                                <td>
+                                                    <% 
+                                                        const statusPriority = {
+                                                            'Cancelled': 0,
+                                                            'Returned': 1,
+                                                            'Pending': 2,
+                                                            'Shipped': 3,
+                                                            'Out for Delivery': 4,
+                                                            'Delivered': 5
+                                                        };
+                                                
+                                                        let worstStatus = 'Delivered'; // default
+                                                        let worstPriority = statusPriority[worstStatus];
+                                                
+                                                        order.orderItems.forEach(item => {
+                                                            const itemStatus = item.statusHistory?.at(-1)?.status || 'Pending';
+                                                            const itemPriority = statusPriority[itemStatus] ?? 2; // Default to Pending if undefined
+                                                            if (itemPriority < worstPriority) {
+                                                                worstPriority = itemPriority;
+                                                                worstStatus = itemStatus;
+                                                            }
+                                                        });
+                                                    %>
+                                                
+                                                    <% if (worstStatus === 'Delivered') { %>
                                                         <span class="badge bg-success" style="border-radius: 28px; width: 130px;">Delivered</span>
-                                                    <% } else if (order.status === 'Pending') { %>
+                                                    <% } else if (worstStatus === 'Pending') { %>
                                                         <span class="badge bg-warning" style="border-radius: 28px; width: 130px;">Pending</span>
-                                                    <% } else if (order.status === 'Cancelled') { %>
+                                                    <% } else if (worstStatus === 'Cancelled') { %>
                                                         <span class="badge bg-danger" style="border-radius: 28px; width: 130px;">Cancelled</span>
-                                                    <% } else if (order.status === 'Out for Delivery') { %>
+                                                    <% } else if (worstStatus === 'Out for Delivery') { %>
                                                         <span class="badge bg-info" style="border-radius: 28px; width: 130px;">Out for Delivery</span>
-                                                    <% } else if (order.status === 'Shipped') { %>
+                                                    <% } else if (worstStatus === 'Shipped') { %>
                                                         <span class="badge" style="background-color: #7a0f7a; border-radius: 28px; width: 130px;">Shipped</span>
-                                                    <% } else if (order.status === 'Returned') { %>
+                                                    <% } else if (worstStatus === 'Returned') { %>
                                                         <span class="badge" style="background-color: #b9043a; border-radius: 28px; width: 130px;">Returned</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-dark" style="border-radius: 28px; width: 130px;">Unknown</span>
                                                     <% } %>
                                                 </td>
+                                                
+                                                
                                                 <td>
                                                     <a href="/admin/vieworders?id=<%= order.orderId %>" class="btn btn-sm btn-outline-primary">View</a>
                                                 </td>
@@ -89,7 +117,7 @@
                                         <% }) %>
                                     <% } else { %>
                                         <tr>
-                                            <td colspan="6" class="text-center">No orders found</td>
+                                            <td colspan="7" class="text-center">No orders found</td>
                                         </tr>
                                     <% } %>
                                 </tbody>                                
@@ -98,29 +126,27 @@
                     </div>
                 </div> 
 
-                <div class="d-flex justify-content-center mt-3 ">
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-3">
                     <nav>
                         <ul class="pagination pagination-sm">
-                            <!-- Previous Page Button -->
                             <% if (currentPage > 1) { %>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>&status=<%= status %>&search=<%= search %>" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
                             <% } %>
 
-                            <!-- Page Numbers -->
-                            <% for(let i = 1; i <= totalPages; i++) { %>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
                                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    <a class="page-link" href="?page=<%= i %>&status=<%= status %>&search=<%= search %>"><%= i %></a>
                                 </li>
                             <% } %>
 
-                            <!-- Next Page Button -->
                             <% if (currentPage < totalPages) { %>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>&status=<%= status %>&search=<%= search %>" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>
@@ -131,9 +157,11 @@
             </main>
         </div>
     </div>
+
+    <!-- Clear Filters Script -->
     <script>
         function clearFilters() {
-            window.location.href = '/admin/orders?clear=true';
+            window.location.href = '/admin/orders';
         }
     </script>
 </body>

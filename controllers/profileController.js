@@ -30,7 +30,7 @@ const loadOrders = async (req, res) => {
             ];
         }
 
-        const orders = await Order.find(filter).populate('product').sort({ createdAt: -1 });
+        const orders = await Order.find(filter).populate('orderItems.product').sort({ createdAt: -1 });
 
         res.render('user/orders', {title: 'My Orders', orders, user, firstName, search});
 
@@ -52,7 +52,7 @@ const loadOrderDetails = async (req,res)=> {
         const user = await User.findOne({_id : userId})
         const [firstName] = user.name.split(' ');
 
-        const order = await Order.findOne({ orderId }).populate('product');
+        const order = await Order.findOne({ orderId }).populate('orderItems.product');
         const addressId = order.address
 
         const addresses = await Address.findOne(

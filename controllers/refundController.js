@@ -43,15 +43,14 @@ export const requestRefund = async (req, res) => {
 };
 
 // user side cancellation
-export const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res) => {
     try {
         const orderId = req.query.id;
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+        const { productId, reason } = req.body;
 
-        const { reason } = req.body;
-
-        if (!orderId) {
-            return res.status(BAD_REQUEST).json({ message: 'Order ID is required' });
+        if (!orderId || !productId) {
+            return res.status(BAD_REQUEST).json({ message: 'Order ID and Product ID are required' });
         }
 
         const order = await Order.findById(orderId);
@@ -59,74 +58,84 @@ export const cancelOrder = async (req, res) => {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
-        if (order.status === 'Cancelled') {
-            return res.status(BAD_REQUEST).json({ message: 'Order is already cancelled' });
+        const item = order.orderItems.find(item => item.product.toString() === productId);
+        if (!item) {
+            return res.status(NOT_FOUND).json({ message: 'Product not found in order' });
         }
 
-        if (order.status === 'Delivered') {
-            return res.status(BAD_REQUEST).json({ message: 'Cannot cancel a delivered order' });
+        const currentStatus = item.currentStatus;
+        if (currentStatus === 'Cancelled') {
+            return res.status(BAD_REQUEST).json({ message: 'Product is already cancelled' });
         }
 
-        order.status = 'Cancelled';
-        order.updatedAt = new Date();
-        order.cancelReason = reason;
-        order.statusHistory.push({ status : 'Cancelled', timestamp: new Date() });
+        if (currentStatus === 'Delivered') {
+            return res.status(BAD_REQUEST).json({ message: 'Cannot cancel a delivered product' });
+        }
 
-        const productId = order.product
+        // Update item status and cancel reason
+        item.statusHistory.push({ status: 'Cancelled', timestamp: new Date() });
+        item.cancelReason = reason;
+        item.updatedAt = new Date();
 
+        // Restock the variant
         const product = await Products.findOne({
-            _id: productId,
+            _id: item.product,
             variants: {
                 $elemMatch: {
-                    color: order.variant.color,
-                    weight: order.variant.weight
+                    color: item.variant.color,
+                    weight: item.variant.weight,
                 }
             }
         });
 
         if (product) {
             const variant = product.variants.find(v =>
-                v.color === order.variant.color && v.weight === order.variant.weight
+                v.color === item.variant.color && v.weight === item.variant.weight
             );
-        
+
             if (variant) {
-                variant.stock += order.quantity;
+                variant.stock += item.quantity;
                 await product.save();
             }
         }
 
+        // Save the order with updated status
         await order.save();
 
         const transactionId = generateTxnId();
+        const refundAmount = item.discountPrice * item.quantity;
 
+        // Wallet entry
         await Wallet.create({
             userId,
             orderId,
-            address : order.address,
-            transactionId : transactionId, 
+            address: order.address,
+            transactionId,
             payment_type: 'wallet',
-            type : 'cancel',
-            amount: order.discountPrice,
+            type: 'cancel',
+            amount: refundAmount,
             status: 'Paid',
-            entryType : 'CREDIT',
+            entryType: 'CREDIT',
         });
 
+        // Update user wallet balance
         const updatedUser = await User.findOneAndUpdate(
             { _id: order.userId },
-            { $inc: { wallet: Number(order.discountPrice) || 0 } },
+            { $inc: { wallet: refundAmount } },
             { new: true }
-            );
+        );
 
-            if (!updatedUser) {
+        if (!updatedUser) {
             console.error('User not found for wallet refund');
-            }
+        }
 
-        return res.status(OK).json({ message: 'Order cancelled successfully' });
+        return res.status(OK).json({ message: 'Product cancelled successfully' });
     } catch (error) {
-        console.error('Error cancelling order:', error);
+        console.error('Error cancelling product from order:', error);
         return res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
 };
+
 
 const generateInvoice = async (req, res) => {
     try {

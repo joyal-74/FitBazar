@@ -224,20 +224,45 @@
                 submitButton.disabled = true;
                 submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
+                const orderCreateRes = await fetch('/user/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        couponApplied,
+                        paymentMethod
+                    })
+                });
+
+                const orderCreateData = await orderCreateRes.json();
+
+                if (!orderCreateRes.ok || !orderCreateData.success) {
+                    Swal.fire({
+                        text: orderCreateData.error || 'Could not create order.',
+                        icon: 'error',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    submitButton.disabled = false;
+                    submitButton.innerText = 'Place Order';
+                    return;
+                }
+
+                const createdOrderId = orderCreateData.orderId;
+
                 if (paymentMethod === 'netbanking' || paymentMethod === 'card') {
-                    await handleRazorpayPayment(couponApplied, paymentMethod, totalPrice);
+                    await handleRazorpayPayment(couponApplied, paymentMethod, totalPrice, createdOrderId);
                 } else {
-                    await handleOtherPaymentMethods(couponApplied, paymentMethod, totalPrice);
+                    await handleOtherPaymentMethods(couponApplied, paymentMethod, totalPrice, createdOrderId);
                 }
             });
 
-            async function handleRazorpayPayment(couponApplied, paymentMethod, totalPrice) {
+            async function handleRazorpayPayment(couponApplied, paymentMethod, totalPrice, orderId) {
                 try {
                     const razorpayResponse = await fetch('/user/payments/razorpay', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
-                            totalPrice
+                            totalPrice, orderId
                         })
                     });
 
@@ -268,7 +293,8 @@
                                 response, 
                                 couponApplied,
                                 paymentMethod,
-                                totalPrice
+                                totalPrice,
+                                orderId 
                             );
                         },
                         prefill: {
@@ -282,18 +308,35 @@
                     const rzp = new Razorpay(options);
                     
                     rzp.on('payment.failed', async (response) => {
-                        window.location.href = '/user/payment-failed'
-                        console.log(response)
+                        try {
+                            await fetch('/user/payment-failed', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    orderId,
+                                    reason: response.error.description || 'Unknown error'
+                                })
+                            });
+
+                            window.location.href = '/user/payment-failed';
+                        } catch (err) {
+                            console.error('Error reporting failed payment:', err);
+                            window.location.href = '/user/payment-failed';
+                        }
                     });
 
                     rzp.open();
 
                 } catch (error) {
                     throw error;
+                    submitButton.disabled = false;
+                    submitButton.innerText = 'Place Order';
                 }
             }
 
-            async function handleOtherPaymentMethods(couponApplied, paymentMethod, totalPrice) {
+            async function handleOtherPaymentMethods(couponApplied, paymentMethod, totalPrice, orderId) {
                 try {
                     const paymentResponse = await fetch('/user/payments', {
                         method: 'POST',
@@ -301,7 +344,8 @@
                         body: JSON.stringify({
                             couponApplied,
                             paymentMethod,
-                            totalPrice
+                            totalPrice,
+                            orderId
                         })
                     });
 
@@ -326,13 +370,15 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(()=>{
+                        submitButton.disabled = false;
+                        submitButton.innerText = 'Place Order';
                         window.location.href = '/user/payment-failed';
                     })
                     console.log(error)
                 }
             }
 
-            async function verifyAndConfirmPayment(response, couponApplied, paymentMethod, totalPrice) {
+            async function verifyAndConfirmPayment(response, couponApplied, paymentMethod, totalPrice, orderId ) {
                 try {
 
                     if (!response.razorpay_payment_id || 
@@ -354,6 +400,7 @@
                             razorpayPaymentId: response.razorpay_payment_id,
                             razorpayOrderId: response.razorpay_order_id,
                             razorpaySignature: response.razorpay_signature,
+                            orderId
                         })
                     });
 
@@ -370,6 +417,7 @@
                             couponApplied,
                             paymentMethod,
                             totalPrice,
+                            orderId,
                             razorpayPaymentId: response.razorpay_payment_id,
                             razorpayOrderId: response.razorpay_order_id,
                         })
@@ -400,7 +448,7 @@
                         icon: 'error'
                     }).then(()=>{
                         window.location.href = '/user/payment-failed';
-                    })
+                    }) 
                 }
             }
         });

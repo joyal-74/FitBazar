@@ -117,7 +117,7 @@ const loadCart = async (req, res) => {
         const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 
         if(!cart){
-            res.render('user/cart', { title: 'cart', cart : null, user });
+            return res.render('user/cart', { title: 'cart', cart : null, user });
         }
 
         res.render('user/cart', { title: 'cart', cart, user });

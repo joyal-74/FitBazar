@@ -78,12 +78,14 @@ router.put('/shoppingAddress', checkoutController.editshoppingAddress);
 
 // order management
 router.get('/orders', profileController.loadOrders);
+router.post('/order', paymentController.createOrder);
 router.get('/orderDetails', profileController.loadOrderDetails);
 router.post('/orders/return', refundController.requestRefund);
 router.patch('/orders/cancel', refundController.cancelOrder);
 router.get('/orders/invoice', refundController.generateInvoice);
 router.get('/confirmOrder', checkoutController.confirmOrder);
 router.get('/payment-failed', paymentController.loadPaymentFailed);
+router.post('/payment-failed', paymentController.paymentFailed);
 
 // review route
 router.post('/review', reviewController.addReview);
