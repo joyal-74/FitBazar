@@ -374,29 +374,35 @@ h1 {
     padding: 5px 12px;
     border-radius: 20px;
 }
-.order-status.pending {
+.order-status.placed {
     background-color: #FFE082;
     color: #FFB300;
+    font-size: 12px;
 }
 .order-status.shipped {
     background-color: #044e53;
     color: #fbfbfb;
+    font-size: 12px;
 }
 .order-status.delivered {
     background-color: #4CAF50;
     color: #fff;
+    font-size: 12px;
 }
 .order-status.cancelled {
     background-color: #d11414;
     color: #fff;
+    font-size: 12px;
 }
 .order-status.out-for-delivery {
     background-color: #148cd1;
     color: #fff;
+    font-size: 12px;
 }
 .order-status.payment-failed {
-    background-color: #ff7424;
+    background-color: #ff87c5;
     color: #fff;
+    font-size: 12px;
 }
 
 .order-details {
@@ -460,7 +466,7 @@ h1 {
     padding: 40px;
 }
 
-.details-btn, .return-btn, .cancel-btn {
+.return-btn, .cancel-btn {
     padding: 8px 20px;
     font-size: 13px;
     font-weight: 500;

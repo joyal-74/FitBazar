@@ -20,7 +20,7 @@
                             <select class="form-select" name="status" onchange="document.getElementById('filterForm').submit();">
                                 <option value="">All Status</option>
                                 <option value="Delivered" <%= status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                <option value="Pending" <%= status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="Placed" <%= status === 'Placed' ? 'selected' : '' %>>Placed</option>
                                 <option value="Cancelled" <%= status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                                 <option value="Out for Delivery" <%= status === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
                                 <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
@@ -53,7 +53,7 @@
                                         <th>Customer</th>
                                         <th>Date</th>
                                         <th>Amount</th>
-                                        <th>Status</th>
+                                        <!-- <th>Status</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -68,23 +68,23 @@
                                                 <td>
                                                     ₹<%= order.orderItems.reduce((total, item) => total + item.discountPrice, 0).toLocaleString('en-IN') %>
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <% 
                                                         const statusPriority = {
                                                             'Cancelled': 0,
                                                             'Returned': 1,
-                                                            'Pending': 2,
+                                                            'Placed': 2,
                                                             'Shipped': 3,
                                                             'Out for Delivery': 4,
                                                             'Delivered': 5
                                                         };
                                                 
-                                                        let worstStatus = 'Delivered'; // default
+                                                        let worstStatus = 'Delivered';
                                                         let worstPriority = statusPriority[worstStatus];
                                                 
                                                         order.orderItems.forEach(item => {
-                                                            const itemStatus = item.statusHistory?.at(-1)?.status || 'Pending';
-                                                            const itemPriority = statusPriority[itemStatus] ?? 2; // Default to Pending if undefined
+                                                            const itemStatus = item.statusHistory?.at(-1)?.status || 'Placed';
+                                                            const itemPriority = statusPriority[itemStatus] ?? 2;
                                                             if (itemPriority < worstPriority) {
                                                                 worstPriority = itemPriority;
                                                                 worstStatus = itemStatus;
@@ -93,22 +93,21 @@
                                                     %>
                                                 
                                                     <% if (worstStatus === 'Delivered') { %>
-                                                        <span class="badge bg-success" style="border-radius: 28px; width: 130px;">Delivered</span>
-                                                    <% } else if (worstStatus === 'Pending') { %>
-                                                        <span class="badge bg-warning" style="border-radius: 28px; width: 130px;">Pending</span>
+                                                        <span class="badge bg-success admin-status-badge">Delivered</span>
+                                                    <% } else if (worstStatus === 'Placed') { %>
+                                                        <span class="badge bg-warning admin-status-badge">Placed</span>
                                                     <% } else if (worstStatus === 'Cancelled') { %>
-                                                        <span class="badge bg-danger" style="border-radius: 28px; width: 130px;">Cancelled</span>
+                                                        <span class="badge bg-danger admin-status-badge">Cancelled</span>
                                                     <% } else if (worstStatus === 'Out for Delivery') { %>
-                                                        <span class="badge bg-info" style="border-radius: 28px; width: 130px;">Out for Delivery</span>
+                                                        <span class="badge bg-info admin-status-badge">Out for Delivery</span>
                                                     <% } else if (worstStatus === 'Shipped') { %>
-                                                        <span class="badge" style="background-color: #7a0f7a; border-radius: 28px; width: 130px;">Shipped</span>
+                                                        <span class="badge bg-violet admin-status-badge">Shipped</span>
                                                     <% } else if (worstStatus === 'Returned') { %>
-                                                        <span class="badge" style="background-color: #b9043a; border-radius: 28px; width: 130px;">Returned</span>
+                                                        <span class="badge admin-status-badge" style="background-color: #b9043a;">Returned</span>
                                                     <% } else { %>
                                                         <span class="badge bg-dark" style="border-radius: 28px; width: 130px;">Unknown</span>
                                                     <% } %>
-                                                </td>
-                                                
+                                                </td> -->
                                                 
                                                 <td>
                                                     <a href="/admin/vieworders?id=<%= order.orderId %>" class="btn btn-sm btn-outline-primary">View</a>

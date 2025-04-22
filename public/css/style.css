@@ -984,3 +984,11 @@ td {
     background-color: #3C1549;
     color: #fff;
 }
+
+
+.admin-status-badge{
+    border-radius: 28px;
+    width: 130px;
+    font-size: 13px;
+}
+

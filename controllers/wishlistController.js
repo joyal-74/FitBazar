@@ -1,6 +1,6 @@
 import User from "../model/userModel.js";
 import Wishlist from "../model/wishlistModel.js";
-import { INTERNAL_SERVER_ERROR, UNAUTHORIZED } from '../config/statusCodes.js'
+import { INTERNAL_SERVER_ERROR, UNAUTHORIZED, BAD_REQUEST } from '../config/statusCodes.js'
 
 const getWishlist = async (req, res) => {
     try {

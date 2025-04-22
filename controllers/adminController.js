@@ -54,7 +54,10 @@ const loadOrders = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const { status, search } = req.query;
-        let query = { status: { $ne: 'Payment Failed' }};
+
+        let query = {
+            paymentStatus: { $ne: 'Failed' }
+        };
 
         // Search Logic
         if (search) {
@@ -103,6 +106,11 @@ const viewOrders = async (req, res) => {
         return res.status(NOT_FOUND).json({message : 'Order not found'})
     }
 
+    const activeItems = order.orderItems.filter(item => item.currentStatus !== 'Cancelled');
+
+    const allShipped = activeItems.length > 0 && activeItems.every(item => item.currentStatus === 'Shipped');
+    const allOutForDelivery = activeItems.length > 0 && activeItems.every(item => item.currentStatus === 'Out for Delivery');
+    
     const addressId = order.address
 
     const addresses = await Address.findOne(
@@ -110,10 +118,37 @@ const viewOrders = async (req, res) => {
         { details: { $elemMatch: { _id: addressId } } }
     );
 
+
     const address = addresses?.details?.[0] || null; 
 
-    res.render('admin/vieworders', { title: 'Orders', order, address });
+    res.render('admin/vieworders', { title: 'Orders', order, address, allShipped, allOutForDelivery });
 }
+
+
+const updateAllOrderItemsStatus = async (req, res) => {
+    try {
+        const orderId = req.query.id;
+        const { status } = req.body;
+
+        const order = await Order.findOne({ orderId });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        order.orderItems.forEach(item => {
+            if (item.currentStatus === 'Cancelled') return;
+
+            item.currentStatus = status;
+            item.statusHistory.push({ status, timestamp: new Date() });
+        });
+
+        await order.save();
+
+        res.json({ message: `Order items marked as ${status}` });
+    } catch (error) {
+        console.error('Bulk update error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 
 async function updateStatus(req, res) {
     const { id } = req.query;
@@ -149,4 +184,4 @@ async function updateStatus(req, res) {
     }
 }
 
-export default { loadLogin, adminLogin, updateStatus, loadOrders, viewOrders, logout }
+export default { loadLogin, adminLogin, updateStatus, updateAllOrderItemsStatus, loadOrders, viewOrders, logout }

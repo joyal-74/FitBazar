@@ -276,6 +276,20 @@ const createOrder = async (req, res) => {
         let itemTotal = 0;
         const orderItems = [];
 
+        if (paymentMethod === 'wallet') {
+            const user = await User.findById(userId).session(session);
+            const tempTotal = cart.items.reduce((acc, item) => {
+                return acc + (item.price * item.quantity);
+            }, 0);
+            const delivery = tempTotal > 499 ? 0 : 39;
+            const totalPayable = tempTotal - couponApplied + delivery;
+        
+            if (user.wallet < totalPayable) {
+                await session.abortTransaction();
+                return res.status(400).json({ error: "Insufficient wallet balance." });
+            }
+        }
+
         for (const item of cart.items) {
             const product = await Products.findById(item.productId._id).session(session);
             if (!product) {
@@ -311,7 +325,8 @@ const createOrder = async (req, res) => {
                 discountPrice: item.price,
                 discount: item.productId.discount || 0,
                 variant: item.variants,
-                statusHistory: [{ status: 'Pending', timestamp: new Date() }]
+                statusHistory: [{ status: 'Placed', timestamp: new Date() }],
+                currentStatus : 'Placed'
             });
         }
 
@@ -326,8 +341,6 @@ const createOrder = async (req, res) => {
             coupon: couponApplied,
             paymentStatus: 'Pending',
             paymentMethod,
-            status: 'Pending',
-            statusHistory: [{ status: 'Pending', timestamp: new Date() }]
         });
 
         await order.save({ session });
@@ -426,7 +439,6 @@ const paymentFailed = async (req,res) => {
         }
 
         order.paymentStatus = 'Failed';
-        order.status = 'Payment Failed';
         order.failureReason = reason;
         await order.save();
 

@@ -38,7 +38,7 @@ const orderSchema = new Schema({
             status: {
                 type: String,
                 required: true,
-                enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed']
+                enum: ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed']
             },
             timestamp: {
                 type: Date,
@@ -78,10 +78,9 @@ const orderSchema = new Schema({
     totalAmount : {
         type: Number,
     },
-    status: {
+    status : {
         type: String,
-        enum: ['Pending', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', ],
-        default: 'Pending'
+        enum: ['Confirmed', 'Out for Delivery', 'Delivered']
     },
 }, { timestamps: true });
 

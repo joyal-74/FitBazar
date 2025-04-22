@@ -24,7 +24,9 @@
                                         <% 
                                             let total = 0; 
                                             order.orderItems.forEach(item => {
-                                                total += item.quantity * (item.discountPrice || 0);
+                                                if (item.currentStatus !== 'Cancelled') {
+                                                    total += item.quantity * (item.discountPrice || 0);
+                                                }
                                             });
                                         %>
                                         <div class="d-flex justify-content-between align-items-center">
@@ -53,7 +55,7 @@
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <thead>
-                                            <tr>
+                                            <tr class="text-center">
                                                 <th scope="col">Product Name</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Unit Price</th>
@@ -63,16 +65,24 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <% order.orderItems.forEach((item, index) => { %>
+                                            <% order.orderItems.forEach((item, index) => { 
+                                                const isCancelled = item.currentStatus === 'Cancelled';
+                                            %>
                                                 <tr class="text-center align-items-center">
                                                     <input type="hidden" class="prdouct-id" value="<%= item.product?._id %>">
-                                                    <td class="text-start"><%= item.product?.name || 'Unknown product' %></td>
+                                                    <td class="text-start <%= isCancelled ? 'text-secondary' : '' %>"><%= item.product?.name || 'Unknown product' %></td>
                                                     <td>
-                                                        <div class="border p-1 rounded text-center"><%= item.statusHistory[item.statusHistory.length - 1].status %></div>
+                                                        <div class="border p-1 rounded text-center  <%= isCancelled ? 'text-danger' : '' %>"><%= item.currentStatus %></div>
                                                     </td>
-                                                    <td>₹<%= item.discountPrice || 0 %></td>
+                                                    <td class=" <%= isCancelled ? 'text-secondary' : '' %>">₹<%= item.discountPrice || 0 %></td>
                                                     <td><%= item.quantity %></td>
-                                                    <td>₹<%= (item.quantity * (item.discountPrice || 0)) %></td>
+                                                    <td class="<%= isCancelled ? 'text-secondary' : '' %>">
+                                                        <% if (isCancelled) { %>
+                                                            <del>₹<%= (item.quantity * (item.discountPrice || 0)) %></del>
+                                                        <% } else { %>
+                                                            ₹<%= (item.quantity * (item.discountPrice || 0)) %>
+                                                        <% } %>
+                                                    </td>
                                                     <td class="text-center align-middle">
                                                         <button class="btn custom-outline-btn btn-sm update-btn" data-bs-toggle="modal" data-bs-target="#statusChangeModal" data-product-id="<%= item.product._id %>">
                                                             Update
@@ -81,8 +91,24 @@
                                                 </tr>
                                             <% }) %>
                                         </tbody>
+                                        
+                                        
                                     </table>
                                 </div>
+                                <% if (allShipped) { %>
+                                    <div class="text-end my-3">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="updateAllOrderItems('<%= order.orderId %>', 'Out for Delivery')">
+                                            Mark as Out for Delivery
+                                        </button>
+                                    </div>
+                                <% } else if (allOutForDelivery) { %>
+                                    <div class="text-end my-3">
+                                        <button class="btn btn-success btn-sm" onclick="updateAllOrderItems('<%= order.orderId %>', 'Delivered')">
+                                            Mark as Delivered
+                                        </button>
+                                    </div>
+                                <% } %>
+                                
                             </div>
                         </div>
                         <div class="card mb-4 border-0" style="border-radius: 15px; overflow: hidden;">
@@ -107,15 +133,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card border-0" style="border-radius: 15px; overflow: hidden;">
-                            <% if (order.cancelReason) { %>
-                                <div class="card-body py-2 px-4" style="background: #fff;">
-                                    <div class="mt-1">
-                                        <p class="mb-1 text-muted fw-bold">Cancel Reason: <%= order.cancelReason %></p>
-                                    </div>
-                                </div>
-                            <% } %>
-                        </div>
                     </div>
                 </div>
             </main>
@@ -136,11 +153,9 @@
                         <label for="orderStatus" class="form-label fw-bold">Select Status</label>
                         <select class="form-select" id="orderStatus" required>
                             <option value="" selected disabled>Select a status</option>
-                            <option value="Pending">Pending</option>
+                            <option value="Placed">Placed</option>
                             <option value="Shipped">Shipped</option>
-                            <option value="Out for Delivery">Out for Delivery</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="Cancelled">Cancel</option>
                         </select>
                         <div class="invalid-feedback">Please select a status.</div>
                     </div>
@@ -252,6 +267,47 @@
                 });
             }
         }
+
+        async function updateAllOrderItems(orderId, status) {
+            try {
+                const response = await fetch(`/admin/orders/all-status?id=${orderId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: data.message || 'Failed to update status',
+                        icon: "error",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            } catch (error) {
+                console.error('Bulk update failed:', error);
+                Swal.fire({
+                    text: 'Something went wrong',
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        }
+
 
         // Add event listener for status change
         document.getElementById('orderStatus').addEventListener('change', toggleCancelReason);

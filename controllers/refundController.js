@@ -74,6 +74,7 @@ const cancelOrder = async (req, res) => {
 
         // Update item status and cancel reason
         item.statusHistory.push({ status: 'Cancelled', timestamp: new Date() });
+        item.currentStatus = 'Cancelled';
         item.cancelReason = reason;
         item.updatedAt = new Date();
 
@@ -142,14 +143,16 @@ const generateInvoice = async (req, res) => {
 
         const orderId = req.query.id;
 
-        const order = await Order.findOne({ orderId }).populate('product');
+        const order = await Order.findOne({ orderId }).populate('orderItems.product');
         if (!order) {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
+        console.log(order)
+
         const addressId = order.address
 
-        console.log(addressId)
+        // console.log(addressId)
 
         const addresses = await Address.findOne(
             { 'details._id': addressId },

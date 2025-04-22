@@ -160,7 +160,12 @@
                                 <% if (isCancelled) { %>
                                     <span class="text-danger">Cancelled</span>
                                 <% } else { %>
-                                    ₹<%= item.discountPrice * item.quantity %>
+                                    <% if (order.paymentStatus !== 'Failed') { %>
+                                        <span class="order-status <%= (item.currentStatus || '').toLowerCase().replace(/\s+/g, '-') %>">
+                                            <%= item.currentStatus || 'Placed' %>
+                                        </span>
+                                    <% } %>
+                                     ₹<%= item.discountPrice * item.quantity %>
                                 <% } %>
                             </span>
                             
@@ -190,14 +195,14 @@
                         <a href="/user/orders" class="btn btn-outline-primary">Back to Orders</a>
                     
                         <% 
-                            const allCancelled = order.orderItems.every(item => item.status === 'Cancelled');
-                            const anyDelivered = order.orderItems.some(item => item.status === 'Delivered');
-                            const anyReturnable = order.orderItems.some(item => item.status === 'Delivered');
-                            const allReturned = order.orderItems.every(item => item.status === 'Returned');
-                            const anyCancellable = order.orderItems.some(item => item.status !== 'Cancelled' && item.status !== 'Delivered');
+                            const allCancelled = order.orderItems.every(item => item.currentStatus === 'Cancelled');
+                            const allDelivered = order.orderItems.every(item => item.currentStatus === 'Delivered');
+                            const anyReturnable = order.orderItems.some(item => item.currentStatus === 'Delivered');
+                            const allReturned = order.orderItems.every(item => item.currentStatus === 'Returned');
+                            const anyCancellable = order.orderItems.some(item => item.currentStatus !== 'Cancelled' && item.currentStatus !== 'Delivered');
                         %>
                     
-                        <% if (anyDelivered) { %>
+                        <% if (allDelivered) { %>
                             <button class="btn custom-btn" onclick="window.location.href='/user/orders/invoice?id=<%= order.orderId %>'">
                                 Download Invoice
                             </button>

@@ -48,6 +48,7 @@ router.get('/customers/filter',adminAuth.checkSession, customerController.filter
 // order management
 router.get('/orders',adminAuth.checkSession, adminController.loadOrders);
 router.patch('/orders', adminController.updateStatus);
+router.patch('/orders/all-status', adminController.updateAllOrderItemsStatus);
 router.get('/vieworders', adminAuth.checkSession, adminController.viewOrders);
 
 // Return management
