@@ -200,6 +200,7 @@
 
                 <!-- Products Loop -->
                 <h5 class="section-title px-3">Product Details</h5>
+                <% let subTotal = 0; %>
                 <% order.orderItems.forEach(item => { %>
                     <div class="order-product-card align-items-center mb-3 px-3">
                         <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>" class="product-img">
@@ -219,8 +220,11 @@
                             </div>
                         </div>
                     </div>
-                    <% grandTotal += (item.discountPrice * item.quantity) - order.coupon + order.deliveryCharge %>
+                    <% subTotal += item.discountPrice * item.quantity; %>
                 <% }) %>
+
+                <% grandTotal = subTotal - (order.coupon || 0) + (order.deliveryCharge || 0); %>
+
                 <hr>
                <div class="text-end mt-5">
                 <p>Delivery Charge: ₹ <%= order.deliveryCharge %></p>

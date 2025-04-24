@@ -48,12 +48,17 @@ const addItemToCart = async (req, res) => {
             availableStock = variant.stock;
         }
 
-        console.log(existingQuantity + Number(quantity))
-        console.log(availableStock);
+        const totalRequested = existingQuantity + Number(quantity);
 
-        if (existingQuantity + Number(quantity) > availableStock) {
+        if (totalRequested > availableStock) {
             return res.status(BAD_REQUEST).json({
                 error: `Only ${availableStock - existingQuantity} more units of "${product.name}" available in stock for this variant.`
+            });
+        }
+
+        if (totalRequested > 10) {
+            return res.status(BAD_REQUEST).json({
+                error: `You can only add up to 10 units of "${product.name}" (this variant) in one order.`
             });
         }
 
@@ -166,11 +171,11 @@ const updateQuantity = async (req, res) => {
             v.color === color && v.weight === weight
         );
 
-        if(item.quantity > 10){
-            return res.status(BAD_REQUEST).json({ error: "Maximum 10 product can purchase in a single order" });
-        }
-
         if (change > 0) {
+            if (item.quantity >= 10) {
+                return res.status(BAD_REQUEST).json({ error: "Maximum 10 products can be purchased in a single order" });
+            }
+        
             if (item.quantity < variant.stock) {
                 item.quantity += 1;
             } else {
@@ -181,6 +186,7 @@ const updateQuantity = async (req, res) => {
         } else if (change < 0 && item.quantity === 1) {
             return res.status(BAD_REQUEST).json({ message: "Quantity unchanged as it’s already at minimum", cart });
         }
+        
 
         await cart.save();
 
@@ -192,26 +198,35 @@ const updateQuantity = async (req, res) => {
 };
 
 
-const deleteFromcart = async (req,res)=> {
+const deleteFromcart = async (req, res) => {
     try {
-        const { productId } = req.body;
+        const { productId, color, weight } = req.body;
         const userId = req.query.userId;
-    
+
         const cart = await Cart.findOneAndUpdate(
             { userId: userId },
-            { $pull: { items: { productId: productId } } },
+            {
+                $pull: {
+                    items: {
+                        productId: productId,
+                        'variants.color': color,
+                        'variants.weight': weight
+                    }
+                }
+            },
             { new: true }
         );
 
         if (!cart) {
             return res.status(NOT_FOUND).json({ message: "Cart not found" });
         }
-        
-        res.status(OK).json({mesage : "Item deleted from cart successfully"});
+
+        res.status(OK).json({ message: "Item deleted from cart successfully" });
     } catch (error) {
         console.log(error);
-        res.status(INTERNAL_SERVER_ERROR).json({message : 'Internal server error'});
+        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
-}
+};
+
 
 export default {loadCart, updateQuantity, addItemToCart, deleteFromcart};

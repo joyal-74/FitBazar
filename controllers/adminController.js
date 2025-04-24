@@ -35,7 +35,6 @@ const adminLogin = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        errorMessage = "Internal server error";
         return res.render('admin/login', { title: "Login Page" });
     }
 };

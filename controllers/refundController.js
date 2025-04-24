@@ -11,7 +11,7 @@ import { nanoid } from 'nanoid';
 
 
 const requestRefund = async (req, res) => {
-    const { reason, productId } = req.body;
+    const { reason, productId, variant } = req.body;
     const orderId = req.query.id;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
@@ -34,6 +34,7 @@ const requestRefund = async (req, res) => {
             userId,
             product: productId,
             reason,
+            variant,
             status: 'Requested',
         });
 
@@ -218,13 +219,11 @@ function generateTxnId(prefix = 'TXN') {
 }
 
 const updateRefundStatus = async (req, res) => {
-    const orderId = req.query.id;
-    const { status } = req.body;
+    const { status, orderId, productId } = req.body;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     try {
-
-        const refund = await Refund.findOne({ order: orderId });
+        const refund = await Refund.findOne({ order: orderId, product: productId });
         if (!refund) {
             return res.status(NOT_FOUND).json({ error: "Refund not found" });
         }
@@ -239,67 +238,77 @@ const updateRefundStatus = async (req, res) => {
             return res.status(NOT_FOUND).json({ error: "User not found" });
         }
 
+        // Find the specific item in the order
+        const itemToUpdate = order.orderItems.find(item =>
+            item.product.toString() === productId &&
+            item.variant.color === refund.variant.color &&
+            item.variant.weight === refund.variant.weight
+        );
+
+        if (!itemToUpdate) {
+            return res.status(NOT_FOUND).json({ error: "Matching product item in order not found" });
+        }
+
         if (status === 'Approved') {
-            user.wallet += order.discountPrice;
+            // Credit wallet
+            const refundAmount = itemToUpdate.discountPrice * itemToUpdate.quantity;
+            user.wallet += refundAmount;
             await user.save();
 
-            const productId = order.product
-            const variant = order.variant
-
+            // Increase stock
             const product = await Products.findOne({
                 _id: productId,
                 variants: {
                     $elemMatch: {
-                        color: variant.color,
-                        weight: variant.weight
+                        color: refund.variant.color,
+                        weight: refund.variant.weight
                     }
                 }
             });
 
-            order.status = 'Returned';
-
-            await order.save()
-
             if (product) {
                 const variant = product.variants.find(v =>
-                    v.color === order.variant.color && v.weight === order.variant.weight
+                    v.color === refund.variant.color && v.weight === refund.variant.weight
                 );
-            
+
                 if (variant) {
-                    variant.stock += order.quantity;
+                    variant.stock += itemToUpdate.quantity;
                     await product.save();
                 }
             }
 
+            // Update refund
             refund.status = status;
             await refund.save();
 
+            // Log to wallet
             const transactionId = generateTxnId();
 
             await Wallet.create({
                 userId,
                 orderId,
-                address : order.address,
-                transactionId : transactionId, 
+                address: order.address,
+                transactionId,
                 payment_type: 'wallet',
-                type : 'refund',
-                amount: order.discountPrice,
+                type: 'refund',
+                amount: refundAmount,
                 status: 'Paid',
-                entryType : 'CREDIT',
+                entryType: 'CREDIT',
             });
 
-            return res.status(OK).json({ message: `Refund of ₹${order.discountPrice} processed successfully` });
+            return res.status(OK).json({ message: `Refund of ₹${refundAmount} processed successfully` });
         } else {
             refund.status = status;
             await refund.save();
 
-            return res.status(BAD_REQUEST).json({ message: `Refund for order #${order._id} rejected` });
+            return res.status(BAD_REQUEST).json({ message: `Refund for order #${order.orderId} rejected` });
         }
     } catch (error) {
         console.error("Error updating refund status:", error);
         return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
     }
 };
+
 
 
 export default { requestRefund, cancelOrder, generateInvoice, loadReturnPage, updateRefundStatus }

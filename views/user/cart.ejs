@@ -154,7 +154,7 @@
                                                 ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
                                             </p>
                                             <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn"
-                                                onclick="removeFromCart('<%= item.productId._id %>')"
+                                                onclick="removeFromCart('<%= item.productId._id %>','<%= item.variants?.color %>', '<%= item.variants?.weight %>')"
                                                 style="width: 38px; height: 38px;">
                                                 <i class="fa-solid fa-trash" style="font-size: 14px;"></i>
                                             </button>
@@ -263,7 +263,7 @@
 
         // remove from Cart
 
-        async function removeFromCart(productId) {
+        async function removeFromCart(productId, color, weight) {
             const userId = document.getElementById('userId').value;
 
             const result = await Swal.fire({
@@ -280,7 +280,7 @@
                 const response = await fetch(`/user/cart?userId=${userId}`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId })
+                    body: JSON.stringify({ productId, color, weight })
                 });
 
                 if (response.ok) {

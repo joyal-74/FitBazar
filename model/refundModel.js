@@ -23,7 +23,11 @@ const refundSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['Requested', 'Approved', 'Rejected']
-    }
+    },
+    variant: {
+        color: { type: String},
+        weight: { type: String}
+    },
 },{timestamps : true});
 
 const Refund = mongoose.model('Refund', refundSchema);

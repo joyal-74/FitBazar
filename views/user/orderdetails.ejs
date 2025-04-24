@@ -232,7 +232,7 @@
                         <% } %>
                         
                         <% if (order.paymentStatus === 'Failed') { %>
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary retry-btn" data-orderid="<%= order._id %>" data-amount="<%= grandTotal %>">
                                 Retry Payment
                             </button>
                         <% } %>
@@ -252,6 +252,7 @@
                                     <!-- Hidden to track order and item ID -->
                                     <input type="hidden" id="returnOrderId">
                                     <input type="hidden" id="returnproductId">
+                                    <input type="hidden" id="returnproductVariant">
                                     <!-- Product Details -->
                                     <div id="returnProductDetails" class="mb-3"></div>
                                     <!-- Reason Dropdown -->
@@ -323,6 +324,8 @@
         </div>
     </main>
 
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <script>
         document.getElementById('returnReason').addEventListener('change', function () {
             const otherReasonContainer = document.getElementById('otherReasonContainer');
@@ -356,6 +359,8 @@
             container.innerHTML = '';
             document.getElementById('returnOrderId').value = orderId;
             document.getElementById('returnproductId').value = productId;
+            document.getElementById('returnproductVariant').value = JSON.stringify(itemVariant);
+
 
             const color = itemVariant?.color || '';
             const weight = itemVariant?.weight ? ' | ' + itemVariant.weight : '';
@@ -390,6 +395,7 @@
         }
 
         async function submitReturn() {
+            const itemVariant = JSON.parse(document.getElementById('returnproductVariant').value || '{}');
             const orderId = document.getElementById('returnOrderId').value;
             const productId = document.getElementById('returnproductId').value;
             let reason = document.getElementById('returnReason').value;
@@ -419,7 +425,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ reason, productId })
+                    body: JSON.stringify({ reason, productId, variant: itemVariant })
                 });
 
                 const data = await response.json();
@@ -502,5 +508,92 @@
                 });
             }
         }
+
+        document.querySelectorAll('.retry-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const orderId = btn.dataset.orderid;
+                const amount = btn.dataset.amount;
+
+
+                try {
+                    const response = await fetch(`/user/payments/retry-payment/${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, body : JSON.stringify({ amount : amount, orderId : orderId})
+                    });
+
+                    const data = await response.json();
+
+                    if (data.razorpayOrder) {
+                        const options = {
+                            key: data.key,
+                            amount: data.razorpayOrder.amount,
+                            currency: "INR",
+                            name: "FitBazar",
+                            description: "Retry Order Payment",
+                            order_id: data.razorpayOrder.id,
+                            handler: async function (response) {
+                                try {
+                                    const res = await fetch('/user/payments/retry-success', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            orderId: orderId,
+                                            paymentId: response.razorpay_payment_id
+                                        })
+                                    });
+
+                                    const data = await res.json();
+
+                                    if (res.ok) {
+                                        Swal.fire({
+                                            text: data.message || "Your retry payment was completed successfully.",
+                                            icon: "success",
+                                            confirmButtonColor: "#0d6efd"
+                                        }).then(()=>{
+                                            window.location.reload()
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            text: data.error || "Something went wrong.",
+                                            icon: "error",
+                                            confirmButtonColor: "#dc3545"
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error("Retry confirmation error:", error);
+                                    Swal.fire({
+                                        text: "Something went wrong while confirming payment.",
+                                        icon: "error",
+                                        confirmButtonColor: "#dc3545"
+                                    });
+                                }
+                            },
+                            prefill: {
+                                name: data.user.name,
+                                email: data.user.email
+                            },
+                            theme: {
+                                color: "#0d6efd"
+                            }
+                        };
+
+                        const rzp = new Razorpay(options);
+                        rzp.open();
+
+                    } else {
+                        alert(data.error || "Something went wrong while retrying payment.");
+                    }
+
+                } catch (err) {
+                    console.error("Retry payment error:", err);
+                    alert("Retry failed due to server error.");
+                }
+            });
+        });
+
     </script>
 </body>
