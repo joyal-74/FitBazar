@@ -146,49 +146,128 @@
 
             // Best Selling Products Bar Chart
             const bestSellingOptions = {
-                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false } },
-                plotOptions: { bar: { horizontal: false, columnWidth: '50%' } },
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    fontFamily: 'Outfit, sans-serif',
+                    toolbar: { show: false },
+                    animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '40%',
+                        borderRadius: 6,
+                        borderRadiusApplication: 'end',
+                    },
+                },
                 dataLabels: { enabled: false },
-                xaxis: { categories: data.bestSellingProducts.map(p => p.name) || ['No Data'] },
-                colors: ['#5b3f64'],
+                xaxis: {
+                    categories: data.bestSellingProducts.map(p => p.productId) || ['No Data'],
+                    labels: { style: { fontSize: '12px', colors: '#666' } },
+                },
+                colors: ['#8b5d9e'],
                 series: [{ name: 'Units Sold', data: data.bestSellingProducts.map(p => p.totalSold) || [0] }],
-                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+                yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
+                grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
+                tooltip: {
+                    theme: 'light',
+                    style: { fontSize: '12px' },
+                    y: { formatter: val => `${val} units` },
+                },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 280 } } }],
             };
             charts.bestSellingChart = new ApexCharts(document.querySelector("#bestSellingChart"), bestSellingOptions);
             charts.bestSellingChart.render();
 
             // Top Categories Bar Chart
             const categoryOptions = {
-                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false } },
-                series: [{ name: 'Units Sold', data: data.topCategories.map(c => c.totalSold) || [0] }],
-                xaxis: { categories: data.topCategories.map(c => c.categoryName) || ['No Data'] },
-                colors: ['#5b3f64'],
-                plotOptions: { bar: { horizontal: false , columnWidth: '50%' }},
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    fontFamily: 'Outfit, sans-serif',
+                    toolbar: { show: false },
+                    animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '40%',
+                        borderRadius: 6,
+                        borderRadiusApplication: 'end',
+                    },
+                },
                 dataLabels: { enabled: false },
-                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+                xaxis: {
+                    categories: data.topCategories.map(c => c.categoryName) || ['No Data'],
+                    labels: { style: { fontSize: '12px', colors: '#666' } },
+                },
+                colors: ['#8b5d9e'],
+                series: [{ name: 'Units Sold', data: data.topCategories.map(c => c.totalSold) || [0] }],
+                yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
+                grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
+                tooltip: {
+                    theme: 'light',
+                    style: { fontSize: '12px' },
+                    y: { formatter: val => `${val} units` },
+                },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 280 } } }],
             };
             charts.categoryBarChart = new ApexCharts(document.querySelector("#categoryBarChart"), categoryOptions);
             charts.categoryBarChart.render();
 
             // Top Selling Brands Bar Chart
             const brandOptions = {
-                chart: { type: 'bar', height: 300, fontFamily: 'Outfit, sans-serif', toolbar: { show: false }  },
-                plotOptions: { bar: { horizontal: true} },
-                dataLabels: { enabled: true },
+                chart: {
+                    type: 'bar',
+                    height: 320,
+                    fontFamily: 'Outfit, sans-serif',
+                    toolbar: { show: false },
+                    animations: { enabled: true, easing: 'easeinout', speed: 800 },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        barHeight: '50%',
+                        borderRadius: 6,
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: { fontSize: '12px', fontWeight: 600, colors: ['#fff'] },
+                    offsetX: -6,
+                },
+                xaxis: {
+                    categories: data.brandData.labels || ['No Data'],
+                    labels: { style: { fontSize: '12px', colors: '#666' } },
+                },
+                colors: ['#8b5d9e'],
                 series: [{ name: 'Units Sold', data: data.brandData.series || [0] }],
-                xaxis: { categories: data.brandData.labels || ['No Data'] },
-                colors: ['#5b3f64'],
-                responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
+                yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
+                grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
+                tooltip: {
+                    theme: 'light',
+                    style: { fontSize: '12px' },
+                    y: { formatter: val => `${val} units` },
+                },
+                responsive: [{ breakpoint: 768, options: { chart: { height: 280 } } }],
             };
             charts.bestBrandBarChart = new ApexCharts(document.querySelector("#bestBrandBarChart"), brandOptions);
             charts.bestBrandBarChart.render();
 
             // Sales by Location Pie Chart
             const pieOptions = {
-                chart: { type: 'pie', height: 300, fontFamily: 'Outfit, sans-serif', },
+                chart: { type: 'pie', height: 300, fontFamily: 'Outfit, sans-serif' },
                 labels: data.locationChartData.labels || ['No Data'],
                 series: data.locationChartData.series || [0],
+                colors: ['#5b3f64', '#8b5d9e', '#cfa1d4', '#f7d6e0', '#fed7c3', '#a7c5eb'],
                 legend: { position: 'bottom' },
+                dataLabels: { enabled: false },
+                tooltip: {
+                    y: {
+                        formatter: val => `₹${val.toLocaleString('en-IN')}`
+                    }
+                },
                 responsive: [{ breakpoint: 768, options: { chart: { height: 250 } } }]
             };
             charts.salesLocationPieChart = new ApexCharts(document.querySelector("#salesLocationPieChart"), pieOptions);

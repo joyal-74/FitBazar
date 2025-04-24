@@ -59,7 +59,15 @@ const loadDashboard = async (req, res) => {
             });
     
             revenueLabels.push(day.format('ddd'));
-            revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
+            const totalRevenue = orders.reduce((sum, order) => {
+                const orderTotal = order.orderItems.reduce((orderSum, item) => {
+                    if (item.currentStatus === 'Cancelled') return orderSum;
+                    return orderSum + (item.discountPrice || 0) * (item.quantity || 1);
+                }, 0);
+                return sum + orderTotal;
+            }, 0);
+        
+            revenueData.push(totalRevenue);
         }
     } else if (filter === 'monthly') {
         const startOfMonth = moment().startOf('month');
@@ -80,7 +88,15 @@ const loadDashboard = async (req, res) => {
     
             const label = `Week ${i + 1}`;
             revenueLabels.push(label);
-            revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
+            const totalRevenue = orders.reduce((sum, order) => {
+                const orderTotal = order.orderItems.reduce((orderSum, item) => {
+                    if (item.currentStatus === 'Cancelled') return orderSum;
+                    return orderSum + (item.discountPrice || 0) * (item.quantity || 1);
+                }, 0);
+                return sum + orderTotal;
+            }, 0);
+        
+            revenueData.push(totalRevenue);
         }
     } else if (filter === 'yearly') {
         for (let i = 11; i >= 0; i--) {
@@ -93,7 +109,15 @@ const loadDashboard = async (req, res) => {
             });
     
             revenueLabels.push(month.format('MMM'));
-            revenueData.push(orders.reduce((sum, order) => sum + order.discountPrice, 0));
+            const totalRevenue = orders.reduce((sum, order) => {
+                const orderTotal = order.orderItems.reduce((orderSum, item) => {
+                    if (item.currentStatus === 'Cancelled') return orderSum;
+                    return orderSum + (item.discountPrice || 0) * (item.quantity || 1);
+                }, 0);
+                return sum + orderTotal;
+            }, 0);
+        
+            revenueData.push(totalRevenue);
         }
     }
     
@@ -101,39 +125,104 @@ const loadDashboard = async (req, res) => {
     // 3. Best Selling Products (with filter)
     const bestSellingProducts = await Order.aggregate([
         { $match: { ...dateFilter } },
-        { $group: { _id: "$product", totalSold: { $sum: "$quantity" } } },
-        { $lookup: { from: "products", localField: "_id", foreignField: "_id", as: "productInfo" } },
+        { $unwind: "$orderItems" },
+        { $group: {
+            _id: "$orderItems.product",
+            totalSold: { $sum: "$orderItems.quantity" }
+        }},
+        {
+            $lookup: {
+                from: "products",
+                localField: "_id",
+                foreignField: "_id",
+                as: "productInfo"
+            }
+        },
         { $unwind: "$productInfo" },
-        { $project: { _id: 0, name: "$productInfo.productId", totalSold: 1 } },
+        {
+            $project: {
+                _id: 0,
+                productId: "$productInfo.productId", 
+                totalSold: 1
+            }
+        },
         { $sort: { totalSold: -1 } },
         { $limit: 10 }
     ]);
+    
 
     // 4. Top Categories (with filter)
     const topCategories = await Order.aggregate([
         { $match: { ...dateFilter } },
-        { $lookup: { from: "products", localField: "product", foreignField: "_id", as: "productInfo" } },
+        { $unwind: "$orderItems" },
+        {
+            $lookup: {
+                from: "products",
+                localField: "orderItems.product",
+                foreignField: "_id",
+                as: "productInfo"
+            }
+        },
         { $unwind: "$productInfo" },
-        { $group: { _id: "$productInfo.category", totalSold: { $sum: "$quantity" } } },
-        { $lookup: { from: "categories", localField: "_id", foreignField: "_id", as: "categoryInfo" } },
+        {
+            $group: {
+                _id: "$productInfo.category",
+                totalSold: { $sum: "$orderItems.quantity" }
+            }
+        },
+        {
+            $lookup: {
+                from: "categories",
+                localField: "_id",
+                foreignField: "_id",
+                as: "categoryInfo"
+            }
+        },
         { $unwind: "$categoryInfo" },
-        { $project: { categoryName: "$categoryInfo.name", totalSold: 1 } },
+        {
+            $project: {
+                _id: 0,
+                categoryName: "$categoryInfo.name",
+                totalSold: 1
+            }
+        },
         { $sort: { totalSold: -1 } },
         { $limit: 10 }
     ]);
+    
 
     // 5. Best Selling Brands (with filter)
     const bestSellingBrands = await Order.aggregate([
         { $match: { ...dateFilter } },
-        { $lookup: { from: 'products', localField: 'product', foreignField: '_id', as: 'productInfo' } },
+        { $unwind: "$orderItems" },
+        {
+            $lookup: {
+                from: 'products',
+                localField: 'orderItems.product',
+                foreignField: '_id',
+                as: 'productInfo'
+            }
+        },
         { $unwind: '$productInfo' },
-        { $group: { _id: '$productInfo.brand', totalSold: { $sum: '$quantity' } } },
+        {
+            $group: {
+                _id: '$productInfo.brand',
+                totalSold: { $sum: '$orderItems.quantity' }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                brand: "$_id",
+                totalSold: 1
+            }
+        },
         { $sort: { totalSold: -1 } },
         { $limit: 10 }
     ]);
 
     const brandData = {
-        labels: bestSellingBrands.map(item => item._id),       
+        labels: bestSellingBrands.map(item => item.brand),
         series: bestSellingBrands.map(item => item.totalSold)
     };
 
@@ -144,7 +233,13 @@ const loadDashboard = async (req, res) => {
         { $unwind: "$addressDoc" }, 
         { $unwind: "$addressDoc.details" },
         { $match: { $expr: { $eq: ["$address", "$addressDoc.details._id"] } } },
-        { $group: { _id: "$addressDoc.details.city", totalSales: { $sum: "$price" } } },
+        { $unwind: "$orderItems" },
+        { 
+            $group: {
+                _id: "$addressDoc.details.city",
+                totalSales: { $sum: { $multiply: ["$orderItems.quantity", "$orderItems.discountPrice"] } }
+            }
+        },
         { $project: { location: "$_id", totalSales: 1, _id: 0 } },
         { $sort: { totalSales: -1 } },
         { $limit: 6 }
@@ -152,7 +247,7 @@ const loadDashboard = async (req, res) => {
 
     const locationChartData = {
         labels: salesByLocation.map(loc => loc.location || "Unknown"),
-        series: salesByLocation.map(loc => loc.totalSales)
+        series: salesByLocation.map(loc => loc.totalSales || 0)
     };
         
     res.render('admin/dashboard', {

@@ -52,9 +52,10 @@
                                         <th>Order ID</th>
                                         <th>Customer</th>
                                         <th>Date</th>
+                                        <th>No of Products</th>
                                         <th>Amount</th>
-                                        <!-- <th>Status</th> -->
-                                        <th>Action</th>
+                                        <!-- <th>Status</th> --> 
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -63,11 +64,20 @@
                                             <tr class="text-center">
                                                 <td><%= index + 1 %></td>
                                                 <td>#<%= order.orderId %></td>
-                                                <td><%= order.userId && order.userId.name ? order.userId.name : 'N/A' %></td>
+                                                <td><%= order.userId && order.userId.name ? order.userId.name : 'N/A'  %></td>
                                                 <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>
+                                                <td><%= order.orderItems.length %></td>
                                                 <td>
-                                                    ₹<%= order.orderItems.reduce((total, item) => total + item.discountPrice, 0).toLocaleString('en-IN') %>
+                                                    ₹<%= (
+                                                        order.orderItems.reduce((total, item) => {
+                                                            if (item.currentStatus !== 'Cancelled') {
+                                                                return total + (item.discountPrice || 0) * (item.quantity || 1);
+                                                            }
+                                                            return total;
+                                                        }, 0) - (order.coupon || 0) + (order.deliveryCharge || 0)
+                                                    ).toLocaleString('en-IN') %>
                                                 </td>
+                                                                                                
                                                 <!-- <td>
                                                     <% 
                                                         const statusPriority = {
@@ -110,7 +120,7 @@
                                                 </td> -->
                                                 
                                                 <td>
-                                                    <a href="/admin/vieworders?id=<%= order.orderId %>" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <a href="/admin/vieworders?id=<%= order._id %>" class="btn btn btn-sm custom-outline-btn">View</a>
                                                 </td>
                                             </tr>
                                         <% }) %>

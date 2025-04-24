@@ -83,4 +83,11 @@ order changed so fix the following
 ------------------------------------
 
 1. retry payment in order details
-2. 
+
+
+
+bugs to fix
+-----------
+
+1. coupon applied and cancelled - check price above or less minimum remove coupon
+2. after going to checkout the stock les how to manage

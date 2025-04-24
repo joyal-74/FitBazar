@@ -3,6 +3,7 @@ import Admin from "../model/adminModel.js";
 import Order from "../model/orderModel.js";
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, UNAUTHORIZED } from '../config/statusCodes.js'
 import Address from "../model/addressModel.js";
+import Refund from "../model/refundModel.js";
 
 
 // Login Page Handler
@@ -100,7 +101,7 @@ const loadOrders = async (req, res) => {
 const viewOrders = async (req, res) => {
     const orderId = req.query.id;
 
-    const order = await Order.findOne({ orderId }).populate('userId').populate('orderItems.product');
+    const order = await Order.findOne({ _id : orderId }).populate('userId').populate('orderItems.product');
     // console.log(order);
     if(!order){
         return res.status(NOT_FOUND).json({message : 'Order not found'})
@@ -118,10 +119,17 @@ const viewOrders = async (req, res) => {
         { details: { $elemMatch: { _id: addressId } } }
     );
 
+    const refunds = await Refund.find({ order: orderId });
+    const refundMap = {};
+
+    refunds.forEach(refund => {
+        refundMap[refund.product.toString()] = refund;
+    });
+
 
     const address = addresses?.details?.[0] || null; 
 
-    res.render('admin/vieworders', { title: 'Orders', order, address, allShipped, allOutForDelivery });
+    res.render('admin/vieworders', { title: 'Orders', order, address, allShipped, allOutForDelivery, refundMap });
 }
 
 

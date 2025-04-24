@@ -42,8 +42,8 @@
                         <div class="order-card" style="background-color: #b971c416;">
                             <!-- Order Header -->
                             <div class="order-header">
-                                <span class="order-id">Order #<%= order.orderId %></span>
-                                <button class="btn btn-primary details-btn px-2 py-1 m-0" data-order-id="<%= order.orderId %>"><i class="fas fa-eye text-white" style="font-size: 12px;"></i> View</button>                              
+                                <span class="order-id">Order #<%= order._id %></span>
+                                <button class="btn btn-primary details-btn px-2 py-1 m-0" data-order-id="<%= order._id %>"><i class="fas fa-eye text-white" style="font-size: 12px;"></i> View</button>                              
                             </div>
                 
                             <!-- Order Details -->
@@ -60,20 +60,24 @@
                                         hour12: false
                                     }) %>
                                 </div>
+                                
                                 <%
                                     let totalAmount = 0;
                                     order.orderItems.forEach(item => {
-                                        totalAmount += item.discountPrice * item.quantity;
+                                        if (item.currentStatus !== 'Cancelled') {
+                                            totalAmount += (item.discountPrice || 0) * (item.quantity || 1);
+                                        }
                                     });
                                 %>
-                                
+
                                 <% if (order.paymentStatus === 'Failed') { %>
                                     <div class="order-status payment-failed text-end w-10">Payment Failed</div>
                                 <% } else { %>
                                     <div>
-                                        <span>Total: </span>₹ <%= totalAmount + (order.delivery || 0) - (order.coupon || 0) %>
+                                        <span>Total: </span>₹ <%= totalAmount + (order.deliveryCharge || 0) - (order.coupon || 0) %>
                                     </div>
                                 <% } %>
+
                                 
                             </div>
                 

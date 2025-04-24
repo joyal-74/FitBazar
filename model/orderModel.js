@@ -38,7 +38,7 @@ const orderSchema = new Schema({
             status: {
                 type: String,
                 required: true,
-                enum: ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Returned', 'Payment Failed']
+                enum: ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Payment Failed']
             },
             timestamp: {
                 type: Date,

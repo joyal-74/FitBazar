@@ -3,6 +3,7 @@ import Address from "../model/addressModel.js";
 import nodemailer from "nodemailer"
 import Order from "../model/orderModel.js";
 import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '../config/statusCodes.js'
+import Refund from "../model/refundModel.js";
 
 const loadOrders = async (req, res) => {
     const search = req.query.search || '';
@@ -52,8 +53,18 @@ const loadOrderDetails = async (req,res)=> {
         const user = await User.findOne({_id : userId})
         const [firstName] = user.name.split(' ');
 
-        const order = await Order.findOne({ orderId }).populate('orderItems.product');
-        const addressId = order.address
+        const order = await Order.findOne({ _id : orderId }).populate('orderItems.product');
+        const addressId = order.address;
+
+        const refundStatus = await Refund.find({order : orderId})
+
+        const refundStatusArray = await Refund.find({ order: orderId });
+
+        const refundMap = {};
+
+        refundStatusArray.forEach(refund => {
+            refundMap[refund.product.toString()] = refund;
+        });
 
         const addresses = await Address.findOne(
             { 'details._id': addressId },
@@ -62,7 +73,7 @@ const loadOrderDetails = async (req,res)=> {
         
         const address = addresses?.details?.[0] || null;
 
-        res.render('user/orderdetails',{title : "My Orders",order, address, user, firstName});
+        res.render('user/orderdetails',{title : "My Orders",order, address, user, firstName, refundMap});
 
     } catch (error) {
         console.error('Error loading orders:', error.message);

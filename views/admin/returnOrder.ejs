@@ -62,7 +62,7 @@
                                                 <td>#<%= request.order.orderId %></td>
                                                 <td><%= request.userId.name || 'N/A' %></td>
                                                 <td><%= new Date(request.createdAt).toLocaleDateString("en-GB") %></td>
-                                                <td>₹<%= (request.order?.price - request.order.coupon + request.order.delivery).toLocaleString('en-IN') || "" %></td>
+                                                <td>₹<%= (request.orderItems?.discountPrice).toLocaleString('en-IN') || "" %></td>
                                                 <td><%= request.reason || 'N/A' %></td>
                                                 <td>
                                                     <% if (request.status === 'Pending') { %>
@@ -77,8 +77,8 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary view-refund-btn" 
-                                                        data-product-name="<%= request.product.name %>" 
-                                                        data-price="<%= (request.order?.price - request.order.coupon + request.order.delivery) %>" 
+                                                        data-product-name="<%= request.product?.name %>" 
+                                                        data-price="<%= request.orderItems?.discountPrice %>" 
                                                         data-reason="<%= request.reason %>" 
                                                         data-date="<%= new Date(request.createdAt).toLocaleDateString("en-GB") %>" 
                                                         data-status="<%= request.status %>"

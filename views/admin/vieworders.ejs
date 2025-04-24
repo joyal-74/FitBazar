@@ -21,13 +21,14 @@
                             <div class="card-body p-4" style="background: #fff;">
                                 <div class="row mb-3">
                                     <div class="">
-                                        <% 
-                                            let total = 0; 
+                                        <%
+                                            let subtotal = 0;
                                             order.orderItems.forEach(item => {
                                                 if (item.currentStatus !== 'Cancelled') {
-                                                    total += item.quantity * (item.discountPrice || 0);
+                                                    subtotal += item.quantity * (item.discountPrice || 0);
                                                 }
                                             });
+                                            let total = subtotal - (order.coupon || 0) + (order.deliveryCharge || 0);
                                         %>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <p class="mb-2"><strong class="text-muted">Order Date:</strong> <%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
@@ -64,35 +65,72 @@
                                                 <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <% order.orderItems.forEach((item, index) => { 
-                                                const isCancelled = item.currentStatus === 'Cancelled';
-                                            %>
-                                                <tr class="text-center align-items-center">
-                                                    <input type="hidden" class="prdouct-id" value="<%= item.product?._id %>">
-                                                    <td class="text-start <%= isCancelled ? 'text-secondary' : '' %>"><%= item.product?.name || 'Unknown product' %></td>
-                                                    <td>
-                                                        <div class="border p-1 rounded text-center  <%= isCancelled ? 'text-danger' : '' %>"><%= item.currentStatus %></div>
+                                        <tbody class="table-group-divider">
+                                            <% order.orderItems.forEach((item) => { 
+                                                const status = item.currentStatus?.toLowerCase();
+                                                const statusClasses = {
+                                                    pending: 'status-badge status-pending',
+                                                    processing: 'status-badge status-processing',
+                                                    shipped: 'status-badge status-shipped',
+                                                    delivered: 'status-badge status-delivered',
+                                                    cancelled: 'status-badge status-cancelled',
+                                                    returned: 'status-badge status-returned',
+                                                };
+                                                const iconMap = {
+                                                    pending: 'fas fa-clock',
+                                                    processing: 'fas fa-cog',
+                                                    shipped: 'fas fa-truck',
+                                                    delivered: 'fas fa-check-circle',
+                                                    cancelled: 'fas fa-times-circle',
+                                                    returned: 'fas fa-undo',
+                                                };
+                                                const statusClass = statusClasses[status] || 'status-badge';
+                                                const icon = iconMap[status] || '';
+                                                const isCancelled = status === 'cancelled';
+
+                                                const productId = item.product?._id?.toString();
+                                                const refund = refundMap[productId];   
+                                                const isReturned = refund && refund.status === 'Requested';                                         %>
+                                                <tr>
+                                                    <td class="<%= isCancelled ? 'text-muted' : '' %> break-text">
+                                                        <%= item.product?.name %>
                                                     </td>
-                                                    <td class=" <%= isCancelled ? 'text-secondary' : '' %>">₹<%= item.discountPrice || 0 %></td>
-                                                    <td><%= item.quantity %></td>
-                                                    <td class="<%= isCancelled ? 'text-secondary' : '' %>">
-                                                        <% if (isCancelled) { %>
-                                                            <del>₹<%= (item.quantity * (item.discountPrice || 0)) %></del>
-                                                        <% } else { %>
-                                                            ₹<%= (item.quantity * (item.discountPrice || 0)) %>
+                                                    <td class="text-center">
+                                                        <span class="<%= statusClass %>">
+                                                            <i class="<%= icon %>"></i> <%= item.currentStatus %>
+                                                        </span>
+                                                        <% if (isReturned) { %>
+                                                            <button class="btn btn-outline-info btn-sm ms-2 return-info-btn"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#returnInfoModal"
+                                                                    data-product-name="<%= item.product?.name %>"
+                                                                    data-reason="<%= refund?.reason %>"
+                                                                    data-description="<%= refund?.description || 'No additional description provided.' %>"
+                                                                    data-product-id="<%= item.product?._id %>"
+                                                                    data-order-id="<%= order._id %>">
+                                                                    <i class="fa-solid fa-circle-info p-0 m-0"></i>
+                                                            </button>
                                                         <% } %>
                                                     </td>
-                                                    <td class="text-center align-middle">
-                                                        <button class="btn custom-outline-btn btn-sm update-btn" data-bs-toggle="modal" data-bs-target="#statusChangeModal" data-product-id="<%= item.product._id %>">
+                                                    <td class="text-center">₹<%= item.discountPrice || 0 %></td>
+                                                    <td class="text-center"><%= item.quantity %></td>
+                                                    <td class="text-center">
+                                                        <% if (isCancelled || isReturned) { %>
+                                                            <del>₹<%= item.quantity * (item.discountPrice || 0) %></del>
+                                                        <% } else { %>
+                                                            ₹<%= item.quantity * (item.discountPrice || 0) %>
+                                                        <% } %>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button class="btn custom-outline-btn btn-sm update-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#statusChangeModal" 
+                                                                data-product-id="<%= item.product?._id %>">
                                                             Update
                                                         </button>
                                                     </td>
                                                 </tr>
                                             <% }) %>
                                         </tbody>
-                                        
-                                        
                                     </table>
                                 </div>
                                 <% if (allShipped) { %>
@@ -175,6 +213,30 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn custom-btn" onclick="submitStatusChange()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="returnInfoModal" tabindex="-1" aria-labelledby="returnInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title" id="returnInfoModalLabel">Return Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-bold">Product:</h6>
+                    <p id="returnProductName" class="text-muted"></p>
+                    <h6 class="fw-bold">Reason:</h6>
+                    <p id="returnReason" class="text-muted"></p>
+                    <h6 class="fw-bold">Description:</h6>
+                    <p id="returnDescription" class="text-muted"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="approveReturnBtn">Approve</button>
+                    <button class="btn btn-danger" id="rejectReturnBtn">Reject</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -308,8 +370,70 @@
             }
         }
 
-
         // Add event listener for status change
         document.getElementById('orderStatus').addEventListener('change', toggleCancelReason);
+
+        let returnProductId = null;
+        let returnOrderId = null;
+
+        document.querySelectorAll('.return-info-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const productName = button.getAttribute('data-product-name');
+                const reason = button.getAttribute('data-reason');
+                const description = button.getAttribute('data-description');
+                returnProductId = button.getAttribute('data-product-id');
+                returnOrderId = button.getAttribute('data-order-id');
+
+                document.getElementById('returnProductName').textContent = productName;
+                document.getElementById('returnReason').textContent = reason;
+                document.getElementById('returnDescription').textContent = description;
+            });
+        });
+
+        document.getElementById('approveReturnBtn').addEventListener('click', () => {
+            updateReturnStatus('Approved');
+        });
+
+        document.getElementById('rejectReturnBtn').addEventListener('click', () => {
+            updateReturnStatus('Rejected');
+        });
+
+        async function updateReturnStatus(action) {
+            try {
+                const response = await fetch(`/admin/returns`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderId: returnOrderId,
+                        productId: returnProductId,
+                        action
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    Swal.fire({
+                        text: data.message,
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || "Failed to update return status");
+                }
+            } catch (error) {
+                console.error("Error approving/rejecting return:", error);
+                Swal.fire({
+                    text: error.message,
+                    icon: "error",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        }
     </script>
 </body>

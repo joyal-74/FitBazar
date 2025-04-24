@@ -10,37 +10,44 @@ import Products from '../model/productModel.js';
 import { nanoid } from 'nanoid';
 
 
-export const requestRefund = async (req, res) => {
-    const { reason } = req.body;
+const requestRefund = async (req, res) => {
+    const { reason, productId } = req.body;
     const orderId = req.query.id;
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     try {
         const order = await Order.findById(orderId);
-        if (!order) {
-            return res.status(NOT_FOUND).json({ message: 'Order not found' });
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        const item = order.orderItems.find(i => i._id.toString() === productId || i.product.toString() === productId);
+
+        if (!item) return res.status(404).json({ message: 'Product not found in this order' });
+
+        if (item.currentStatus === 'Requested' || item.currentStatus === 'Returned') {
+            return res.status(400).json({ message: 'Return already requested or item already returned' });
         }
 
-        const existingRefund = await Refund.findOne({ order : orderId });
-        if (existingRefund) {
-            return res.status(BAD_REQUEST).json({ message: 'Refund already requested' });
-        }
+        await order.save();
 
-        const refund = new Refund({
+        const newRefund = new Refund({
             order: orderId,
             userId,
+            product: productId,
             reason,
-            product : order.product
+            status: 'Requested',
         });
 
-        await refund.save();
+        await newRefund.save();
 
-        res.status(CREATED).json({ message: 'Refund request submitted' });
-    } catch (error) {
-        console.error(error);
-        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
+        return res.status(201).json({ message: 'Return request submitted successfully' });
+    } catch (err) {
+        console.error('Refund request error:', err);
+        return res.status(500).json({ message: 'Server error' });
     }
 };
+
+
+
 
 // user side cancellation
 const cancelOrder = async (req, res) => {
@@ -148,7 +155,7 @@ const generateInvoice = async (req, res) => {
             return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
-        console.log(order)
+        order.orderItems = order.orderItems.filter(item => item.currentStatus === 'Delivered');
 
         const addressId = order.address
 
