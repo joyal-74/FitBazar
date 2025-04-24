@@ -14,9 +14,9 @@
 
                 <!-- Filters and Export Button -->
                 <form id="filterForm" method="GET" action="/admin/orders">
-                    <div class="d-flex justify-content-between mb-4">
+                    <div class="d-flex justify-content-end mb-4">
                         <!-- Filter by Status -->
-                        <div class="col-2">
+                        <!-- <div class="col-2">
                             <select class="form-select" name="status" onchange="document.getElementById('filterForm').submit();">
                                 <option value="">All Status</option>
                                 <option value="Delivered" <%= status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
@@ -26,7 +26,7 @@
                                 <option value="Shipped" <%= status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                 <option value="Returned" <%= status === 'Returned' ? 'selected' : '' %>>Returned</option>
                             </select>
-                        </div>
+                        </div> -->
                         
                         <!-- Search Bar -->
                         <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">

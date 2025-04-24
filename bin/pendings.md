@@ -73,16 +73,16 @@ _________________________
 2. Shop page price filter min - max [x]
 3. top 10 for dashbord chart - [x]
 4. max quantity per order - 10 [x]
-5. payment failure also create as an order - []
-5. multiple products as single order not multiple - []
-6. transaction credit/debit color - []
+5. payment failure also create as an order - []x
+5. multiple products as single order not multiple - [x]
+6. transaction credit/debit color - [x]
 
 
 
 order changed so fix the following
 ------------------------------------
 
-1. retry payment in order details
+1. retry payment in order details [x]
 
 
 
@@ -90,4 +90,4 @@ bugs to fix
 -----------
 
 1. coupon applied and cancelled - check price above or less minimum remove coupon
-2. after going to checkout the stock les how to manage
+2. after going to checkout the stock less how to manage

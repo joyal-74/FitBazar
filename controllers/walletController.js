@@ -17,7 +17,7 @@ const loadWallet = async(req, res) =>{
         const user = await User.findOne({_id : userId})
 
         const lastTransaction = await Wallet.findOne({ userId }).sort({ createdAt: -1 });
-        console.log(lastTransaction);
+        // console.log(lastTransaction);
         
 
         const [firstName] = user.name.split(" ");
