@@ -164,7 +164,7 @@ const createOrder = async (req, res) => {
                 quantity: item.quantity,
                 basePrice: item.basePrice,
                 discountPrice: item.price,
-                discount: item.productId.discount || 0,
+                finalPrice: item.price * item.quantity,
                 variant: item.variants,
                 statusHistory: [{ status: 'Placed', timestamp: new Date() }],
                 currentStatus : 'Placed'

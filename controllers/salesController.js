@@ -85,46 +85,37 @@ const loadSalesReport = async (req, res) => {
 
         const dateFilter = await dateFilterFun(filter, startDate, endDate);
 
-        const productSales = await Order.aggregate([
-            { $match: dateFilter },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product',
-                    foreignField: '_id',
-                    as: 'productInfo'
-                }
-            },
-            { $unwind: '$productInfo' },
+        const queryFilter = {
+            ...dateFilter,
+            paymentStatus: { $ne: "Failed" }
+        };
+
+        const orderSummary = await Order.aggregate([
+            { $match: queryFilter },
             {
                 $group: {
-                    _id: '$productInfo._id',
-                    productName: { $first: '$productInfo.name' },
-                    totalOrders: { $sum: 1 },
-                    totalDiscounts: { $sum: '$coupon' },
-                    totalAmount: { $sum: '$price' }
+                    _id: null,
+                    totalOrders: { $addToSet: "$orderId" }, 
+                    totalDiscounts: { $sum: "$coupon" },
+                    totalAmount: { $sum: { 
+                        $sum: "$orderItems.finalPrice" 
+                    }}
                 }
             },
             {
                 $project: {
                     _id: 0,
-                    productName: 1,
-                    totalOrders: 1,
+                    totalOrders: { $size: "$totalOrders" },
                     totalDiscounts: 1,
                     totalAmount: 1
                 }
-            },
-            { $sort: { productName: 1 } }
+            }
         ]);
-
-        const summary = {
-            totalOrders: productSales.reduce((sum, p) => sum + p.totalOrders, 0),
-            totalDiscounts: productSales.reduce((sum, p) => sum + p.totalDiscounts, 0),
-            totalAmount: productSales.reduce((sum, p) => sum + p.totalAmount, 0)
-        };
-
-        const salesData = await Order.find(dateFilter).populate('product').populate('userId').sort({createdAt : -1}).skip(skip).limit(limit);
-        const totalSales = await Order.countDocuments(dateFilter);
+        
+        const summary = orderSummary[0] || { totalOrders: 0, totalDiscounts: 0, totalAmount: 0 };
+        
+        const salesData = await Order.find(queryFilter).populate('orderItems.product').populate('userId').sort({createdAt : -1}).skip(skip).limit(limit);
+        const totalSales = await Order.countDocuments(queryFilter);
         const totalPages = Math.ceil(totalSales / limit);
 
         res.render('admin/sales', {
@@ -147,7 +138,12 @@ const generateSalesReportPDF = async (req, res) => {
 
         const dateFilter = await dateFilterFun(range, start, end);
 
-        const salesData = await Order.find(dateFilter).populate('product').populate('userId')
+        const queryFilter = {
+            ...dateFilter,
+            paymentStatus: { $ne: "Failed" }
+        };
+
+        const salesData = await Order.find(queryFilter).populate('orderItems.product').populate('userId')
 
         const htmlContent = salesReportPDF(salesData);
 
@@ -177,8 +173,13 @@ const downloadSalesReportExcel = async (req, res) => {
 
         const dateFilter = await dateFilterFun(range, start, end);
 
-        const salesData = await Order.find(dateFilter)
-            .populate('product')
+        const queryFilter = {
+            ...dateFilter,
+            paymentStatus: { $ne: "Failed" }
+        };
+
+        const salesData = await Order.find(queryFilter)
+            .populate('orderItems.product')
             .populate('userId')
         
         const filePath = await salesReportExcel(salesData);

@@ -19,7 +19,7 @@ router.post('/login', adminController.adminLogin);
 router.get('/logout', adminController.logout);
 
 // dashboard
-router.get('/dashboard',  dashboardController.loadDashboard);
+router.get('/dashboard',adminAuth.checkSession,  dashboardController.loadDashboard);
 
 // category Management
 router.get('/categories',adminAuth.checkSession, categoryController.categoryInfo);

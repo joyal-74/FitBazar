@@ -1,11 +1,12 @@
 <body class="bg-violet">
     <%- include('../partials/header') %>
 
-    <div class="container-fluid w-100 sidebar-header">
+    <div class="w-100 px-3 mx-auto custom-sm-container sidebar-header">
+
         <div class="row g-0">
             <%- include('../partials/sidebar', { activePage: 'sales' }) %>
 
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+            <main class="col-12 col-md-11 col-lg-10 col-xl-9 px-3 px-md-4 py-4 mx-auto">
                 <h1 class="h3 mb-3 fw-bold">Sales Report</h1>
 
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
@@ -36,11 +37,11 @@
                 </div>
 
                 <div class="row g-4 mb-4">
-                    <div class="col-md-6 col-xl-3">
+                    <div class="col-6 col-md-3">
                         <div class="card shadow-sm border-0 h-100 summary-card">
-                            <div class="card-body p-4 d-flex align-items-center">
-                                <div class="icon-container me-3 flex-shrink-0">
-                                    <i class="fa-solid fa-cart-shopping fa-2x text-warning"></i>
+                            <div class="card-body p-4 d-flex align-items-center flex-wrap">
+                                <div class="icon-container me-3 flex-shrink-0 d-flex justify-content-center align-items-center d-none d-sm-flex">
+                                    <i class="fa-solid fa-cart-shopping text-warning fa-2x"></i>
                                 </div>
                                 <div class="flex-grow-1">
                                     <p class="text-muted mb-1 fw-medium">Total Orders</p>
@@ -49,10 +50,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
+                
+                    <div class="col-6 col-md-3">
                         <div class="card shadow-sm border-0 h-100 summary-card">
-                            <div class="card-body p-4 d-flex align-items-center">
-                                <div class="icon-container me-3 flex-shrink-0">
+                            <div class="card-body p-4 d-flex align-items-center flex-wrap">
+                                <div class="icon-container me-3 flex-shrink-0 d-flex justify-content-center align-items-center d-none d-sm-flex">
                                     <i class="fas fa-wallet fa-2x text-primary"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -62,10 +64,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
+                
+                    <div class="col-6 col-md-3">
                         <div class="card shadow-sm border-0 h-100 summary-card">
-                            <div class="card-body p-4 d-flex align-items-center">
-                                <div class="icon-container me-3 flex-shrink-0">
+                            <div class="card-body p-4 d-flex align-items-center flex-wrap">
+                                <div class="icon-container me-3 flex-shrink-0 d-flex justify-content-center align-items-center d-none d-sm-flex">
                                     <i class="fa-solid fa-tag fa-2x text-success"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -75,10 +78,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-xl-3">
+                
+                    <div class="col-6 col-md-3">
                         <div class="card shadow-sm border-0 h-100 summary-card">
-                            <div class="card-body p-4 d-flex align-items-center">
-                                <div class="icon-container me-3 flex-shrink-0">
+                            <div class="card-body p-4 d-flex align-items-center flex-wrap">
+                                <div class="icon-container me-3 flex-shrink-0 d-flex justify-content-center align-items-center d-none d-sm-flex">
                                     <i class="fa-solid fa-sack-dollar fa-2x text-info"></i>
                                 </div>
                                 <div class="flex-grow-1">
@@ -89,48 +93,96 @@
                         </div>
                     </div>
                 </div>
+                
 
-                <div>
-                    <div class="card" >
+                <div class="d-none d-md-block">
+                    <div class="card">
                         <div class="card-body p-0 m-0">
                             <div class="table-responsive">
                                 <table class="table table-hover text-center">
                                     <thead>
-                                        <tr class="text-center">
-                                            <th>SL No</th>
+                                        <tr>
                                             <th>Order ID</th>
                                             <th>Customer</th>
                                             <th>Order Date</th>
                                             <th>Products</th>
-                                            <th>Qty</th>
-                                            <th>Amount (₹)</th>
+                                            <th>Total (₹)</th>
                                             <th>Discount (₹)</th>
                                             <th>Payment</th>
-                                            <th>Status</th>
                                         </tr>
                                     </thead>
-                                    
                                     <tbody>
                                         <% salesData.forEach((order, index) => { %>
-                                          <tr class="text-center">
-                                            <td><%= index + 1 %></td>
-                                            <td class="text-start">#<%= order.orderId %></td>
-                                            <td><%= order.userId?.name || 'N/A' %></td>
-                                            <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>                                          
-                                            <td><%= order.product.productId %></td>
-                                            <td><%= order.quantity %></div></td>
-                                            <td>₹<%= (order.discountPrice).toLocaleString('en-IN') %></td>
-                                            <td>₹<%= (order.coupon || 0).toLocaleString('en-IN') %></td>
-                                            <td><%= order.paymentMethod %></td>
-                                            <td class="text-start"><%= order.status %></td>
-                                          </tr>
+                                            <tr class="align-middle">
+                                                <td class="text-start">#<%= order.orderId %></td>
+                                                <td><%= order.userId?.name || 'N/A' %></td>
+                                                <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>
+                                                <td>
+                                                    <% order.orderItems.forEach((item, itemIndex) => { %>
+                                                        <span 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#productModal-<%= index %>-<%= itemIndex %>" 
+                                                            class="text-primary text-decoration-underline" 
+                                                            style="cursor:pointer;">
+                                                            <%= item.product?.productId || 'N/A' %>
+                                                        </span>
+                                                        <%= itemIndex < order.orderItems.length - 1 ? ', ' : '' %>
+                                                    <% }) %>
+                                                </td>
+                                                <td>₹<%= order.orderItems.reduce((t, i) => t + i.finalPrice, 0).toLocaleString('en-IN') %></td>
+                                                <td>₹<%= (order.coupon || 0).toLocaleString('en-IN') %></td>
+                                                <td><%= order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) %></td>
+                                            </tr>
                                         <% }) %>
-                                      </tbody>   
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
+                <!-- CARD VIEW FOR MOBILE -->
+                <div class="d-block d-md-none">
+                    <% salesData.forEach((order, index) => { %>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body p-3">
+                                <div class="d-flex gap-5">
+                                    <div class="text-muted">
+                                        <p class="mb-1"><strong>Order ID:</strong></p>
+                                        <p class="mb-1"><strong>Customer:</strong></p>
+                                        <p class="mb-1"><strong>Order Date:</strong></p>
+                                        <p class="mb-1"><strong>Products:</strong></p>
+                                        <p class="mb-1"><strong>Total:</strong></p>
+                                        <p class="mb-1"><strong>Discount:</strong></p>
+                                        <p class="mb-0"><strong>Payment:</strong></p>
+                                    </div>
+                                    <div class="text-start">
+                                        <p class="mb-1">#<%= order.orderId %></p>
+                                        <p class="mb-1"><%= order.userId?.name || 'N/A' %></p>
+                                        <p class="mb-1"><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
+                                        <p class="mb-1">
+                                            <% order.orderItems.forEach((item, itemIndex) => { %>
+                                                <span 
+                                                    class="text-primary text-decoration-underline" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#productModal-<%= index %>-<%= itemIndex %>" 
+                                                    style="cursor:pointer;">
+                                                    <%= item.product?.productId || 'N/A' %>
+                                                </span>
+                                                <%= itemIndex < order.orderItems.length - 1 ? ', ' : '' %>
+                                            <% }) %>
+                                        </p>
+                                        <p class="mb-1">₹<%= order.orderItems.reduce((t, i) => t + i.finalPrice, 0).toLocaleString('en-IN') %></p>
+                                        <p class="mb-1">₹<%= (order.coupon || 0).toLocaleString('en-IN') %></p>
+                                        <p class="mb-0"><%= order.paymentMethod.charAt(0).toUpperCase() + order.paymentMethod.slice(1) %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
 
                 <!-- pagination -->
                  
@@ -159,6 +211,30 @@
                         </ul>
                     </nav>
                 </div>
+
+                <!-- MODALS -->
+                <% salesData.forEach((order, index) => { %>
+                    <% order.orderItems.forEach((item, itemIndex) => { %>
+                        <div class="modal fade" id="productModal-<%= index %>-<%= itemIndex %>" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Product Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>ID:</strong> <%= item.product?.productId %></p>
+                                        <p><strong>Name:</strong> <%= item.product?.name %></p>
+                                        <p><strong>Quantity:</strong> <%= item.quantity %></p>
+                                        <p><strong>Unit Price:</strong> ₹<%= item.discountPrice.toLocaleString('en-IN') %></p>
+                                        <p><strong>Total:</strong> ₹<%= item.finalPrice.toLocaleString('en-IN') %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% }) %>
+
             </main>
         </div>
     </div>
@@ -223,6 +299,14 @@
     
         document.getElementById('downloadExcel').addEventListener('click', function() {
             handleDownload('excel');
+        });
+
+        // Enable Bootstrap tooltips
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('.tooltip-icon'));
+            tooltipTriggerList.forEach(tooltipTriggerEl => {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
     </script>
 </body>

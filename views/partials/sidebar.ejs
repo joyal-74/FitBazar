@@ -1,44 +1,105 @@
-<nav class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm">
+<nav class="col-xl-2 col-md-1 bg-white sidebar shadow-sm d-none d-md-block">
     <ul class="nav flex-column mt-3">
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">
-                <i class="fa-solid fa-tachometer-alt me-2"></i>Dashboard
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">
+                <i class="fa-solid fa-tachometer-alt me-xl-2"></i>
+                <span class="d-none d-xl-inline">Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'categories' ? 'active' : '' %>" href="/admin/categories">
-                <i class="fa-solid fa-grid-2 me-2"></i>Categories
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'categories' ? 'active' : '' %>" href="/admin/categories">
+                <i class="fa-solid fa-grid-2 me-xl-2"></i>
+                <span class="d-none d-xl-inline">Categories</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'products' ? 'active' : '' %>" href="/admin/products">
-                <i class="fa-solid fa-tags me-2"></i>Products
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'products' ? 'active' : '' %>" href="/admin/products">
+                <i class="fa-solid fa-tags me-xl-2"></i>
+                <span class="d-none d-xl-inline">Products</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'customers' ? 'active' : '' %>" href="/admin/customers">
-                <i class="fa-solid fa-user me-2"></i>Customers
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'customers' ? 'active' : '' %>" href="/admin/customers">
+                <i class="fa-solid fa-user me-xl-2"></i>
+                <span class="d-none d-xl-inline">Customers</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'orders' ? 'active' : '' %>" href="/admin/orders">
-                <i class="fa-solid fa-bag-shopping me-2"></i>Orders
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'orders' ? 'active' : '' %>" href="/admin/orders">
+                <i class="fa-solid fa-bag-shopping me-xl-2"></i>
+                <span class="d-none d-xl-inline">Orders</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'coupons' ? 'active' : '' %>" href="/admin/coupons">
-                <i class="fas fa-percent me-2"></i>Coupons
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'coupons' ? 'active' : '' %>" href="/admin/coupons">
+                <i class="fas fa-percent me-xl-2"></i>
+                <span class="d-none d-xl-inline">Coupons</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'transaction' ? 'active' : '' %>" href="/admin/transactions">
-                <i class="fas fa-wallet me-2"></i>Transactions
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'transaction' ? 'active' : '' %>" href="/admin/transactions">
+                <i class="fas fa-wallet me-xl-2"></i>
+                <span class="d-none d-xl-inline">Transactions</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link sidebar-link <%= activePage === 'sales' ? 'active' : '' %>" href="/admin/sales">
-                <i class="fas fa-chart-line me-2"></i>Sales Report
+            <a class="nav-link sidebar-link px-xl-3 <%= activePage === 'sales' ? 'active' : '' %>" href="/admin/sales">
+                <i class="fas fa-chart-line me-xl-2"></i>
+                <span class="d-none d-xl-inline">Sales Report</span>
             </a>
         </li>
     </ul>
 </nav>
+
+<div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mobileSidebarLabel">Admin Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <!-- Reuse the same sidebar content here -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">
+                    <i class="fa-solid fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'categories' ? 'active' : '' %>" href="/admin/categories">
+                    <i class="fa-solid fa-grid-2 me-2"></i> Categories
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'products' ? 'active' : '' %>" href="/admin/products">
+                    <i class="fa-solid fa-tags me-2"></i> Products
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'customers' ? 'active' : '' %>" href="/admin/customers">
+                    <i class="fa-solid fa-user me-2"></i> Customers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'orders' ? 'active' : '' %>" href="/admin/orders">
+                    <i class="fa-solid fa-bag-shopping me-2"></i> Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'coupons' ? 'active' : '' %>" href="/admin/coupons">
+                    <i class="fas fa-percent me-2"></i> Coupons
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'transaction' ? 'active' : '' %>" href="/admin/transactions">
+                    <i class="fas fa-wallet me-2"></i> Transactions
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link sidebar-link px-2 <%= activePage === 'sales' ? 'active' : '' %>" href="/admin/sales">
+                    <i class="fas fa-chart-line me-2"></i> Sales Report
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+

@@ -6,7 +6,7 @@
             <!-- Sidebar -->
             <%- include('../partials/sidebar', { activePage: 'coupons' }) %>
 
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+            <main class="col-md-10 col-lg-9 px-md-4 py-4 mx-auto px-3">
                 <h1 class="h3 mb-3 fw-bold">Coupons</h1>
 
                 <!-- Filters and Add Coupon Button -->
@@ -176,99 +176,207 @@
                     </div>
                 </div>
 
-                <!-- Coupons Table -->
-                <div class="card">
-                    <div class="card-body p-0 m-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover text-center">
-                                <thead>
-                                    <tr>
-                                        <th>SL No</th>
-                                        <th class="text-start ps-5">Coupon Name</th>
-                                        <th>Coupon Code</th>
-                                        <th>Start Date</th>
-                                        <th>Expiry Date</th>
-                                        <th>Min Price</th>
-                                        <th>Offer Price</th>
-                                        <th>Used</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% coupons.reverse().forEach((coupon, index) => { %>
-                                    <tr>
-                                        <td><%= index + 1 %></td>
-                                        <td class="text-start ps-4"><%= coupon.name %></td>
-                                        <td><%= coupon.code %></td>
-                                        <td><%= new Date(coupon.startDate).toLocaleDateString("en-GB") %></td>
-                                        <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-GB") %></td>
-                                        <td><%= coupon.minPrice %></td>
-                                        <td><%= coupon.offerPrice %></td>
-                                        <td><%= coupon.used %></td>
-                                        <td>
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <p style=" margin: 0;" class="badge stock-color <%= coupon.status === 'Active' ? '' : 'd-none' %>">
-                                                    Active
-                                                </p>   
-                                                <p style="margin: 0;" class="badge no-stock-color <%= coupon.status === 'Active' ? 'd-none' : '' %>">
-                                                    Expired
-                                                </p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button 
-                                                class="btn btn-sm me-2" 
-                                                style="color: #5b3f64;"
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#editCouponModal"
-                                                onclick="openEditModal(
-                                                    '<%= coupon.name %>',
-                                                    '<%= coupon.code %>', 
-                                                    '<%= coupon.description %>', 
-                                                    '<%= coupon.startDate.toISOString().split('T')[0] %>', 
-                                                    '<%= coupon.expiryDate.toISOString().split('T')[0] %>',
-                                                    '<%= coupon.minPrice %>',
-                                                    '<%= coupon.offerPrice %>',
-                                                    '<%= coupon.status %>'
-                                                )">
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </button>
-                                            <button class="deleteButton btn btn-sm me-2" data-coupon-name="<%= coupon.name %>">
-                                                <i class="fa-solid fa-trash" style="color: #5b3f64;"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
+                <!-- Desktop Table View -->
+                <div class="d-none d-md-block">
+                    <div class="card">
+                        <div class="card-body p-0 m-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>SL No</th>
+                                            <th class="text-start ps-5">Coupon Name</th>
+                                            <th>Coupon Code</th>
+                                            <th>Start Date</th>
+                                            <th>Expiry Date</th>
+                                            <th>Min Price</th>
+                                            <th>Offer Price</th>
+                                            <th>Used</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% coupons.reverse().forEach((coupon, index) => { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td class="text-start ps-4"><%= coupon.name %></td>
+                                            <td><%= coupon.code %></td>
+                                            <td><%= new Date(coupon.startDate).toLocaleDateString("en-GB") %></td>
+                                            <td><%= new Date(coupon.expiryDate).toLocaleDateString("en-GB") %></td>
+                                            <td><%= coupon.minPrice %></td>
+                                            <td><%= coupon.offerPrice %></td>
+                                            <td><%= coupon.used %></td>
+                                            <td>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <p style=" margin: 0;" class="badge stock-color <%= coupon.status === 'Active' ? '' : 'd-none' %>">
+                                                        Active
+                                                    </p>   
+                                                    <p style="margin: 0;" class="badge no-stock-color <%= coupon.status === 'Active' ? 'd-none' : '' %>">
+                                                        Expired
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button 
+                                                    class="btn btn-sm me-2" 
+                                                    style="color: #5b3f64;"
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editCouponModal"
+                                                    onclick="openEditModal(
+                                                        '<%= coupon.name %>',
+                                                        '<%= coupon.code %>', 
+                                                        '<%= coupon.description %>', 
+                                                        '<%= coupon.startDate.toISOString().split('T')[0] %>', 
+                                                        '<%= coupon.expiryDate.toISOString().split('T')[0] %>',
+                                                        '<%= coupon.minPrice %>',
+                                                        '<%= coupon.offerPrice %>',
+                                                        '<%= coupon.status %>'
+                                                    )">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                                <button class="deleteButton btn btn-sm me-2" data-coupon-name="<%= coupon.name %>">
+                                                    <i class="fa-solid fa-trash" style="color: #5b3f64;"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        <nav>
+                            <ul class="pagination pagination-sm">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                            <span aria-hidden="true">«</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                                <% for(let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">»</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-center mt-3">
-                    <nav>
-                        <ul class="pagination pagination-sm">
-                            <% if (currentPage > 1) { %>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                                        <span aria-hidden="true">«</span>
-                                    </a>
-                                </li>
-                            <% } %>
-                            <% for(let i = 1; i <= totalPages; i++) { %>
-                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                </li>
-                            <% } %>
-                            <% if (currentPage < totalPages) { %>
-                                <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                        <span aria-hidden="true">»</span>
-                                    </a>
-                                </li>
-                            <% } %>
-                        </ul>
-                    </nav>
+
+
+                <!-- Mobile Card View -->
+                <div class="d-block d-md-none px-3">
+                    <% coupons.reverse().forEach((coupon, index) => { %>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body p-3">
+                                <!-- Header Row -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><%= coupon.name %></h6>
+                                        <small class="text-muted">Code: <%= coupon.code %></small>
+                                    </div>
+                                    <span class="badge <%= coupon.status === 'Active' ? 'stock-color' : 'no-stock-color' %>">
+                                        <%= coupon.status %>
+                                    </span>
+                                </div>
+
+                                <!-- Dates Row -->
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div>
+                                        <small class="text-muted">Start:</small>
+                                        <div><%= new Date(coupon.startDate).toLocaleDateString("en-GB") %></div>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Expiry:</small>
+                                        <div><%= new Date(coupon.expiryDate).toLocaleDateString("en-GB") %></div>
+                                    </div>
+                                </div>
+
+                                <!-- Prices Row -->
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div>
+                                        <small class="text-muted">Min Price:</small>
+                                        <div>₹<%= coupon.minPrice %></div>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Offer:</small>
+                                        <div>₹<%= coupon.offerPrice %></div>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Used:</small>
+                                        <div><%= coupon.used %></div>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-3">
+                                    <small class="text-muted">Description:</small>
+                                    <div class="text-break"><%= coupon.description %></div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-flex justify-content-between pt-3 border-top">
+                                    <button 
+                                        class="btn btn-sm" 
+                                        style="color: #5b3f64;"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editCouponModal"
+                                        onclick="openEditModal(
+                                            '<%= coupon.name %>',
+                                            '<%= coupon.code %>', 
+                                            '<%= coupon.description %>', 
+                                            '<%= coupon.startDate.toISOString().split('T')[0] %>', 
+                                            '<%= coupon.expiryDate.toISOString().split('T')[0] %>',
+                                            '<%= coupon.minPrice %>',
+                                            '<%= coupon.offerPrice %>',
+                                            '<%= coupon.status %>'
+                                        )">
+                                        <i class="fa-solid fa-pen-to-square me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm text-danger deleteButton" data-coupon-name="<%= coupon.name %>">
+                                        <i class="fa-solid fa-trash me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+
+                    <!-- Pagination for mobile -->
+                    <div class="d-flex justify-content-center mt-4 mb-3">
+                        <nav>
+                            <ul class="pagination pagination-sm">
+                                <% if (currentPage > 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                            <span aria-hidden="true">«</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                                <% for(let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">»</span>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </main>
         </div>

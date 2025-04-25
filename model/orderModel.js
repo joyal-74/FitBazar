@@ -16,14 +16,18 @@ const orderSchema = new Schema({
             ref: "Products",
             required: true
         },
+        basePrice: {
+            type: Number
+        },
         quantity: {
             type: Number,
             required: true
         },
-        basePrice: {
-            type: Number
-        },
         discountPrice: {
+            type: Number,
+            required: true
+        },
+        finalPrice : {
             type: Number,
             required: true
         },

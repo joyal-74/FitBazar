@@ -1,12 +1,17 @@
-<nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top bg-dark">
     <div class="container px-4">
+        <!-- Sidebar Toggle (visible below md) -->
+        <button class="btn d-md-none text-white me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
         <!-- Logo -->
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/admin/dashboard">
             <span style="font-size: 24px; color: #ffffff; letter-spacing: 1px;">FitBazar</span>
         </a>
+
         <!-- Right Side -->
         <div class="d-flex align-items-center gap-3">
-            <!-- User Info -->
             <div class="dropdown">
                 <a href="#" class="avatar d-flex align-items-center gap-2 text-decoration-none"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -20,9 +25,7 @@
                             Joyal K
                         </span>
                     </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item py-2 text-danger" href="/admin/logout">
                             <i class="fa-solid fa-sign-out-alt me-2"></i> Logout

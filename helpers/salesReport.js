@@ -10,24 +10,34 @@ const __dirname = path.dirname(__filename);
 export const salesReportPDF = (salesData) => {
 
     let totalOrders = salesData.length;
-    let totalAmount = salesData.reduce((sum, order) => sum + order.discountPrice, 0);
-    let totalDiscounts = salesData.reduce((sum, order) => sum + (order.coupon || 0), 0);
+    let totalAmount = 0;
+    let totalDiscounts = 0;
+
+    salesData.forEach(order => {
+    order.orderItems.forEach(item => {
+        totalAmount += item.finalPrice;
+        totalDiscounts += order.coupon || 0;
+    });
+    });
+
     let netSales = totalAmount - totalDiscounts;
 
-    let rows = salesData.map((order, index) => `
+    let serial = 1;
+    let rows = salesData.map(order => {
+    return order.orderItems.map(item => `
         <tr class="text-center">
-            <td>${index + 1}</td>
+            <td>${serial++}</td>
             <td>${order.orderId}</td>
             <td>${order.userId?.name || 'N/A'}</td>
             <td>${new Date(order.createdAt).toISOString().split('T')[0]}</td>
-            <td>${order.product?.productId || 'N/A'}</td>
-            <td>${order.quantity}</td>
-            <td>₹${order.discountPrice}</td>
-            <td>₹${order.coupon}</td>
+            <td>${item.product.productId || 'N/A'}</td>
+            <td>${item.quantity}</td>
+            <td>₹${item.discountPrice * item.quantity}</td>
+            <td>₹${order.coupon || 0}</td>
             <td>${order.paymentMethod}</td>
-            <td>${order.status}</td>
         </tr>
     `).join('');
+    }).join('');
 
     return `
     <html>
@@ -54,7 +64,6 @@ export const salesReportPDF = (salesData) => {
                     <th>Amount (₹)</th>
                     <th>Discount (₹)</th>
                     <th>Payment</th>
-                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,25 +112,34 @@ export const salesReportExcel = async (salesData) => {
         { header: 'Status', key: 'status', width: 15 }
     ];
 
+    let serial = 1;
+    let totalAmount = 0;
+    let totalDiscounts = 0;
 
-    salesData.forEach((order, index) => {
-        worksheet.addRow({
-            slNo: index + 1,
-            orderId: `#${order.orderId}`,
-            customer: order.userId?.name || 'N/A',
-            orderDate: new Date(order.createdAt).toISOString().split('T')[0],
-            product: order.product?.name || 'N/A',
-            quantity: order.quantity,
-            amount: order.discountPrice.toLocaleString('en-IN'),
-            discount: (order.coupon || 0).toLocaleString('en-IN'),
-            paymentMethod: order.paymentMethod,
-            status: order.status
+    salesData.forEach(order => {
+        order.orderItems.forEach(item => {
+            const itemAmount = item.price * item.quantity;
+            const itemDiscount = item.discount || 0;
+
+            totalAmount += itemAmount;
+            totalDiscounts += itemDiscount;
+
+            worksheet.addRow({
+                slNo: serial++,
+                orderId: `#${order.orderId}`,
+                customer: order.userId?.name || 'N/A',
+                orderDate: new Date(order.createdAt).toISOString().split('T')[0],
+                product: item.name || item.productId || 'N/A',
+                quantity: item.quantity,
+                amount: `₹${itemAmount.toLocaleString('en-IN')}`,
+                discount: `₹${itemDiscount.toLocaleString('en-IN')}`,
+                paymentMethod: order.paymentMethod,
+                status: order.status
+            });
         });
     });
 
     const totalOrders = salesData.length;
-    const totalAmount = salesData.reduce((sum, order) => sum + order.discountPrice, 0);
-    const totalDiscounts = salesData.reduce((sum, order) => sum + (order.coupon || 0), 0);
     const netSales = totalAmount - totalDiscounts;
 
     worksheet.addRow({});
@@ -130,9 +148,9 @@ export const salesReportExcel = async (salesData) => {
     worksheet.addRow({ slNo: '', orderId: 'Total Discounts (₹)', amount: `₹${totalDiscounts.toLocaleString('en-IN')}` });
     worksheet.addRow({ slNo: '', orderId: 'Net Sales (₹)', amount: `₹${netSales.toLocaleString('en-IN')}` });
 
-    // 🔹 Save the File
     const filePath = path.join(__dirname, '../invoices/sales_report.xlsx');
     await workbook.xlsx.writeFile(filePath);
-    
+
     return filePath;
 };
+
