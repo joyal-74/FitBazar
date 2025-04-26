@@ -74,6 +74,28 @@ const createRazorpayOrder = async (req, res) => {
     }
 };
 
+
+const verifyPayment = (req, res) => {
+    try {
+        const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+
+        const hmac = crypto.createHmac('sha256', process.env.RAZOR_API_SECRET);
+        hmac.update(razorpayOrderId + "|" + razorpayPaymentId);
+        const generatedSignature = hmac.digest('hex');
+
+        if (generatedSignature === razorpaySignature) {
+            console.log('Payment verified');
+            res.json({ success: true });
+        } else {
+            res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
+        }
+    } catch (error) {
+        console.error('Error verifying payment:', error);
+        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Payment verification failed' });
+    }
+};
+
+
 function generateTxnId(prefix = 'TXN') {
     const id = nanoid(10).toUpperCase();
     return `${prefix}-${id}`;
@@ -290,25 +312,6 @@ const paymentFailed = async (req,res) => {
     }
 }
 
-const verifyPayment = (req, res) => {
-    try {
-        const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
-
-        const hmac = crypto.createHmac('sha256', process.env.RAZOR_API_SECRET);
-        hmac.update(razorpayOrderId + "|" + razorpayPaymentId);
-        const generatedSignature = hmac.digest('hex');
-
-        if (generatedSignature === razorpaySignature) {
-            console.log('Payment verified');
-            res.json({ success: true });
-        } else {
-            res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
-        }
-    } catch (error) {
-        console.error('Error verifying payment:', error);
-        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Payment verification failed' });
-    }
-};
 
 
 const loadPaymentFailed = async (req,res) => {

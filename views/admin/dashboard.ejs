@@ -3,24 +3,38 @@
     <%- include('../partials/header') %>
 
     <!-- Sidebar + Main Content -->
-    <div class="container-fluid w-100">
+    <div class="container-fluid custom-sm-container w-100 sidebar-header">
         <div class="row g-0">
             <!-- Sidebar -->
             <%- include('../partials/sidebar', { activePage: 'dashboard' }) %>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="margin: 80px 0;">
+            <main class="col-md-10 col-lg-9 px-md-4 py-4 mx-auto px-3">
                 <div class="d-flex justify-content-between">
                     <h1 class="h3 mb-4 fw-bold">Dashboard</h1>
                     <!-- Filter Section -->
-                    <div class="row mb-4">
+                    <div class="row mb-4 d-none d-sm-flex">
                         <div class="col-md-4">
                             <div class="btn-group w-100" role="group" id="filterButtons">
-                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'weekly' ? 'active' : '' %>" data-filter="weekly">Weekly</button>
-                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'monthly' ? 'active' : '' %>" data-filter="monthly">Monthly</button>
-                                <button type="button" class="btn custom-outline-btn filter-btn <%= currentFilter === 'yearly' ? 'active' : '' %>" data-filter="yearly">Yearly</button>
+                                <button type="button" class="btn custom-outline-btn filter-btn btn-sm <%= currentFilter === 'weekly' ? 'active' : '' %>" data-filter="weekly">
+                                    Weekly
+                                </button>
+                                <button type="button" class="btn custom-outline-btn filter-btn btn-sm <%= currentFilter === 'monthly' ? 'active' : '' %>" data-filter="monthly">
+                                    Monthly
+                                </button>
+                                <button type="button" class="btn custom-outline-btn filter-btn btn-sm <%= currentFilter === 'yearly' ? 'active' : '' %>" data-filter="yearly">
+                                    Yearly
+                                </button>
                             </div>
                         </div>
+                    </div>  
+                    
+                    <div class="d-block d-sm-none">
+                        <select class="form-select form-select-sm" id="filterDropdown">
+                        <option value="weekly" <%= currentFilter === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                        <option value="monthly" <%= currentFilter === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                        <option value="yearly" <%= currentFilter === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                        </select>
                     </div>
                 </div>
 
@@ -303,5 +317,23 @@
                 }
             });
         });
+
+        const filterDropdown = document.getElementById('filterDropdown');
+
+        if (filterDropdown) {
+            filterDropdown.addEventListener('change', async () => {
+                const filter = filterDropdown.value;
+
+                // Optional: Update active buttons too if you want (not needed if buttons hidden)
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+                // Fetch new data (same as button logic)
+                const response = await fetch(`/admin/dashboard?filter=${filter}`);
+                if (response.ok) {
+                    window.location.href = `/admin/dashboard?filter=${filter}`;
+                }
+            });
+        }
+
     </script>
 </body>

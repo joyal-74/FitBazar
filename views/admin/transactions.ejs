@@ -1,21 +1,19 @@
 <body class="bg-violet">
-
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
     <!-- Sidebar + Main Content Wrapper -->
-    <div class="container-fluid w-100 sidebar-header">
+    <div class="container-fluid custom-sm-container w-100 sidebar-header">
         <div class="row g-0">
             <!-- Sidebar -->
             <%- include('../partials/sidebar', { activePage: 'transaction' }) %>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+            <main class="col-md-10 col-lg-9 px-md-4 py-4 mx-auto px-3">
                 <h1 class="h3 mb-4 fw-bold">Transactions</h1>
 
-                <!-- Filters and Add Product Button -->
+                <!-- Filters and Search -->
                 <div class="d-flex flex-wrap align-items-center justify-content-end gap-3 mb-4">
-            
                     <!-- Search Bar -->
                     <form class="d-flex search-container flex-grow-1" id="searchForm" style="max-width: 300px;">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchval">
@@ -25,8 +23,8 @@
                     </form>
                 </div>
 
-                <!-- Products Table -->
-                <div class="card">
+                <!-- Desktop Table (hidden on mobile) -->
+                <div class="card d-none d-md-block">
                     <div class="card-body p-0 m-0">
                         <div class="table-responsive">
                             <table class="table table-hover text-center customer-table">
@@ -38,11 +36,10 @@
                                         <th>User</th>
                                         <th>Type</th>
                                         <th>Amount</th>
-                                        <th>Status</th>
+                                        <th>Payment</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-
                                 <% wallet.forEach((wallet, index) => { %>
                                     <tbody>
                                         <td><%= index+1 %></td>
@@ -60,8 +57,8 @@
                                         </td>
                                         <td class="text-<%= wallet.entryType === 'CREDIT' ? 'danger' : 'success' %>">
                                             <%= wallet.entryType === 'CREDIT' ? '-' : '+' %>₹<%= wallet.amount %>
-                                          </td>                                          
-                                        <td><%= wallet.status %></td>
+                                        </td>
+                                        <td><%= wallet.payment_type %></td>
                                         <td><button class="btn btn-outline-secondary txnDetailsBtn my-0 py-1" id="txnDetails" data-walletId="<%= wallet._id %>">view</button></td>
                                     </tbody>
                                 <% }) %>
@@ -69,10 +66,60 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center mt-3 ">
+
+                <!-- Mobile Cards (shown only on mobile) -->
+                <div class="d-block d-md-none">
+                    <% wallet.forEach((wallet, index) => { %>
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Transaction ID:</span>
+                                    <span><%= wallet.transactionId %></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Date:</span>
+                                    <span><%= new Date(wallet.createdAt).toLocaleDateString('en-GB') %></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">User:</span>
+                                    <span><%= wallet.userId?.name || 'N/A' %></span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Type:</span>
+                                    <span>
+                                        <%= 
+                                            wallet.type === 'add_money' ? 'Wallet Updated' : 
+                                            wallet.type === 'cancel' ? 'Order Cancelled' : 
+                                            wallet.type === 'refund' ? 'Order Refund' : 
+                                            wallet.type === 'product_purchase' ? 'Product Purchased' : 
+                                            wallet.type 
+                                        %>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Amount:</span>
+                                    <span class="text-<%= wallet.entryType === 'CREDIT' ? 'danger' : 'success' %>">
+                                        <%= wallet.entryType === 'CREDIT' ? '-' : '+' %>₹<%= wallet.amount %>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="fw-bold">Payment Method:</span>
+                                    <span><%= wallet.payment_type %></span>
+                                </div>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button class="btn btn-sm btn-outline-secondary txnDetailsBtn" data-walletId="<%= wallet._id %>">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-3">
                     <nav>
                         <ul class="pagination pagination-sm">
-                            <!-- Previous Page Button -->
                             <% if (currentPage > 1) { %>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
@@ -81,14 +128,12 @@
                                 </li>
                             <% } %>
 
-                            <!-- Page Numbers -->
                             <% for(let i = 1; i <= totalPages; i++) { %>
                                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                                     <a class="page-link" href="?page=<%= i %>"><%= i %></a>
                                 </li>
                             <% } %>
 
-                            <!-- Next Page Button -->
                             <% if (currentPage < totalPages) { %>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
@@ -110,5 +155,5 @@
                 window.location.href = `/admin/transactionDetails?walletId=${walletId}`;
             });
         });
-      </script>  
+    </script>  
 </body>

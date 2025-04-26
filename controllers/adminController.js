@@ -68,7 +68,7 @@ const loadOrders = async (req, res) => {
         }
 
         if (status) {
-            query['orderItems.currentStatus'] = status;
+            query.status = status;
 
         }
 
@@ -147,6 +147,16 @@ const updateAllOrderItemsStatus = async (req, res) => {
             item.statusHistory.push({ status, timestamp: new Date() });
         });
 
+        const nonCancelledStatuses = order.orderItems
+            .filter(item => item.currentStatus !== 'Cancelled')
+            .map(item => item.currentStatus);
+
+        const allSame = nonCancelledStatuses.every(s => s === status);
+
+        if (allSame) {
+            order.status = status;
+        }
+
         await order.save();
 
         res.json({ message: `Order items marked as ${status}` });
@@ -179,6 +189,16 @@ async function updateStatus(req, res) {
 
         if (status === 'Cancelled') {
             item.cancelReason = cancelReason;
+        }
+
+        const nonCancelledStatuses = order.orderItems
+            .filter(item => item.currentStatus !== 'Cancelled')
+            .map(item => item.currentStatus);
+
+        const allSame = nonCancelledStatuses.every(s => s === status);
+
+        if (allSame) {
+            order.status = status;
         }
 
         order.updatedAt = new Date();

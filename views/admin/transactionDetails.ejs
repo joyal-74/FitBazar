@@ -5,141 +5,141 @@
         <!-- Sidebar + Main Content Wrapper -->
         <div class="container-fluid w-100 sidebar-header">
             <div class="row g-0">
-                <!-- Sidebar -->
-                <%- include('../partials/sidebar', { activePage: 'transaction' }) %>
-                    <!-- Main Content -->
-                    <main class="col-md-9 ms-sm-auto col-lg-9 px-md-2 py-4 mx-auto">
-                        <h1 class="h3 mb-4 fw-bold text-dark">Transaction Details</h1>
-                        <div class="row">
-                            <!-- Order Summary -->
-                            <div class="col-md-6 m-0">
-                                <div class="card mb-4 border-0"
-                                    style="border-radius: 15px; overflow: hidden; height: 330px;">
-                                    <div class="card-header bg-gradient text-white py-3"
-                                        style="background-color: #5b3f64;">
-                                        <h5 class="card-title mb-0 fw-bold">Order Details</h5>
-                                    </div>
-                                    <div class="card-body p-4" style="background: #fff;">
-                                        <div class="row">
-                                            <div class="col-md-4" style="line-height: 2;">
-                                                <p class="mb-2 text-muted fw-bold">Transaction ID</p>
-                                                <p class="mb-2 text-muted fw-bold">Transaction Date</p>
-                                                <p class="mb-2 text-muted fw-bold">Payment Type</p>
-                                                <p class="mb-2 text-muted fw-bold">Payment Amount</p>
-                                                <p class="mb-2 text-muted fw-bold">Payment Status</p>
-                                                <p class="mb-2 text-muted fw-bold">Credit/Debit</p>
-                                            </div>
-                                            <div class="col-md-7" style="line-height: 2;">
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.transactionId %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= new Date(wallet.createdAt).toLocaleString('en-GB') %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.type %>
-                                                </p>
-                                                <p class="mb-2 text-muted">₹<%= wallet.amount %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.status %>
-                                                </p>
-                                                <p class="mb-2">
-                                                    <span class="badge <%= wallet.entryType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
-                                                        <%= wallet.entryType %>
-                                                    </span>
-                                                </p>                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+            <!-- Sidebar -->
+            <%- include('../partials/sidebar', { activePage: 'transaction' }) %>
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-2 py-4 mx-auto">
+                <h1 class="h3 mb-4 fw-bold text-dark">Transaction Details</h1>
+                <div class="row">
+                    <!-- Order Summary -->
+                    <div class="col-md-6 m-0">
+                        <div class="card mb-4 border-0"
+                            style="border-radius: 15px; overflow: hidden; height: 330px;">
+                            <div class="card-header bg-gradient text-white py-3"
+                                style="background-color: #5b3f64;">
+                                <h5 class="card-title mb-0 fw-bold">Order Details</h5>
                             </div>
-
-                            <!-- Change Status Section -->
-                            <div class="col-md-6">
-                                <div class="card border-0"
-                                    style="border-radius: 15px; overflow: hidden; height: 330px;">
-                                    <div class="card-header bg-gradient text-white py-3"
-                                        style="background-color: #5b3f64;">
-                                        <h5 class="card-title mb-0 fw-bold">User Details</h5>
+                            <div class="card-body p-4" style="background: #fff;">
+                                <div class="row">
+                                    <div class="col-md-4" style="line-height: 2;">
+                                        <p class="mb-2 text-muted fw-bold">Transaction ID</p>
+                                        <p class="mb-2 text-muted fw-bold">Transaction Date</p>
+                                        <p class="mb-2 text-muted fw-bold">Payment Type</p>
+                                        <p class="mb-2 text-muted fw-bold">Payment Amount</p>
+                                        <p class="mb-2 text-muted fw-bold">Payment Status</p>
+                                        <p class="mb-2 text-muted fw-bold">Credit/Debit</p>
                                     </div>
-                                    <div class="card-body py-4 px-4" style="background: #ffffff;">
-                                        <div class="row">
-                                            <div class="col-md-4" style="line-height: 2;">
-                                                <p class="mb-2 text-muted fw-bold">User ID </p>
-                                                <p class="mb-2 text-muted fw-bold">Name</p>
-                                                <p class="mb-2 text-muted fw-bold">Phone Number</p>
-                                                <p class="mb-2 text-muted fw-bold">Email</p>
-                                                <p class="mb-2 text-muted fw-bold">Address</p>
-                                            </div>
-                                            <div class="col-md-8" style="line-height: 2;">
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.userId.userId %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.userId.name %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.userId.phone || "no phone number" %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= wallet.userId.email %>
-                                                </p>
-                                                <p class="mb-2 text-muted">
-                                                    <%= address.addressLine1 %>, <%= address.addressLine2 %>, <%=
-                                                        address.city %>, <%= address.state %>, <%=
-                                                        address.pincode %>, India
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card shadow-sm border-0 rounded-3 mb-4" style="width: 1130px; margin-left: 10px;"> 
-                                <div class="card-body py-4">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                                        <div class="d-flex align-items-center gap-3">
-                                            <span class="transaction-icon" aria-hidden="true">
-                                                <% if (wallet.type==='add_money' ) { %>
-                                                    <i class="fa-solid fa-wallet text-success"></i>
-                                                    <% } else if (wallet.type==='refund' || wallet.type==='cancel' ) { %>
-                                                        <i class="fa-solid fa-undo text-warning"></i>
-                                                    <% } else if (wallet.type==='product_purchase' ) { %>
-                                                        <i class="fa-solid fa-shopping-cart text-danger"></i>
-                                                <% } %>
+                                    <div class="col-md-7" style="line-height: 2;">
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.transactionId %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= new Date(wallet.createdAt).toLocaleString('en-GB') %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.type %>
+                                        </p>
+                                        <p class="mb-2 text-muted">₹<%= wallet.amount %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.status %>
+                                        </p>
+                                        <p class="mb-2">
+                                            <span class="badge <%= wallet.entryType === 'CREDIT' ? 'bg-success' : 'bg-danger' %>">
+                                                <%= wallet.entryType %>
                                             </span>
-                                            <p class="mb-0">
-                                                <strong>Transaction:</strong>
-                                                <%= wallet.type==='add_money' ? 'Added money to wallet' :
-                                                    wallet.type==='refund' ? 'Product amount refunded to wallet' :
-                                                    wallet.type==='cancel' ? 'Product cancelled & amound refunded to wallet'
-                                                    : 'Product purchased' 
-                                                %>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <% if (wallet.type==='product_purchase' || wallet.type==='refund' || wallet.type==='cancel' ) { %>
-                                                <a href="/admin/vieworders?id=<%= wallet?.orderId %>"
-                                                    class="btn custom-btn btn-sm" target="_blank"
-                                                    aria-label="View order details">
-                                                    <i class="fa-solid fa-eye me-1"></i> View Order
-                                                </a>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-between flex-wrap gap-2 mt-3 text-muted">
-                                        <span>Transaction ID: <%= wallet?.transactionId || 'N/A' %></span>
-                                        <% if (wallet?.createdAt) { %>
-                                            <span>
-                                                <%= new Date(wallet.createdAt).toLocaleString() %>
-                                            </span>
-                                        <% } %>
+                                        </p>                                                
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </main>
-            </div>
+                    </div>
+
+                    <!-- Change Status Section -->
+                    <div class="col-md-6">
+                        <div class="card border-0"
+                            style="border-radius: 15px; overflow: hidden; height: 330px;">
+                            <div class="card-header bg-gradient text-white py-3"
+                                style="background-color: #5b3f64;">
+                                <h5 class="card-title mb-0 fw-bold">User Details</h5>
+                            </div>
+                            <div class="card-body py-4 px-4" style="background: #ffffff;">
+                                <div class="row">
+                                    <div class="col-md-4" style="line-height: 2;">
+                                        <p class="mb-2 text-muted fw-bold">User ID </p>
+                                        <p class="mb-2 text-muted fw-bold">Name</p>
+                                        <p class="mb-2 text-muted fw-bold">Phone Number</p>
+                                        <p class="mb-2 text-muted fw-bold">Email</p>
+                                        <p class="mb-2 text-muted fw-bold">Address</p>
+                                    </div>
+                                    <div class="col-md-8" style="line-height: 2;">
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.userId.userId %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.userId.name %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.userId.phone || "no phone number" %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= wallet.userId.email %>
+                                        </p>
+                                        <p class="mb-2 text-muted">
+                                            <%= address.addressLine1 %>, <%= address.addressLine2 %>, <%=
+                                                address.city %>, <%= address.state %>, <%=
+                                                address.pincode %>, India
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm border-0 rounded-3 mb-4" style="width: 1130px; margin-left: 10px;"> 
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="transaction-icon" aria-hidden="true">
+                                        <% if (wallet.type==='add_money' ) { %>
+                                            <i class="fa-solid fa-wallet text-success"></i>
+                                            <% } else if (wallet.type==='refund' || wallet.type==='cancel' ) { %>
+                                                <i class="fa-solid fa-undo text-warning"></i>
+                                            <% } else if (wallet.type==='product_purchase' ) { %>
+                                                <i class="fa-solid fa-shopping-cart text-danger"></i>
+                                        <% } %>
+                                    </span>
+                                    <p class="mb-0">
+                                        <strong>Transaction:</strong>
+                                        <%= wallet.type==='add_money' ? 'Added money to wallet' :
+                                            wallet.type==='refund' ? 'Product amount refunded to wallet' :
+                                            wallet.type==='cancel' ? 'Product cancelled & amound refunded to wallet'
+                                            : 'Product purchased' 
+                                        %>
+                                    </p>
+                                </div>
+                                <div>
+                                    <% if (wallet.type==='product_purchase' || wallet.type==='refund' || wallet.type==='cancel' ) { %>
+                                        <a href="/admin/vieworders?id=<%= wallet?.orderId %>"
+                                            class="btn custom-btn btn-sm" target="_blank"
+                                            aria-label="View order details">
+                                            <i class="fa-solid fa-eye me-1"></i> View Order
+                                        </a>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between flex-wrap gap-2 mt-3 text-muted">
+                                <span>Transaction ID: <%= wallet?.transactionId || 'N/A' %></span>
+                                <% if (wallet?.createdAt) { %>
+                                    <span>
+                                        <%= new Date(wallet.createdAt).toLocaleString() %>
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
+    </div>
 </body>

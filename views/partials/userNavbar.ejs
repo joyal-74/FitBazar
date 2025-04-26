@@ -1,31 +1,40 @@
-<nav class="navbar navbar-expand-lg shadow-sm <%= (activePage === 'orders' || activePage === 'coupons' ||  activePage === 'orderDetails') ? 'fixed-top' : '' %>">
-    <div class="container d-flex flex-column">
-        <div class="d-flex w-100 justify-content-between align-items-center">
+<nav class="navbar user-navbar navbar-expand-lg shadow-sm <%= (activePage === 'orders' || activePage === 'coupons' ||  activePage === 'orderDetails') ? 'fixed-top' : '' %>">
+    <div class="container">
+        <!-- Combined brand and navigation in a more streamlined layout -->
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <!-- Brand -->
             <a class="navbar-brand fw-bold" href="/">FitBazar</a>
-            <ul class="nav align-items-center">
-                <li class="nav-item"><a class="nav-link text-white <%= activePage === 'home' ? 'user-nav-text' : '' %>" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link text-white <%= activePage === 'shop' ? 'user-nav-text' : '' %>" href="/shop">Shop</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Deals/Offers</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="#">Customer Support</a></li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2 navbar-search" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn" type="submit" style="background-color: #f4dbfc;">
-                    <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                </button>
-            </form>
+            
+            <div class="d-flex align-items-center justify-content-end">
+                <!-- Desktop Navigation (hidden on small screens) -->
+                <ul class="navbar-nav d-none d-lg-flex flex-row me-3">
+                    <li class="nav-item me-3"><a class="text-white text-decoration-none <%= activePage === 'home' ? 'user-nav-text' : '' %>" href="/">Home</a></li>
+                    <li class="nav-item me-3"><a class="text-white text-decoration-none <%= activePage === 'shop' ? 'user-nav-text' : '' %>" href="/shop">Shop</a></li>
+                </ul>
+                
+                <!-- Search bar with max-width -->
+                <form class="">
+                    <div class="input-group">
+                        <input class="form-control navbar-search" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn" type="submit" style="background-color: #f4dbfc;">
+                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- User actions -->
             <div class="d-flex align-items-center">
                 <% if (!user) { %>
-                    <a href="#" class="me-3 text-white guest-wishlist"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="#" class="me-3 text-white guest-cart"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white guest-wishlist d-none d-lg-block"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="#" class="me-3 text-white guest-cart d-none d-lg-block"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                 <% } else { %>
-                    <a href="/user/wishlist" class="me-3 text-white"><i class="fa-solid fa-heart fa-lg"></i></a>
-                    <a href="/user/cart" class="me-3 text-white"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
+                    <a href="/user/wishlist" class="me-3 text-white d-none d-lg-block"><i class="fa-solid fa-heart fa-lg"></i></a>
+                    <a href="/user/cart" class="me-3 text-white d-none d-lg-block"><i class="fa-solid fa-cart-shopping fa-lg"></i></a>
                 <% } %>
                 
                 <% if (user) { %>
-                    <div class="dropdown">
+                    <div class="dropdown d-none d-lg-block">
                         <a href="#" class="text-decoration-none text-white" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <%= user.name.split(" ")[0] %>
                         </a>
@@ -55,31 +64,122 @@
                         </ul>
                     </div>
                 <% } else { %>
-                    <a href="/user/login" class="btn btn-light text-dark text-decoration-none" style="width: 100px;" id="authButton">Sign In</a>
+                    <a href="/user/login" class="btn btn-light text-dark text-decoration-none d-none d-lg-block" style="width: 100px;" id="authButton">Sign In</a>
                 <% } %>
+                
+                <!-- Hamburger for Medium Screens Only (Tablet) -->
+                <button class="navbar-toggler d-none d-md-block d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <i class="fa-solid fa-bars text-white"></i>
+                </button>
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          document.querySelectorAll(".guest-wishlist, .guest-cart").forEach(el => {
-            el.addEventListener("click", function (e) {
-              e.preventDefault();
-              Swal.fire({
-                icon: 'info',
-                text: 'Please login to continue',
-                showConfirmButton: true,
-                confirmButtonText: 'Login',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel'
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  window.location.href = "/user/login";
-                }
-              });
-            });
-          });
-        });
-      </script>      
 </nav>
 
+<!-- Offcanvas Menu (for tablet only, not for mobile) -->
+<div class="offcanvas offcanvas-end d-md-block d-sm-none" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+            
+            <% if (user) { %>
+                <li class="nav-item mt-3">
+                    <span class="nav-link fw-bold">Account</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">
+                        <i class="fa-solid fa-user me-2"></i>Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/orders">
+                        <i class="fa-solid fa-box me-2"></i>My Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user/wallet">
+                        <i class="fa-solid fa-wallet me-2"></i>My Wallet
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <form id="offcanvasLogoutForm" action="/user/logout" method="POST" style="display: none;"></form>
+                    <a class="nav-link text-danger" href="#" onclick="document.getElementById('offcanvasLogoutForm').submit(); return false;">
+                        <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="nav-item mt-3">
+                    <a href="/user/login" class="btn btn-primary w-100">Sign In</a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+
+<!-- Mobile Bottom Navigation Bar - WHITE background with DARK icons -->
+<nav class="navbar fixed-bottom d-md-none bg-white shadow-lg" style="height: 60px;">
+    <div class="container-fluid px-0">
+        <div class="d-flex justify-content-between w-100">
+            <a href="/" class="text-center text-decoration-none" style="color: <%= activePage === 'home' ? '#5B3F64' : '#212529' %>">
+                <div><i class="fa-solid fa-home"></i></div>
+                <div style="font-size: 0.7rem;">Home</div>
+            </a>
+            <a href="/shop" class="text-center text-decoration-none" style="color: <%= activePage === 'shop' ? '#5B3F64' : '#212529' %>">
+                <div><i class="fa-solid fa-store"></i></div>
+                <div style="font-size: 0.7rem;">Shop</div>
+            </a>
+            <% if (!user) { %>
+                <a href="#" class="text-center text-decoration-none guest-wishlist" style="color: #212529">
+                    <div><i class="fa-solid fa-heart"></i></div>
+                    <div style="font-size: 0.7rem;">Wishlist</div>
+                </a>
+                <a href="#" class="text-center text-decoration-none guest-cart" style="color: #212529">
+                    <div><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div style="font-size: 0.7rem;">Cart</div>
+                </a>
+            <% } else { %>
+                <a href="/user/wishlist" class="text-center text-decoration-none" style="color: <%= activePage === 'wishlist' ? '#5B3F64' : '#212529' %>">
+                    <div><i class="fa-solid fa-heart"></i></div>
+                    <div style="font-size: 0.7rem;">Wishlist</div>
+                </a>
+                <a href="/user/cart" class="text-center text-decoration-none" style="color: <%= activePage === 'cart' ? '#5B3F64' : '#212529' %>">
+                    <div><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div style="font-size: 0.7rem;">Cart</div>
+                </a>
+            <% } %>
+            <a href="/user/<%= user ? 'profile' : 'login' %>" class="text-center text-decoration-none" style="color: <%= activePage === 'profile' ? '#5B3F64' : '#212529' %>">
+                <div><i class="fa-solid fa-user"></i></div>
+                <div style="font-size: 0.7rem;">Profile</div>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle guest wishlist and cart clicks
+        document.querySelectorAll(".guest-wishlist, .guest-cart").forEach(el => {
+            el.addEventListener("click", function (e) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'info',
+                    text: 'Please login to continue',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Login',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/user/login";
+                    }
+                });
+            });
+        });
+        
+    });
+</script>

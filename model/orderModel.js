@@ -84,7 +84,7 @@ const orderSchema = new Schema({
     },
     status : {
         type: String,
-        enum: ['Confirmed', 'Out for Delivery', 'Delivered']
+        enum: ['Placed', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Requested', 'Approved', 'Rejected']
     },
 }, { timestamps: true });
 

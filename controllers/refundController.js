@@ -281,6 +281,8 @@ const updateRefundStatus = async (req, res) => {
             refund.status = status;
             await refund.save();
 
+            await Order.findByIdAndUpdate(order._id, { status: status });
+
             // Log to wallet
             const transactionId = generateTxnId();
 

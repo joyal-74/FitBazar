@@ -504,10 +504,10 @@
 }
 
 /* Custom File Input Container */
-.input-group {
+/* .input-group {
     max-width: 500px;
     height: 60px;
-}
+} */
 
 /* Style the custom button */
 #customFileButton {
@@ -552,7 +552,7 @@
 .shipped { background: #d9f0ff; color: #007bff; }
 .delivered { background: #d4f5d0; color: green; }
 
-.navbar {
+.user-navbar {
     background: linear-gradient(90deg, #3e2248, #5b3f64);
 }
 
@@ -1004,4 +1004,27 @@ td {
     word-break: break-word;      
     white-space: normal;         
     max-width: 500px;             
+}
+
+
+/* customers css */
+
+.text-break {
+    word-break: break-word;
+}
+
+/* Profile image circle */
+.rounded-circle {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.offer-badge {
+    font-size: 0.65rem !important;
+}
+@media (min-width: 768px) {
+    .offer-badge {
+        font-size: 0.75rem !important;
+    }
 }

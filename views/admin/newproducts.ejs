@@ -9,91 +9,77 @@
     <%- include('../partials/header') %>
 
     <!-- Sidebar + Main Content -->
-    <div class="container-fluid w-100 sidebar-header">
+    <div class="container-fluid custom-sm-container w-100 sidebar-header">
         <div class="row g-0">
             <!-- Sidebar -->
             <%- include('../partials/sidebar', { activePage: 'products' }) %>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-9 px-md-4 py-4 mx-auto">
+            <main class="col-md-10 col-lg-9 px-md-4 py-4 mx-auto px-3">
                 <h3 class="fw-bold">Add New Product</h3>
-
+            
                 <!-- Product Form -->
                 <div class="card add-product-form">
                     <div class="card-body p-4">
                         <form id="addProductForm" enctype="multipart/form-data">
-                            <div class="mb-4 d-flex gap-3">
-                                <div class="w-100">
+                            <div class="mb-4 row g-3">
+                                <div class="col-md-6">
                                     <label for="productName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control form-control-sm" id="productName"
-                                        name="productName" placeholder="Enter product name">
-                                        <div id="nameError" style="font-size: 0.8em; color: #ff0101;"></div>
+                                    <input type="text" class="form-control form-control-sm" id="productName" name="productName" placeholder="Enter product name">
+                                    <div id="nameError" class="text-danger small"></div>
                                 </div>
-                                <div class="w-100">
-                                    <label for="productCategory" class="form-label mb-2">Category</label>
-                                    <select class="form-select form-select-sm" id="productCategory"
-                                        name="productCategory">
+                                <div class="col-md-6">
+                                    <label for="productCategory" class="form-label">Category</label>
+                                    <select class="form-select form-select-sm" id="productCategory" name="productCategory">
                                         <option hidden>Select category</option>
-                                        <% category.forEach(category=> { %>
-                                            <option value="<%= category.name %>">
-                                                <%= category.name %>
-                                            </option>
+                                        <% category.forEach(category => { %>
+                                            <option value="<%= category.name %>"><%= category.name %></option>
                                         <% }) %>
                                     </select>
-                                    <div id="categoryError" style="font-size: 0.8em; color: #ff0101;"></div>
+                                    <div id="categoryError" class="text-danger small"></div>
                                 </div>
                             </div>
-
-                            <div class="mb-4 d-flex gap-3">
-                                <div class="w-100">
+            
+                            <div class="mb-4 row g-3">
+                                <div class="col-md-4">
                                     <label for="brand" class="form-label">Brand</label>
-                                    <input type="text" class="form-control form-control-sm" id="brand"
-                                        name="productBrand" placeholder="Enter brand">
-                                        <div id="brandError" style="font-size: 0.8em; color: #ff0101;"></div>
+                                    <input type="text" class="form-control form-control-sm" id="brand" name="productBrand" placeholder="Enter brand">
+                                    <div id="brandError" class="text-danger small"></div>
                                 </div>
-                                <div class="w-100">
+                                <div class="col-md-4">
                                     <label for="basePrice" class="form-label">Base Price</label>
-                                    <input type="number" id="productPrice" name="productPrice"
-                                        class="form-control form-control-sm" placeholder="Enter price">
-                                        <div id="priceError" style="font-size: 0.8em; color: #ff0101;"></div>
-
+                                    <input type="number" id="productPrice" name="productPrice" class="form-control form-control-sm" placeholder="Enter price">
+                                    <div id="priceError" class="text-danger small"></div>
                                 </div>
-                                <div class="w-100">
+                                <div class="col-md-4">
                                     <label for="discountPrice" class="form-label">Discount Percentage (%)</label>
-                                    <input type="number" id="productOffer" name="productOffer"
-                                        class="form-control form-control-sm" placeholder="Enter discount">
+                                    <input type="number" id="productOffer" name="productOffer" class="form-control form-control-sm" placeholder="Enter discount">
                                 </div>
                             </div>
-
-                            <div class="mb-4 d-flex gap-3">
-                                <div class="w-100">
+            
+                            <div class="mb-4 row g-3">
+                                <div class="col-md-6">
                                     <label for="shortDescription" class="form-label">Short Description</label>
-                                    <textarea class="form-control" id="shortDescription" name="shortDescription"
-                                        placeholder="Enter short description"></textarea>
+                                    <textarea class="form-control" id="shortDescription" name="shortDescription" placeholder="Enter short description"></textarea>
                                 </div>
-                                <div class="w-100">
+                                <div class="col-md-6">
                                     <label for="productDescription" class="form-label">Long Description</label>
-                                    <textarea class="form-control" id="productDescription" name="productDescription"
-                                        placeholder="Enter description"></textarea>
-                                        <div id="descriptionError" style="font-size: 0.8em; color: #ff0101;"></div>
+                                    <textarea class="form-control" id="productDescription" name="productDescription" placeholder="Enter description"></textarea>
+                                    <div id="descriptionError" class="text-danger small"></div>
                                 </div>
                             </div>
-                            
-                            <div class="mb-4 d-flex gap-3">
-                                <div class="w-100">
-                                    <label for="productSpec" class="form-label">Specifications</label>
-                                    <textarea class="form-control" id="productSpec" name="productSpec"
-                                        placeholder="Enter specifications"></textarea>
-                                    <div id="specError" style="font-size: 0.8em; color: #ff0101;"></div>
-
-                                </div>
+            
+                            <div class="mb-4">
+                                <label for="productSpec" class="form-label">Specifications</label>
+                                <textarea class="form-control" id="productSpec" name="productSpec" placeholder="Enter specifications"></textarea>
+                                <div id="specError" class="text-danger small"></div>
                             </div>
-
-                            <!-- Single Image Section -->
+            
+                            <!-- Image Upload Area (UNTOUCHED) -->
                             <div class="mb-4">
                                 <label class="form-label">Product Images</label>
-                                <div class="image-upload-row">
-                                    <div class="image-upload-slot" data-slot="1">
+                                <div class="row g-3 image-upload-row">
+                                    <div class="col-6 image-upload-slot" data-slot="1">
                                         <div class="image-upload-dropzone">
                                             <i class="fa-solid fa-upload"></i>
                                             <p class="mb-0">Add Image</p>
@@ -101,7 +87,7 @@
                                         </div>
                                         <div class="image-preview"></div>
                                     </div>
-                                    <div class="image-upload-slot" data-slot="2">
+                                    <div class="col-6 image-upload-slot" data-slot="2">
                                         <div class="image-upload-dropzone">
                                             <i class="fa-solid fa-upload"></i>
                                             <p class="mb-0">Add Image</p>
@@ -109,7 +95,7 @@
                                         </div>
                                         <div class="image-preview"></div>
                                     </div>
-                                    <div class="image-upload-slot" data-slot="3">
+                                    <div class="col-6 image-upload-slot" data-slot="3">
                                         <div class="image-upload-dropzone">
                                             <i class="fa-solid fa-upload"></i>
                                             <p class="mb-0">Add Image</p>
@@ -117,7 +103,7 @@
                                         </div>
                                         <div class="image-preview"></div>
                                     </div>
-                                    <div class="image-upload-slot" data-slot="4">
+                                    <div class="col-6 image-upload-slot" data-slot="4">
                                         <div class="image-upload-dropzone">
                                             <i class="fa-solid fa-upload"></i>
                                             <p class="mb-0">Add Image</p>
@@ -126,29 +112,40 @@
                                         <div class="image-preview"></div>
                                     </div>
                                 </div>
-                                <div id="imageError" class="text-center" style="font-size: 0.8em; color: #ff0101;"></div>
+                                <div id="imageError" class="text-center text-danger small"></div>
                             </div>
-
+            
                             <!-- Variant Section -->
                             <div class="mb-4">
-                                <label class="form-label">Product Variants</label>
+                                <label class="form-label h6">Product Variants</label>
                                 <div id="variantContainer" class="variant-container">
                                     <!-- Variants will be added here -->
                                 </div>
                                 <div class="d-flex justify-content-between mt-3">
-                                    <button type="button" id="addVariantButton" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;">
-                                        <i class="fas fa-plus me-1"></i> Add Variant
+                                    <!-- Add Variant Button (Small with Icon) -->
+                                    <button type="button" id="addVariantButton" class="btn btn-sm btn-outline-secondary rounded-2">
+                                        <i class="fas fa-plus"></i>
+                                        <span class="d-none d-sm-inline-block ms-2">Add Variant</span>
                                     </button>
-                                    <div class="d-flex gap-3">
-                                        <a class="btn cancel-btn" href="/admin/products">Cancel</a>
-                                        <button type="submit" class="btn btn-primary">Add Product</button>
+                            
+                                    <div class="d-flex gap-2">
+                                        <!-- Cancel Button with Icon (Text hidden on small screens) -->
+                                        <a class="btn cancel-btn btn-sm" href="/admin/products">
+                                            <i class="fas fa-times"></i>
+                                            <span class="d-none d-sm-inline-block ms-2">Cancel</span>
+                                        </a>
+                                        <!-- Add Product Button with Icon (Text hidden on small screens) -->
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-check"></i>
+                                            <span class="d-none d-sm-inline-block ms-2">Add Product</span>
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> 
                         </form>
                     </div>
                 </div>
-            </main>
+            </main>            
         </div>
     </div>
 

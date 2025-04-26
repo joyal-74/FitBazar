@@ -91,3 +91,7 @@ bugs to fix
 
 1. coupon applied and cancelled - check price above or less minimum remove coupon
 2. after going to checkout the stock less how to manage
+
+
+3. add a filter in transaction based on payment type
+4. cod saving in transaction - which need to remove
