@@ -333,9 +333,7 @@
 }
 
 /*Home page*/
-.hero-section {
-    padding: 40px 0;
-}
+
 
 .hero-img {
     max-width: 100%;
@@ -598,7 +596,6 @@
     color: white;
     padding: 10px 20px;
     text-align: center;
-    position: relative;
 }
 
 .subscription-banner h2 {
@@ -1026,5 +1023,64 @@ td {
 @media (min-width: 768px) {
     .offer-badge {
         font-size: 0.75rem !important;
+    }
+}
+
+
+.image-container {
+    height: 270px;
+    overflow: hidden;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .image-container {
+        height: 200px; 
+    }
+
+    .sidebar-header {
+        margin-top: 25px;
+        padding-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .image-container {
+        height: 160px; 
+    }
+    .sidebar-header {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+}
+
+
+@media (min-width: 768px) {
+    .display-md-3 {
+        font-size: calc(1.525rem + 3vw);
+    }
+    .fs-md-4 {
+        font-size: 1.25rem !important;
+    }
+}
+
+
+.subscription-banner h2 {
+    font-size: 1.7rem;
+}
+
+@media (max-width: 576px) {
+    .subscription-banner h2 {
+        font-size: 1rem;
+    }
+}
+
+.subscription-banner p {
+    font-size: 1rem;
+}
+
+@media (max-width: 576px) {
+    .subscription-banner p {
+        font-size: 0.7rem;
     }
 }

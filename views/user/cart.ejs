@@ -1,81 +1,93 @@
 <head>
     <style>
-        .progress-step {
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
+        :root {
+            --primary: #5B3F64;
+            --primary-dark: #3C1549;
+            --accent: #d8c5d6;
+            --danger: #dc3545;
         }
-
-        .progress-step.active i,
-        .progress-step.active span {
-            color: #5B3F64 !important;
+        
+        /* Minimal custom CSS */
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary-dark);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        .checkout-btn {
+            background: linear-gradient(90deg, #5B3F64, #3C1549);
+        }
+        .progress-step.active {
+            color: var(--primary);
             font-weight: 600;
         }
-
-        .progress-arrow {
-            color: #d8c5d6;
-            font-size: 1.2rem;
-            margin: 0 20px;
-        }
-
-        .quantity-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #E0E0E0;
-            border-radius: 50%;
-            background-color: #FFFFFF;
-            color: #5B3F64;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quantity-btn:hover {
-            background-color: #5B3F64;
-            color: #FFFFFF;
-            border-color: #5B3F64;
-        }
-
-        .quantity-btn:active {
-            transform: scale(0.95);
-        }
-
-        .quantity-display {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            min-width: 40px;
-            text-align: center;
-        }
-
-        .cart-item {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border-radius: 12px !important;
-        }
-
-        .cart-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
-        }
-
-        .remove-btn {
-            transition: all 0.3s ease;
-        }
-
-        .remove-btn:hover {
-            background-color: #dc3545 !important;
-            color: #FFFFFF !important;
-            border-color: #dc3545 !important;
-        }
-
         .order-summary {
-            background: linear-gradient(135deg, #F9F9F9, #fbf4fc);
-            border-radius: 12px !important;
             position: sticky;
             top: 20px;
         }
-
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Custom quantity button styles */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .qty-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .qty-value {
+            min-width: 36px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Mobile quantity buttons */
+        .mobile-qty-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .mobile-qty-value {
+            min-width: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0 2px;
+        }
     </style>
 </head>
 
@@ -84,80 +96,128 @@
     <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Main Section -->
-    <main class="container my-5">
-        <div class="d-flex justify-content-between w-100 align-items-center mb-3"
-            style="padding: 16px; border-radius: 10px;">
-            <h4 class="fw-bold mb-0 text-dark">Discover Items in your Cart</h4>
-            <div class="d-flex justify-content-center align-items-center gap-3">
-                <div class="progress-step active">
-                    <i class="fas fa-shopping-cart text-muted me-1" style="font-size: 1rem;"></i>
-                    <span class="fw-medium" style="font-size: 0.8rem;">Cart</span>
-                </div>
-                <i class="fas fa-arrow-right progress-arrow text-muted"></i>
-                <div class="progress-step">
-                    <i class="fas fa-truck me-1" style="font-size: 0.9rem;"></i>
-                    <span style="font-size: 0.9rem;">Shipping</span>
-                </div>
-                <i class="fas fa-arrow-right progress-arrow text-muted"></i>
-                <div class="progress-step">
-                    <i class="fas fa-credit-card text-muted me-1" style="font-size: 0.9rem;"></i>
-                    <span class="fw-medium" style="font-size: 0.9rem;">Payments</span>
+    <main class="container my-4 my-md-5">
+        <!-- Cart Header with Progress -->
+        <div class="border-0 mb-4 p-3">
+            <div class="d-flex justify-content-between flex-wrap">
+                <h4 class="fw-bold mb-3 mb-md-0">Your Shopping Cart</h4>
+                
+                <!-- Progress Steps -->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="progress-step active d-flex align-items-center">
+                        <i class="fas fa-shopping-cart me-1"></i>
+                        <span class="d-none d-sm-inline">Cart</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted mx-1 mx-md-2"></i>
+                    <div class="progress-step d-flex align-items-center text-muted">
+                        <i class="fas fa-truck me-1"></i>
+                        <span class="d-none d-sm-inline">Shipping</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted mx-1 mx-md-2"></i>
+                    <div class="progress-step d-flex align-items-center text-muted">
+                        <i class="fas fa-credit-card me-1"></i>
+                        <span class="d-none d-sm-inline">Payment</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Cart Section -->
-        <div class="row g-5">
-            <div class="col-md-8">
-                <% if (cart && cart.items && cart.items.length> 0) { %>
-                    <% cart.items.forEach(item=> { %>
-                        <div class="card mb-4 shadow-sm border-0 cart-item"
-                            style="background: linear-gradient(to right, #f9ecfb, #F8F8FC);">
-                            <div class="row g-0 align-items-center px-4 py-2">
-                                <div class="col-3 col-md-2">
-                                    <img src="<%= item.productImage %>" alt="<%= item.productId.name %>"
-                                        class="img-fluid rounded"
-                                        style="max-width: 100px; object-fit: cover; border: 1px solid #EDEDED;">
+        <div class="row g-4">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <% if (cart && cart.items && cart.items.length > 0) { %>
+                    <% cart.items.forEach(item => { %>
+                        <!-- Desktop Card (hidden on xs and sm screens) -->
+                        <div class="card mb-3 border-0 shadow-sm d-none d-md-block">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <!-- Product Image -->
+                                    <div class="col-md-2 text-center">
+                                        <img src="<%= item.productImage %>" alt="<%= item.productId.name %>"
+                                            class="img-fluid rounded" style="max-height: 80px; object-fit: contain;">
+                                    </div>
+                                    
+                                    <!-- Product Details -->
+                                    <div class="col-md-5">
+                                        <h6 class="mb-1"><%= item.productId.name %></h6>
+                                        <p class="text-muted small mb-0">
+                                            <%= item.variants.color %> | <%= item.variants?.weight || "" %>
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Quantity Controls - REDESIGNED -->
+                                    <div class="col-md-3">
+                                        <div class="quantity-controls">
+                                            <button class="qty-btn" type="button"
+                                                onclick="updateQuantity('<%= item.productId._id %>', -1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                            <span class="qty-value mx-2"><%= item.quantity %></span>
+                                            <button class="qty-btn" type="button"
+                                                onclick="updateQuantity('<%= item.productId._id %>', 1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Price and Remove Button -->
+                                    <div class="col-md-2 text-end">
+                                        <div class="fw-bold mb-1">₹<%= item.price * item.quantity %></div>
+                                        <del class="text-muted small">₹<%= item.basePrice * item.quantity %></del>
+                                        <button class="btn btn-sm text-danger border-0 p-0 ms-2"
+                                            onclick="removeFromCart('<%= item.productId._id %>','<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="col-9 col-md-10">
-                                    <div class="d-flex align-items-center flex-nowrap gap-3">
-                                        <div class="flex-grow-1" style="min-width: 0;">
-                                            <h6 class="fw-bold mb-2 text-dark text-truncate"
-                                                style="font-size: 1.05rem; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Card (shown only on xs and sm screens) -->
+                        <div class="card mb-3 border-0 shadow-sm d-md-none">
+                            <div class="card-body p-2">
+                                <div class="row g-2">
+                                    <!-- Left: Product Image -->
+                                    <div class="col-3">
+                                        <img src="<%= item.productImage %>" alt="<%= item.productId.name %>"
+                                            class="img-fluid rounded" style="width: 100%; object-fit: cover;">
+                                    </div>
+                                    
+                                    <!-- Right: Product Details -->
+                                    <div class="col-9">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <h6 class="mb-0 text-truncate pe-2" style="max-width: 85%;">
                                                 <%= item.productId.name %>
                                             </h6>
-                                            <p class="text-muted mb-2 small">
-                                                <%= item.variants.color %> | <%= item.variants?.weight || "" %>
-                                            </p>
-                                            <p class="mb-0 text-dark fw-semibold">
-                                                <span style="font-size: 1.2rem;">₹ <%= item.price.toLocaleString('en-IN') %></span> | 
-                                                <del style="font-size: 0.9rem; color: #888;">₹ <%= item.basePrice.toLocaleString('en-IN') %></del>
-                                            </p>                                            
-                                            <input type="hidden" id="userId" value="<%= user._id %>">
+                                            <button class="btn btn-sm p-0 text-danger" 
+                                                onclick="removeFromCart('<%= item.productId._id %>','<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
+                                                <i class="fa-solid fa-times"></i>
+                                            </button>
                                         </div>
-                                        <div class="d-flex align-items-center gap-3 flex-shrink-0">
-                                            <div class="quantity-control d-flex align-items-center gap-2">
-                                                <button class="quantity-btn"
+                                        
+                                        <p class="text-muted small mb-1">
+                                            <%= item.variants.color %> | <%= item.variants?.weight || "" %>
+                                        </p>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <div>
+                                                <span class="fw-bold">₹<%= item.price.toLocaleString('en-IN') %></span>
+                                                <del class="text-muted small ms-1">₹<%= item.basePrice.toLocaleString('en-IN') %></del>
+                                            </div>
+                                            
+                                            <!-- Mobile Quantity Controls - REDESIGNED -->
+                                            <div class="d-flex align-items-center">
+                                                <button class="mobile-qty-btn" type="button"
                                                     onclick="updateQuantity('<%= item.productId._id %>', -1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
-                                                    <i class="fa-solid fa-minus" style="font-size: 12px;"></i>
+                                                    <i class="fa-solid fa-minus small"></i>
                                                 </button>
-                                                <span class="quantity-display">
-                                                    <%= item.quantity %>
-                                                </span>
-                                                <button class="quantity-btn"
+                                                <span class="mobile-qty-value"><%= item.quantity %></span>
+                                                <button class="mobile-qty-btn" type="button"
                                                     onclick="updateQuantity('<%= item.productId._id %>', 1, '<%= item.variants?.color %>', '<%= item.variants?.weight %>')">
-                                                    <i class="fa-solid fa-plus" style="font-size: 12px;"></i>
+                                                    <i class="fa-solid fa-plus small"></i>
                                                 </button>
                                             </div>
-                                            <p class="mb-0 fw-bold text-dark"
-                                                style="font-size: 1.1rem; width: 70px; flex-shrink: 0;">
-                                                ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
-                                            </p>
-                                            <button class="btn btn-outline-danger btn-sm rounded-circle remove-btn"
-                                                onclick="removeFromCart('<%= item.productId._id %>','<%= item.variants?.color %>', '<%= item.variants?.weight %>')"
-                                                style="width: 38px; height: 38px;">
-                                                <i class="fa-solid fa-trash" style="font-size: 14px;"></i>
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -165,23 +225,28 @@
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <div class="text-center py-5 rounded-3">
-                        <i class="fa-solid fa-cart-shopping fa-4x text-muted mb-4" style="font-size: 3rem;"></i>
-                        <p class="text-muted fs-4 fw-medium">Your cart is empty!</p>
-                        <a href="/shop" class="btn mt-3 px-5 py-2 text-white"
-                            style="background: linear-gradient(90deg, #5B3F64, #3C1549); border-radius: 20px;">
-                            Start Shopping
-                        </a>
+                    <div class="card border-0 shadow-sm text-center p-5">
+                        <div class="card-body">
+                            <i class="fa-solid fa-cart-shopping text-muted mb-3" style="font-size: 2rem;"></i>
+                            <p class="text-muted fs-5">Your cart is empty!</p>
+                            <a href="/shop" class="btn btn-primary mt-2 px-4">
+                                Start Shopping
+                            </a>
+                        </div>
                     </div>
                 <% } %>
+                
+                <input type="hidden" id="userId" value="<%= user._id %>">
             </div>
 
             <!-- Order Summary -->
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm border-0 order-summary">
-                    <h5 class="fw-bold text-dark mb-4" style="font-size: 1.5rem;">Order Summary</h5>
-                    <% if (cart && cart.items && cart.items.length> 0) { %>
-                        <% 
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm order-summary">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">Order Summary</h5>
+                        
+                        <% if (cart && cart.items && cart.items.length > 0) { %>
+                            <% 
                                 let total = 0;
                                 cart.items.forEach(item => { 
                                     total += item.quantity * item.price;
@@ -189,50 +254,101 @@
                                 let deliveryCharge = total < 499 ? 39 : 0;
                                 let grandTotal = total + deliveryCharge;
                             %>
+                            
+                            <!-- Items Summary -->
                             <% cart.items.forEach(item => { %>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-muted text-truncate" 
-                                        style="font-size: 0.95rem; max-width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted text-truncate" style="max-width: 70%;">
                                         <%= item.quantity %>x <%= item.productId.name %>
                                     </span>
-                                    <span class="text-dark fw-medium flex-shrink-0">
-                                        ₹ <%= (item.quantity * item.price).toLocaleString('en-IN') %>
+                                    <span class="text-dark">
+                                        ₹<%= (item.quantity * item.price).toLocaleString('en-IN') %>
                                     </span>
                                 </div>
                             <% }) %>
-
-                            <!-- Delivery Charges -->
+                            
+                            <!-- Delivery & Total -->
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted" style="font-size: 0.95rem;">Delivery Charges</span>
-                                <span class="<%= deliveryCharge ? 'text-danger' : 'text-success' %> flex-shrink-0">
-                                    <%= deliveryCharge ? `₹ ${deliveryCharge}` : 'Free' %>
+                                <span class="text-muted">Delivery Charges</span>
+                                <span class="<%= deliveryCharge ? 'text-danger' : 'text-success' %>">
+                                    <%= deliveryCharge ? `₹${deliveryCharge}` : 'Free' %>
                                 </span>
                             </div>
-
-                            <hr class="my-4" style="border-color: #E0E0E0;">
-
-                            <!-- Total Amount (Including GST and Delivery) -->
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold text-dark" style="font-size: 1.2rem;">Total</span>
-                                <span class="fw-bold text-dark flex-shrink-0" style="font-size: 1.2rem;">
-                                    ₹ <%= grandTotal.toLocaleString('en-IN') %>
+                            
+                            <hr class="my-3">
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <span class="fw-bold">Total</span>
+                                <span class="fw-bold fs-5">
+                                    ₹<%= grandTotal.toLocaleString('en-IN') %>
                                 </span>
                             </div>
-
-                            <button class="btn checkout-btn w-100 mt-4"
-                                onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')"
-                                style="border-radius: 12px; padding: 12px; font-size: 1.1rem; color: #FFFFFF;">
+                            
+                            <button class="btn checkout-btn w-100 text-white py-2"
+                                onclick="goToCheckout('<%= cart._id %>', '<%= user._id %>')">
                                 Continue to Checkout
                             </button>
+                            
+                            <% if (deliveryCharge > 0) { %>
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Add items worth ₹<%= (499 - total).toLocaleString('en-IN') %> more for free delivery
+                                    </small>
+                                </div>
+                            <% } %>
                         <% } else { %>
-                            <p class="text-muted text-center fs-5">No items in your cart.</p>
-                    <% } %>
+                            <p class="text-muted text-center">No items in your cart</p>
+                        <% } %>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast align-items-center text-white bg-success border-0" id="notification">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="toast-icon fas me-2"></i>
+                    <span class="toast-text"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </main>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Show toast notification
+        function showNotification(message, type) {
+            const toast = document.getElementById('notification');
+            const icon = toast.querySelector('.toast-icon');
+            const text = toast.querySelector('.toast-text');
+            
+            // Set type
+            if (type === 'success') {
+                toast.classList.remove('bg-danger');
+                toast.classList.add('bg-success');
+                icon.className = 'toast-icon fas fa-check-circle';
+            } else {
+                toast.classList.remove('bg-success');
+                toast.classList.add('bg-danger');
+                icon.className = 'toast-icon fas fa-exclamation-circle';
+            }
+            
+            // Set message
+            text.textContent = message;
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
         // Update Quantity
         async function updateQuantity(productId, change, color, weight) {
             try {
@@ -245,60 +361,52 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    window.location.reload();
+                    showNotification('Quantity updated successfully', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        text: data.error || 'Failed to update quantity!'
-                    });
+                    showNotification(data.error || 'Failed to update quantity!', 'error');
                 }
             } catch (error) {
                 console.error('Error updating quantity:', error);
-                Swal.fire({
-                    icon: 'error',
-                    text: error.message || 'Something went wrong. Please try again later.'
-                });
+                showNotification('Something went wrong. Please try again later.', 'error');
             }
         }
 
-        // remove from Cart
-
+        // Remove from Cart
         async function removeFromCart(productId, color, weight) {
             const userId = document.getElementById('userId').value;
 
             const result = await Swal.fire({
-                text: "Do you really want to remove this item from your cart?",
+                text: "Remove this item from your cart?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, remove it!',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, remove it',
                 cancelButtonText: 'Cancel'
             });
 
             if (result.isConfirmed) {
-                const response = await fetch(`/user/cart?userId=${userId}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId, color, weight })
-                });
+                try {
+                    const response = await fetch(`/user/cart?userId=${userId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId, color, weight })
+                    });
 
-                if (response.ok) {
-                    Swal.fire({
-                        text: 'The item has been removed from your cart.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 2000,
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        text: 'Failed to remove the item from the cart.',
-                        icon: 'error',
-                        showConfirmButton: false,
-                        timer: 2000,
-                    });
+                    if (response.ok) {
+                        showNotification('Item removed from cart', 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Failed to remove item from cart', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error removing from cart:', error);
+                    showNotification('Something went wrong. Please try again.', 'error');
                 }
             }
         }
