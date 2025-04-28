@@ -1,7 +1,3 @@
-<head>
-    <link rel="stylesheet" href="/css/profile-section.css">
-</head>
-
 <body>
     <!-- Navbar -->
     <%- include('../partials/userNavbar', { activePage: '' }) %> 
@@ -12,12 +8,12 @@
             <%- include('../partials/profileSidebar', { activePage: 'profile' }) %> 
 
             <!-- Optimized Profile Display -->
-            <div class="col-md-9">
-                <div class="profile-card">
-                    <div class="profile-header d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center">
+            <div class="col-md-9 col-lg-10 col-xl-9 mt-5 p-4">
+                <div class="profile-section">
+                    <div class="profile-header d-flex flex-column flex-md-row align-items-center align-items-md-start justify-content-between mb-4">
+                        <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start mb-3 mb-md-0">
                             <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="Profile Picture"
-                                class=" profile-avatar me-3" width="80" height="80">
+                                class="profile-avatar me-md-3 mb-2 mb-md-0" width="80" height="80">
                             <div>
                                 <h4 style="color: #3C1549; margin: 0;">
                                     <%= user.name %>
@@ -25,31 +21,32 @@
                                 <div class="mt-1"><small class="text-muted">Member since <%= new Date(user.createdAt).toLocaleDateString() %></small></div>
                             </div>
                         </div>
-                        <a href="/user/profileU?userId=<%= user.userId %>" class="btn btn-primary">
-                            <i class="fa-solid fa-pen me-2"></i>Edit Profile
+                        <a href="/user/profileU?userId=<%= user.userId %>" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                            <i class="fa-solid fa-pen"></i>
+                            <span class="d-none d-md-inline">Edit Profile</span>
                         </a>
                     </div>
 
-                    <div class="info-grid" style="margin-top: 50px;">
-                        <div class="info-item">
+                    <div class="info-grid mt-4">
+                        <div class="info-item mb-3">
                             <div class="info-label">Email Address</div>
-                            <div class="info-value">
+                            <div class="info-value text-break">
                                 <%= user.email %>
                             </div>
                         </div>
-                        <div class="info-item">
+                        <div class="info-item mb-3">
                             <div class="info-label">Mobile Number</div>
                             <div class="info-value">
                                 <%= user.phone || 'Not provided' %>
                             </div>
                         </div>
-                        <div class="info-item">
+                        <div class="info-item mb-3">
                             <div class="info-label">Gender</div>
                             <div class="info-value">
                                 <%= user.gender || 'Not specified' %>
                             </div>
                         </div>
-                        <div class="info-item">
+                        <div class="info-item mb-3">
                             <div class="info-label">Username</div>
                             <div class="info-value">
                                 <%= user.username || 'Username not set yet' %>
@@ -57,56 +54,90 @@
                         </div>
                     </div>
 
-                    <!-- Additional Content: Stats -->
-                    <div class="stats-section">
-                        <h5 style="color: #3C1549; margin-bottom: 15px;">Your Stats</h5>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-value">
-                                    <%= user.ordersCount || 0 %>
-                                </div>
-                                <div class="stat-label">Orders Placed</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">
-                                    <%= user.reviewsCount || 0 %>
-                                </div>
-                                <div class="stat-label">Reviews Written</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value">₹<%= user.totalSpent || '0.00' %>
-                                </div>
-                                <div class="stat-label">Total Spent</div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Referral Section -->
-                    <div class="referral-section d-flex justify-content-between" style="margin-top: 15px;">
-                        <div class="referral-content">
-                            <h6 style="color: #3C1549;">Refer a Friend</h6>
-                            <p class="text-muted">Share your referral code with friends and earn rewards!</p>   
-                        </div>
-                        <div class="input-group align-self-end" style="max-width: 400px;">
-                            <input type="text" 
-                                   class="form-control" 
-                                   value="<%= user.referalCode %>" 
-                                   id="referralCode" 
-                                   readonly 
-                                   style="font-size: 0.8rem; padding: 0px 15px; height: 40px; line-height: 1;">
-                            <button class="btn admin-btns text-white" 
-                                    onclick="copyReferralCode()" 
-                                    style="font-size: 0.75rem; padding: 0px 8px; height: 40px; line-height: 1;">
-                                <i class="fa-solid fa-copy me-1"></i>Copy
-                            </button>
+                    <div class="referral-section mt-4 pt-4 border-top">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                                <h6 style="color: #3C1549;">Refer a Friend</h6>
+                                <p class="text-muted">Share your referral code with friends and earn rewards!</p>   
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <input type="text" 
+                                          class="form-control" 
+                                          value="<%= user.referalCode %>" 
+                                          id="referralCode" 
+                                          readonly 
+                                          style="font-size: 0.8rem; padding: 0px 15px; height: 40px; line-height: 1;">
+                                    <button class="btn admin-btns text-white" 
+                                            onclick="copyReferralCode()" 
+                                            style="font-size: 0.75rem; padding: 0px 8px; height: 40px; line-height: 1;">
+                                        <i class="fa-solid fa-copy me-1"></i><span class="d-none d-sm-inline">Copy</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-
                 </div>
             </div>
         </div>
     </main>
+
+    <style>
+        /* Responsive grid layout */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3C1549;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .profile-avatar {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Media queries for responsive layout */
+        @media (min-width: 576px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .profile-header {
+                text-align: center;
+            }
+        }
+    </style>
 
     <script>
         function copyReferralCode() {

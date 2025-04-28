@@ -14,7 +14,7 @@
             <!-- Add New Address Form -->
             <div class="col-md-9">
                 <div class="py-3 px-5 h-100" style="border-radius: 12px; background-color: #ffffff;">
-                    <h4 class="mb-4" style="color: #5b3f64;">Add New Address</h4>
+                    <h4 class="mb-4" style="color: #5b3f64;">Add Address</h4>
                     <form id="addAddressForm">
                         <div class="form-group-pair">
                             <div class="mb-3">
@@ -112,9 +112,16 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">Save Address</button>
-                                <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
-                            </div>
+                                <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                                  <i class="fas fa-save"></i> 
+                                  <span class="d-none d-sm-inline">Save Address</span>
+                                </button>
+                              
+                                <button type="button" class="btn btn-secondary d-flex align-items-center gap-2" onclick="window.history.back();">
+                                  <i class="fas fa-times"></i> 
+                                  <span class="d-none d-sm-inline">Cancel</span>
+                                </button>
+                              </div>
                             <div class="d-flex gap-2">
                                 <input type="radio" name="addressType" id="addressHome" value="home">
                                 <label for="addressType">Home</label>

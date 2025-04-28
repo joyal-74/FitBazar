@@ -1,11 +1,3 @@
-/* Sidebar container */
-.sidebar-profile {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    position: fixed;
-}
-
 .sidebar-heading {
     font-size: 14px;
     font-weight: 600;
@@ -119,7 +111,6 @@
 .profile-card {
     border-radius: 12px;
     background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 25px;
 }
 
@@ -519,3 +510,39 @@ h1 {
         gap: 15px;
     }
 }
+
+
+@media (max-width: 767.98px) {
+    body {
+        padding-bottom: 70px;
+    }  
+    
+    .dropup .dropdown-menu {
+        max-height: calc(80vh - 60px);
+    }
+}
+
+
+.sidebar-custom-width {
+    width: 280px;
+}
+
+@media (max-width: 1200px) {
+    .sidebar-custom-width {
+        width: 80px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .order-card, .order-card * {
+      font-size: 13px !important; /* or 12px if you want even smaller */
+    }
+    .order-id, .order-status {
+      font-size: 12px !important;
+    }
+    .order-header button {
+      font-size: 12px !important;
+      padding: 2px 8px !important;
+    }
+  }

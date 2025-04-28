@@ -152,10 +152,21 @@
                     <div style="font-size: 0.7rem;">Cart</div>
                 </a>
             <% } %>
-            <a href="/user/<%= user ? 'profile' : 'login' %>" class="text-center text-decoration-none" style="color: <%= activePage === 'profile' ? '#5B3F64' : '#212529' %>">
-                <div><i class="fa-solid fa-user"></i></div>
-                <div style="font-size: 0.7rem;">Profile</div>
-            </a>
+            <!-- Profile dropup for mobile -->
+            <div class="dropup text-center">
+                <a href="#" class="text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: <%= ['profile', 'orders', 'address', 'privacy', 'coupons', 'reviews', 'wallet'].includes(activePage) ? '#5B3F64' : '#212529' %>">
+                    <div><i class="fa-solid fa-user"></i></div>
+                    <div style="font-size: 0.7rem;">Profile</div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown" style="bottom: 60px; max-height: 80vh; overflow-y: auto;">
+                    <li><a class="dropdown-item <%= activePage === 'profile' ? 'active' : '' %>" href="/user/profile"><i class="fa-solid fa-user me-2"></i>Profile Information</a></li>
+                    <li><a class="dropdown-item <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>" href="/user/orders"><i class="fa-solid fa-box me-2"></i>My Orders</a></li>
+                    <li><a class="dropdown-item <%= activePage === 'address' ? 'active' : '' %>" href="/user/address"><i class="fa-solid fa-location-dot me-2"></i>Manage Addresses</a></li>
+                    <li><a class="dropdown-item <%= activePage === 'privacy' ? 'active' : '' %>" href="/user/privacy"><i class="fa-solid fa-key me-2"></i>Privacy Settings</a></li>
+                    <li><a class="dropdown-item <%= activePage === 'coupons' ? 'active' : '' %>" href="/user/coupons"><i class="fa-solid fa-ticket me-2"></i>My Coupons</a></li>
+                    <li><a class="dropdown-item <%= activePage === 'wallet' ? 'active' : '' %>" href="/user/wallet"><i class="fa-solid fa-wallet me-2"></i>My Wallet</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

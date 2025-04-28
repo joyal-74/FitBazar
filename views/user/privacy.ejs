@@ -1,132 +1,141 @@
 <head>
-    <link rel="stylesheet" href="/css/profile-section.css">        
+    <link rel="stylesheet" href="/css/profile-section.css">
 </head>
 
 <body>
-    
-    <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
-    <main class="container mt-4">
-        <div class="row g-5">
+    <%- include('../partials/userNavbar', { activePage: '' }) %>
 
-            <%- include('../partials/profileSidebar', { activePage: 'privacy' }) %> 
-            <!-- Privacy Settings Section -->
-            <div class="col-md-9">
-                <div class="card p-4 h-100" style="border-radius: 12px; background-color: #ffffff; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
-                    <h4 class="mb-4" style="color: #5b3f64;">Change Password</h4>
-                    <form id="changePasswordForm">
-                        <!-- Old Password -->
-                        <div class="mb-4">
-                            <label for="oldPassword" class="form-label">Old Password</label>
-                            <input type="password" id="oldPassword" name="oldPassword" class="form-control" placeholder="Enter your old password">
-                            <div id="oldPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
+        <main class="container mt-4">
+            <div class="row">
+
+                <%- include('../partials/profileSidebar', { activePage: 'privacy' }) %>
+
+                    <div class="col-md-9 col-lg-10 col-xl-9 p-4">
+                        <div class="p-4 h-100" style="border-radius: 12px; background-color: #ffffff;">
+                            <h4 class="mb-4" style="color: #5b3f64;">Change Password</h4>
+
+                            <form id="changePasswordForm">
+                                <!-- Old Password -->
+                                <div class="mb-4">
+                                    <label for="oldPassword" class="form-label">Old Password</label>
+                                    <input type="password" id="oldPassword" name="oldPassword"
+                                        class="form-control form-control-sm" placeholder="Enter your old password">
+                                    <div id="oldPasswordError" class="small text-danger"></div>
+                                </div>
+
+                                <!-- New Password -->
+                                <div class="mb-4">
+                                    <label for="newPassword" class="form-label">New Password</label>
+                                    <input type="password" id="newPassword" name="newPassword"
+                                        class="form-control form-control-sm" placeholder="Enter your new password">
+                                    <div id="newPasswordError" class="small text-danger"></div>
+                                </div>
+
+                                <!-- Confirm New Password -->
+                                <div class="mb-4">
+                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                    <input type="password" id="confirmPassword" name="confirmPassword"
+                                        class="form-control form-control-sm" placeholder="Confirm your new password">
+                                    <div id="confirmPasswordError" class="small text-danger"></div>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="d-flex gap-3 align-items-center mt-5">
+                                    <button type="submit" class="btn btn-primary"
+                                        style="background-color: #5b3f64; border: none;">Change Password</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="window.history.back();">Cancel</button>
+                                </div>
+
+                            </form>
+
                         </div>
-    
-                        <!-- New Password -->
-                        <div class="mb-4">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword" class="form-control" placeholder="Enter your new password">
-                            <div id="newPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
-                        </div>
-    
-                        <!-- Confirm New Password -->
-                        <div class="mb-4">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm your new password">
-                            <div id="confirmPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
-                        </div>
-    
-                        <!-- Buttons -->
-                        <div class="d-flex gap-3 align-items-between" style="margin-top: 100px;">
-                            <button type="submit" class="btn btn-primary" style="background-color: #5b3f64; border: none;">Change Password</button>
-                            <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
             </div>
-        </div>
-    </main>
-    <script>
-        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-    
-            const oldPassword = document.getElementById('oldPassword').value.trim();
-            const newPassword = document.getElementById('newPassword').value.trim();
-            const confirmPassword = document.getElementById('confirmPassword').value.trim();
-    
-            const errors = {
-                oldPassword: document.getElementById("oldPasswordError"),
-                newPassword: document.getElementById("newPasswordError"),
-                confirmPassword: document.getElementById("confirmPasswordError"),
-            };
-    
-            Object.values(errors).forEach((el) => el.innerText = "");
-    
-            let hasError = false;
-    
-            if (!oldPassword) {
-                errors.oldPassword.innerText = "Please enter old password";
-                hasError = true;
-            }
-    
-            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{6,}$/;
-            if (!newPassword) {
-                errors.newPassword.innerText = "Please enter a new password";
-                hasError = true;
-            } else if (!strongPasswordRegex.test(newPassword)) {
-                errors.newPassword.innerText = 
-                errors.newPassword.innerText = "Password must be 6+ chars, incl. uppercase, lowercase, number & special (@$!%*?&#^)";
-                hasError = true;
-            }
-    
-            if (!confirmPassword) {
-                errors.confirmPassword.innerText = "Please confirm your new password";
-                hasError = true;
-            } else if (newPassword !== confirmPassword) {
-                errors.confirmPassword.innerText = "Passwords do not match";
-                hasError = true;
-            }
-    
-            if (hasError) return;
-    
-            const privacyData = { oldPassword, newPassword };
-    
-            try {
-                const response = await fetch('/user/privacy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(privacyData)
-                });
-    
-                const data = await response.json();
-    
-                if (!response.ok) {
+        </main>
+
+        <script>
+            document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const oldPassword = document.getElementById('oldPassword').value.trim();
+                const newPassword = document.getElementById('newPassword').value.trim();
+                const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+                const errors = {
+                    oldPassword: document.getElementById("oldPasswordError"),
+                    newPassword: document.getElementById("newPasswordError"),
+                    confirmPassword: document.getElementById("confirmPasswordError"),
+                };
+
+                Object.values(errors).forEach((el) => el.innerText = "");
+
+                let hasError = false;
+
+                if (!oldPassword) {
+                    errors.oldPassword.innerText = "Please enter old password";
+                    hasError = true;
+                }
+
+                const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{6,}$/;
+                if (!newPassword) {
+                    errors.newPassword.innerText = "Please enter a new password";
+                    hasError = true;
+                } else if (!strongPasswordRegex.test(newPassword)) {
+                    errors.newPassword.innerText =
+                        errors.newPassword.innerText = "Password must be 6+ chars, incl. uppercase, lowercase, number & special (@$!%*?&#^)";
+                    hasError = true;
+                }
+
+                if (!confirmPassword) {
+                    errors.confirmPassword.innerText = "Please confirm your new password";
+                    hasError = true;
+                } else if (newPassword !== confirmPassword) {
+                    errors.confirmPassword.innerText = "Passwords do not match";
+                    hasError = true;
+                }
+
+                if (hasError) return;
+
+                const privacyData = { oldPassword, newPassword };
+
+                try {
+                    const response = await fetch('/user/privacy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(privacyData)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        Swal.fire({
+                            icon: "error",
+                            text: data.error,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "success",
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                } catch (error) {
+                    console.error(error);
                     Swal.fire({
                         icon: "error",
-                        text: data.error,
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "success",
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
+                        text: "An error occurred. Please try again.",
                     });
                 }
-            } catch (error) {
-                console.error(error);
-                Swal.fire({
-                    icon: "error",
-                    text: "An error occurred. Please try again.",
-                });
-            }
-        });
-    </script>    
+            });
+        </script>
 </body>
-

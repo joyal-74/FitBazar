@@ -34,31 +34,36 @@
     <%- include('../partials/userNavbar', { activePage: '' }) %> 
 
     <!-- Progress Bar -->
-    <main class="container mt-4">
-        <div class="d-flex justify-content-between w-100 align-items-center mb-3"
-            style="padding: 16px; border-radius: 10px;">
-            <h4 class="fw-bold mb-0 text-dark">Discover Items in your Cart</h4>
-            <div class="d-flex justify-content-center align-items-center gap-3">
-                <div class="progress-step active">
-                    <i class="fas fa-shopping-cart text-muted me-1" style="font-size: 1rem;"></i>
-                    <span class="fw-medium" style="font-size: 0.8rem;">Cart</span>
-                </div>
-                <i class="fas fa-arrow-right progress-arrow text-muted"></i>
-                <div class="progress-step">
-                    <i class="fas fa-truck me-1 text-muted" style="font-size: 0.9rem;"></i>
-                    <span style="font-size: 0.9rem;">Shipping</span>
-                </div>
-                <i class="fas fa-arrow-right progress-arrow"></i>
-                <div class="progress-step">
-                    <i class="fas fa-credit-card me-1" style="font-size: 0.9rem;"></i>
-                    <span class="fw-medium" style="font-size: 0.9rem;">Payments</span>
+    <main class="container my-4 my-md-5">
+        
+        <div class="border-0 mb-4 p-3">
+            <div class="d-flex justify-content-between flex-wrap">
+                <h4 class="fw-bold mb-3 mb-md-0">Your Shopping Cart</h4>
+                
+                <!-- Progress Steps -->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="progress-step d-flex align-items-center text-muted">
+                        <i class="fas fa-shopping-cart me-1 text-muted"></i>
+                        <span class="d-none d-sm-inline">Cart</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-muted mx-1 mx-md-2"></i>
+                    <div class="progress-step d-flex align-items-center text-muted">
+                        <i class="fas fa-truck me-1"></i>
+                        <span class="d-none d-sm-inline">Shipping</span>
+                    </div>
+                    <i class="fas fa-chevron-right mx-1 mx-md-2"></i>
+                    <div class="progress-step d-flex active align-items-center">
+                        <i class="fas fa-credit-card me-1"></i>
+                        <span class="d-none d-sm-inline">Payment</span>
+                    </div>
                 </div>
             </div>
         </div>
+
         <form id="paymentForm">
             <div class="row g-4">
                 <!-- Payment Methods -->
-                <div class="col-md-8">
+                <div class="col-lg-8">
                     <!-- Razorpay -->
                     <div class="card p-4 mb-3 border-0 shadow-sm" style="background-color: #F8F8F8;">
                         <div class="form-check">
@@ -124,7 +129,7 @@
                 </div>
     
                 <!-- Price Summary -->
-                <div class="col-md-4">
+                <div class="col-lg-4">
                     <div class="card p-3 shadow-sm border-0 order-summary mb-3">
                         <h5 class="fw-bold text-dark mb-4">Price Details</h5>
 

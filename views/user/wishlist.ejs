@@ -16,13 +16,12 @@
             <% if (wishlist && wishlist.length > 0) { %>
                 <div class="row">
                     <% wishlist.forEach(item => { %>
-                        <div class="col-md-4 col-lg-3 mb-4">
-                            <div class="card shadow p-2">
+                        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+                            <div class="card shadow-sm p-2 bg-white h-100">
                                 <!-- Product Image -->
                                 <div class="position-relative">
                                     <img src="<%= item.product.images[0] %>" alt="<%= item.product.name %>"
-                                        class="card-img-top mx-auto d-block"
-                                        style="height: 280px; object-fit: cover;">
+                                        class="card-img-top mx-auto d-block img-fluid">
                                     <% if (item.product.productOffer > 0) { %>
                                         <span class="badge bg-danger position-absolute top-0 start-0 m-2 px-2 py-1">
                                             <%= item.product.productOffer %>% OFF
@@ -52,7 +51,7 @@
                                             data-product-id="<%= item.product._id %>"
                                             data-color="<%= item.color %>"
                                             data-weight="<%= item.weight %>">
-                                            <i class="fa fa-cart-plus me-1"></i> Add to Cart
+                                            <i class="fa fa-cart-plus me-1"></i> Cart
                                         </button>
                                         <button class="btn btn-sm w-50 btn-danger remove-from-wishlist"
                                             data-wishlist-id="<%= item._id %>">

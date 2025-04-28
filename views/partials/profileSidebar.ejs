@@ -1,34 +1,61 @@
-<div class="col-md-3">
+<head>
+    <link rel="stylesheet" href="/css/profile-section.css">
+</head>
+<div class="col-auto d-none d-md-block sidebar-container">
     <div class="sidebar-profile p-3">
-        <div class="d-flex align-items-center mb-5">
+        <!-- User greeting - visible only on xl screens and above -->
+        <div class="d-none d-xl-flex align-items-center mb-5">
             <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="User Avatar" class="me-2" width="50"
                 height="50">
-            <span>Hello, <strong>
-                    <%= firstName %>
-                </strong></span>
+            <span>Hello, <strong><%= firstName %></strong></span>
         </div>
+        
 
         <nav class="nav flex-column gap-3">
-            <a href="/user/orders" class="nav-link sidebar-linkz <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>">
+            <!-- Full sidebar links (xl and above) -->
+            <a href="/user/orders" class="nav-link sidebar-linkz d-none d-xl-flex <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>">
                 <i class="fa-solid fa-box me-2"></i>My Orders
             </a>
-            <a href="/user/profile" class="nav-link sidebar-linkz <%= activePage === 'profile' ? 'active' : '' %>">
+            <a href="/user/profile" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'profile' ? 'active' : '' %>">
                 <i class="fa-solid fa-user me-2"></i>Profile Information
             </a>
-            <a href="/user/address" class="nav-link sidebar-linkz <%= activePage === 'address' ? 'active' : '' %>">
+            <a href="/user/address" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'address' ? 'active' : '' %>">
                 <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
             </a>
-            <a href="/user/privacy" class="nav-link sidebar-linkz <%= activePage === 'privacy' ? 'active' : '' %>">
+            <a href="/user/privacy" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'privacy' ? 'active' : '' %>">
                 <i class="fa-solid fa-key me-2"></i>Privacy Settings
             </a>
-            <a href="/user/coupons" class="nav-link sidebar-linkz <%= activePage === 'coupons' ? 'active' : '' %>">
+            <a href="/user/coupons" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'coupons' ? 'active' : '' %>">
                 <i class="fa-solid fa-ticket me-2"></i>My Coupons
             </a>
-            <a href="/user/reviews" class="nav-link sidebar-linkz <%= activePage === 'reviews' ? 'active' : '' %>">
-                <i class="fa-solid fa-star me-2"></i>My Reviews & Ratings
-            </a>
-            <a href="/user/wallet" class="nav-link sidebar-linkz <%= activePage === 'wallet' ? 'active' : '' %>">
+            <a href="/user/wallet" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'wallet' ? 'active' : '' %>">
                 <i class="fa-solid fa-wallet me-2"></i>My Wallet
+            </a>
+            
+            <!-- Icons-only sidebar links (md screens only) -->
+            <a href="/user/orders" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>" 
+               data-bs-toggle="tooltip" data-bs-placement="right" title="My Orders">
+                <i class="fa-solid fa-box"></i>
+            </a>
+            <a href="/user/profile" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= activePage === 'profile' ? 'active' : '' %>"
+               data-bs-toggle="tooltip" data-bs-placement="right" title="Profile Information">
+                <i class="fa-solid fa-user"></i>
+            </a>
+            <a href="/user/address" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= activePage === 'address' ? 'active' : '' %>"
+               data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Addresses">
+                <i class="fa-solid fa-location-dot"></i>
+            </a>
+            <a href="/user/privacy" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= activePage === 'privacy' ? 'active' : '' %>"
+               data-bs-toggle="tooltip" data-bs-placement="right" title="Privacy Settings">
+                <i class="fa-solid fa-key"></i>
+            </a>
+            <a href="/user/coupons" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= activePage === 'coupons' ? 'active' : '' %>"
+               data-bs-toggle="tooltip" data-bs-placement="right" title="My Coupons">
+                <i class="fa-solid fa-ticket"></i>
+            </a>
+            <a href="/user/wallet" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= activePage === 'wallet' ? 'active' : '' %>"
+               data-bs-toggle="tooltip" data-bs-placement="right" title="My Wallet">
+                <i class="fa-solid fa-wallet"></i>
             </a>
         </nav>
     </div>
