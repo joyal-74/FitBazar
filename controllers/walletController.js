@@ -124,19 +124,56 @@ const moneyAddWallet = async (req,res) => {
 }
 
 
-const loadTransactions = async (req,res) => {
+export const loadTransactions = async (req, res) => {
+    const search = req.query.search || "";
+    const filter = req.query.filter || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = 7;
+    const limit = 10;
+
     const skip = (page - 1) * limit;
-    const filter = {};
 
-    const wallet = await Wallet.find(filter).sort({createdAt : -1}).skip(skip).limit(limit).populate('userId');
+    let matchConditions = {};
 
-    const totalTransactions = await Wallet.countDocuments(filter);
-    const totalPages = Math.ceil(totalTransactions / limit);
+    if (filter) {
+        matchConditions.type = filter;
+    }
 
-    res.render('admin/transactions', {title : "Wallet management", wallet, totalPages, currentPage : page });
-}
+    if (search) {
+        matchConditions.$or = [
+            { transactionId: { $regex: search, $options: 'i' } },
+            { payment_type: { $regex: search, $options: 'i' } },
+            { 'userId.name': { $regex: search, $options: 'i' } }  
+        ];
+    }
+
+    try {
+        const walletData = await Wallet.aggregate([
+            { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'userId' } },
+            { $unwind: { path: '$userId', preserveNullAndEmptyArrays: true } },
+            { $match: matchConditions },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit }
+        ]);
+
+        const totalCount = await Wallet.countDocuments(matchConditions);
+
+        const totalPages = Math.ceil(totalCount / limit);
+
+        res.render('admin/transactions', {
+            title : 'Transactions',
+            wallet: walletData,
+            selectedFilter: filter,
+            searchVal: search,
+            currentPage: page,
+            totalPages: totalPages
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
+    }
+};
 
 const loadTransactionDetails = async (req,res) => {
     const {walletId} = req.query

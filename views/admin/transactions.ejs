@@ -10,19 +10,36 @@
 
             <!-- Main Content -->
             <main class="col-md-10 col-lg-9 px-md-4 py-4 mx-auto px-3">
-                <h1 class="h3 mb-4 fw-bold">Transactions</h1>
+
+                <h1 class="h3 mb-4 fw-bold mt-4 mt-sm-3 mt-md-1">Transactions</h1>
 
                 <!-- Filters and Search -->
-                <div class="d-flex flex-wrap align-items-center justify-content-end gap-3 mb-4">
-                    <!-- Search Bar -->
-                    <form class="d-flex search-container flex-grow-1" id="searchForm" style="max-width: 300px;">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchval">
-                        <button class="btn" type="submit" style="background-color: #6d4e77;">
-                            <i class="fas fa-search text-white"></i>
-                        </button>
+                <div class="mb-4">
+                    <form class="search-container w-100" id="searchForm" action="/admin/transactions" method="GET">
+                        <div class="row justify-content-between">
+                            <!-- Filter Select -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <select class="form-select filter-select" name="filter" onchange="this.form.submit()">
+                                    <option disabled hidden <%= !selectedFilter ? 'selected' : '' %>>Filter ⇅</option>
+                                    <option value="add_money" <%= selectedFilter === 'add_money' ? 'selected' : '' %>>Wallet</option>
+                                    <option value="product_purchase" <%= selectedFilter === 'product_purchase' ? 'selected' : '' %>>Product Purchase</option>
+                                    <option value="refund" <%= selectedFilter === 'refund' ? 'selected' : '' %>>Returned</option>
+                                </select>
+                            </div>
+                        
+                            <!-- Search Input + Button -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="input-group">
+                                    <input class="form-control" type="search" name="search" value="<%= searchVal || '' %>" placeholder="Search" aria-label="Search">
+                                    <button class="btn" type="submit" style="background-color: #6d4e77;">
+                                        <i class="fas fa-search text-white"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
-
+                
                 <!-- Desktop Table (hidden on mobile) -->
                 <div class="card d-none d-md-block">
                     <div class="card-body p-0 m-0">
@@ -122,7 +139,7 @@
                         <ul class="pagination pagination-sm">
                             <% if (currentPage > 1) { %>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>&filter=<%= selectedFilter || '' %>&search=<%= searchVal || '' %>" aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
                                     </a>
                                 </li>
@@ -130,13 +147,13 @@
 
                             <% for(let i = 1; i <= totalPages; i++) { %>
                                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                    <a class="page-link" href="?page=<%= i %>&filter=<%= selectedFilter || '' %>&search=<%= searchVal || '' %>"><%= i %></a>
                                 </li>
                             <% } %>
 
                             <% if (currentPage < totalPages) { %>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>&filter=<%= selectedFilter || '' %>&search=<%= searchVal || '' %>" aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
                                     </a>
                                 </li>

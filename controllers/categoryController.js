@@ -7,7 +7,7 @@ const categoryInfo = async (req, res) => {
         const searchQuery = req.query.q || "";
         
         const page = parseInt(req.query.page) || 1;
-        const limit = 7;
+        const limit = 8;
         const skip = (page - 1) * limit;
 
         const categoryData = await Category.find({ name: { $regex: searchQuery, $options: "i" }}).sort({ createdAt: -1 }).skip(skip).limit(limit);
@@ -100,7 +100,7 @@ const filterCategories = async (req, res) => {
         let filter = {};
 
         const page = parseInt(req.query.page) || 1;
-        const limit = 7;
+        const limit = 8;
         const skip = (page - 1) * limit;
 
         if (visibility === 'true') {

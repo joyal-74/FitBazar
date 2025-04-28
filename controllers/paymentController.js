@@ -261,17 +261,19 @@ const paymentSuccess = async (req, res) => {
         await order.save({ session });
 
         const transactionId = generateTxnId();
-        await Wallet.create({
-            userId,
-            orderId,
-            transactionId,
-            payment_type: paymentMethod,
-            type: 'product_purchase',
-            amount: totalPayable,
-            status: 'Paid',
-            entryType: 'DEBIT',
-            address: order.address,
-        });
+        if(paymentMethod !== 'cod'){
+            await Wallet.create({
+                userId,
+                orderId,
+                transactionId,
+                payment_type: paymentMethod,
+                type: 'product_purchase',
+                amount: totalPayable,
+                status: 'Paid',
+                entryType: 'DEBIT',
+                address: order.address,
+            });
+        }
 
         await Cart.findOneAndDelete({ userId }).session(session);
 

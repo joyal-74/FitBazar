@@ -118,8 +118,8 @@ export const salesReportExcel = async (salesData) => {
 
     salesData.forEach(order => {
         order.orderItems.forEach(item => {
-            const itemAmount = item.price * item.quantity;
-            const itemDiscount = item.discount || 0;
+            const itemAmount = item.discountPrice * item.quantity;
+            const itemDiscount = item.coupon || 0;
 
             totalAmount += itemAmount;
             totalDiscounts += itemDiscount;
@@ -129,7 +129,7 @@ export const salesReportExcel = async (salesData) => {
                 orderId: `#${order.orderId}`,
                 customer: order.userId?.name || 'N/A',
                 orderDate: new Date(order.createdAt).toISOString().split('T')[0],
-                product: item.name || item.productId || 'N/A',
+                product: item.product.name || item.product.productId || 'N/A',
                 quantity: item.quantity,
                 amount: `₹${itemAmount.toLocaleString('en-IN')}`,
                 discount: `₹${itemDiscount.toLocaleString('en-IN')}`,

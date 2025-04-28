@@ -93,5 +93,7 @@ bugs to fix
 2. after going to checkout the stock less how to manage
 
 
-3. add a filter in transaction based on payment type
-4. cod saving in transaction - which need to remove
+3. add a filter in transaction based on payment type [x]
+4. cod saving in transaction - which need to remove [x]
+
+5. sales report excel [x]
