@@ -19,7 +19,7 @@ const loadproductDetails = async (req, res) => {
         const product = await Products.findOne({ _id : productId }).populate('category')
         const relateproducts = await Products.find({ category }).limit(4);
 
-        return res.render('productdetails', { title: "productDetails", product, relateproducts, userId, user, reviews })
+        return res.render('productDetails', { title: `${product.name}`, product, relateproducts, userId, user, reviews })
     } catch (error) {
         console.log(error)
     }

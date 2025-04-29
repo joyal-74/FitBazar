@@ -109,8 +109,7 @@
                                 <label class="form-label">Payment Method</label>
                                 <select class="form-select" id="paymentMethod" name="paymentMethod">
                                     <option value="" disabled selected>Select payment method</option>
-                                    <option value="razorpay">Netbanking</option>
-                                    <option value="razorpay">Credit/Debit Card</option>
+                                    <option value="razorpay">Online Payment</option>
                                 </select>
                             </div>
                         </div>
@@ -143,7 +142,6 @@
 
             if (!paymentMethod) {
                 return Swal.fire({
-                    title: "Payment Method Required",
                     text: "Please select a payment method.",
                     icon: "warning"
                 });
@@ -188,7 +186,6 @@
                 console.error('Payment Initialization Error:', error);
 
                 Swal.fire({
-                    title: "Error",
                     text: "Failed to start the payment. Please try again.",
                     icon: "error"
                 });

@@ -152,6 +152,7 @@
                     <div style="font-size: 0.7rem;">Cart</div>
                 </a>
             <% } %>
+
             <!-- Profile dropup for mobile -->
             <div class="dropup text-center">
                 <a href="#" class="text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: <%= ['profile', 'orders', 'address', 'privacy', 'coupons', 'reviews', 'wallet'].includes(activePage) ? '#5B3F64' : '#212529' %>">
@@ -165,6 +166,12 @@
                     <li><a class="dropdown-item <%= activePage === 'privacy' ? 'active' : '' %>" href="/user/privacy"><i class="fa-solid fa-key me-2"></i>Privacy Settings</a></li>
                     <li><a class="dropdown-item <%= activePage === 'coupons' ? 'active' : '' %>" href="/user/coupons"><i class="fa-solid fa-ticket me-2"></i>My Coupons</a></li>
                     <li><a class="dropdown-item <%= activePage === 'wallet' ? 'active' : '' %>" href="/user/wallet"><i class="fa-solid fa-wallet me-2"></i>My Wallet</a></li>
+                    <li class="nav-item">
+                        <form id="offcanvasLogoutForm" action="/user/logout" method="POST" style="display: none;"></form>
+                        <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('offcanvasLogoutForm').submit(); return false;">
+                            <i class="fa-solid fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

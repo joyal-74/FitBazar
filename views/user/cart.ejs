@@ -310,48 +310,9 @@
             </div>
         </div>
 
-        <!-- Toast Notification -->
-        <div class="toast align-items-center text-white bg-success border-0" id="notification">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="toast-icon fas me-2"></i>
-                    <span class="toast-text"></span>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
     </main>
 
     <script>
-        // Show toast notification
-        function showNotification(message, type) {
-            const toast = document.getElementById('notification');
-            const icon = toast.querySelector('.toast-icon');
-            const text = toast.querySelector('.toast-text');
-            
-            // Set type
-            if (type === 'success') {
-                toast.classList.remove('bg-danger');
-                toast.classList.add('bg-success');
-                icon.className = 'toast-icon fas fa-check-circle';
-            } else {
-                toast.classList.remove('bg-success');
-                toast.classList.add('bg-danger');
-                icon.className = 'toast-icon fas fa-exclamation-circle';
-            }
-            
-            // Set message
-            text.textContent = message;
-            
-            // Show toast
-            toast.classList.add('show');
-            
-            // Hide after 3 seconds
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
         // Update Quantity
         async function updateQuantity(productId, change, color, weight) {
             try {
@@ -364,16 +325,19 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    showNotification('Quantity updated successfully', 'success');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    window.location.reload();
                 } else {
-                    showNotification(data.error || 'Failed to update quantity!', 'error');
+                    Swal.fire({
+                        text : data.error  || 'Qantity already at its minimum',
+                        icon: "warning"
+                    })
                 }
             } catch (error) {
                 console.error('Error updating quantity:', error);
-                showNotification('Something went wrong. Please try again later.', 'error');
+                Swal.fire({
+                    text: "Error updating quantity",
+                    icon: "error"
+                });
             }
         }
 

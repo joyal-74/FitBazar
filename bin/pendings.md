@@ -97,3 +97,19 @@ bugs to fix
 4. cod saving in transaction - which need to remove [x]
 
 5. sales report excel [x]
+
+
+
+bugs after hosting
+__________________
+
+otp verification
+wallet money add [x]
+productdetails page [x]
+order details page - responsive [x]
+orderconfirmation - navbar [x]
+
+logout-button - profile mobile screen [x]
+google signup fix []
+
+global search - []
