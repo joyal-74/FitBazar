@@ -19,27 +19,38 @@ passport.use(
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
-                let user = await User.findOne({ googleId: profile.id });
-                const userId = await generateUserId();
-                const referalCode = `FIT${userId}`
+                const email = profile.emails[0].value;
 
-                if (!user) {
-                    user = new User({
-                        name: profile.displayName,
-                        email: profile.emails[0].value,
-                        googleId: profile.id,
-                        userId,
-                        referalCode,
-                    });
-                    await user.save();
+                let user = await User.findOne({ email });
+
+                if (user) {
+                    if (user.isBlocked) {
+                        return done(null, false, { message: "Account is blocked. Please contact support" });
+                    }
+
+                    if (!user.googleId) {
+                        return done(null, false, { message: "Email already registered. Please login with password." });
+                    }
+
+                    return done(null, user);
                 }
 
-                req.session.user = user
-                // console.log(req.session.user)
+                // Create new user
+                const userId = await generateUserId();
+                const referalCode = `FIT${userId}`;
 
-                return done(null, user);
-            } catch (error) {
-                return done(error, null);
+                const newUser = new User({
+                    name: profile.displayName,
+                    email,
+                    googleId: profile.id,
+                    userId,
+                    referalCode,
+                });
+
+                await newUser.save();
+                return done(null, newUser);
+            } catch (err) {
+                return done(err, null);
             }
         }
     )

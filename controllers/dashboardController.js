@@ -143,6 +143,7 @@ const loadDashboard = async (req, res) => {
             $project: {
                 _id: 0,
                 productId: "$productInfo.productId", 
+                name: "$productInfo.name", 
                 totalSold: 1
             }
         },

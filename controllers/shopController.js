@@ -12,7 +12,7 @@ const loadproductDetails = async (req, res) => {
     
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         const reviews = await Reviews.find({productId})
 
@@ -29,7 +29,7 @@ const loadproductDetails = async (req, res) => {
 const loadShop = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         const page = parseInt(req.query.page) || 1;
         const limit = 12;

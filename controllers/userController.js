@@ -24,7 +24,9 @@ const getUserHome = async (req, res)=> {
 
 // Login Page Handler
 function loadLogin(req, res) {
-    res.render('user/login', { title: 'Login Page' });
+    const messages = req.session.messages || [];
+    req.session.messages = []; 
+    res.render('user/login', { title: 'Login Page', messages });
 }
 
 // Register Page Handler

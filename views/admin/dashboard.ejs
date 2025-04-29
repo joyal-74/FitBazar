@@ -159,6 +159,10 @@
             charts.revenueLineChart.render();
 
             // Best Selling Products Bar Chart
+            const productIds = data.bestSellingProducts.map(p => p.productId);
+            const productNames = data.bestSellingProducts.map(p => p.name);
+            const productSales = data.bestSellingProducts.map(p => p.totalSold);
+
             const bestSellingOptions = {
                 chart: {
                     type: 'bar',
@@ -177,17 +181,23 @@
                 },
                 dataLabels: { enabled: false },
                 xaxis: {
-                    categories: data.bestSellingProducts.map(p => p.productId) || ['No Data'],
+                    categories: productIds,
                     labels: { style: { fontSize: '12px', colors: '#666' } },
                 },
                 colors: ['#8b5d9e'],
-                series: [{ name: 'Units Sold', data: data.bestSellingProducts.map(p => p.totalSold) || [0] }],
+                series: [{ name: 'Units Sold', data: productSales }],
                 yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
                 grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
                 tooltip: {
                     theme: 'light',
-                    style: { fontSize: '12px' },
-                    y: { formatter: val => `${val} units` },
+                    x: {
+                        formatter: function (value, { dataPointIndex }) {
+                            return productNames[dataPointIndex] || value;
+                        },
+                    },
+                    y: {
+                        formatter: val => `${val} units`,
+                    },
                 },
                 responsive: [{ breakpoint: 768, options: { chart: { height: 280 } } }],
             };

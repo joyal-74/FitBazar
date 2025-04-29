@@ -6,7 +6,7 @@ const getWishlist = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-        const user = await User.findOne({_id : userId})
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         if(!userId){
             res.status(UNAUTHORIZED).json({error : "Please login to view wishlist"})

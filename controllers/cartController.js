@@ -117,7 +117,7 @@ const loadCart = async (req, res) => {
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-        const user = await User.findOne({ _id : userId});
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 

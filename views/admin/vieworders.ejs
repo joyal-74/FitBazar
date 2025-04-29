@@ -118,7 +118,6 @@
                                                                     data-bs-target="#returnInfoModal"
                                                                     data-product-name="<%= item.product?.name %>"
                                                                     data-reason="<%= refund?.reason %>"
-                                                                    data-description="<%= refund?.description || 'No additional description provided.' %>"
                                                                     data-product-id="<%= item.product?._id %>"
                                                                     data-order-id="<%= order._id %>">
                                                                 <i class="fa-solid fa-circle-info p-0 m-0"></i>
@@ -245,8 +244,6 @@
                     <p id="returnProductName" class="text-muted"></p>
                     <h6 class="fw-bold">Reason:</h6>
                     <p id="returnReason" class="text-muted"></p>
-                    <h6 class="fw-bold">Description:</h6>
-                    <p id="returnDescription" class="text-muted"></p>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success" id="approveReturnBtn">Approve</button>
@@ -395,13 +392,11 @@
             button.addEventListener('click', () => {
                 const productName = button.getAttribute('data-product-name');
                 const reason = button.getAttribute('data-reason');
-                const description = button.getAttribute('data-description');
                 returnProductId = button.getAttribute('data-product-id');
                 returnOrderId = button.getAttribute('data-order-id');
 
                 document.getElementById('returnProductName').textContent = productName;
                 document.getElementById('returnReason').textContent = reason;
-                document.getElementById('returnDescription').textContent = description;
             });
         });
 

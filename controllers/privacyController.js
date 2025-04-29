@@ -5,7 +5,7 @@ import { OK, NOT_FOUND, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '../config/st
 
 const loadPrivacy = async (req,res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-    const user = await User.findOne({_id : userId})
+    const user = await User.findOne({ _id : userId, isBlocked : false});
 
     const [firstName] = user.name.split(' ');
 
@@ -21,7 +21,7 @@ const updatePassword = async (req, res) => {
             return res.status(UNAUTHORIZED).json({ error: "User not authenticated" });
         }
 
-        const user = await User.findOne({ _id: userId });
+        const user = await User.findOne({ _id : userId, isBlocked : false});
         if (!user) {
             return res.status(NOT_FOUND).json({ error: "User not found" });
         }

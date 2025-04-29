@@ -9,7 +9,7 @@ const loadAddress = async (req, res) => {
 
     if (!userId) return res.redirect('/user/login');
 
-    const user = await User.findOne({_id : userId})
+    const user = await User.findOne({ _id : userId, isBlocked : false});
 
     const [firstName, lastName] = user.name.split(' ');
 
@@ -78,7 +78,7 @@ const loadAddAddress = async (req,res)=>{
 
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
-    const user = await User.findOne({_id : userId})
+    const user = await User.findOne({ _id : userId, isBlocked : false});
 
     const [firstName, lastName] = user.name.split(' ');
 
@@ -90,7 +90,7 @@ const loadEditAddress = async (req, res) => {
         const { id, index, from } = req.query;
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({_id : userId})
+        const user = await User.findOne({ _id : userId, isBlocked : false});
         if (!user) {
             return res.status(UNAUTHORIZED).json({ error: "Unauthorized" });
         }

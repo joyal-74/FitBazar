@@ -14,7 +14,7 @@ import { nanoid } from "nanoid";
 const loadPayments = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({_id: userId});
+        const user = await User.findOne({ _id : userId, isBlocked : false});
         const cart = await Cart.findOne({ userId: userId }).populate('items.productId');
 
         if (!cart || !cart.items || cart.items.length === 0) {
@@ -318,7 +318,7 @@ const paymentFailed = async (req,res) => {
 
 const loadPaymentFailed = async (req,res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-    const user = await User.findById(userId);
+    const user = await User.findOne({ _id : userId, isBlocked : false});
 
     res.render('user/paymentFailed', {title : "Payment Failed", user});
 }

@@ -73,7 +73,7 @@ _________________________
 2. Shop page price filter min - max [x]
 3. top 10 for dashbord chart - [x]
 4. max quantity per order - 10 [x]
-5. payment failure also create as an order - []x
+5. payment failure also create as an order - [x]
 5. multiple products as single order not multiple - [x]
 6. transaction credit/debit color - [x]
 
@@ -113,3 +113,9 @@ logout-button - profile mobile screen [x]
 google signup fix []
 
 global search - []
+
+No error message is showing for Google users when they are blocked -[x]
+
+Remove the unwanted elements from ui [x]
+
+Bug in product search [x]

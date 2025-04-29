@@ -15,7 +15,7 @@ const loadOrders = async (req, res) => {
             return res.status(UNAUTHORIZED).redirect('/user/login');
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findOne({ _id : userId, isBlocked : false});
         if (!user) {
             return res.status(NOT_FOUND).send('User not found');
         }
@@ -50,7 +50,7 @@ const loadOrderDetails = async (req,res)=> {
             return res.status(UNAUTHORIZED).redirect('/user/login');
         }
 
-        const user = await User.findOne({_id : userId})
+        const user = await User.findOne({ _id : userId, isBlocked : false});
         const [firstName] = user.name.split(' ');
 
         const order = await Order.findOne({ _id : orderId }).populate('orderItems.product');
@@ -85,7 +85,7 @@ const loadprofile = async (req,res) => {
 
     if (!userId) return res.redirect('/user/login');
 
-    const user = await User.findOne({_id : userId})
+    const user = await User.findOne({ _id : userId, isBlocked : false});
     const [firstName, lastName] = user.name.split(' ');
     res.render('user/profile',{title : "User Pofile", user, firstName, lastName })
 }
@@ -93,7 +93,7 @@ const loadprofile = async (req,res) => {
 const loadUpdateProfile = async (req,res) => {
     const userId = req.query.userId;
 
-    const user = await User.findOne({ userId : userId});
+    const user = await User.findOne({ _id : userId, isBlocked : false});
     const [firstName, lastName] = user.name.split(' ');
     res.render('user/profileU',{title : "Edit Pofile", user, firstName, lastName })
 }
@@ -171,7 +171,7 @@ const updateProfile = async (req, res) => {
             username = username.trim();
         }
 
-        const user = await User.findOne({ userId });
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         if (!user) {
             return res.status(NOT_FOUND).json({ error: "User not found" });

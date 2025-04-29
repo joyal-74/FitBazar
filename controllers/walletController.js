@@ -14,7 +14,7 @@ const loadWallet = async(req, res) =>{
             return res.status(UNAUTHORIZED).json({message : 'Please login to continue..!'})
         }
 
-        const user = await User.findOne({_id : userId})
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         const lastTransaction = await Wallet.findOne({ userId }).sort({ createdAt: -1 });
         // console.log(lastTransaction);
@@ -128,7 +128,7 @@ export const loadTransactions = async (req, res) => {
     const search = req.query.search || "";
     const filter = req.query.filter || "";
     const page = parseInt(req.query.page) || 1;
-    const limit = 10;
+    const limit = 7;
 
     const skip = (page - 1) * limit;
 

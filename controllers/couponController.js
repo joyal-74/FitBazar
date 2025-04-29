@@ -175,7 +175,7 @@ const loadCoupons = async (req,res)=>{
         res.redirect('/user/login')
     }
 
-    const user = await User.findOne({_id : userId})
+    const user = await User.findOne({ _id : userId, isBlocked : false});
 
     const [firstName] = user.name.split(' ');
 

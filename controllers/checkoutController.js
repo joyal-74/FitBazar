@@ -9,7 +9,7 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATE
 const loadCheckout = async (req, res) => {
     const userId = req.query.userId;
 
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id : userId, isBlocked : false});
     const address = await Address.find({ userId });
     const cart = await Cart.findOne({ userId }).populate('items.productId');
 
@@ -117,7 +117,7 @@ const loadCheckoutUp = async (req, res) => {
         const { id, index } = req.query;
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
-        const user = await User.findOne({_id : userId})
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         if (!user) {
             return res.status(UNAUTHORIZED).json({ error: "Please Login to continue" });
@@ -156,7 +156,7 @@ const confirmOrder = async (req, res) => {
             return res.status(NOT_FOUND).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findOne({ _id : userId, isBlocked : false});
 
         const orders = await Order.find({ userId }).populate('orderItems.product').sort({ createdAt: -1 }).limit(1);
 

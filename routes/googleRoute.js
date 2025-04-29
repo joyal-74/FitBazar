@@ -4,7 +4,11 @@ const router = express.Router();
 
 
 router.get('/google', passport.authenticate('google',{scope:['profile', 'email']}));
-router.get('/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),(req,res)=>{
+router.get('/google/callback', passport.authenticate('google',{
+            failureRedirect:'/user/login', 
+            failureMessage: true,
+        }),(req,res)=>{
+
     req.session.userLogged = true
 
     req.session.user = {
