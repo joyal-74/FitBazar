@@ -156,7 +156,7 @@ const confirmOrder = async (req, res) => {
             return res.status(NOT_FOUND).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
         }
 
-        const user = await User.findOne({ _id : userId, isBlocked : false});
+        const user = await User.findById(userId);
 
         const orders = await Order.find({ userId }).populate('orderItems.product').sort({ createdAt: -1 }).limit(1);
 

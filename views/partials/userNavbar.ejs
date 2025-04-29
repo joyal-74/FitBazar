@@ -5,22 +5,14 @@
             <!-- Brand -->
             <a class="navbar-brand fw-bold" href="/">FitBazar</a>
             
-            <div class="d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-start justify-content-end">
                 <!-- Desktop Navigation (hidden on small screens) -->
                 <ul class="navbar-nav d-none d-lg-flex flex-row me-3">
                     <li class="nav-item me-3"><a class="text-white text-decoration-none <%= activePage === 'home' ? 'user-nav-text' : '' %>" href="/">Home</a></li>
                     <li class="nav-item me-3"><a class="text-white text-decoration-none <%= activePage === 'shop' ? 'user-nav-text' : '' %>" href="/shop">Shop</a></li>
+                    <li class="nav-item me-3"><a class="text-white text-decoration-none <%= activePage === 'about' ? 'user-nav-text' : '' %>" href="/about">About Us</a></li>
                 </ul>
-                
-                <!-- Search bar with max-width -->
-                <form class="">
-                    <div class="input-group">
-                        <input class="form-control navbar-search" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn" type="submit" style="background-color: #f4dbfc;">
-                            <i class="fa-solid fa-magnifying-glass" style="color: black;"></i>
-                        </button>
-                    </div>
-                </form>
+
             </div>
             
             <!-- User actions -->
@@ -86,6 +78,7 @@
         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="/shop">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
             
             <% if (user) { %>
                 <li class="nav-item mt-3">
@@ -166,6 +159,7 @@
                     <li><a class="dropdown-item <%= activePage === 'privacy' ? 'active' : '' %>" href="/user/privacy"><i class="fa-solid fa-key me-2"></i>Privacy Settings</a></li>
                     <li><a class="dropdown-item <%= activePage === 'coupons' ? 'active' : '' %>" href="/user/coupons"><i class="fa-solid fa-ticket me-2"></i>My Coupons</a></li>
                     <li><a class="dropdown-item <%= activePage === 'wallet' ? 'active' : '' %>" href="/user/wallet"><i class="fa-solid fa-wallet me-2"></i>My Wallet</a></li>
+                    <li><a class="dropdown-item <%= activePage === 'about' ? 'active' : '' %>" href="/about"><i class="fa-solid fa-wallet me-2"></i>About Us</a></li>
                     <li class="nav-item">
                         <form id="offcanvasLogoutForm" action="/user/logout" method="POST" style="display: none;"></form>
                         <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('offcanvasLogoutForm').submit(); return false;">

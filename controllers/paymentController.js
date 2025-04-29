@@ -51,6 +51,7 @@ const loadPayments = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
     try {
+        console.log('hi')
         const { totalPrice } = req.body;
 
         const options = {
@@ -69,7 +70,8 @@ const createRazorpayOrder = async (req, res) => {
             currency: order.currency
         });
     } catch (error) {
-        console.error('Error creating Razorpay order:', error);
+        console.error('Razorpay Error:', error?.response?.data || error.message || error);
+
         res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to create order' });
     }
 };

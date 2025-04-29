@@ -116,8 +116,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Spinner Overlay -->
+        <div id="spinnerOverlay" class="spinner-overlay d-none">
+            <div class="spinner-box">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Verifying...</span>
+                </div>
+                <p class="text-white mt-3">Processing...</p>
+            </div>
+        </div>
+
     </main>
     <script>
+
+    const spinnerOverlay = document.getElementById("spinnerOverlay");
 
     function previewImage(event) {
         const file = event.target.files[0];
@@ -149,7 +162,9 @@
             if (newEmail === originalEmail) {
                 await updateProfile();
             } else {
-                
+
+                spinnerOverlay.classList.remove("d-none");
+
                 try {
                     const response = await fetch('/user/sendotp', {
                         method: 'POST',
@@ -158,6 +173,8 @@
                     });
 
                     const data = await response.json();
+                    spinnerOverlay.classList.add("d-none");
+
                     if (!response.ok) {
                         Swal.fire('Error', data.error || 'Failed to send OTP', 'error');
                         return;
@@ -168,6 +185,8 @@
                     otpError.style.display = 'none';
 
                 } catch (error) {
+                    spinnerOverlay.classList.add("d-none");
+
                     console.error('Error:', error);
                     Swal.fire('Error', 'An error occurred while sending OTP', 'error');
                 }
@@ -183,6 +202,8 @@
                 return;
             }
 
+            spinnerOverlay.classList.remove("d-none");
+
             try {
                 const response = await fetch('/user/verifymail', {
                     method: 'POST',
@@ -191,6 +212,8 @@
                 });
 
                 const data = await response.json();
+                spinnerOverlay.classList.add("d-none");
+
                 if (!response.ok) {
                     otpError.textContent = data.error || 'Invalid OTP';
                     otpError.style.display = 'block';
@@ -201,6 +224,8 @@
                 await updateProfile();
             } catch (error) {
                 console.error('Error:', error);
+                spinnerOverlay.classList.add("d-none");
+
                 otpError.textContent = 'An error occurred';
                 otpError.style.display = 'block';
             }
@@ -208,6 +233,7 @@
 
         // Update Profile function
         async function updateProfile() {
+            spinnerOverlay.classList.remove("d-none");
             try {
                 const response = await fetch(`/user/profile?id=${userId}`, {
                     method: 'PUT',
@@ -215,6 +241,9 @@
                 });
 
                 const data = await response.json();
+
+                spinnerOverlay.classList.add("d-none");
+
                 if (!response.ok) {
                     Swal.fire('Error', data.error || 'Failed to update profile', 'error');
                 } else {
@@ -229,6 +258,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
+                spinnerOverlay.classList.add("d-none");
                 Swal.fire('Error', 'An error occurred while updating the profile', 'error');
             }
         }

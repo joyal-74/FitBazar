@@ -1,0 +1,100 @@
+<head>
+    <style>
+        .highlight-box {
+            background-color: #5b3f64;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .quote-box {
+            background-color: #f3f4f6;
+            padding: 1.5rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            font-style: italic;
+        }
+
+        .section-title {
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .icon-img {
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('./partials/userNavbar', { activePage: 'about' }) %>
+
+    <div class="container py-5">
+        <!-- Header -->
+        <h2 class="text-center mb-4">Who we are</h2>
+
+        <!-- Image Icons -->
+        <div class="row justify-content-center text-center mb-4">
+            <div class="col-5 col-md-3"><img src="/Sport family-rafiki.svg" alt="Icon 1" class="img-fluid icon-img"></div>
+            <div class="col-5 col-md-3"><img src="/Dumbbell exercise-rafiki.svg" alt="Icon 2" class="img-fluid icon-img"></div>
+            <div class="col-5 col-md-3"><img src="/Jiu Jitsu-rafiki.svg" alt="Icon 3" class="img-fluid icon-img"></div>
+            <div class="col-5 col-md-3"><img src="/Running-rafiki.svg" alt="Icon 3" class="img-fluid icon-img"></div>
+        </div>
+
+        <!-- Highlight Statement -->
+        <div class="highlight-box text-center mb-4">
+            With the latest, trendiest, and most high-performance gear from India and beyond, FitBazar empowers you to
+            train harder, push limits, and conquer your fitness journey with confidence
+        </div>
+
+        <!-- Descriptive Paragraphs -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <p>Our exclusive private label—designed by us, owned by you. If you’re looking for top-tier fitness
+                    essentials, high-performance gym gear, and sleek sports accessories, FitBazar OWN is what you need
+                    to power your workouts.</p>
+            </div>
+            <div class="col-md-6">
+                <p>From world-class sportswear to cutting-edge gym equipment, we bring the best global fitness brands
+                    straight to your doorstep. No more searching endlessly—we’ve curated the top-performing gear for
+                    you.</p>
+            </div>
+        </div>
+
+        <!-- Motivational Quote -->
+        <div class="quote-box text-center mb-5">
+            So, the next time someone says "That workout is too intense," "Are you sure you can lift that?" "Maybe you
+            should try something easier," or "That gear is too bold for you,"—prove them wrong. At FitBazar, we believe
+            fitness is personal, and your journey is yours to own.
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="row gy-4">
+            <div class="col-md-6">
+                <div class="section-title mb-2">Performance Collections</div>
+                <p>Whether you’re training for a marathon, lifting heavy at the gym, or hitting the trails for an
+                    adventure, we have a collection that matches your energy and ambition.</p>
+            </div>
+            <div class="col-md-6">
+                <div class="section-title mb-2">The Indie Fitness Experience</div>
+                <p>Support handcrafted, homegrown fitness brands that bring innovation, sustainability, and authenticity
+                    to your workouts. Every product tells a story of passion and dedication.</p>
+            </div>
+            <div class="col-md-6">
+                <div class="section-title mb-2">FitBazar Athlete Tribe</div>
+                <p>A dedicated space where we feature real athletes, fitness influencers, and everyday champions. Get
+                    inspired by their stories and shop their favorite training gear.</p>
+            </div>
+            <div class="col-md-6">
+                <div class="section-title mb-2">#FitBazarToday</div>
+                <p>Your daily dose of fitness trends, new launches, and expert training tips—because staying ahead in
+                    fitness is just as important as staying fit!</p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('./partials/userFooter') %>
+
+</body>
+

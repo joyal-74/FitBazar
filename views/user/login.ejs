@@ -1,55 +1,72 @@
+<body class="l-body">
+    <div class="min-vh-100 d-flex text-center align-items-center">
+        <div class="container container-sm-fluid log-container">
+            <div class="d-flex login-div flex-column flex-md-row align-items-center">
+                <!-- Left Side - Login Form -->
+                <div class="col-12 col-md-6 px-3 px-md-5 py-4 py-md-5 mt-md-1 mt-5">
 
-<body class="d-flex align-items-center justify-content-center min-vh-100 l-body">
-    <div class="container log-container flex-md-row row">
-        <div class="d-flex login-div flex-md-row align-items-center">
-            <!-- Left Side - Login Form -->
-            <div class="w-50 px-5 py-5">
-                <h2 class="fw-bold mb-5 text-center">Welcome Back</h2>
-                <!-- Google Login -->
-                <div class="google-btn mt-3 bg-white" style="border-radius: 28px;">
-                    <a style="text-decoration: none; color: #000;" href="/auth/google"><img src="/google-logo.png" alt="Google Logo" >
-                    Login with Google</a>
+                    <h3 class="fw-bold mb-4 mb-md-5 text-center">FitBazar Login..!</h3>
+                    <!-- Google Login -->
+                    <div class="google-btn mt-3 bg-white" style="border-radius: 28px;">
+                        <a style="text-decoration: none; color: #000;" href="/auth/google"><img src="/google-logo.png" alt="Google Logo" >
+                        Login with Google</a>
+                    </div>
+    
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+    
+                    <!-- Login Form -->
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <input type="text" id="email" class="form-control" name="email" placeholder="Email">
+                            <div id="emailError" style="font-size: 0.8em; color: #ff0101;"></div>
+                        </div>
+                    
+                        <div class="mb-3">
+                            <input type="password" id="password" class="form-control" name="password" placeholder="Password">
+                            <div id="passwordError" style="font-size: 0.8em; color: #ff0101;"></div>
+                        </div>
+                        <div class="mb-3 forgot-password">
+                            <a class="forgot-password" href="/user/forgetPass">Forgot password?</a>
+                        </div>
+                    
+                        <button type="submit" class="btn send-btn mt-3 w-100">Login</button>
+                    </form>
+                    
+                    <!-- Sign Up -->
+                    <p class="signup-text mt-3 text-center">New User? <a href="/user/register">Sign up now..!</a></p>
                 </div>
-
-                <!-- Divider -->
-                <div class="divider">
-                    <span>or</span>
+    
+                <!-- Right Side - Image -->
+                <div class="col-12 col-md-6 d-flex justify-content-center mt-4 mt-md-0">
+                    <div class="login-image">
+                        <img src="/Weights-rafiki.svg" class="img-fluid" style="max-height: 500px;" alt="Running Illustration">
+                    </div>
                 </div>
-
-                <!-- Login Form -->
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <input type="text" id="email" class="form-control" name="email" placeholder="Email">
-                        <div id="emailError" style="font-size: 0.8em; color: #ff0101;"></div>
-                    </div>
-                
-                    <div class="mb-3">
-                        <input type="password" id="password" class="form-control" name="password" placeholder="Password">
-                        <div id="passwordError" style="font-size: 0.8em; color: #ff0101;"></div>
-                    </div>
-                    <div class="mb-3 forgot-password">
-                        <a class="forgot-password" href="/user/forgetPass">Forgot password?</a>
-                    </div>
-                
-                    <button type="submit" class="btn send-btn mt-3">Login</button>
-                </form>
-                
-                <!-- Sign Up -->
-                <p class="signup-text mt-3">New User? <a href="/user/register">Sign up now..!</a></p>
             </div>
-
-            <!-- Right Side - Image -->
-            <div class="w-50 d-flex justify-content-center">
-                <div class="login-image">
-                    <img src="/Weights-rafiki.svg" style="height: 500px;" alt="Running Illustration">
-                </div>
-            </div>
+            
         </div>
-        
     </div>
-    <p class="text-center logo-text-bottom fixed-bottom">© 2025 FitBazar – Your Sports & Fitness Partner</p>
+
+    
+    <p class="text-center logo-text-bottom fixed-bottom py-2">© 2025 FitBazar – Your Sports & Fitness Partner</p>
+
+    <!-- Spinner Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay d-none">
+        <div class="spinner-box">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Verifying...</span>
+            </div>
+            <p class="text-white mt-3">Processing...</p>
+        </div>
+    </div>
 
     <script>
+
+        const spinnerOverlay = document.getElementById("spinnerOverlay");
+
         document.getElementById("loginForm").addEventListener("submit", async (event)=> {
             event.preventDefault();
 
@@ -78,13 +95,15 @@
                 errors.password.innerText = "Password is required";
                 hasError = true;
             } else if (password.length < 6) {
-                errorText.innerText = "Password must be 6+ characters";
+                errors.password.innerText = "Password must be 6+ characters";
                 hasError = true;
             }
 
             if (hasError) return;
 
             const formData = {email, password}
+
+            spinnerOverlay.classList.remove("d-none");
 
             try {
                 const response = await fetch('/user/login', {
@@ -95,7 +114,9 @@
                     body : JSON.stringify(formData)
                 });
 
-                const data = await response.json()
+                const data = await response.json();
+
+                spinnerOverlay.classList.add("d-none");
 
                 if(response.ok){
                     Swal.fire({
@@ -115,7 +136,14 @@
                     })
                 }
             } catch (error) {
-                console.log(error);
+                spinnerOverlay.classList.add("d-none");
+
+                Swal.fire({
+                    icon : 'error',
+                    text : error || "Login Error",
+                    timer : 2000,
+                    showConfirmButton: false
+                })
             }
         });
 

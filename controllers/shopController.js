@@ -167,4 +167,15 @@ const loadShop = async (req, res) => {
 };
 
 
-export default {loadShop, loadproductDetails};
+const loadAbout = async (req,res) => {
+
+    const user = req.session.user
+
+    try {
+        res.render('about', {title : 'About Us', user})
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export default {loadShop, loadproductDetails, loadAbout};

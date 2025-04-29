@@ -37,7 +37,21 @@
         </div>
     </div>
 
+    <!-- Spinner Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay d-none">
+        <div class="spinner-box">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Verifying...</span>
+            </div>
+            <p class="text-white mt-3">Processing...</p>
+        </div>
+    </div>
+
+
     <script>
+
+        const spinnerOverlay = document.getElementById("spinnerOverlay");
+
         document.addEventListener("DOMContentLoaded", async function () {
             await fetchRemainingTime();
 
@@ -89,6 +103,8 @@
 
                 if (this.classList.contains("disabled")) return;
 
+                spinnerOverlay.classList.remove("d-none");
+
                 try {
                     const response = await fetch("/user/resendOtp", {
                         method: "POST",
@@ -96,6 +112,8 @@
                     });
 
                     const data = await response.json();
+                    spinnerOverlay.classList.add("d-none");
+
                     if (response.ok) {
                         Swal.fire({
                             icon: "success",
@@ -126,6 +144,8 @@
                     }
                 } catch (error) {
                     console.error("Resend OTP Error:", error);
+                    spinnerOverlay.classList.add("d-none");
+                    
                     Swal.fire({
                         icon: "error",
                         text: error.message,
@@ -147,6 +167,8 @@
 
                 const otpData = { otp1, otp2, otp3, otp4 };
 
+                spinnerOverlay.classList.remove("d-none");
+
                 try {
                     const response = await fetch("/user/otpverify", {
                         method: "POST",
@@ -155,6 +177,8 @@
                     });
 
                     const data = await response.json();
+                    spinnerOverlay.classList.add("d-none");
+
                     if (response.ok) {
                         Swal.fire({
                             icon: "success",
@@ -173,6 +197,8 @@
                         });
                     }
                 } catch (error) {
+                    spinnerOverlay.classList.add("d-none");
+
                     console.error("OTP Verification Error:", error);
 
                     document.getElementById('otp1').value = "";

@@ -342,7 +342,7 @@ const logoutUser = (req, res) => {
         if (err) {
             return res.send("Error destroying session");
         }
-        res.render('user/login', { title: "login page", message: "Session destroyed. You are logged out." });
+        res.render('user/login', { title: "login page", message: "Session destroyed. You are logged out." , messages : []});
     });
 };
 

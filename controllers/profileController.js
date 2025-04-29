@@ -93,7 +93,7 @@ const loadprofile = async (req,res) => {
 const loadUpdateProfile = async (req,res) => {
     const userId = req.query.userId;
 
-    const user = await User.findOne({ _id : userId, isBlocked : false});
+    const user = await User.findOne({ userId, isBlocked : false});
     const [firstName, lastName] = user.name.split(' ');
     res.render('user/profileU',{title : "Edit Pofile", user, firstName, lastName })
 }
@@ -171,7 +171,7 @@ const updateProfile = async (req, res) => {
             username = username.trim();
         }
 
-        const user = await User.findOne({ _id : userId, isBlocked : false});
+        const user = await User.findOne({ userId, isBlocked : false});
 
         if (!user) {
             return res.status(NOT_FOUND).json({ error: "User not found" });

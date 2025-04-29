@@ -11,4 +11,8 @@ router.get('/', userController.getUserHome);
 router.get('/shop', shopController.loadShop);
 router.get('/product', shopController.loadproductDetails);
 
+// about uS
+
+router.get('/about', shopController.loadAbout);
+
 export default router

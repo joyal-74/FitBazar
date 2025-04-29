@@ -174,10 +174,24 @@
                 </div>
             </div>
         </form>
+
+        <!-- Spinner Overlay -->
+        <div id="spinnerOverlay" class="spinner-overlay d-none">
+            <div class="spinner-box">
+                <div class="spinner-border text-light" role="status">
+                    <span class="visually-hidden">Verifying...</span>
+                </div>
+                <p class="text-white mt-3">Processing...</p>
+            </div>
+        </div>
+
     </main>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
+
+        const spinnerOverlay = document.getElementById("spinnerOverlay");
+
         document.addEventListener('DOMContentLoaded', () => {
             const paymentForm = document.getElementById('paymentForm');
             
@@ -214,7 +228,7 @@
                     return;
                 }
 
-                if (totalPrice > 1000 && paymentMethod =='cod' ) {
+                if (totalPrice > 1000 && paymentMethod === 'cod') {
                     Swal.fire({
                         text: 'Cash on delivery Not allowed for payments above ₹1000',
                         icon: 'warning',
@@ -223,11 +237,6 @@
                     });
                     return;
                 }
-
-                // Show loading state
-                const submitButton = paymentForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
                 const orderCreateRes = await fetch('/user/order', {
                     method: 'POST',
@@ -247,8 +256,6 @@
                         timer: 2500,
                         showConfirmButton: false
                     });
-                    submitButton.disabled = false;
-                    submitButton.innerText = 'Place Order';
                     return;
                 }
 
@@ -259,9 +266,13 @@
                 } else {
                     await handleOtherPaymentMethods(couponApplied, paymentMethod, totalPrice, createdOrderId);
                 }
+
             });
 
+
             async function handleRazorpayPayment(couponApplied, paymentMethod, totalPrice, orderId) {
+                spinnerOverlay.classList.remove("d-none");
+
                 try {
                     const razorpayResponse = await fetch('/user/payments/razorpay', {
                         method: 'POST',
@@ -272,6 +283,8 @@
                     });
 
                     const razorpayData = await razorpayResponse.json();
+                    spinnerOverlay.classList.add("d-none");
+
                     if (!razorpayResponse.ok) throw new Error(razorpayData.error || 'Payment initialization failed');
 
                     const options = {
@@ -335,9 +348,13 @@
                     rzp.open();
 
                 } catch (error) {
-                    throw error;
-                    submitButton.disabled = false;
-                    submitButton.innerText = 'Place Order';
+                    spinnerOverlay.classList.add("d-none");
+                    Swal.fire({
+                        text: 'Razorpay server error.',
+                        icon: 'error',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
                 }
             }
 
@@ -375,8 +392,6 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(()=>{
-                        submitButton.disabled = false;
-                        submitButton.innerText = 'Place Order';
                         window.location.href = '/user/payment-failed';
                     })
                     console.log(error)
@@ -429,7 +444,7 @@
                     });
 
                     const orderDataResult = await orderResponse.json();
-                    console.log(orderDataResult)
+                    // console.log(orderDataResult)
                     
                     if (!orderResponse.ok) {
                         throw new Error(orderDataResult.error || 'Failed to process order');
