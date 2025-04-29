@@ -9,7 +9,8 @@ export const generateInvoicePDF = async (order, address) => {
     const browser = await puppeteer.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+    });
+    
     const page = await browser.newPage();
 
     const date = new Date(order.createdAt).toLocaleString('en-IN', {
