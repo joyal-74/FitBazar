@@ -185,7 +185,19 @@
         </div>
     </div>
 
+    <!-- Spinner Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay d-none">
+        <div class="spinner-box">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Verifying...</span>
+            </div>
+            <p class="text-white mt-3">Processing...</p>
+        </div>
+    </div>
+
     <script>
+        const spinnerOverlay = document.getElementById("spinnerOverlay");
+
         document.addEventListener("DOMContentLoaded", function () {
             let cropper;
             let currentInput;
@@ -215,6 +227,8 @@
                         formData.append("removedImages", JSON.stringify(removedImages));
                     }
 
+                    spinnerOverlay.classList.remove("d-none");
+
                     try {
                         const response = await fetch(`/admin/products/${document.getElementById('productId').value}`, {
                             method: "PUT",
@@ -222,6 +236,7 @@
                         });
 
                         const result = await response.json();
+                        spinnerOverlay.classList.add("d-none");
 
                         if (response.ok) {
                             Swal.fire({
@@ -241,6 +256,7 @@
                         }
                     } catch (error) {
                         console.error("Error:", error);
+                        spinnerOverlay.classList.add("d-none");
                         Swal.fire({
                             icon: "error",
                             text: "Something went wrong. Please try again.",

@@ -115,7 +115,7 @@
     <script>
         document.querySelectorAll('.details-btn').forEach(button => {
             button.addEventListener('click', (e) => {
-                const orderId = e.target.dataset.orderId;
+                const orderId = e.currentTarget.dataset.orderId;
                 console.log(orderId);
                 window.location.href = `/user/orderDetails?id=${orderId}`;
             });

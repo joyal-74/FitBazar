@@ -11,6 +11,10 @@ const loadAddress = async (req, res) => {
 
     const user = await User.findOne({ _id : userId, isBlocked : false});
 
+    if(!user){
+        return res.redirect('/')
+    }
+
     const [firstName, lastName] = user.name.split(' ');
 
     try {
@@ -80,6 +84,10 @@ const loadAddAddress = async (req,res)=>{
 
     const user = await User.findOne({ _id : userId, isBlocked : false});
 
+    if(!user){
+        return res.redirect('/')
+    }
+
     const [firstName, lastName] = user.name.split(' ');
 
     res.render('user/addAddress', {title : "Address", user, firstName, lastName});
@@ -91,8 +99,9 @@ const loadEditAddress = async (req, res) => {
 
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({ _id : userId, isBlocked : false});
-        if (!user) {
-            return res.status(UNAUTHORIZED).json({ error: "Unauthorized" });
+
+        if(!user){
+            return res.redirect('/')
         }
 
         const [firstName, lastName] = user.name.split(' ');

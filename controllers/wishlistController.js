@@ -8,6 +8,10 @@ const getWishlist = async (req, res) => {
 
         const user = await User.findOne({ _id : userId, isBlocked : false});
 
+        if(!user){
+            return res.redirect('/')
+        }
+
         if(!userId){
             res.status(UNAUTHORIZED).json({error : "Please login to view wishlist"})
         }

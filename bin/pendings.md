@@ -110,9 +110,9 @@ order details page - responsive [x]
 orderconfirmation - navbar [x]
 
 logout-button - profile mobile screen [x]
-google signup fix []
+google signup fix [x]
 
-global search - []
+global search - [x] - removed
 
 No error message is showing for Google users when they are blocked -[x]
 

@@ -7,6 +7,10 @@ const loadPrivacy = async (req,res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
     const user = await User.findOne({ _id : userId, isBlocked : false});
 
+    if(!user){
+        return res.redirect('/')
+    }
+
     const [firstName] = user.name.split(' ');
 
     res.render('user/privacy', {title : "Privacy settings", user, firstName})

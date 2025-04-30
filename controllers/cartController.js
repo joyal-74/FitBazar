@@ -119,6 +119,10 @@ const loadCart = async (req, res) => {
 
         const user = await User.findOne({ _id : userId, isBlocked : false});
 
+        if(!user){
+            return res.redirect('/')
+        }
+
         const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 
         if(!cart){

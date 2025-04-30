@@ -171,11 +171,16 @@ const validateCoupon = async (req, res) => {
 // user side coupon showing
 const loadCoupons = async (req,res)=>{
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
     if(!userId){
         res.redirect('/user/login')
     }
 
     const user = await User.findOne({ _id : userId, isBlocked : false});
+
+    if(!user){
+        return res.redirect('/')
+    }
 
     const [firstName] = user.name.split(' ');
 

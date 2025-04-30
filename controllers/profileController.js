@@ -16,8 +16,9 @@ const loadOrders = async (req, res) => {
         }
 
         const user = await User.findOne({ _id : userId, isBlocked : false});
-        if (!user) {
-            return res.status(NOT_FOUND).send('User not found');
+        
+        if(!user){
+            return res.redirect('/')
         }
 
         const [firstName] = user.name.split(' ');
@@ -51,12 +52,15 @@ const loadOrderDetails = async (req,res)=> {
         }
 
         const user = await User.findOne({ _id : userId, isBlocked : false});
+
+        if(!user){
+            return res.redirect('/')
+        }
+
         const [firstName] = user.name.split(' ');
 
         const order = await Order.findOne({ _id : orderId }).populate('orderItems.product');
         const addressId = order.address;
-
-        const refundStatus = await Refund.find({order : orderId})
 
         const refundStatusArray = await Refund.find({ order: orderId });
 
@@ -86,6 +90,11 @@ const loadprofile = async (req,res) => {
     if (!userId) return res.redirect('/user/login');
 
     const user = await User.findOne({ _id : userId, isBlocked : false});
+
+    if(!user){
+        return res.redirect('/')
+    }
+
     const [firstName, lastName] = user.name.split(' ');
     res.render('user/profile',{title : "User Pofile", user, firstName, lastName })
 }
@@ -94,6 +103,11 @@ const loadUpdateProfile = async (req,res) => {
     const userId = req.query.userId;
 
     const user = await User.findOne({ userId, isBlocked : false});
+
+    if(!user){
+        return res.redirect('/')
+    }
+
     const [firstName, lastName] = user.name.split(' ');
     res.render('user/profileU',{title : "Edit Pofile", user, firstName, lastName })
 }

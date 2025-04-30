@@ -2,10 +2,11 @@ import express from "express";
 const router = express.Router();
 import userController from '../controllers/userController.js';
 import shopController from "../controllers/shopController.js";
+import userAuth from "../middleware/userAuth.js";
 
 
 //session handled home route
-router.get('/', userController.getUserHome);
+router.get('/', userAuth.verifyUserStatus ,userController.getUserHome);
 
 //shop page
 router.get('/shop', shopController.loadShop);

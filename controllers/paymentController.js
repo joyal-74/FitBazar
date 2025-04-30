@@ -42,7 +42,7 @@ const loadPayments = async (req, res) => {
 
         grandTotal = cartTotal + deliveryCharge - couponDiscount;
 
-        res.render('user/payment', {title: "Checkout", user, cart, cartTotal, deliveryCharge, grandTotal, couponDiscount});
+        res.render('user/payment', {title: "Checkout", user, cart, cartTotal, deliveryCharge, grandTotal, couponDiscount, RAZOR_API_KEY: process.env.RAZOR_API_KEY});
     } catch (error) {
         console.error('Error loading payment:', error);
         
@@ -51,8 +51,11 @@ const loadPayments = async (req, res) => {
 
 const createRazorpayOrder = async (req, res) => {
     try {
-        console.log('hi')
-        const { totalPrice } = req.body;
+        const { totalPrice, orderId } = req.body;
+
+        if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
+            return res.status(BAD_REQUEST).json({ success: false, error: 'Invalid amount' });
+        }
 
         const options = {
             amount: totalPrice * 100,
@@ -63,18 +66,33 @@ const createRazorpayOrder = async (req, res) => {
 
         const order = await razorpay.orders.create(options);
 
-        res.json({
+        return res.json({
             success: true,
             orderId: order.id,
             amount: order.amount,
             currency: order.currency
         });
+
     } catch (error) {
         console.error('Razorpay Error:', error?.response?.data || error.message || error);
 
-        res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to create order' });
+        const { orderId } = req.body;
+
+        if (orderId) {
+            try {
+                await Order.findOneAndUpdate(
+                    { orderId },
+                    { paymentStatus: 'Failed' }
+                );
+            } catch (updateError) {
+                console.error('Failed to update payment status:', updateError.message);
+            }
+        }
+
+        return res.status(INTERNAL_SERVER_ERROR).json({ success: false, error: 'Failed to create Razorpay order' });
     }
 };
+
 
 
 const verifyPayment = (req, res) => {

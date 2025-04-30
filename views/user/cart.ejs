@@ -364,16 +364,26 @@
                     });
 
                     if (response.ok) {
-                        showNotification('Item removed from cart', 'success');
-                        setTimeout(() => {
+                        Swal.fire({
+                            text: "Item removed from cart",
+                            icon: "success"
+                        }).then(()=>{
                             window.location.reload();
-                        }, 1000);
+                        })
                     } else {
-                        showNotification('Failed to remove item from cart', 'error');
+                        Swal.fire({
+                            text: "Failed to remove item from cart",
+                            icon: "error"
+                        }).then(()=>{
+                            window.location.reload();
+                        })
                     }
                 } catch (error) {
                     console.error('Error removing from cart:', error);
-                    showNotification('Something went wrong. Please try again.', 'error');
+                    Swal.fire({
+                        text: error || "Somethinf went wrong",
+                        icon: "error"
+                    });
                 }
             }
         }

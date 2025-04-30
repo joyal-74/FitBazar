@@ -288,7 +288,7 @@
                     if (!razorpayResponse.ok) throw new Error(razorpayData.error || 'Payment initialization failed');
 
                     const options = {
-                        key: '<%= process.env.RAZOR_API_KEY %>',
+                        key: '<%= RAZOR_API_KEY %>',
                         amount: razorpayData.amount,
                         currency: razorpayData.currency,
                         name: 'FitBazar',
@@ -323,7 +323,11 @@
                         theme: { color: '#3B3389' }
                     };
 
+                    console.log("hi")
+
                     const rzp = new Razorpay(options);
+
+                    console.log("helo")
                     
                     rzp.on('payment.failed', async (response) => {
                         try {
@@ -347,8 +351,11 @@
 
                     rzp.open();
 
+                    console.log("sjdjkhkagh")
+
                 } catch (error) {
                     spinnerOverlay.classList.add("d-none");
+                    console.log(error)
                     Swal.fire({
                         text: 'Razorpay server error.',
                         icon: 'error',
