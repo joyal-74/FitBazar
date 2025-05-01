@@ -21,27 +21,27 @@
                     <form id="registerForm">
                         <div class="mb-2">
                             <input type="text" class="form-control" placeholder="Full Name" id="name" name="fullName">
-                            <div id="nameError" style="font-size: 0.8em; color: #ff0101;"></div>
+                            <div id="nameError" class="text-start" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
     
                         <div class="mb-2">
                             <input type="email" class="form-control" placeholder="Email Address" id="email" name="email">
-                            <div id="emailError" style="font-size: 0.8em; color: #ff0101;"></div>
+                            <div id="emailError" class="text-start" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
                         <div class="mb-2">
                             <input type="text" class="form-control" placeholder="Phone Number" id="phone" name="phone">
-                            <div id="phoneError" style="font-size: 0.8em; color: #ff0101;"></div>
+                            <div id="phoneError" class="text-start" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
                         <div class="mb-2">
                             <input type="text" class="form-control" placeholder="Enter referal code (Optional)" id="userReferal" name="userReferal">
                         </div>
                         <div class="mb-2">
                             <input type="password" class="form-control" placeholder="Password" id="password" name="password">
-                            <div id="passwordError" style="font-size: 0.8em; color: #ff0101;"></div>
+                            <div id="passwordError" class="text-start" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
                         <div class="mb-2">
                             <input type="password" class="form-control" placeholder="Confirm Password" id="confirmPassword" name="confirmPassword">
-                            <div id="confirmPasswordError" style="font-size: 0.8em; color: #ff0101;"></div>
+                            <div id="confirmPasswordError" class="text-start" style="font-size: 0.8em; color: #ff0101;"></div>
                         </div>
     
                         <button type="submit" class="btn send-btn mt-3">Signup</button>
@@ -61,6 +61,7 @@
         </div>
     </div>
 
+    
     <script>
         document.getElementById("registerForm").addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -80,40 +81,62 @@
                 confirmPassword: document.getElementById("confirmPasswordError"),
             };
     
+            const fields = {
+                name: document.getElementById("name"),
+                email: document.getElementById("email"),
+                phone: document.getElementById("phone"),
+                password: document.getElementById("password"),
+                confirmPassword: document.getElementById("confirmPassword"),
+            };
+    
+            // Reset errors and border colors
             Object.values(errors).forEach((el) => (el.innerText = ""));
+            Object.values(fields).forEach((el) => el.style.borderColor = "");
     
             let hasError = false;
-
+    
+            // Name validation
             if (!fullName) {
                 errors.name.innerText = "Full name is required";
+                fields.name.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             }
     
+            // Email validation
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email) {
                 errors.email.innerText = "Email is required";
+                fields.email.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             } else if (!emailPattern.test(email)) {
                 errors.email.innerText = "Please enter a valid email";
+                fields.email.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             }
     
+            // Phone validation
             if (!/^\d{10}$/.test(phone)) {
                 errors.phone.innerText = "Please enter a valid phone number";
+                fields.phone.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             }
     
+            // Password validation
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{6,}$/;
             if (!password) {
                 errors.password.innerText = "Password is required";
+                fields.password.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             } else if (!passwordPattern.test(password)) {
                 errors.password.innerText = "Use 6+ chars with a mix of letters, numbers & symbols";
+                fields.password.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             }
     
+            // Confirm password validation
             if (password !== confirmPassword) {
                 errors.confirmPassword.innerText = "Passwords do not match";
+                fields.confirmPassword.style.borderColor = "#ff0101";  // Red border
                 hasError = true;
             }
     
@@ -137,16 +160,16 @@
                         timer: 2000,
                         showConfirmButton: false,
                     });
-                }else{
+                } else {
                     Swal.fire({
                         icon: "success",
                         text: data.message,
                         timer: 2000,
                         showConfirmButton: false,
-                    }).then(()=>{
+                    }).then(() => {
                         window.location.href = "/user/otpverify";
-                    })
-                }    
+                    });
+                }
             } catch (error) {
                 Swal.fire({
                     icon: "error",
@@ -155,5 +178,92 @@
                 });
             };
         });
+    
+        // Live validation on blur event
+        document.getElementById("name").addEventListener("blur", validateName);
+        document.getElementById("email").addEventListener("blur", validateEmail);
+        document.getElementById("phone").addEventListener("blur", validatePhone);
+        document.getElementById("password").addEventListener("blur", validatePassword);
+        document.getElementById("confirmPassword").addEventListener("blur", validateConfirmPassword);
+    
+        function validateName() {
+            const fullName = document.getElementById("name").value.trim();
+            const errorElement = document.getElementById("nameError");
+            const field = document.getElementById("name");
+    
+            if (!fullName) {
+                errorElement.innerText = "Full name is required";
+                field.style.borderColor = "#ff0101";
+            } else {
+                errorElement.innerText = "";
+                field.style.borderColor = "#28a745";
+            }
+        }
+    
+        function validateEmail() {
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const errorElement = document.getElementById("emailError");
+            const field = document.getElementById("email");
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+            if (!email) {
+                errorElement.innerText = "Email is required";
+                field.style.borderColor = "#ff0101";
+            } else if (!emailPattern.test(email)) {
+                errorElement.innerText = "Please enter a valid email";
+                field.style.borderColor = "#ff0101";
+            } else {
+                errorElement.innerText = "";
+                field.style.borderColor = "#28a745";
+            }
+        }
+    
+        function validatePhone() {
+            const phone = document.getElementById("phone").value.trim();
+            const errorElement = document.getElementById("phoneError");
+            const field = document.getElementById("phone");
+    
+            if (!/^\d{10}$/.test(phone)) {
+                errorElement.innerText = "Please enter a valid phone number";
+                field.style.borderColor = "#ff0101";
+            } else {
+                errorElement.innerText = "";
+                field.style.borderColor = "#28a745";
+            }
+        }
+    
+        function validatePassword() {
+            const password = document.getElementById("password").value.trim();
+            const errorElement = document.getElementById("passwordError");
+            const field = document.getElementById("password");
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{6,}$/;
+    
+            if (!password) {
+                errorElement.innerText = "Password is required";
+                field.style.borderColor = "#ff0101";
+            } else if (!passwordPattern.test(password)) {
+                errorElement.innerText = "Use 6+ chars with a mix of letters, numbers & symbols";
+                field.style.borderColor = "#ff0101";
+            } else {
+                errorElement.innerText = "";
+                field.style.borderColor = "#28a745";
+            }
+        }
+    
+        function validateConfirmPassword() {
+            const password = document.getElementById("password").value.trim();
+            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            const errorElement = document.getElementById("confirmPasswordError");
+            const field = document.getElementById("confirmPassword");
+    
+            if (password !== confirmPassword) {
+                errorElement.innerText = "Passwords do not match";
+                field.style.borderColor = "#ff0101";
+            } else {
+                errorElement.innerText = "";
+                field.style.borderColor = "#28a745";
+            }
+        }
     </script>
+    
 </body>

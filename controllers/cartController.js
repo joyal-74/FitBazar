@@ -119,22 +119,33 @@ const loadCart = async (req, res) => {
 
         const user = await User.findOne({ _id : userId, isBlocked : false});
 
-        if(!user){
-            return res.redirect('/')
+        if (!user) {
+            return res.redirect('/');
         }
 
         const cart = await Cart.findOne({ userId : userId }).populate('items.productId');
 
-        if(!cart){
-            return res.render('user/cart', { title: 'cart', cart : null, user });
+        if (!cart) {
+            return res.render('user/cart', { title: 'Cart', cart: null, user });
         }
 
-        res.render('user/cart', { title: 'cart', cart, user });
+        // Calculate total, delivery charge, and grand total
+        let total = 0;
+        cart.items.forEach(item => {
+            total += item.quantity * item.price;
+        });
+
+        let deliveryCharge = total < 499 ? 39 : 0;
+        let grandTotal = total + deliveryCharge;
+
+        // Pass total, deliveryCharge, and grandTotal to the view
+        res.render('user/cart', { title: 'Cart', cart, user, total, deliveryCharge, grandTotal });
     } catch (error) {
         console.error('Error fetching cart:', error);
-        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+};
+
 
 const updateQuantity = async (req, res) => {
     const { productId, color, weight, change } = req.body;
@@ -176,8 +187,8 @@ const updateQuantity = async (req, res) => {
         );
 
         if (change > 0) {
-            if (item.quantity >= 10) {
-                return res.status(BAD_REQUEST).json({ error: "Maximum 10 products can be purchased in a single order" });
+            if (item.quantity >= 5) {
+                return res.status(BAD_REQUEST).json({ error: "Maximum 5 products can be purchased in a single order" });
             }
         
             if (item.quantity < variant.stock) {
@@ -191,10 +202,18 @@ const updateQuantity = async (req, res) => {
             return res.status(BAD_REQUEST).json({ message: "Quantity unchanged as it’s already at minimum", cart });
         }
         
-
         await cart.save();
 
-        return res.status(OK).json({ message: "Quantity updated successfully", cart });
+        let total = 0;
+        cart.items.forEach(item => {
+            total += item.quantity * item.price;
+        });
+
+        const deliveryCharge = total < 499 ? 39 : 0;
+        const grandTotal = total + deliveryCharge;
+
+
+        return res.status(OK).json({ message: "Quantity updated successfully", cart, price: item.price, basePrice : item.basePrice, quantity: item.quantity, grandTotal });
     } catch (error) {
         console.error("Error updating quantity:", error);
         return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });

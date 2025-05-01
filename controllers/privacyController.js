@@ -19,6 +19,7 @@ const loadPrivacy = async (req,res) => {
 const updatePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
+        console.log(req.body)
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!userId) {
@@ -28,6 +29,10 @@ const updatePassword = async (req, res) => {
         const user = await User.findOne({ _id : userId, isBlocked : false});
         if (!user) {
             return res.status(NOT_FOUND).json({ error: "User not found" });
+        }
+
+        if (user.googleId) {
+            return res.status(FORBIDDEN).json({ error: "Cannot change password for Google login account" });
         }
 
         const isMatch = await bcrypt.compare(oldPassword, user.password);
@@ -46,4 +51,18 @@ const updatePassword = async (req, res) => {
     }
 };
 
-export default {loadPrivacy, updatePassword,}
+const checkOldpassword = async (req, res) => {
+    const { oldPassword } = req.body;
+    const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
+    if (!userId) {
+        return res.status(401).json({ valid: false });
+    }
+
+    const user = await User.findOne({ _id: userId });
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    return res.json({ valid: isMatch });
+};
+
+export default {loadPrivacy, updatePassword, checkOldpassword}

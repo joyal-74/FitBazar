@@ -93,15 +93,16 @@
                                             <div id="addOfferPriceError" style="font-size: 0.8em; color: #ff0101;"></div>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="w-50 me-2">
-                                            <label for="addStatus" class="form-label fw-semibold">Status</label>
-                                            <select class="form-select rounded-3" id="addStatus" name="addStatus">
-                                                <option value="Active">Active</option>
-                                                <option value="Inactive">Expired</option>
+                                    <div class="d-flex justify-content-between align-items-end w-100 gap-3">
+                                        <div class="w-25 me-2">
+                                            <label for="addUsageType" class="form-label fw-semibold">Status</label>
+                                            <select class="form-select rounded-3" id="addUsageType" name="addUsageType">
+                                                <option value="single-use">One time</option>
+                                                <option value="multi-use">Reusable</option>
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
+
+                                        <button type="submit" class="btn w-50 px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
                                             <i class="fa fa-plus-circle me-2"></i> Add Coupon
                                         </button>
                                     </div>
@@ -163,15 +164,22 @@
                                             <div id="editOfferPriceError" style="font-size: 0.8em; color: #ff0101;"></div>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="w-25 me-2">
+                                    <div class="d-flex justify-content-between align-items-end w-100">
+                                        <div class="w-100 me-2">
                                             <label for="editStatus" class="form-label fw-semibold">Status</label>
                                             <select class="form-select rounded-3" id="editStatus" name="editStatus">
                                                 <option value="Active">Active</option>
                                                 <option value="Inactive">Expired</option>
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
+                                        <div class="w-100 me-2">
+                                            <label for="editUsageType" class="form-label fw-semibold">Status</label>
+                                            <select class="form-select rounded-3" id="editUsageType" name="editUsageType">
+                                                <option value="single-use">One time</option>
+                                                <option value="multi-use">Reusable</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="w-100 btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
                                             <i class="fa fa-check-circle me-2"></i> Update Coupon
                                         </button>
                                     </div>
@@ -236,7 +244,8 @@
                                                         '<%= coupon.expiryDate.toISOString().split('T')[0] %>',
                                                         '<%= coupon.minPrice %>',
                                                         '<%= coupon.offerPrice %>',
-                                                        '<%= coupon.status %>'
+                                                        '<%= coupon.status %>',
+                                                        '<%= coupon.usageType %>'
                                                     )">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
@@ -345,7 +354,8 @@
                                             '<%= coupon.expiryDate.toISOString().split('T')[0] %>',
                                             '<%= coupon.minPrice %>',
                                             '<%= coupon.offerPrice %>',
-                                            '<%= coupon.status %>'
+                                            '<%= coupon.status %>',
+                                            '<%= coupon.usageType %>'
                                         )">
                                         <i class="fa-solid fa-pen-to-square me-1"></i> Edit
                                     </button>
@@ -389,7 +399,7 @@
     </div>
 
     <script>
-        function openEditModal(name, code, description, startDate, expiryDate, minPrice, offerPrice, status) {
+        function openEditModal(name, code, description, startDate, expiryDate, minPrice, offerPrice, status, usageType) {
             document.getElementById("originalCouponName").value = name;
             document.getElementById("editName").value = name;
             document.getElementById('editCode').value = code;
@@ -399,6 +409,7 @@
             document.getElementById("editMinPrice").value = minPrice;
             document.getElementById("editOfferPrice").value = offerPrice;
             document.getElementById("editStatus").value = status;
+            document.getElementById("editUsageType").value = usageType;
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -419,6 +430,7 @@
                 const editMinPrice = document.getElementById("editMinPrice").value;
                 const editOfferPrice = document.getElementById("editOfferPrice").value;
                 const editStatus = document.getElementById("editStatus").value
+                const editUsageType = document.getElementById("editUsageType").value;
 
                 let errors = {
                     editName: document.getElementById("editNameError"),
@@ -479,7 +491,7 @@
 
                 if (hasError) return;
 
-                const formData = {orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus};
+                const formData = {orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus, editUsageType};
 
                 try {
                     const response = await fetch("/admin/coupons", {
@@ -528,7 +540,7 @@
                 const addExpiryDate = document.getElementById("addExpiryDate").value;
                 const addMinPrice = document.getElementById("addMinPrice").value;
                 const addOfferPrice = document.getElementById("addOfferPrice").value;
-                
+                const addUsageType = document.getElementById("addUsageType").value;
 
                 let errors = {
                     addName: document.getElementById("addNameError"),
@@ -598,7 +610,8 @@
                     addStartDate,
                     addExpiryDate,
                     addMinPrice,
-                    addOfferPrice
+                    addOfferPrice,
+                    addUsageType
                 };
 
                 try {

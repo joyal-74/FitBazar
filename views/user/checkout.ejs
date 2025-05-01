@@ -268,6 +268,7 @@
                                             placeholder="Enter coupon code" 
                                             style="border-radius: 6px 0 0 6px; height: 52px; font-size: 0.9rem;">
                                             <input type="hidden" id="couponDiscount" name="couponDiscount" value="0">
+                                            <input type="hidden" id="couponId" name="couponId" value="">
                                         <button class="btn btn-outline-secondary btn-sm apply-coupon" type="button" 
                                             style="border-radius: 0 6px 6px 0; height: 52px; font-size: 0.9rem;">
                                             Apply
@@ -918,8 +919,9 @@
                 updateTotalPrice();
             }
     
-            function showSuccessCoupon(couponCode, discount, message) {
+            function showSuccessCoupon(couponCode, discount, couponId, message) {
                 document.getElementById('couponDiscount').value = discount;
+                document.getElementById('couponId').value = couponId;
                 const couponText = document.getElementById('couponText');
                 const couponValue = document.getElementById('couponValue');
 
@@ -999,7 +1001,7 @@
     
                     if (data.success) {
                         localStorage.setItem('couponDiscount', data.discount);
-                        showSuccessCoupon(couponCode, data.discount, data.message);
+                        showSuccessCoupon(couponCode, data.discount, data.couponId, data.message);
                     } else {
                         showErrorCoupon(data.message);
                     }

@@ -39,7 +39,8 @@ const loadCouponPage = async(req,res)=>{
 
 const addCoupon = async (req, res)=> {
     try {
-        const { addName, addCode, addDescription, addStartDate, addExpiryDate, addMinPrice, addOfferPrice, addStatus } = req.body;
+        const { addName, addCode, addDescription, addStartDate, addExpiryDate, addMinPrice, addOfferPrice, addStatus, addUsageType } = req.body;
+        console.log(req.body)
    
         if (new Date(addStartDate) >= new Date(addExpiryDate)) {
             return res.status(BAD_REQUEST).json({ error: 'Expiry date must be after start date' });
@@ -48,7 +49,7 @@ const addCoupon = async (req, res)=> {
             return res.status(BAD_REQUEST).json({ error: 'Minimum price must be greater than offer price' });
         }
 
-        const coupon = new Coupon({
+        await Coupon.create({
             name: addName,
             code: addCode, 
             description: addDescription,
@@ -56,11 +57,12 @@ const addCoupon = async (req, res)=> {
             expiryDate: addExpiryDate,
             minPrice: addMinPrice,
             offerPrice: addOfferPrice,
-            status: addStatus
+            status: addStatus,
+            usageType: addUsageType
         });
+        
+        return res.status(OK).json({ message: 'Coupon added successfully' });
 
-        await coupon.save();
-        res.status(OK).json({ message: 'Coupon added successfully' });
     } catch (err) {
         console.error(err);
         if (err.code === 11000) {
@@ -74,7 +76,7 @@ const addCoupon = async (req, res)=> {
 
 const editCoupon = async (req, res) => {
     try {
-        const { orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus } = req.body;
+        const { orgName, editName, editCode, editDescription, editStartDate, editExpiryDate, editMinPrice, editOfferPrice, editStatus, editUsageType } = req.body;
 
         if (new Date(editStartDate) >= new Date(editExpiryDate)) {
             return res.status(BAD_REQUEST).json({ error: 'Expiry date must be after start date' });
@@ -83,24 +85,30 @@ const editCoupon = async (req, res) => {
             return res.status(BAD_REQUEST).json({ error: 'Minimum price must be greater than offer price' });
         }
 
-        const coupon = await Coupon.findOne({ name: orgName });
-
-        if (coupon) {
-            coupon.name = editName;
-            coupon.code = editCode;
-            coupon.description = editDescription;
-            coupon.startDate = editStartDate;
-            coupon.expiryDate = editExpiryDate;
-            coupon.minPrice = editMinPrice;
-            coupon.offerPrice = editOfferPrice;
-            coupon.status = editStatus;
+        const coupon = await Coupon.findOneAndUpdate(
+            { name: orgName },
+            { 
+                name: editName,
+                code: editCode,
+                description: editDescription,
+                startDate: editStartDate,
+                expiryDate: editExpiryDate,
+                minPrice: editMinPrice,
+                offerPrice: editOfferPrice,
+                status: editStatus,
+                usageType: editUsageType,
+            }, 
+            { new: true }
+        );
         
-            await coupon.save();
+        if (coupon) {
+            return res.status(OK).json({ message: 'Coupon updated successfully' });
         } else {
-            console.log('Coupon not found');
+            return res.status(BAD_REQUEST).json({ error : 'Coupon updated Failed' });
         }
+        
 
-        res.status(OK).json({ message: 'Coupon updated successfully' });
+        
     } catch (err) {
         console.error(err);
         if (err.code === 11000) {
@@ -131,6 +139,8 @@ const validateCoupon = async (req, res) => {
     try {
         const { code, total } = req.body;
 
+        const userId = req.session.user?.id ?? req.session.user?._id ?? null;
+
         const coupon = await Coupon.findOne({ code });
 
         if (!coupon) {
@@ -153,14 +163,18 @@ const validateCoupon = async (req, res) => {
             });
         }
 
-        req.session.couponDiscount = coupon.offerPrice;
-        coupon.used ++
-        await coupon.save();
+        if (coupon.usageType === 'single-use' && coupon.usersUsed?.includes(userId)) {
+            return res.status(BAD_REQUEST).json({
+                success: false,
+                message: 'You have already used this coupon.'
+            });
+        }
 
         return res.status(OK).json({
             success: true,
             message: `Coupon applied! ₹${coupon.offerPrice} discount applied.`,
-            discount: coupon.offerPrice
+            discount: coupon.offerPrice,
+            couponId: coupon._id
         });
     } catch (error) {
         console.error(error);

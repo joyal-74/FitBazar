@@ -3,15 +3,24 @@ import Cart from "../model/cartModel.js";
 import Address from "../model/addressModel.js";
 import Order from "../model/orderModel.js";
 import Coupon from "../model/couponModel.js";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED } from "../config/statusCodes.js";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, CREATED, FORBIDDEN } from "../config/statusCodes.js";
 
 
 const loadCheckout = async (req, res) => {
     const userId = req.query.userId;
 
     const user = await User.findOne({ _id : userId, isBlocked : false});
+
+    if (!user) {
+        return res.status(FORBIDDEN).redirect('/'); 
+    }
+
     const address = await Address.find({ userId });
     const cart = await Cart.findOne({ userId }).populate('items.productId');
+
+    if (!cart || cart.items.length === 0) {
+        return res.status(NOT_FOUND).redirect('/');
+    }
 
     let cartTotal = 0;
     let deliveryCharge = 0;
@@ -37,9 +46,14 @@ const loadCheckout = async (req, res) => {
 
 
 const checkoutDetails = async (req,res) => {
-    const {selectedAddress} = req.body
+
+    const {selectedAddress, couponDiscount, couponId} = req.body
+
+    // console.log(req.body);
 
     req.session.deliveryAddress = selectedAddress;
+    req.session.couponDiscount = couponDiscount;
+    req.session.couponId = couponId;
 
     res.redirect('/user/payments')
 }
@@ -148,12 +162,10 @@ const loadCheckoutUp = async (req, res) => {
 
 const confirmOrder = async (req, res) => {
     try {
-        
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
     
         if (!userId) {
-            console.error('User ID is missing in session.');
-            return res.status(NOT_FOUND).render('error', { title : "error",message: 'Invalid session. Please log in again.' });
+            return res.redirect('/')
         }
 
         const user = await User.findById(userId);

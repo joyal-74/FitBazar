@@ -51,6 +51,7 @@ router.delete('/address', addressController.deleteAddress);
 router.get('/coupons', couponController.loadCoupons);
 router.get('/privacy', privacyController.loadPrivacy);
 router.post('/privacy', privacyController.updatePassword);
+router.post('/check-old-password', privacyController.checkOldpassword);
 
 // wishlist routes
 router.get('/wishlist', wishlistController.getWishlist);

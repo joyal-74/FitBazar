@@ -10,11 +10,17 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from 
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
+import Coupon from "../model/couponModel.js";
 
 const loadPayments = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
         const user = await User.findOne({ _id : userId, isBlocked : false});
+
+        if (!user) {
+            return res.status(403).redirect('/');
+        }
+
         const cart = await Cart.findOne({ userId: userId }).populate('items.productId');
 
         if (!cart || !cart.items || cart.items.length === 0) {
@@ -34,15 +40,19 @@ const loadPayments = async (req, res) => {
         deliveryCharge = cartTotal < 499 ? 39 : 0;
 
         const couponDiscount = req.session.couponDiscount || 0;
+        const couponId = req.session.couponId || "";
+
+        console.log(couponId)
 
         if (req.session.couponDiscount) {
             req.session.couponDiscount = 0;
+            req.session.couponId = "";
             await req.session.save();
         }
 
         grandTotal = cartTotal + deliveryCharge - couponDiscount;
 
-        res.render('user/payment', {title: "Checkout", user, cart, cartTotal, deliveryCharge, grandTotal, couponDiscount, RAZOR_API_KEY: process.env.RAZOR_API_KEY});
+        res.render('user/payment', {title: "Checkout", user, cart, cartTotal, deliveryCharge, grandTotal, couponDiscount, couponId, RAZOR_API_KEY: process.env.RAZOR_API_KEY});
     } catch (error) {
         console.error('Error loading payment:', error);
         
@@ -128,7 +138,9 @@ const createOrder = async (req, res) => {
     try {
         const userId = req.session.user?.id ?? req.session.user?._id;
         const addressId = req.session.deliveryAddress;
-        const { couponApplied = 0, paymentMethod } = req.body;
+        const { couponApplied = 0, paymentMethod, couponId } = req.body;
+
+        console.log(req.body)
 
         if (!userId || !addressId) {
             await session.abortTransaction();
@@ -224,6 +236,11 @@ const createOrder = async (req, res) => {
             coupon: couponApplied,
             paymentStatus: 'Pending',
             paymentMethod,
+        });
+
+        await Coupon.findByIdAndUpdate(couponId, {
+            $push: { usersUsed: userId },
+            $inc: { used: 1 }
         });
 
         await order.save({ session });

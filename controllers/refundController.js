@@ -86,6 +86,15 @@ const cancelOrder = async (req, res) => {
         item.cancelReason = reason;
         item.updatedAt = new Date();
 
+        const allCancelled = order.orderItems.every(item => item.currentStatus === 'Cancelled');
+
+        if (allCancelled) {
+            if (order.coupon) {
+                order.coupon = 0;
+            }
+            order.status = 'Cancelled';
+        }
+
         // Restock the variant
         const product = await Products.findOne({
             _id: item.product,

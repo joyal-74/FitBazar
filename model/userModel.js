@@ -55,7 +55,11 @@ const userSchema = new Schema(
         type : String,
         unique : true,
         required : true
-    }
+    },
+    usedCoupons: [{
+        type: Schema.Types.ObjectId,
+        ref: "Coupon",
+    }],
   }, { timestamps: true }
 );
 

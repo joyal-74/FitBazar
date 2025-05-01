@@ -154,7 +154,9 @@
                             
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted" style="font-size: 0.95rem;">Coupon Discount</span>
-                                <span class="text-success fw-semibold flex-shrink-0" id="couponDiscount" data-discount="<%= couponDiscount %>">₹ <%= couponDiscount %></span>
+                                <span class="text-success fw-semibold flex-shrink-0">₹ <%= couponDiscount %></span>
+                                <input type="hidden" id="couponDiscount" name="couponDiscount" value="<%= couponDiscount %>">
+                                <input type="hidden" id="couponId" name="couponId" value="<%= couponId %>">
                             </div>
                             <hr class="my-2" style="border-color: #E0E0E0;">
                             <div class="d-flex justify-content-between align-items-center">
@@ -191,9 +193,11 @@
     <script>
 
         const spinnerOverlay = document.getElementById("spinnerOverlay");
+       
 
         document.addEventListener('DOMContentLoaded', () => {
             const paymentForm = document.getElementById('paymentForm');
+            // console.log('<%= couponId %>')
             
 
             paymentForm.addEventListener('submit', async (e) => {
@@ -202,7 +206,10 @@
                 // Get the selected payment method with validation
                 const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
                 const couponDiscountElement = document.getElementById('couponDiscount');
-                const couponApplied = parseFloat(couponDiscountElement.dataset.discount) || 0;
+                const couponIdElement = document.getElementById('couponId');
+
+                const couponApplied = parseFloat(couponDiscountElement.value) || 0;
+                const couponId = couponIdElement.value;
 
                 if (!selectedPaymentMethod) {
                     Swal.fire({
@@ -243,6 +250,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         couponApplied,
+                        couponId,
                         paymentMethod
                     })
                 });

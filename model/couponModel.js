@@ -33,6 +33,16 @@ const couponSchema = new Schema({
         required: true,
         min: 0
     },
+    usageType: {
+        type: String,
+        enum: ["single-use", "multi-use"],
+        default: "single-use",
+    },
+    usersUsed: {
+        type: [Schema.Types.ObjectId],
+        ref: 'User',
+        default: []
+    },
     used : {
         type : Number,
         default : 0

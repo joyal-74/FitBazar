@@ -35,56 +35,103 @@
     </div>
     <p class="text-center logo-text-bottom fixed-bottom">© 2025 FitBazar – Your Sports & Fitness Partner</p>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", async (event) =>{
-            event.preventDefault();
+    <!-- Spinner Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay d-none">
+        <div class="spinner-box">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Verifying...</span>
+            </div>
+            <p class="text-white mt-3">Processing...</p>
+        </div>
+    </div>
 
+    <script>
+        const spinnerOverlay = document.getElementById("spinnerOverlay");
+
+        document.getElementById("loginForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+    
             let email = document.getElementById("email").value.trim();
             let password = document.getElementById("password").value.trim();
-
+    
             const errors = {
                 email: document.getElementById("emailError"),
                 password: document.getElementById("passwordError"),
             };
     
-            Object.values(errors).forEach((el) => (el.innerText = ""));
-
+            const fields = {
+                email: document.getElementById("email"),
+                password: document.getElementById("password"),
+            };
+    
+            // Reset error messages and borders
+            Object.values(errors).forEach(el => el.innerText = "");
+            Object.values(fields).forEach(el => el.style.borderColor = "");
+    
             let hasError = false;
 
             if (!email) {
                 errors.email.innerText = "Email is required";
+                fields.email.style.borderColor = "#ff0101";
                 hasError = true;
             } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 errors.email.innerText = "Invalid email format";
+                fields.email.style.borderColor = "#ff0101";
                 hasError = true;
             }
-
+    
             if (!password) {
                 errors.password.innerText = "Password is required";
+                fields.password.style.borderColor = "#ff0101";
                 hasError = true;
             } else if (password.length < 6) {
                 errors.password.innerText = "Password must be 6+ characters";
+                fields.password.style.borderColor = "#ff0101";
                 hasError = true;
             }
-
+    
             if (hasError) return;
+    
+            const formData = { email, password };
 
-            const formData = {email, password}
-
-            const response = await fetch('/admin/login',{
-                method : "POST",
-                headers : {
-                    'content-type' : 'application/json'
-                },
-                body : JSON.stringify(formData)
-            })
-
-            const data = await response.json();
-
-            if(response.ok){
-                console.log(data.message)
-                window.location.href = '/admin/dashboard'
+            spinnerOverlay.classList.remove("d-none");
+    
+            try {
+                const response = await fetch('/admin/login', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+    
+                const data = await response.json();
+                spinnerOverlay.classList.add("d-none");
+    
+                if (!response.ok) {
+                    Swal.fire({
+                        icon: "error",
+                        text: data.error || "Login failed",
+                        showConfirmButton: true,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "success",
+                        text: data.message || "Login successful",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = '/admin/dashboard';
+                    });
+                }
+            } catch (error) {
+                spinnerOverlay.classList.add("d-none");
+                Swal.fire({
+                    icon: "error",
+                    text: error.message,
+                    showConfirmButton: true,
+                });
             }
         });
-    </script>
+    </script>    
 </body>
