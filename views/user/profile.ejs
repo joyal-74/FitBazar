@@ -15,7 +15,7 @@
                             <img src="<%= user.profilePic || '/placeholder.jpg' %>" alt="Profile Picture"
                                 class="profile-avatar me-md-3 mb-2 mb-md-0" width="80" height="80">
                             <div>
-                                <h4 style="color: #3C1549; margin: 0;">
+                                <h4 style="color: var(--primary); margin: 0;">
                                     <%= user.name %>
                                 </h4>
                                 <div class="mt-1"><small class="text-muted">Member since <%= new Date(user.createdAt).toLocaleDateString() %></small></div>
@@ -59,7 +59,7 @@
                     <div class="referral-section mt-4 pt-4 border-top">
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3 mb-md-0">
-                                <h6 style="color: #3C1549;">Refer a Friend</h6>
+                                <h6 style="color: var(--primary);">Refer a Friend</h6>
                                 <p class="text-muted">Share your referral code with friends and earn rewards!</p>   
                             </div>
                             <div class="col-12 col-md-6">

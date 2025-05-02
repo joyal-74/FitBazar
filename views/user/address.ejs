@@ -15,7 +15,7 @@
             <div class="col-md-9 col-lg-10 col-xl-9 p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold">Manage Addresses</h4>
-                    <a href="/user/addAddress" class="btn btn-primary" style="background-color: #5b3f64; border-color: #483250; border-radius: 8px;">
+                    <a href="/user/addAddress" class="btn btn-primary" style="background-color: var(--secondary); border-color: var(--border); border-radius: 8px;">
                         Add Address
                     </a>
                 </div>
@@ -24,7 +24,7 @@
                 <% if (addresses.length > 0) { %>
                     <% addresses.forEach((address) => { %>
                         <% address.details.forEach((detail, index) => { %>
-                            <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: #f9f4fa; border-radius: 12px;">
+                            <div class="card p-3 mb-3 border-0 shadow-sm" style="background-color: var(--light); border-radius: 12px;">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <strong>
@@ -34,7 +34,7 @@
                                             <%= detail.addressLine1 %>, <%= detail.addressLine2 %>, <%= detail.city %>,<br>
                                             <%= detail.state %> - <%= detail.pincode %>
                                         </p>
-                                        <span class="badge text-end" style="background-color: #E0E0E0; color: #5b3f64; border-radius: 8px; padding: 4px 8px; font-size: 12px;">
+                                        <span class="badge text-end" style="background-color: var(--border); color: var(--secondary); border-radius: 8px; padding: 4px 8px; font-size: 12px;">
                                             <%= detail.addressType %>
                                         </span>
                                     </div>

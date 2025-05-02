@@ -13,27 +13,27 @@
 
         <nav class="nav flex-column gap-3">
             <!-- Full sidebar links (xl and above) -->
-            <a href="/user/orders" class="nav-link sidebar-linkz d-none d-xl-flex <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>">
+            <a href="/user/orders" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>">
                 <i class="fa-solid fa-box me-2"></i>My Orders
             </a>
-            <a href="/user/profile" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'profile' ? 'active' : '' %>">
+            <a href="/user/profile" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= activePage === 'profile' ? 'active' : '' %>">
                 <i class="fa-solid fa-user me-2"></i>Profile Information
             </a>
-            <a href="/user/address" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'address' ? 'active' : '' %>">
+            <a href="/user/address" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= activePage === 'address' ? 'active' : '' %>">
                 <i class="fa-solid fa-location-dot me-2"></i>Manage Addresses
             </a>
-            <a href="/user/privacy" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'privacy' ? 'active' : '' %>">
+            <a href="/user/privacy" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= activePage === 'privacy' ? 'active' : '' %>">
                 <i class="fa-solid fa-key me-2"></i>Privacy Settings
             </a>
-            <a href="/user/coupons" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'coupons' ? 'active' : '' %>">
+            <a href="/user/coupons" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= activePage === 'coupons' ? 'active' : '' %>">
                 <i class="fa-solid fa-ticket me-2"></i>My Coupons
             </a>
-            <a href="/user/wallet" class="nav-link sidebar-linkz d-none d-xl-flex <%= activePage === 'wallet' ? 'active' : '' %>">
+            <a href="/user/wallet" class="nav-link sidebar-linkz align-items-center d-none d-xl-flex <%= activePage === 'wallet' ? 'active' : '' %>">
                 <i class="fa-solid fa-wallet me-2"></i>My Wallet
             </a>
             
             <!-- Icons-only sidebar links (md screens only) -->
-            <a href="/user/orders" class="nav-link sidebar-linkz d-flex d-xl-none justify-content-center <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>" 
+            <a href="/user/orders" class="nav-link sidebar-linkz align-items-center d-flex d-xl-none justify-content-center <%= (activePage === 'orders' || activePage === 'orderDetails') ? 'active' : '' %>" 
                data-bs-toggle="tooltip" data-bs-placement="right" title="My Orders">
                 <i class="fa-solid fa-box"></i>
             </a>

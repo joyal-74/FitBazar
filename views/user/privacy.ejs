@@ -14,7 +14,7 @@
                 <% if (!user.googleId) { %>
                     <div class="col-md-9 col-lg-10 col-xl-9 p-4">
                         <div class="p-4 h-100" style="border-radius: 12px; background-color: #ffffff;">
-                            <h4 class="mb-4" style="color: #5b3f64;">Change Password</h4>
+                            <h4 class="mb-4" style="color: var(--secondary);">Change Password</h4>
 
                             <form id="changePasswordForm">
                                 <!-- Old Password -->
@@ -44,7 +44,7 @@
                                 <!-- Buttons -->
                                 <div class="d-flex gap-3 align-items-center mt-5">
                                     <button type="submit" class="btn btn-primary"
-                                        style="background-color: #5b3f64; border: none;">Change Password</button>
+                                        style="background-color: var(--secondary); border: none;">Change Password</button>
                                     <button type="button" class="btn btn-secondary"
                                         onclick="window.history.back();">Cancel</button>
                                 </div>
@@ -65,7 +65,7 @@
                             
                             <p class="mb-4" style="max-width: 320px;">Password changes are not applicable for Google login users.</p>
                     
-                            <a href="/user/profile" class="btn btn-dark px-4">Back to Profile</a>
+                            <a href="/user/profile" class="btn px-4" style="background-color: var(--secondary); color: var(--card-background);">Back to Profile</a>
                         </div>
                     </div>
                 <% } %>

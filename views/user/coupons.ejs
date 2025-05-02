@@ -2,19 +2,19 @@
     <link rel="stylesheet" href="/css/profile-section.css">
     <style>
         .coupon-card {
-            border: 1px solid #5B3F64;
+            border: 1px solid var(--secondary);
             background-color: #FFFFFF; 
             border-radius: 16px;
         }
         .copy-btn {
-            background-color: #5B3F64;
+            background-color: var(--secondary);
             border: none;
             padding: 6px 12px;
             font-size: 14px;
             transition: background-color 0.2s ease;
         }
         .copy-btn:hover {
-            background-color: #5B3F64;
+            background-color: var(--secondary);
         }
 
         .coupon-status {
@@ -57,7 +57,7 @@
                             <div class="d-flex  flex-column gap-2">
                                 <button class="copy-btn text-white rounded" onclick="navigator.clipboard.writeText('<%= coupon.code %>')">Copy Code</button>
                                 <span class="badge coupon-status" 
-                                    style="color: <%= new Date(coupon.expiryDate) > new Date() ? '#5b2864' : '#999' %>;" >
+                                    style="color: <%= new Date(coupon.expiryDate) > new Date() ? 'var(--primary)' : '#999' %>;" >
                                     <%= new Date(coupon.expiryDate) > new Date() ? 'Active' : 'Expired' %>
                                 </span>
                             </div>

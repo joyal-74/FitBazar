@@ -18,7 +18,7 @@
                     <form id="searchForm" method="GET" action="/user/orders">
                         <div class="d-flex search-container flex-grow-1" style="max-width: 300px;">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" value="<%= search %>">
-                            <button class="btn" type="submit" style="background-color: #5b3f64; border-radius: 10px;">
+                            <button class="btn" type="submit" style="background-color: var(--secondary); border-radius: 10px;">
                                 <i class="fas fa-search text-white"></i>
                             </button>
                         </div>
@@ -28,7 +28,7 @@
             
                 <% if (orders && orders.length > 0) { %>
                     <% orders.forEach(order => { %>
-                        <div class="order-card" style="background-color: #b971c416;">
+                        <div class="order-card" style="background-color: var(--light);">
                             <!-- Order Header -->
                             <div class="order-header">
                                 <span class="order-id">Order #<%= order._id %></span>
