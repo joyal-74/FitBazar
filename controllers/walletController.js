@@ -71,7 +71,7 @@ const verifyWalletPayment = (req, res) => {
         );
 
         if (isValidSignature) {
-            console.log('Payment successfully verified:', razorpay_payment_id);
+            // console.log('Payment successfully verified:', razorpay_payment_id);
             return res.json({ success: true, message: 'Payment verified', razorpay_payment_id });
         } else {
             console.warn('Payment verification failed:', razorpay_payment_id);

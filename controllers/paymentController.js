@@ -42,7 +42,7 @@ const loadPayments = async (req, res) => {
         const couponDiscount = req.session.couponDiscount || 0;
         const couponId = req.session.couponId || "";
 
-        console.log(couponId)
+        // console.log(couponId)
 
         if (req.session.couponDiscount) {
             req.session.couponDiscount = 0;
@@ -114,7 +114,7 @@ const verifyPayment = (req, res) => {
         const generatedSignature = hmac.digest('hex');
 
         if (generatedSignature === razorpaySignature) {
-            console.log('Payment verified');
+            // console.log('Payment verified');
             res.json({ success: true });
         } else {
             res.status(BAD_REQUEST).json({ success: false, error: 'Invalid payment signature' });
