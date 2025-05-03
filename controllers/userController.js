@@ -56,7 +56,7 @@ const userLogin = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            console.log("not matched")
+            // console.log("not matched")
             return res.status(BAD_REQUEST).json({error : "Invalid email or password"});
         }
 
@@ -132,7 +132,7 @@ const userRegister = async (req, res) => {
         req.session.newuser = newuser
 
         const otp = generateOtpCode();
-        console.log("Generated OTP:", otp);
+        // console.log("Generated OTP:", otp);
 
 
         req.session.otp = otp;
@@ -181,7 +181,7 @@ const generateOtp = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
-        console.log("This email is not registered yet");
+        // console.log("This email is not registered yet");
         return res.status(BAD_REQUEST).json({
             success: false,
             message: "Email not registered",
@@ -190,7 +190,7 @@ const generateOtp = async (req, res) => {
 
 
     const otp = generateOtpCode();
-    console.log("Generated OTP:", otp);
+    // console.log("Generated OTP:", otp);
 
     req.session.otp = otp;
     req.session.email = email;
@@ -223,7 +223,7 @@ const generateOtp = async (req, res) => {
 const resendOtp = async (req, res) => {
     try {
         const otp = generateOtpCode();
-        console.log("New OTP:", otp);
+        // console.log("New OTP:", otp);
 
         req.session.otp = otp;
         const email = req.session.email;
@@ -261,8 +261,8 @@ const verifyOtp = async (req, res) => {
     const sentOtp = req.session.otp;
     const otpExpire = req.session.otpExpire || 0;
 
-    console.log("Session OTP:", sentOtp);
-    console.log("Form OTP:", formOtp);
+    // console.log("Session OTP:", sentOtp);
+    // console.log("Form OTP:", formOtp);
     // console.log(requestFrom)
 
     if (!formOtp || !sentOtp) {
@@ -275,17 +275,17 @@ const verifyOtp = async (req, res) => {
 
     // Check if the OTP matches
     if (formOtp.toString() === sentOtp.toString()) {
-        console.log("OTP matched. Verification successful.");
+        // console.log("OTP matched. Verification successful.");
 
         if (requestFrom === "register") {
             const {userId, email, password, name, phone, referalCode} = req.session.newuser
             const newuser = new User({ userId, email, password, name, phone, referalCode });
             await newuser.save();
 
-            console.log("Register successful Redirecting to login page...");
+            // console.log("Register successful Redirecting to login page...");
             return res.status(OK).json({ message: "OTP verified successfully! Now login to your account", redirectUrl: '/user/login' });
         } else {
-            console.log("Redirecting to password reset page...");
+            // console.log("Redirecting to password reset page...");
             return res.status(OK).json({message: "OTP verified successfully!", redirectUrl: '/user/resetpass' });
         }
     } else {
@@ -317,7 +317,7 @@ const changePassword = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            console.log("User not found for email:", email);
+            // console.log("User not found for email:", email);
             return res.status(NOT_FOUND).json({ success: false, message: "User not found" });
         }
 

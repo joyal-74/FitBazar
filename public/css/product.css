@@ -9,14 +9,13 @@ body {
 }
 
 .buy-now-btn, .add-to-cart-btn {
-    background: linear-gradient(to right, #5B3F64, #3C1549);
+    background: linear-gradient(to right, var(--primary), var(--secondary));
     border: none;
-    font-size: 0.8em;
     transition: all 0.3s ease-in-out;
 }
 
 .buy-now-btn:hover, .add-to-cart-btn:hover {
-    background: linear-gradient(to right, #5B3F64, #3C1549)
+    background: linear-gradient(to right, var(--primary), var(--secondary))
 }
 
 .nav-tabs {
@@ -30,7 +29,7 @@ body {
 
 .nav-tabs .nav-link.active {
     color: #000;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid var(--secondary);
     border-radius: 8px 8px 0 0;
 }
 
@@ -114,21 +113,21 @@ body {
 
 
 .pagination .page-link {
-    color: #3C1549;
+    color: var(--primary);
 }
 
 .pagination .page-item.active .page-link {
-    background-color: #7a1ba9;
-    border-color: #7a1ba9;
+    background-color: var(--secondary);
+    border-color: var(--secondary);
 }
 
 .pagination .page-link:hover {
-    background-color: #7a1ba9;
+    background-color: var(--secondary);
     color: white;
 }
 
 footer {
-    background-color: #3B3389;
+    background-color: var(--primary);
 }
 
 /* Custom Range Slider Styling */
@@ -145,12 +144,12 @@ footer {
     transition: all 0.2s;
 }
 .variant-btn.active {
-    border-color: #4D44AD;
-    background: #E0DBFC;
-    color: #4D44AD;
+    border-color: var(--secondary);
+    background: var(--background);
+    color: var(--secondary);
 }
 .variant-btn:hover:not(.active) {
-    border-color: #9c3ec8;
+    border-color: var(--secondary);
 }
 .color-swatch {
     width: 20px;
@@ -248,7 +247,7 @@ input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    background: #5B3F64; /* green thumb */
+    background: var(--secondary);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -261,13 +260,13 @@ input[type="range"]::-webkit-slider-thumb {
 /* First slider (min range) - shows track color */
 .range-1::-webkit-slider-runnable-track {
     height: 8px;
-    background: #5B3F64; /* Your colored track */
+    background: var(--secondary); /* Your colored track */
     border-radius: 5px;
 }
 
 .range-1::-moz-range-track {
     height: 8px;
-    background: #5B3F64;
+    background: var(--secondary);
     border-radius: 5px;
 }
 

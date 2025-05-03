@@ -58,6 +58,14 @@
                 <% } else { %>
                     <a href="/user/login" class="btn btn-light text-dark text-decoration-none d-none d-lg-block" style="width: 100px;" id="authButton">Sign In</a>
                 <% } %>
+
+                <% if (user) { %>
+                    <a href="#" class="text-decoration-none text-white d-md-none px-2">
+                        <%= user.name.split(" ")[0] %>
+                    </a>
+                <% } else { %>
+                    <a href="/user/login" class="btn text-dark text-decoration-none d-md-none bg-light px-2 py-1" style="font-size: 0.9em;" id="authButton">Sign In</a>
+                <% } %>
                 
                 <!-- Hamburger for Medium Screens Only (Tablet) -->
                 <button class="navbar-toggler d-none d-md-block d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -136,11 +144,11 @@
                     <div style="font-size: 0.7rem;">Cart</div>
                 </a>
             <% } else { %>
-                <a href="/user/wishlist" class="text-center text-decoration-none" style="color: <%= activePage === 'wishlist' ? '#5B3F64' : '#212529' %>">
+                <a href="/user/wishlist" class="text-center text-decoration-none" style="color: <%= activePage === 'wishlist' ? '#169976' : '#212529' %>">
                     <div><i class="fa-solid fa-heart"></i></div>
                     <div style="font-size: 0.7rem;">Wishlist</div>
                 </a>
-                <a href="/user/cart" class="text-center text-decoration-none" style="color: <%= activePage === 'cart' ? '#5B3F64' : '#212529' %>">
+                <a href="/user/cart" class="text-center text-decoration-none" style="color: <%= activePage === 'cart' ? '#169976' : '#212529' %>">
                     <div><i class="fa-solid fa-cart-shopping"></i></div>
                     <div style="font-size: 0.7rem;">Cart</div>
                 </a>

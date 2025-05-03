@@ -19,7 +19,7 @@ const loadPrivacy = async (req,res) => {
 const updatePassword = async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
-        console.log(req.body)
+        // console.log(req.body)
         const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
         if (!userId) {

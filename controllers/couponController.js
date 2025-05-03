@@ -40,7 +40,7 @@ const loadCouponPage = async(req,res)=>{
 const addCoupon = async (req, res)=> {
     try {
         const { addName, addCode, addDescription, addStartDate, addExpiryDate, addMinPrice, addOfferPrice, addStatus, addUsageType } = req.body;
-        console.log(req.body)
+        // console.log(req.body)
    
         if (new Date(addStartDate) >= new Date(addExpiryDate)) {
             return res.status(BAD_REQUEST).json({ error: 'Expiry date must be after start date' });
