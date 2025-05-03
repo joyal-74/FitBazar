@@ -41,8 +41,6 @@ router.patch('/products/offer', offerController.removeProductOffer);
 // user management
 router.get('/customers',adminAuth.checkSession, customerController.userInfo);
 router.put("/customers", customerController.toggleBlockStatus);
-router.get('/viewcustomers',adminAuth.checkSession, customerController.userDeatails);
-router.post('/viewcustomers', customerController.changeBlockStatus);
 router.get('/customers/filter',adminAuth.checkSession, customerController.filterCustomers);
 
 // order management

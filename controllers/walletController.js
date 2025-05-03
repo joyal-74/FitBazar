@@ -171,7 +171,7 @@ export const loadTransactions = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server Error');
+        res.status(INTERNAL_SERVER_ERROR).send('Server Error');
     }
 };
 

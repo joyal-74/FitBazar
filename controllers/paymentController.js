@@ -6,7 +6,7 @@ import Order from "../model/orderModel.js";
 import Address from "../model/addressModel.js";
 import Wallet from "../model/walletModel.js";
 import crypto from 'crypto';
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from "../config/statusCodes.js";
+import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED } from "../config/statusCodes.js";
 import generateOrderId from "../helpers/uniqueIdHelper.js";
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
@@ -18,7 +18,7 @@ const loadPayments = async (req, res) => {
         const user = await User.findOne({ _id : userId, isBlocked : false});
 
         if (!user) {
-            return res.status(403).redirect('/');
+            return res.status(FORBIDDEN).redirect('/');
         }
 
         const cart = await Cart.findOne({ userId: userId }).populate('items.productId');
@@ -140,11 +140,11 @@ const createOrder = async (req, res) => {
         const addressId = req.session.deliveryAddress;
         const { couponApplied = 0, paymentMethod, couponId } = req.body;
 
-        console.log(req.body)
+        // console.log(req.body)
 
         if (!userId || !addressId) {
             await session.abortTransaction();
-            return res.status(400).json({ error: "Missing user or address." });
+            return res.status(BAD_REQUEST).json({ error: "Missing user or address." });
         }
 
         const cart = await Cart.findOne({ userId })
@@ -153,7 +153,7 @@ const createOrder = async (req, res) => {
 
         if (!cart || cart.items.length === 0) {
             await session.abortTransaction();
-            return res.status(400).json({ error: "Cart is empty." });
+            return res.status(BAD_REQUEST).json({ error: "Cart is empty." });
         }
 
         const address = await Address.findOne(
@@ -163,7 +163,7 @@ const createOrder = async (req, res) => {
 
         if (!address?.details?.[0]) {
             await session.abortTransaction();
-            return res.status(404).json({ error: 'Address not found.' });
+            return res.status(NOT_FOUND).json({ error: 'Address not found.' });
         }
 
         const shoppingAddress = address.details[0];
@@ -181,7 +181,7 @@ const createOrder = async (req, res) => {
         
             if (user.wallet < totalPayable) {
                 await session.abortTransaction();
-                return res.status(400).json({ error: "Insufficient wallet balance." });
+                return res.status(BAD_REQUEST).json({ error: "Insufficient wallet balance." });
             }
         }
 
@@ -189,7 +189,7 @@ const createOrder = async (req, res) => {
             const product = await Products.findById(item.productId._id).session(session);
             if (!product) {
                 await session.abortTransaction();
-                return res.status(404).json({ error: `Product ${item.productId.name} not found.` });
+                return res.status(NOT_FOUND).json({ error: `Product ${item.productId.name} not found.` });
             }
 
             const variantUpdate = await Products.findOneAndUpdate(
@@ -205,7 +205,7 @@ const createOrder = async (req, res) => {
 
             if (!variantUpdate) {
                 await session.abortTransaction();
-                return res.status(400).json({
+                return res.status(BAD_REQUEST).json({
                     error: `Insufficient stock for "${product.name}" (${item.variants.color}, ${item.variants.weight}).`
                 });
             }
@@ -238,15 +238,17 @@ const createOrder = async (req, res) => {
             paymentMethod,
         });
 
-        await Coupon.findByIdAndUpdate(couponId, {
-            $push: { usersUsed: userId },
-            $inc: { used: 1 }
-        });
+        if(couponId){
+            await Coupon.findByIdAndUpdate(couponId, {
+                $push: { usersUsed: userId },
+                $inc: { used: 1 }
+            });
+        }
 
         await order.save({ session });
         await session.commitTransaction();
 
-        return res.status(201).json({
+        return res.status(CREATED).json({
             success: true,
             message: "Order created. Proceed to payment.",
             orderId: order.orderId
@@ -255,7 +257,7 @@ const createOrder = async (req, res) => {
     } catch (error) {
         await session.abortTransaction();
         console.error("Order Creation Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     } finally {
         session.endSession();
     }
@@ -273,7 +275,7 @@ const paymentSuccess = async (req, res) => {
         const order = await Order.findOne({ orderId, userId }).session(session);
         if (!order) {
             await session.abortTransaction();
-            return res.status(404).json({ error: "Order not found." });
+            return res.status(NOT_FOUND).json({ error: "Order not found." });
         }
 
         const itemTotal = order.orderItems.reduce((acc, item) => acc + item.discountPrice, 0);
@@ -283,7 +285,7 @@ const paymentSuccess = async (req, res) => {
             const user = await User.findById(userId).session(session);
             if (user.wallet < totalPayable) {
                 await session.abortTransaction();
-                return res.status(400).json({ error: "Insufficient wallet balance." });
+                return res.status(BAD_REQUEST).json({ error: "Insufficient wallet balance." });
             }
 
             await User.findByIdAndUpdate(
@@ -315,7 +317,7 @@ const paymentSuccess = async (req, res) => {
         await Cart.findOneAndDelete({ userId }).session(session);
 
         await session.commitTransaction();
-        return res.status(200).json({
+        return res.status(OK).json({
             success: true,
             message: "Payment successful and order confirmed.",
             orderId
@@ -324,7 +326,7 @@ const paymentSuccess = async (req, res) => {
     } catch (error) {
         await session.abortTransaction();
         console.error("Payment Success Error:", error);
-        return res.status(500).json({ error: "Internal server error." });
+        return res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal server error." });
     } finally {
         session.endSession();
     }
@@ -337,17 +339,17 @@ const paymentFailed = async (req,res) => {
         const order = await Order.findOne({ orderId });
 
         if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+            return res.status(NOT_FOUND).json({ message: 'Order not found' });
         }
 
         order.paymentStatus = 'Failed';
         order.failureReason = reason;
         await order.save();
 
-        res.status(200).json({ message: 'Payment status updated to failed' });
+        res.status(OK).json({ message: 'Payment status updated to failed' });
     } catch (error) {
         console.error('Error updating failed payment:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.status(INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
     }
 }
 
@@ -367,7 +369,7 @@ const retryPayment = async (req, res) => {
         const order = await Order.findById(req.params.orderId).populate('userId');
 
         if (!order || order.paymentStatus === 'Paid') {
-            return res.status(400).json({ error: 'Invalid or already paid order.' });
+            return res.status(BAD_REQUEST).json({ error: 'Invalid or already paid order.' });
         }
 
         const razorpayOrder = await razorpay.orders.create({
@@ -393,7 +395,7 @@ const retryPayment = async (req, res) => {
         });
     } catch (error) {
         console.error("Retry Payment Error:", error);
-        res.status(500).json({ error: 'Retry payment failed.' });
+        res.status(INTERNAL_SERVER_ERROR).json({ error: 'Retry payment failed.' });
     }
 };
 
@@ -404,7 +406,7 @@ const retrySuccess = async (req, res) => {
 
     try {
         const order = await Order.findById(orderId);
-        if (!order) return res.status(404).send('Order not found.');
+        if (!order) return res.status(NOT_FOUND).send('Order not found.');
 
         const itemTotal = order.orderItems.reduce((acc, item) => acc + item.discountPrice, 0);
         const totalPayable = itemTotal - (order.coupon || 0) + (order.delivery || 0);
@@ -429,11 +431,11 @@ const retrySuccess = async (req, res) => {
             address: order.address,
         });
 
-        return res.status(200).json({message : 'Payment success order updated'})
+        return res.status(OK).json({message : 'Payment success order updated'})
 
     } catch (err) {
         console.error('Payment success handler error:', err);
-        res.status(500).send('Payment verification failed.');
+        res.status(INTERNAL_SERVER_ERROR).send('Payment verification failed.');
     }
 };
 

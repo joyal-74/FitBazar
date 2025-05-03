@@ -71,7 +71,7 @@
                                                 <% } else { %>
                                                     <span class="badge stock-btn1">Active</span>
                                                 <% } %>
-                                            </td>
+                                            </td>                                             
                                             <td>
                                                 <% if (customer.isBlocked) { %>
                                                     <a href="#" class="toggle-block me-2" data-id="<%= customer.userId %>" data-blocked="true">
@@ -81,9 +81,8 @@
                                                     <a href="#" class="toggle-block me-2" data-id="<%= customer.userId %>" data-blocked="false">
                                                         <i class="fa-solid fa-circle-check fa-xl" style="color: #0a8f3b;"></i>
                                                     </a>
-                                                <% } %>
-                                                <!-- <a href="/admin/viewcustomers?user=<%= customer.userId %>" class="btn btn-dark px-2 py-1 m-0" style="font-size: 0.8em;">View</a> -->
-                                            </td>                                        
+                                                <% } %>                                           
+                                             </td>                                        
                                         </tr>
                                         <% }) %>
                                     </tbody>
@@ -242,23 +241,54 @@
                         const result = await response.json();
 
                         if (response.ok) {
+                            const updated = result; // { success: true, isBlocked: true/false, userId: "..." }
+
+                            // Update button
+                            const badge = document.querySelector(`.status-badge[data-id="${updated.userId}"]`);
+
+                            const row = button.closest('tr');
+                            if (row) {
+                                const statusCell = row.querySelector('td:has(.badge)');
+                                if (statusCell) {
+                                    if (updated.isBlocked) {
+                                        statusCell.innerHTML = '<span class="badge stock-btn3">Blocked</span>';
+                                    } else {
+                                        statusCell.innerHTML = '<span class="badge stock-btn1">Active</span>';
+                                    }
+                                }
+                            }
+
+                            // Update icon
+                            const icon = button.querySelector("i");
+
+                            button.setAttribute("data-blocked", updated.isBlocked.toString());
+
+                            if (updated.isBlocked) {
+                                icon.className = "fa-solid fa-circle-xmark fa-xl";
+                                icon.style.color = "#ff0000";
+                            } else {
+                                icon.className = "fa-solid fa-circle-check fa-xl";
+                                icon.style.color = "#0a8f3b";
+                            }
+
+                            // Optional: feedback message
                             Swal.fire({
                                 position: "top-center",
                                 icon: "success",
-                                text: `Customer ${!isBlocked ? "Blocked" : "Unblocked"} Successfully`,
+                                text: `Customer ${updated.isBlocked ? "Blocked" : "Unblocked"} Successfully`,
                                 showConfirmButton: false,
                                 timer: 1500
-                            }).then(() => {
-                                location.reload();
                             });
-                        } else {
+
+                            } else {
                             Swal.fire({
                                 icon: "error",
                                 text: result.error || "Something went wrong. Try again!",
                                 showConfirmButton: false,
                                 timer: 2000
                             });
-                        }
+                            }
+
                     } catch (error) {
                         console.error("Error:", error);
                         Swal.fire({

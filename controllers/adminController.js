@@ -204,7 +204,7 @@ async function updateStatus(req, res) {
         order.updatedAt = new Date();
         await order.save();
 
-        return res.status(OK).json({ message: 'Status updated successfully', order });
+        return res.status(OK).json({ message: 'Status updated successfully', order, status });
     } catch (error) {
         console.error(error);
         return res.status(INTERNAL_SERVER_ERROR).json({ message: 'Error updating status', error });

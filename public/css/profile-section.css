@@ -846,7 +846,7 @@ h1 {
 
 /* Navigation */
 .user-navbar {
-    background: linear-gradient(90deg, var(--secondary), var(--primary));
+    background: linear-gradient(90deg, var(--primary), var(--secondary) );
 }
 
 .navbar-brand {
