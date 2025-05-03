@@ -28,12 +28,12 @@
 
         .image-upload-dropzone.dragover {
             background: #e9ecef;
-            border-color: #4a00e0;
+            border-color: var(--primary);
         }
 
         .image-upload-dropzone i {
             font-size: 20px;
-            color: #4a00e0;
+            color: var(--primary);
         }
 
         .image-upload-dropzone p {
@@ -111,7 +111,7 @@
 
         .dropdown-item:hover {
             background-color: #f8f9fa;
-            color: #3e29a8;
+            color: var(--secondary);
         }
 
         @media (max-width: 768px) {
@@ -126,7 +126,7 @@
     </style>
 </head>
 
-<body class="bg-violet">
+<body style="background-color: var(--background);">
     
     <%- include('../partials/header') %>
   
@@ -138,7 +138,7 @@
             <main class="col-md-11 col-lg-10 col-xl-9 px-md-4 mt-5 mt-md-0 mx-auto px-3">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 mt-2 mt-sm-3 mt-md-4">
                     <h1 class="h3 mb-0 fw-bold">Categories</h1>
-                    <button type="button" class="btn btn-sm d-flex align-items-center gap-1 text-white" style="background-color: #5b3f64;" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                    <button type="button" class="btn btn-sm d-flex align-items-center gap-1 text-white" style="background-color: var(--secondary);" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                         <i class="fa-solid fa-plus"></i> 
                         <span class="d-none d-sm-inline">New</span>
                     </button>
@@ -161,7 +161,7 @@
                         <form class="d-flex search-container flex-grow-1" style="max-width: 300px;" id="searchForm">
                             <div class="input-group">
                                 <input id="searchInput" class="form-control" type="search" placeholder="Search category name...." aria-label="Search" value="<%= searchQuery || '' %>">
-                                <button class="btn" type="submit" style="background-color: #5b3f64;">
+                                <button class="btn" type="submit" style="background-color: var(--secondary);">
                                     <i class="fas fa-search text-white"></i>
                                 </button>
                             </div>
@@ -173,7 +173,7 @@
                 <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 700px;">
                         <div class="modal-content shadow-lg border-0 rounded-3">
-                            <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                            <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                                 <h5 class="modal-title fw-bold" id="addCategoryModalLabel">Add Category</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
@@ -216,7 +216,7 @@
                                                 <option value="Inactive">Inactive</option>
                                             </select>
                                         </div>
-                                        <button type="submit" class="btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
+                                        <button type="submit" class="btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: var(--secondary);">
                                             <i class="fa fa-plus-circle me-2"></i> Add Category
                                         </button>
                                     </div>
@@ -230,7 +230,7 @@
                 <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 700px;">
                         <div class="modal-content shadow-lg border-0 rounded-3">
-                            <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                            <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                                 <input type="hidden" id="originalCategoryName" name="originalCategoryName">
                                 <h5 class="modal-title fw-bold" id="editCategoryModalLabel">Update Category</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -316,7 +316,7 @@
                                             }) %></td>
                                             <td>
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <p style="color: #5b3f64; margin: 0;" class="<%= category.visibility ? '' : 'd-none' %>">
+                                                    <p style="color: var(--secondary); margin: 0;" class="<%= category.visibility ? '' : 'd-none' %>">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </p>   
                                                     <p style="color: #9c9999; margin: 0;" class="<%= category.visibility ? 'd-none' : '' %>">
@@ -339,7 +339,7 @@
                                             <td>
                                                 <button 
                                                     class="btn btn-sm me-2" 
-                                                    style="color: #5b3f64;"
+                                                    style="color: var(--secondary);"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editCategoryModal"
                                                     onclick="openEditModal(
@@ -453,7 +453,7 @@
                                     </div>
                                     <div>
                                         <button class="btn btn-sm me-2" 
-                                                style="color: #5b3f64;"
+                                                style="color: var(--secondary);"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#editCategoryModal"
                                                 onclick="openEditModal(
@@ -503,7 +503,7 @@
             <div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content shadow-lg border-0 rounded-3">
-                        <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                        <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                             <input type="hidden" id="originalCategoryName" name="originalCategoryName">
                             <h5 class="modal-title fw-bold" id="addOfferModalLabel">Add Category Offer</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -519,7 +519,7 @@
                                 </div>
                                 <input type="hidden" id="categoryIdInput" name="categoryId">
                                 <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn px-4 py-2 text-white shadow-sm" id="submitOfferBtn" style="background-color: #5b3f64;">
+                                    <button type="button" class="btn px-4 py-2 text-white shadow-sm" id="submitOfferBtn" style="background-color: var(--secondary);">
                                         <i class="fa fa-plus-circle me-2"></i> Add Offer
                                     </button>
                                 </div>

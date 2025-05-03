@@ -1,4 +1,4 @@
-<body class="bg-violet">
+<body style="background-color: var(--background);">
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
@@ -31,7 +31,7 @@
                             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                 <div class="input-group">
                                     <input class="form-control" type="search" name="search" value="<%= searchVal || '' %>" placeholder="Search" aria-label="Search">
-                                    <button class="btn" type="submit" style="background-color: #6d4e77;">
+                                    <button class="btn" type="submit" style="background-color: var(--secondary);">
                                         <i class="fas fa-search text-white"></i>
                                     </button>
                                 </div>

@@ -56,7 +56,7 @@ const checkOldpassword = async (req, res) => {
     const userId = req.session.user?.id ?? req.session.user?._id ?? null;
 
     if (!userId) {
-        return res.status(401).json({ valid: false });
+        return res.status(UNAUTHORIZED).json({ valid: false });
     }
 
     const user = await User.findOne({ _id: userId });

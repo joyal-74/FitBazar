@@ -1,22 +1,5 @@
 <head>
     <style>
-        /* Progress Bar */
-        .progress-step {
-            display: flex;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        .progress-step.active i,
-        .progress-step.active span {
-            color: #5B3F64 !important;
-            font-weight: 600;
-        }
-        .progress-arrow {
-            color: #D3D3D3;
-            font-size: 1.2rem;
-            margin: 0 20px;
-        }
-
         /* Address Card */
         .address-card {
             background: linear-gradient(135deg, #F9F9F9, #fbf4fc);
@@ -25,10 +8,10 @@
 
         .address-card .form-check-input:checked + .form-check-label {
             font-weight: 600;
-            color: #5B3F64;
+            color: var(--secondary);
         }
         .address-card .badge {
-            background-color: #5B3F64;
+            background-color: var(--secondary);
             color: #FFFFFF;
             padding: 5px 10px;
             border-radius: 8px;
@@ -37,11 +20,11 @@
         /* Add New Address Link */
         .add-address {
             font-weight: 500;
-            color: #5B3F64;
+            color: var(--secondary);
             transition: color 0.2s ease;
         }
         .add-address:hover {
-            color: #89448f;
+            color: var(--primary);
             text-decoration: none;
         }
 
@@ -53,7 +36,7 @@
             top: 20px;
         }
         .order-summary .btn-primary {
-            background: linear-gradient(90deg, #5B3F64, #3C1549);
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
             border: none;
             border-radius: 12px;
             padding: 12px;
@@ -68,9 +51,9 @@
             transition: background-color 0.2s ease;
         }
         .coupon-input .btn-outline-secondary:hover {
-            background-color: #5B3F64;
+            background-color: var(--secondary);
             color: #FFFFFF;
-            border-color: #5B3F64;
+            border-color: var(--secondary);
         }
         .coupon-status {
             color: #03d10d;
@@ -101,7 +84,7 @@
         .view-coupons-link {
             display: inline-block;
             margin-top: 8px;
-            color: #5B3F64;
+            color: var(--secondary);
             font-weight: 500;
             text-decoration: underline;
         }
@@ -214,7 +197,7 @@
                             </a>
                         <% } else { %>
                             <div class="text-center py-5">
-                                <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color: #5B3F64;"></i>
+                                <i class="fa-solid fa-map-location-dot fa-3x mb-3" style="color: var(--secondary);"></i>
                                 <p class="fs-5 text-muted">No addresses found. Add a new address to get started!</p>
                                 <a href="#" data-bs-toggle="modal" class="d-block add-address" id="addAddressLink" data-bs-target="#addAddressModal">
                                     <i class="fas fa-plus me-2"></i>Add a new address
@@ -315,7 +298,7 @@
         <div class="modal fade" id="availableCouponsModal" tabindex="-1" aria-labelledby="availableCouponsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 rounded-4">
-                    <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                    <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                         <h5 class="modal-title fw-bold text-white" id="couponsModalLabel">Available Coupons</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -353,7 +336,7 @@
         <div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 rounded-4">
-                    <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                    <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                         <h5 class="modal-title fw-bold text-white" id="couponsModalLabel">Add Address</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -478,7 +461,7 @@
         <div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 rounded-4">
-                    <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                    <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                         <h5 class="modal-title fw-bold text-white" id="editAddressModalLabel">Edit Address</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

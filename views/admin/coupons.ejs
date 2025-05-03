@@ -1,4 +1,4 @@
-<body class="bg-violet">
+<body style="background-color: var(--background);">
     <%- include('../partials/header') %>
 
     <div class="container-fluid custom-sm-container w-100 sidebar-header">
@@ -9,7 +9,7 @@
             <main class="col-md-11 col-lg-10 col-xl-9 px-md-4 mt-5 mt-md-0 mx-auto px-3">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 mt-sm-3 mt-md-4">
                     <h1 class="h3 mb-3 fw-bold">Coupons</h1>
-                    <button type="button" class="btn btn-sm d-flex align-items-center gap-1 text-white" style="background-color: #5b3f64;" data-bs-toggle="modal" data-bs-target="#addCouponModal">
+                    <button type="button" class="btn btn-sm d-flex align-items-center gap-1 text-white" style="background-color: var(--secondary);" data-bs-toggle="modal" data-bs-target="#addCouponModal">
                         <i class="fa-solid fa-plus"></i> 
                         <span class="d-none d-sm-inline">New</span>
                     </button>
@@ -32,7 +32,7 @@
                         <form class="d-flex search-container flex-grow-1" style="max-width: 300px;" id="searchForm">
                             <div class="input-group">
                                 <input id="searchInput" class="form-control" type="search" placeholder="Search coupon name..." aria-label="Search" value="<%= searchQuery || '' %>">
-                                <button class="btn" type="submit" style="background-color: #5b3f64;">
+                                <button class="btn" type="submit" style="background-color: var(--secondary);">
                                     <i class="fas fa-search text-white"></i>
                                 </button>
                             </div>
@@ -44,7 +44,7 @@
                 <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 700px;">
                         <div class="modal-content shadow-lg border-0 rounded-3">
-                            <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                            <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                                 <h5 class="modal-title fw-bold" id="addCouponModalLabel">Add new Coupon</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
@@ -102,7 +102,7 @@
                                             </select>
                                         </div>
 
-                                        <button type="submit" class="btn w-50 px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
+                                        <button type="submit" class="btn w-50 px-4 py-2 text-white shadow-sm align-self-end" style="background-color: var(--secondary);">
                                             <i class="fa fa-plus-circle me-2"></i> Add Coupon
                                         </button>
                                     </div>
@@ -116,7 +116,7 @@
                 <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 700px;">
                         <div class="modal-content shadow-lg border-0 rounded-3">
-                            <div class="modal-header text-white" style="background-color: #5b3f64; height: 50px;">
+                            <div class="modal-header text-white" style="background-color: var(--secondary); height: 50px;">
                                 <input type="hidden" id="originalCouponName" name="originalCouponName">
                                 <h5 class="modal-title fw-bold" id="editCouponModalLabel">Update Coupon</h5>
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -179,7 +179,7 @@
                                                 <option value="multi-use">Reusable</option>
                                             </select>
                                         </div>
-                                        <button type="submit" class="w-100 btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: #5b3f64;">
+                                        <button type="submit" class="w-100 btn px-4 py-2 text-white shadow-sm align-self-end" style="background-color: var(--secondary);">
                                             <i class="fa fa-check-circle me-2"></i> Update Coupon
                                         </button>
                                     </div>
@@ -233,7 +233,7 @@
                                             <td>
                                                 <button 
                                                     class="btn btn-sm me-2" 
-                                                    style="color: #5b3f64;"
+                                                    style="color: var(--secondary);"
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#editCouponModal"
                                                     onclick="openEditModal(
@@ -250,7 +250,7 @@
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </button>
                                                 <button class="deleteButton btn btn-sm me-2" data-coupon-name="<%= coupon.name %>">
-                                                    <i class="fa-solid fa-trash" style="color: #5b3f64;"></i>
+                                                    <i class="fa-solid fa-trash" style="color: var(--secondary);"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -343,7 +343,7 @@
                                 <div class="d-flex justify-content-between pt-3 border-top">
                                     <button 
                                         class="btn btn-sm" 
-                                        style="color: #5b3f64;"
+                                        style="color: var(--secondary);"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editCouponModal"
                                         onclick="openEditModal(

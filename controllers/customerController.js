@@ -57,20 +57,27 @@ const toggleBlockStatus = async (req, res) => {
         const id = req.query.user;
         const { isBlocked } = req.body;
 
-        const customer = await User.findOne({userId : id});
+        const customer = await User.findOneAndUpdate(
+            { userId: id },
+            { isBlocked: Boolean(isBlocked) }, // ensure it's a boolean
+            { new: true }
+        );
+
         if (!customer) {
             return res.status(NOT_FOUND).json({ error: "Customer not found" });
         }
 
-        customer.isBlocked = isBlocked;
-        await customer.save();
-
-        res.status(OK).json({ message: "Status updated successfully" });
+        res.status(OK).json({
+            message: "Status updated successfully",
+            isBlocked: customer.isBlocked,
+            userId: customer.userId // useful if you want to verify or update UI
+        });
     } catch (error) {
         console.error("Error updating status:", error);
         res.status(INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
     }
 };
+
 
 
 const filterCustomers = async (req, res) => {
@@ -114,24 +121,26 @@ const filterCustomers = async (req, res) => {
 };
 
 
-const changeBlockStatus = async (req, res) => {
-    try {
-        const { userId, isBlocked } = req.body;
+// const changeBlockStatus = async (req, res) => {
+//     try {
+//         const { userId, isBlocked } = req.body;
 
-        const customer = await User.findOne({ userId });
-        if (!customer) {
-            return res.status(NOT_FOUND).json({ error: "Customer not found" });
-        }
-
-        customer.isBlocked = isBlocked === "true";
-        await customer.save();
-
-        res.redirect(`/admin/viewcustomers?user=${userId}`);
-    } catch (error) {
-        console.error("Error updating status:", error);
-        res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
-    }
-};
+//         const customer = await User.findByIdAndUpdate(
+//             userId,
+//             { isBlocked: isBlocked === "true" },
+//             { new: true }
+//         );
+          
+//         if (!customer) {
+//         return res.status(NOT_FOUND).json({ error: "Customer not found" });
+//         }
+          
+//         res.redirect(`/admin/viewcustomers?user=${userId}`);
+//     } catch (error) {
+//         console.error("Error updating status:", error);
+//         res.status(INTERNAL_SERVER_ERROR).send("Internal Server Error");
+//     }
+// };
     
 
-export default { userInfo, toggleBlockStatus, userDeatails, filterCustomers, changeBlockStatus }
+export default { userInfo, toggleBlockStatus, userDeatails, filterCustomers }

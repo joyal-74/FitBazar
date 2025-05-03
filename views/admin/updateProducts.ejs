@@ -5,7 +5,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </head>
 
-<body class="bg-violet">
+<body style="background-color: var(--background);">
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
@@ -150,8 +150,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 d-flex justify-content-end gap-3">
-                                    <a class="btn cancel-btn" href="/admin/products">Cancel</a>
-                                    <button type="submit" class="btn btn-primary">
+                                    <a class="btn can-cel-btn" href="/admin/products" style="border: 1px solid var(--primary);">Cancel</a>
+                                    <button type="submit" class="btn add-btn text-white" style="background-color: var(--primary);">
                                         <i class="fa fa-check-circle me-2"></i> Update
                                     </button>
                                 </div>

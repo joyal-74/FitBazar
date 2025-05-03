@@ -11,7 +11,7 @@
     <!-- Wishlist Main Content -->
     <main>
         <div class="container mt-5">
-            <h2 class="fw-bold mb-4" style="color: #3B3389;">My Wishlist</h2>
+            <h2 class="fw-bold mb-4" style="color: var(--primary);">My Wishlist</h2>
             
             <% if (wishlist && wishlist.length > 0) { %>
                 <div class="row">
@@ -65,10 +65,10 @@
                 </div>
             <% } else { %>
                 <div class="text-center py-5">
-                    <i class="fa fa-heart fa-3x text-muted mb-3"></i>
+                    <i class="fa fa-heart fa-3x mb-3" style="color: var(--secondary);"></i>
                     <h4 class="text-muted">Your Wishlist is Empty</h4>
                     <p class="text-muted">Start adding items you love!</p>
-                    <a href="/shop" class="btn text-white" style="background-color: #4D44AD;">Shop Now</a>
+                    <a href="/shop" class="btn text-white" style="background-color: var(--secondary);">Shop Now</a>
                 </div>
             <% } %>
         </div>

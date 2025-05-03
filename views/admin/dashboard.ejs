@@ -1,4 +1,4 @@
-<body class="bg-light">
+<body style="background-color: var(--background);">
     <!-- Navbar -->
     <%- include('../partials/header') %>
 
@@ -184,7 +184,7 @@
                     categories: productIds,
                     labels: { style: { fontSize: '12px', colors: '#666' } },
                 },
-                colors: ['#8b5d9e'],
+                colors: ['#169976'],
                 series: [{ name: 'Units Sold', data: productSales }],
                 yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
                 grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
@@ -226,7 +226,7 @@
                     categories: data.topCategories.map(c => c.categoryName) || ['No Data'],
                     labels: { style: { fontSize: '12px', colors: '#666' } },
                 },
-                colors: ['#8b5d9e'],
+                colors: ['#169976'],
                 series: [{ name: 'Units Sold', data: data.topCategories.map(c => c.totalSold) || [0] }],
                 yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
                 grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
@@ -265,7 +265,7 @@
                     categories: data.brandData.labels || ['No Data'],
                     labels: { style: { fontSize: '12px', colors: '#666' } },
                 },
-                colors: ['#8b5d9e'],
+                colors: ['#169976'],
                 series: [{ name: 'Units Sold', data: data.brandData.series || [0] }],
                 yaxis: { labels: { style: { fontSize: '12px', colors: '#666' } } },
                 grid: { borderColor: '#e0e0e0', strokeDashArray: 4 },
@@ -284,7 +284,7 @@
                 chart: { type: 'pie', height: 300, fontFamily: 'Outfit, sans-serif' },
                 labels: data.locationChartData.labels || ['No Data'],
                 series: data.locationChartData.series || [0],
-                colors: ['#5b3f64', '#8b5d9e', '#cfa1d4', '#f7d6e0', '#fed7c3', '#a7c5eb'],
+                colors: ['#0B5D47', '#169976', '#1E7F60', '#A3D9C4', '#D7F2E9', '#F3F9F7'],
                 legend: { position: 'bottom' },
                 dataLabels: { enabled: false },
                 tooltip: {
