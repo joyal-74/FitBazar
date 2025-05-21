@@ -44,4 +44,8 @@ Welcome to **FitBazar**, a sleek and modern e-commerce platform tailored for all
 
 ## 🧩 Project Structure (MVC)
 
+📬 Contact
+Email : joyalkuriakose74@gmail.com
+Made with ❤️ by JK
+
 
