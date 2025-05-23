@@ -318,11 +318,7 @@
                         theme: { color: '#3B3389' }
                     };
 
-                    console.log("hi")
-
                     const rzp = new Razorpay(options);
-
-                    console.log("helo")
                     
                     rzp.on('payment.failed', async (response) => {
                         try {
@@ -345,8 +341,6 @@
                     });
 
                     rzp.open();
-
-                    console.log("sjdjkhkagh")
 
                 } catch (error) {
                     spinnerOverlay.classList.add("d-none");
